@@ -739,7 +739,7 @@ theorem formSet_of' (a : α) (k : ℕ) (F : Forest (UnorderedTree α)) :
     AlgHom.toLinearMap_apply, rTensor_homogeneousComponent_comulPrim_of', map_multiset_sum,
     map_multiset_sum, Multiset.map_map, Multiset.map_map]
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun S _ ↦ ?_)
-  simp [bPlusLin_of', ← of'_singleton, ← of'_add, Multiset.singleton_add]
+  simp [bPlusLin_of']
 
 /-- With fewer than `k` components there is nothing to group. -/
 theorem formSet_of'_of_card_lt (a : α) {k : ℕ} {F : Forest (UnorderedTree α)}

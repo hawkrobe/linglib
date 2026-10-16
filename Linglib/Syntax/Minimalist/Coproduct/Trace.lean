@@ -81,13 +81,6 @@ noncomputable def comulCForestN (τ : UnorderedTree (α ⊕ β) → β) :
       comulCForestN (R := R) τ F * comulCForestN (R := R) τ G :=
   comulForestNG_add _ F G
 
-/-- `comulCMonoidHomN τ` is `comulCForestN τ` as a monoid homomorphism. -/
-noncomputable def comulCMonoidHomN (τ : UnorderedTree (α ⊕ β) → β) :
-    Multiplicative (Forest (UnorderedTree (α ⊕ β))) →*
-      (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
-        ConnesKreimer R (UnorderedTree (α ⊕ β))) :=
-  comulMonoidHomNG (cutSummandsCN τ)
-
 /-- `comulCAlgHomN τ` is the coproduct `Δ^c` on `ConnesKreimer R (UnorderedTree (α ⊕ β))`, an
 algebra homomorphism, for the trace encoder `τ`. -/
 noncomputable def comulCAlgHomN (τ : UnorderedTree (α ⊕ β) → β) :
@@ -437,25 +430,14 @@ theorem comulCN_coassoc
       (comulCAlgHomN (R := R') τ).toLinearMap := by
   suffices hLR : coassocLHSAlgC (R' := R') τ = coassocRHSAlgC τ from
     congrArg AlgHom.toLinearMap hLR
-  -- Both AlgHoms agree on every basis forest `of' G`, by induction on
-  -- `G` using multiplicativity and the per-tree statement.
-  refine ConnesKreimer.algHom_ext fun G => ?_
-  induction G using Multiset.induction with
-  | empty => rw [ConnesKreimer.of'_zero, map_one, map_one]
-  | cons T G ihG =>
-    rw [show (T ::ₘ G : Forest (UnorderedTree (α' ⊕ β'))) = {T} + G from
-          (Multiset.singleton_add T G).symm,
-        ConnesKreimer.of'_add, map_mul, map_mul, ihG, ConnesKreimer.of'_singleton]
-    congr 1
-    -- The AlgHom applications are defeq to the LinearMap-applied
-    -- per-tree form.
-    show TensorProduct.assoc R' _ _ _
-        ((comulCAlgHomN (R := R') τ).toLinearMap.rTensor _
-          (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))) =
-      (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _
-        (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))
-    rw [comulCAlgHomN_apply_ofTree]
-    exact comulCN_coassoc_tree τ hτ T
+  refine ConnesKreimer.algHom_ext_ofTree fun T ↦ ?_
+  show TensorProduct.assoc R' _ _ _
+      ((comulCAlgHomN (R := R') τ).toLinearMap.rTensor _
+        (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))) =
+    (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _
+      (comulCAlgHomN (R := R') τ (ConnesKreimer.ofTree T))
+  rw [comulCAlgHomN_apply_ofTree]
+  exact comulCN_coassoc_tree τ hτ T
 
 end CoassocCommRing
 
@@ -615,10 +597,8 @@ private theorem counit_rTensor_comulCForestN (τ : UnorderedTree (α' ⊕ β') �
     have ih' := ih (fun T' hT' => hF T' (Multiset.mem_cons_of_mem hT'))
     have hT := hF T (Multiset.mem_cons_self T F')
     have hForest : (ConnesKreimer.ofTree T : ConnesKreimer R' (UnorderedTree (α' ⊕ β')))
-                    * ConnesKreimer.of' F' = ConnesKreimer.of' (T ::ₘ F') := by
-      rw [show (T ::ₘ F' : Forest (UnorderedTree (α' ⊕ β'))) = {T} + F' from
-            (Multiset.singleton_add T F').symm,
-          ConnesKreimer.of'_add, ConnesKreimer.of'_singleton]
+                    * ConnesKreimer.of' F' = ConnesKreimer.of' (T ::ₘ F') :=
+      (ConnesKreimer.of'_cons T F').symm
     -- comulCForestN (T ::ₘ F') = comulCTreeN τ T * comulCForestN τ F'
     have hCons : comulCForestN (R := R') τ (T ::ₘ F') =
         comulCTreeN (R := R') τ T * comulCForestN (R := R') τ F' :=
@@ -645,10 +625,8 @@ private theorem counit_lTensor_comulCForestN (τ : UnorderedTree (α' ⊕ β') �
     have ih' := ih (fun T' hT' => hF T' (Multiset.mem_cons_of_mem hT'))
     have hT := hF T (Multiset.mem_cons_self T F')
     have hForest : (ConnesKreimer.ofTree T : ConnesKreimer R' (UnorderedTree (α' ⊕ β')))
-                    * ConnesKreimer.of' F' = ConnesKreimer.of' (T ::ₘ F') := by
-      rw [show (T ::ₘ F' : Forest (UnorderedTree (α' ⊕ β'))) = {T} + F' from
-            (Multiset.singleton_add T F').symm,
-          ConnesKreimer.of'_add, ConnesKreimer.of'_singleton]
+                    * ConnesKreimer.of' F' = ConnesKreimer.of' (T ::ₘ F') :=
+      (ConnesKreimer.of'_cons T F').symm
     have hCons : comulCForestN (R := R') τ (T ::ₘ F') =
         comulCTreeN (R := R') τ T * comulCForestN (R := R') τ F' :=
       comulForestNG_cons _ T F'

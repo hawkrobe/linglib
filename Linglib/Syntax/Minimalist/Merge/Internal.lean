@@ -16,7 +16,7 @@ trace cuts it keeps a trace in place of `β` (`mergeOpC_im_composition`).
 
 * `Minimalist.Merge.mergeOpUnitG_apply_singleton`, `mergeOpUnitG_apply_singleton_unique`: the
   unit stage on one tree, a sum over the cuts with crown `{β}`.
-* `Minimalist.Merge.mergeOpUnitG_factor_out_singleton`,
+* `Minimalist.Merge.mergeOpUnitG_ofTree_mul`,
   `mergeOpUnitG_apply_singleton_unique_residual`: the unit stage beside a spectator workspace.
 * `Minimalist.Merge.mergeOpG_im_composition`, `mergeOp_im_composition`,
   `mergeOpC_im_composition`: Internal Merge as a composition of Merges.
@@ -86,14 +86,12 @@ theorem mergeOpUnitG_apply_singleton_unique (β T : UnorderedTree α)
   exact ite_eq_right (Multiset.mem_filter.mp hp).2
 
 /-- The unit stage commutes with a spectator component `T` that does not have `β` as a subtree. -/
-theorem mergeOpUnitG_factor_out_singleton [IsMergeCuts cuts] {β T : UnorderedTree α}
+theorem mergeOpUnitG_ofTree_mul [IsMergeCuts cuts] {β T : UnorderedTree α}
     (hT : β ∉ T.subtrees) (w : ConnesKreimer R (UnorderedTree α)) :
-    mergeOpUnitG (R := R) cuts β (of' ({T} : Forest (UnorderedTree α)) * w)
-      = of' ({T} : Forest (UnorderedTree α)) * mergeOpUnitG (R := R) cuts β w := by
+    mergeOpUnitG (R := R) cuts β (ofTree T * w) = ofTree T * mergeOpUnitG (R := R) cuts β w := by
   rw [mergeOpUnitG, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    AlgHom.toLinearMap_apply, map_mul,
-    show comulAlgHomNG (R := R) cuts (of' ({T} : Forest (UnorderedTree α))) = comulTreeNG cuts T
-      from comulAlgHomNG_apply_ofTree cuts T, comulTreeNG, add_mul, map_add, ← of'_singleton]
+    AlgHom.toLinearMap_apply, map_mul, comulAlgHomNG_apply_ofTree, comulTreeNG, add_mul, map_add,
+    ← of'_singleton]
   -- The primitive term vanishes, since `T ≠ β`.
   rw [mergePostUnit_left_mul_eq_zero_of_not_le _ _ _ ?prim, zero_add]
   case prim =>
@@ -133,10 +131,8 @@ theorem mergeOpUnitG_apply_singleton_unique_residual [IsMergeCuts cuts] (β T : 
       ← of'_singleton, ← of'_add]
     rfl
   | cons U Fhat' ih =>
-    rw [Multiset.add_cons, Multiset.add_cons, ← Multiset.singleton_add, ← Multiset.singleton_add,
-      of'_add (R := R) ({U} : Forest (UnorderedTree α)),
-      of'_add (R := R) ({U} : Forest (UnorderedTree α)),
-      mergeOpUnitG_factor_out_singleton (hF U (Multiset.mem_cons_self _ _)),
+    rw [Multiset.add_cons, Multiset.add_cons, of'_cons, of'_cons,
+      mergeOpUnitG_ofTree_mul (hF U (Multiset.mem_cons_self _ _)),
       ih fun V hV ↦ hF V (Multiset.mem_cons_of_mem hV)]
 
 /-- Internal Merge as the composition `M_{T/β,β} ∘ M_{β,1}` over a cut enumeration admitting

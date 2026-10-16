@@ -117,17 +117,15 @@ theorem mergeOp_pair (lbl : α) (S S' : UnorderedTree α) :
     ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). The primitive term of `T` does not fit inside
     `{S, S'}`, no nonempty cut of `T` extracts `S` or `S'`, and the empty cut passes `T` through to
     the right channel. -/
-theorem mergeOpG_factor_out_singleton
+theorem mergeOpG_ofTree_mul
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
     [IsMergeCuts cuts] (lbl : α) {S S' T : UnorderedTree α}
     (hT_S : S ∉ T.subtrees) (hT_S' : S' ∉ T.subtrees)
     (w : ConnesKreimer R (UnorderedTree α)) :
-    mergeOpG (R := R) cuts lbl S S' (of' ({T} : Forest (UnorderedTree α)) * w)
-      = of' ({T} : Forest (UnorderedTree α)) * mergeOpG (R := R) cuts lbl S S' w := by
+    mergeOpG (R := R) cuts lbl S S' (ofTree T * w) = ofTree T * mergeOpG (R := R) cuts lbl S S' w := by
   rw [mergeOpG, LinearMap.comp_apply, LinearMap.comp_apply, AlgHom.toLinearMap_apply,
-    AlgHom.toLinearMap_apply, map_mul,
-    show comulAlgHomNG (R := R) cuts (of' ({T} : Forest (UnorderedTree α))) = comulTreeNG cuts T
-      from comulAlgHomNG_apply_ofTree cuts T, comulTreeNG, add_mul, map_add, ← of'_singleton]
+    AlgHom.toLinearMap_apply, map_mul, comulAlgHomNG_apply_ofTree, comulTreeNG, add_mul, map_add,
+    ← of'_singleton]
   -- The primitive term vanishes, since `{T}` does not fit inside `{S, S'}`.
   rw [mergePost_left_mul_eq_zero_of_not_le _ _ _ _ _ ?prim, zero_add]
   case prim =>
@@ -172,19 +170,18 @@ theorem mergeOpG_of'_mul
   | empty => rw [of'_zero, one_mul, one_mul]
   | cons T F ih =>
     have hT := hF T (Multiset.mem_cons_self _ _)
-    rw [← Multiset.singleton_add, of'_add, mul_assoc,
-      mergeOpG_factor_out_singleton lbl (Multiset.disjoint_left.mp hT (by simp))
+    rw [of'_cons, mul_assoc,
+      mergeOpG_ofTree_mul lbl (Multiset.disjoint_left.mp hT (by simp))
         (Multiset.disjoint_left.mp hT (by simp)),
       ih (fun U hU ↦ hF U (Multiset.mem_cons_of_mem hU)), mul_assoc]
 
 /-- Merge at the pruning cuts commutes with a spectator component that has neither `S` nor `S'`
     as a subtree. -/
-theorem mergeOp_factor_out_singleton (lbl : α) {S S' T : UnorderedTree α}
+theorem mergeOp_ofTree_mul (lbl : α) {S S' T : UnorderedTree α}
     (hT_S : S ∉ T.subtrees) (hT_S' : S' ∉ T.subtrees)
     (w : ConnesKreimer R (UnorderedTree α)) :
-    mergeOp (R := R) lbl S S' (of' ({T} : Forest (UnorderedTree α)) * w)
-      = of' ({T} : Forest (UnorderedTree α)) * mergeOp (R := R) lbl S S' w :=
-  mergeOpG_factor_out_singleton lbl hT_S hT_S' w
+    mergeOp (R := R) lbl S S' (ofTree T * w) = ofTree T * mergeOp (R := R) lbl S S' w :=
+  mergeOpG_ofTree_mul lbl hT_S hT_S' w
 
 /-- External Merge with a residual workspace `F̂` none of whose components has `S` or `S'` as a
     subtree ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). Without the hypothesis Merge also

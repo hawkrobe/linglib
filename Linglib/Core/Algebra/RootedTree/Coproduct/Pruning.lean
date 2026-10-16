@@ -7,10 +7,6 @@ public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.RingTheory.Bialgebra.Basic
 public import Mathlib.RingTheory.TensorProduct.Maps
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
 # The pruning coproduct Δ^ρ
 
@@ -54,6 +50,10 @@ instance is in `HopfAlgebra.lean`.
 * [foissy-introduction-hopf-algebras-trees]
 * [grinberg-reiner-2020]
 -/
+
+@[expose] public section
+
+open RoseTree UnorderedTree
 
 namespace ConnesKreimer
 
@@ -247,11 +247,7 @@ private theorem comulForestN_counit_rTensor (F : Forest (UnorderedTree α))
     have hT := hF T (Multiset.mem_cons_self T F')
     rw [comulForestN_cons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, mul_one,
-        show (ofTree T : ConnesKreimer R (UnorderedTree α)) * of' F' =
-              of' (T ::ₘ F') from by
-          rw [show (T ::ₘ F' : Forest (UnorderedTree α)) = {T} + F' from
-                (Multiset.singleton_add T F').symm,
-              of'_add, of'_singleton]]
+        ← of'_cons]
 
 private theorem comulForestN_counit_lTensor (F : Forest (UnorderedTree α))
     (hF : ∀ T ∈ F, (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
@@ -268,11 +264,7 @@ private theorem comulForestN_counit_lTensor (F : Forest (UnorderedTree α))
     have hT := hF T (Multiset.mem_cons_self T F')
     rw [comulForestN_cons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, one_mul,
-        show (ofTree T : ConnesKreimer R (UnorderedTree α)) * of' F' =
-              of' (T ::ₘ F') from by
-          rw [show (T ::ₘ F' : Forest (UnorderedTree α)) = {T} + F' from
-                (Multiset.singleton_add T F').symm,
-              of'_add, of'_singleton]]
+        ← of'_cons]
 
 private theorem comulTreeN_counit_rTensor (T : UnorderedTree α) :
     (Algebra.TensorProduct.map (counit (R := R))
@@ -319,32 +311,12 @@ private theorem comulTreeN_counit_rTensor (T : UnorderedTree α) :
             exact hlt),
         LinearMap.lTensor_tmul, bPlusLin_of']
 
-/-- `counit ∘ B+_a = 0` as a linear map. The image of `B+_a` lies in the
-    span of `ofTree`s on non-leaf trees, all of which have card-1 forests
-    so counit kills them. Proven by reducing the linear-map equality to
-    basis vectors via `ConnesKreimer.lhom_ext`, then computing on `of' F`. -/
+/-- The counit kills the image of `B+_a`, which is spanned by single trees. -/
 private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (UnorderedTree α)) :
     counit (R := R) (bPlusLin (R := R) a y) = 0 := by
-  -- Both maps are R-linear; reduce to checking equality of the composite with 0
-  -- as a LinearMap, then evaluate at y.
-  have h : ((counit (R := R)).toLinearMap.comp (bPlusLin (R := R) a) :
-           ConnesKreimer R (UnorderedTree α) →ₗ[R] R) = 0 := by
-    apply ConnesKreimer.lhom_ext
-    intro F r
-    show counit (bPlusLin a (ConnesKreimer.single F r)) = (0 : R)
-    -- Convert `single F r` to `r • of' F`, then push through linearity.
-    have hr : (ConnesKreimer.single F r : ConnesKreimer R (UnorderedTree α))
-              = (r : R) • (of' F : ConnesKreimer R (UnorderedTree α)) :=
-      ConnesKreimer.smul_single_one F r
-    rw [hr]
-    -- Force re-elaboration through Module-flavored smul.
-    change counit (R := R) (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) =
-           (0 : R)
-    rw [(bPlusLin (R := R) a).map_smul, bPlusLin_of',
-        _root_.map_smul (counit (R := R)) r, counit_ofTree, smul_zero]
-  -- Apply h pointwise to y.
-  have := congrFun (congrArg DFunLike.coe h) y
-  simpa using this
+  have h : (counit (R := R)).toLinearMap ∘ₗ bPlusLin (R := R) a = 0 :=
+    ConnesKreimer.lhom_ext' fun F ↦ by simp
+  exact congr($h y)
 
 private theorem comulTreeN_counit_lTensor (T : UnorderedTree α) :
     (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
@@ -455,10 +427,8 @@ theorem mem_coassocSubalg (x : ConnesKreimer R (UnorderedTree α)) :
 
 /-! ### Linear extension of the cocycle
 
-The cocycle `comulAlgHomN_bPlusLin_cocycle` is stated for `of' F`. Since
-both sides are R-linear in `x : H`, it extends to arbitrary `x` via
-`ConnesKreimer.lhom_ext` (all linear maps out of `H = R[Forest]` are determined
-by their action on basis vectors `of' F = ConnesKreimer.single F 1`). -/
+Both sides of `comulAlgHomN_bPlusLin_cocycle` are linear, so it extends from forests to all of
+`H` by `ConnesKreimer.lhom_ext'`. -/
 
 /-- The cocycle law holds for arbitrary `x : H`, by linearity. -/
 theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
@@ -466,50 +436,10 @@ theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
     comulAlgHomN (bPlusLin (R := R) a x) =
       bPlusLin (R := R) a x ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
       (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulAlgHomN x) := by
-  -- LHS and RHS are both R-linear in x. Reduce to checking on ConnesKreimer.single F r
-  -- (= r • of' F), then to F = of' F (r = 1) via scalar linearity, then apply cocycle.
-  have heq :
-      ((comulAlgHomN (R := R) (α := α)).toLinearMap.comp (bPlusLin (R := R) a) :
-        ConnesKreimer R (UnorderedTree α) →ₗ[R]
-          ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) =
-      ((TensorProduct.mk R _ _).flip 1).comp (bPlusLin (R := R) a) +
-      (LinearMap.lTensor _ (bPlusLin (R := R) a)).comp
-        (comulAlgHomN (R := R) (α := α)).toLinearMap := by
-    apply ConnesKreimer.lhom_ext
-    intro F r
-    -- Convert single F r to r • of' F, then use cocycle. Use `change` to force the
-    -- smul to elaborate via Module instance (matching what map_smul expects), avoiding
-    -- the SMulZeroClass mismatch.
-    show comulAlgHomN.toLinearMap (bPlusLin a (ConnesKreimer.single F r)) =
-         (TensorProduct.mk R _ _).flip 1 (bPlusLin a (ConnesKreimer.single F r)) +
-         LinearMap.lTensor _ (bPlusLin a) (comulAlgHomN.toLinearMap (ConnesKreimer.single F r))
-    have hr : ConnesKreimer.single F r = (r : R) • (of' F : ConnesKreimer R (UnorderedTree α)) :=
-      ConnesKreimer.smul_single_one F r
-    rw [hr]
-    -- Force re-elaboration through Module-flavored smul:
-    change comulAlgHomN.toLinearMap
-        (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) =
-           (TensorProduct.mk R _ _).flip 1
-              (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α)))) +
-           LinearMap.lTensor _ (bPlusLin a)
-              (comulAlgHomN.toLinearMap ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α))))
-    rw [(bPlusLin (R := R) a).map_smul,
-        (comulAlgHomN (R := R) (α := α)).toLinearMap.map_smul,
-        AlgHom.toLinearMap_apply, AlgHom.toLinearMap_apply,
-        comulAlgHomN_bPlusLin_cocycle, smul_add, TensorProduct.smul_tmul']
-    -- Now match the second summand on both sides:
-    --   r • (lTensor _ (bPlusLin a)) (comulAlgHomN (of' F))
-    --   = (lTensor _ (bPlusLin a)) (comulAlgHomN (r • of' F))
-    -- via map_smul on comulAlgHomN and lTensor in turn.
-    simp only [LinearMap.flip_apply, TensorProduct.mk_apply]
-    congr 1
-    -- Now isolate the r-smul mismatch: (lTensor _ ...) (r • _) vs r • (lTensor _ ...) _.
-    change (r : R) • (LinearMap.lTensor _ (bPlusLin (R := R) a))
-              (comulAlgHomN (of' F)) =
-           (LinearMap.lTensor _ (bPlusLin (R := R) a))
-              (comulAlgHomN ((r : R) • (of' F : ConnesKreimer R (UnorderedTree α))))
-    rw [_root_.map_smul (comulAlgHomN (R := R) (α := α)),
-        (LinearMap.lTensor _ (bPlusLin (R := R) a)).map_smul]
+  have heq : (comulAlgHomN (R := R) (α := α)).toLinearMap ∘ₗ bPlusLin (R := R) a =
+      (TensorProduct.mk R _ _).flip 1 ∘ₗ bPlusLin (R := R) a +
+        LinearMap.lTensor _ (bPlusLin (R := R) a) ∘ₗ (comulAlgHomN (R := R) (α := α)).toLinearMap :=
+    ConnesKreimer.lhom_ext' fun F ↦ comulAlgHomN_bPlusLin_cocycle a F
   exact congr($heq x)
 
 /-! ### Closure of `coassocSubalg` under `B+_a`
@@ -688,7 +618,7 @@ private theorem of'_mem_coassocSubalg_of_trees (F : Forest (UnorderedTree α))
     have hF' : ∀ T' ∈ F', ofTree T' ∈ coassocSubalg (R := R) (α := α) :=
       fun T' hT' => h T' (Multiset.mem_cons_of_mem hT')
     have ih' := ih hF'
-    rw [show ((T ::ₘ F') : Forest (UnorderedTree α)) = ({T} + F') from rfl, of'_add, of'_singleton]
+    rw [of'_cons]
     exact mul_mem hT ih'
 
 /-- Every tree generator lies in `coassocSubalg`, by strong induction on height. A leaf is

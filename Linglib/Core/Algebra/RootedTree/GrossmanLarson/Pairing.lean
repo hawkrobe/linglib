@@ -52,73 +52,28 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### The bilinear pairing -/
 
-/-- `pairingAux` is the symmetry-weighted pairing on finitely supported functions on forests. -/
-noncomputable def pairingAux :
-    (Forest (UnorderedTree α) →₀ R) →ₗ[R] (Forest (UnorderedTree α) →₀ R) →ₗ[R] R :=
-  Finsupp.lift _ R (Forest (UnorderedTree α)) (fun F =>
-    Finsupp.lift R R (Forest (UnorderedTree α)) (fun G =>
-      if F = G then (forestAutCard F : R) else 0))
-
 /-- `pairing (of' F) (of' G)` is the number of symmetries of `F` when `F = G`, and `0`
 otherwise. -/
 noncomputable def pairing :
     ConnesKreimer R (UnorderedTree α) →ₗ[R]
       ConnesKreimer R (UnorderedTree α) →ₗ[R] R :=
-  pairingAux.compl₁₂
-    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
-      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := UnorderedTree α)).toLinearMap)
-    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
-      (ConnesKreimer.toFinsuppAlgEquiv (R := R) (T := UnorderedTree α)).toLinearMap)
-
-private theorem pairingAux_single_single (F G : Forest (UnorderedTree α)) :
-    pairingAux (R := R) (Finsupp.single F 1) (Finsupp.single G 1) =
-      (if F = G then (forestAutCard F : R) else 0) := by
-  show (Finsupp.lift _ R (Forest (UnorderedTree α)) (fun F' =>
-    Finsupp.lift R R (Forest (UnorderedTree α)) (fun G' =>
-      if F' = G' then (forestAutCard F' : R) else 0)))
-    (Finsupp.single F 1 : Forest (UnorderedTree α) →₀ R) (Finsupp.single G 1) = _
-  rw [Finsupp.lift_apply, Finsupp.sum_single_index]
-  · rw [one_smul]
-    show (Finsupp.lift R R (Forest (UnorderedTree α)) (fun G' =>
-        if F = G' then (forestAutCard F : R) else 0))
-        (Finsupp.single G 1 : Forest (UnorderedTree α) →₀ R) = _
-    rw [Finsupp.lift_apply, Finsupp.sum_single_index]
-    · simp only [one_smul]
-    · simp
-  · simp
-
-private theorem pairing_apply (x y : ConnesKreimer R (UnorderedTree α)) :
-    pairing (R := R) x y = pairingAux x.toFinsupp.coeff y.toFinsupp.coeff := rfl
+  ConnesKreimer.linearLift fun F ↦ ConnesKreimer.linearLift fun G ↦
+    if F = G then (forestAutCard F : R) else 0
 
 @[simp] theorem pairing_of'_of' (F G : Forest (UnorderedTree α)) :
-    pairing (R := R) (ConnesKreimer.of' (R := R) F)
-                     (ConnesKreimer.of' (R := R) G) =
+    pairing (R := R) (ConnesKreimer.of' F) (ConnesKreimer.of' G) =
       (if F = G then (forestAutCard F : R) else 0) := by
-  rw [pairing_apply, ConnesKreimer.toFinsupp_of', ConnesKreimer.toFinsupp_of']
-  exact pairingAux_single_single F G
+  simp [pairing]
 
 /-- The pairing is symmetric. -/
 theorem pairing_symm (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x y = pairing y x := by
-  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-  · rw [LinearMap.map_zero, LinearMap.zero_apply, LinearMap.map_zero]
-  · intro x₁ x₂ ih₁ ih₂
-    rw [map_add, LinearMap.add_apply, ih₁, ih₂, map_add]
-  · intro F r
-    refine ConnesKreimer.induction_linear y ?_ ?_ ?_
-    · rw [LinearMap.map_zero, LinearMap.map_zero, LinearMap.zero_apply]
-    · intro y₁ y₂ ih₁ ih₂
-      rw [map_add, LinearMap.map_add, LinearMap.add_apply, ih₁, ih₂]
-    · intro G s
-      rw [show ConnesKreimer.single F r = r • ConnesKreimer.of' (R := R) F
-            from ConnesKreimer.smul_single_one F r,
-          show ConnesKreimer.single G s = s • ConnesKreimer.of' (R := R) G
-            from ConnesKreimer.smul_single_one G s]
-      simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of']
-      by_cases h : F = G
-      · subst h; ring
-      · have h' : G ≠ F := fun heq => h heq.symm
-        simp [h, h']
+  have h : pairing (R := R) (α := α) = pairing.flip := by
+    ext F G
+    rcases eq_or_ne F G with rfl | h
+    · simp
+    · simp [h, h.symm]
+  exact congr($h x y)
 
 @[simp] theorem pairing_zero_left (y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) 0 y = 0 := by
@@ -133,47 +88,26 @@ theorem pairing_one_right (w : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) w (1 : ConnesKreimer R (UnorderedTree α)) =
       (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R) w := by
   have h : (pairing (R := R)).flip (1 : ConnesKreimer R (UnorderedTree α)) =
-      (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap :=
-    ConnesKreimer.lhom_ext' fun F => by
-      show pairing (R := R) (ConnesKreimer.of' F)
-          (ConnesKreimer.of' (0 : Forest (UnorderedTree α))) =
-        (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
-          (ConnesKreimer.of' F)
-      rw [pairing_of'_of', ConnesKreimer.counit_of']
-      by_cases h : F = (0 : Forest (UnorderedTree α))
-      · subst h
-        rw [ite_eq_left rfl, ite_eq_left Multiset.card_zero]
-        show ((UnorderedTree.forestAutCard (0 : Forest (UnorderedTree α)) : ℕ) : R) = 1
-        rw [UnorderedTree.forestAutCard_zero, Nat.cast_one]
-      · rw [ite_eq_right h, ite_eq_right (by simpa [Multiset.card_eq_zero] using h)]
-  exact LinearMap.congr_fun h w
+      (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R).toLinearMap := by
+    ext F
+    rcases eq_or_ne F 0 with rfl | h <;> simp [← ConnesKreimer.of'_zero, *]
+  exact congr($h w)
+
+/-- Pairing with `of' F` takes the coefficient of `F`, weighted by the symmetries of `F`. -/
+theorem pairing_of' (F : Forest (UnorderedTree α)) :
+    pairing (R := R) (ConnesKreimer.of' F) = (forestAutCard F : R) • ConnesKreimer.lcoeff R F := by
+  ext G
+  rcases eq_or_ne F G with rfl | h
+  · simp [ConnesKreimer.coeff_of']
+  · simp [ConnesKreimer.coeff_of', h, h.symm]
 
 /-- Pairing against `of' G` gives the coefficient of `G`, weighted by the symmetries of `G`. -/
 theorem pairing_apply_of' (x : ConnesKreimer R (UnorderedTree α))
     (G : Forest (UnorderedTree α)) :
     pairing (R := R) x (ConnesKreimer.of' G) =
       x.coeff G * (forestAutCard G : R) := by
-  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-  · simp
-  · intro x₁ x₂ ih₁ ih₂
-    rw [map_add, LinearMap.add_apply, ih₁, ih₂, ConnesKreimer.coeff_add, add_mul]
-  · intro F r
-    rw [show ConnesKreimer.single F r = r • ConnesKreimer.of' (R := R) F
-          from ConnesKreimer.smul_single_one F r]
-    simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of',
-      ConnesKreimer.coeff_smul]
-    rw [ConnesKreimer.coeff_of']
-    by_cases h : F = G
-    · subst h
-      simp [smul_eq_mul]
-    · simp [ite_eq_right h]
-
-/-- Pairing with `of' F` takes the coefficient of `F`, weighted by the symmetries of `F`. -/
-theorem pairing_of' (F : Forest (UnorderedTree α)) :
-    pairing (R := R) (ConnesKreimer.of' F) = (forestAutCard F : R) • ConnesKreimer.lcoeff R F :=
-  LinearMap.ext fun x ↦ by
-    rw [pairing_symm, pairing_apply_of', LinearMap.smul_apply, ConnesKreimer.lcoeff_apply,
-      smul_eq_mul, mul_comm]
+  rw [pairing_symm, pairing_of', LinearMap.smul_apply, ConnesKreimer.lcoeff_apply, smul_eq_mul,
+    mul_comm]
 
 /-- Over a ring of characteristic zero without zero divisors, the pairing is nondegenerate. -/
 theorem pairing_nondegenerate
@@ -326,103 +260,16 @@ theorem pairing_of'_mul (W : Forest (UnorderedTree α))
       ((Multiset.antidiagonal W).map (fun p =>
         pairing (R := R) (ConnesKreimer.of' p.1) z₁ *
         pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum := by
-  -- First extend in z₂ at basis z₁, then in z₁.
-  have aux : ∀ (C₁ : Forest (UnorderedTree α))
-      (z₂ : ConnesKreimer R (UnorderedTree α)),
-      pairing (R := R) (ConnesKreimer.of' W)
-          (ConnesKreimer.of' C₁ * z₂) =
-        ((Multiset.antidiagonal W).map (fun p =>
-          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-          pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum := by
-    intro C₁ z₂
-    refine ConnesKreimer.induction_linear z₂ ?_ ?_ ?_
-    · show pairing (R := R) (ConnesKreimer.of' W)
-          (ConnesKreimer.of' C₁ * (0 : ConnesKreimer R (UnorderedTree α))) =
-        ((Multiset.antidiagonal W).map (fun p =>
-          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-          pairing (R := R) (ConnesKreimer.of' p.2)
-            (0 : ConnesKreimer R (UnorderedTree α)))).sum
-      rw [mul_zero, map_zero]
-      symm
-      refine Multiset.sum_eq_zero fun r hr => ?_
-      obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hr
-      rw [map_zero, mul_zero]
-    · intro a b iha ihb
-      let a' : ConnesKreimer R (UnorderedTree α) := a
-      let b' : ConnesKreimer R (UnorderedTree α) := b
-      show pairing (R := R) (ConnesKreimer.of' W)
-          (ConnesKreimer.of' C₁ * (a' + b')) =
-        ((Multiset.antidiagonal W).map (fun p =>
-          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-          pairing (R := R) (ConnesKreimer.of' p.2) (a' + b'))).sum
-      rw [mul_add, map_add]
-      rw [show pairing (R := R) (ConnesKreimer.of' W)
-            (ConnesKreimer.of' C₁ * a') = _ from iha,
-          show pairing (R := R) (ConnesKreimer.of' W)
-            (ConnesKreimer.of' C₁ * b') = _ from ihb,
-          ← Multiset.sum_map_add]
-      refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ => ?_)
-      show pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-            pairing (R := R) (ConnesKreimer.of' p.2) a' +
-          pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-            pairing (R := R) (ConnesKreimer.of' p.2) b' = _
-      rw [map_add, mul_add]
-    · intro G s
-      rw [show ConnesKreimer.single G s = s • ConnesKreimer.of' (R := R) G
-            from ConnesKreimer.smul_single_one G s,
-          mul_smul_comm, map_smul, smul_eq_mul,
-          pairing_of'_mul_of' W C₁ G]
-      rw [show ((Multiset.antidiagonal W).map (fun p =>
-            pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-            pairing (R := R) (ConnesKreimer.of' p.2)
-              (s • ConnesKreimer.of' (R := R) G))) =
-          ((Multiset.antidiagonal W).map (fun p => s *
-            (pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' C₁) *
-             pairing (R := R) (ConnesKreimer.of' p.2) (ConnesKreimer.of' G)))) from
-        Multiset.map_congr rfl fun p _ => by rw [map_smul, smul_eq_mul]; ring]
-      rw [Multiset.sum_map_mul_left]
-  refine ConnesKreimer.induction_linear z₁ ?_ ?_ ?_
-  · show pairing (R := R) (ConnesKreimer.of' W)
-        ((0 : ConnesKreimer R (UnorderedTree α)) * z₂) =
-      ((Multiset.antidiagonal W).map (fun p =>
-        pairing (R := R) (ConnesKreimer.of' p.1)
-          (0 : ConnesKreimer R (UnorderedTree α)) *
-        pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum
-    rw [zero_mul, map_zero]
-    symm
-    refine Multiset.sum_eq_zero fun r hr => ?_
-    obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp hr
-    rw [map_zero, zero_mul]
-  · intro a b iha ihb
-    let a' : ConnesKreimer R (UnorderedTree α) := a
-    let b' : ConnesKreimer R (UnorderedTree α) := b
-    show pairing (R := R) (ConnesKreimer.of' W) ((a' + b') * z₂) =
-      ((Multiset.antidiagonal W).map (fun p =>
-        pairing (R := R) (ConnesKreimer.of' p.1) (a' + b') *
-        pairing (R := R) (ConnesKreimer.of' p.2) z₂)).sum
-    rw [add_mul, map_add]
-    rw [show pairing (R := R) (ConnesKreimer.of' W) (a' * z₂) = _ from iha,
-        show pairing (R := R) (ConnesKreimer.of' W) (b' * z₂) = _ from ihb,
-        ← Multiset.sum_map_add]
-    refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ => ?_)
-    show pairing (R := R) (ConnesKreimer.of' p.1) a' *
-          pairing (R := R) (ConnesKreimer.of' p.2) z₂ +
-        pairing (R := R) (ConnesKreimer.of' p.1) b' *
-          pairing (R := R) (ConnesKreimer.of' p.2) z₂ = _
-    rw [map_add, add_mul]
-  · intro F r
-    rw [show ConnesKreimer.single F r = r • ConnesKreimer.of' (R := R) F
-          from ConnesKreimer.smul_single_one F r,
-        smul_mul_assoc, map_smul, smul_eq_mul, aux F z₂]
-    rw [show ((Multiset.antidiagonal W).map (fun p =>
-          pairing (R := R) (ConnesKreimer.of' p.1)
-            (r • ConnesKreimer.of' (R := R) F) *
-          pairing (R := R) (ConnesKreimer.of' p.2) z₂)) =
-        ((Multiset.antidiagonal W).map (fun p => r *
-          (pairing (R := R) (ConnesKreimer.of' p.1) (ConnesKreimer.of' F) *
-           pairing (R := R) (ConnesKreimer.of' p.2) z₂))) from
-      Multiset.map_congr rfl fun p _ => by rw [map_smul, smul_eq_mul]; ring]
-    rw [Multiset.sum_map_mul_left]
+  induction z₁ using ConnesKreimer.induction_linear with
+  | zero => simp
+  | add a b ha hb => simp only [add_mul, map_add, ha, hb, Multiset.sum_map_add]
+  | single F r =>
+    induction z₂ using ConnesKreimer.induction_linear with
+    | zero => simp
+    | add a b ha hb => simp only [mul_add, map_add, ha, hb, Multiset.sum_map_add]
+    | single G s =>
+      simp only [← ConnesKreimer.smul_of', smul_mul_smul_comm, map_smul, smul_eq_mul,
+        pairing_of'_mul_of', mul_mul_mul_comm r, Multiset.sum_map_mul_left]
 
 /-- Pairing a Grossman–Larson product against a Connes–Kreimer product splits both of its
 factors, `⟨A ⋆ B, C₁ · C₂⟩ = Σ_{A = A₁ + A₂} Σ_{B = B₁ + B₂} ⟨A₁ ⋆ B₁, C₁⟩ ⟨A₂ ⋆ B₂, C₂⟩`. -/

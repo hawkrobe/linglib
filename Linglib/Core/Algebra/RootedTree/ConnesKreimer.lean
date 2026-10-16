@@ -9,40 +9,32 @@ public import Mathlib.Algebra.MonoidAlgebra.Basic
 public import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 
 /-!
-# Connes-Kreimer Hopf algebra carrier on n-ary rooted trees
+# The Connes–Kreimer algebra
 
-The **Connes-Kreimer Hopf algebra** on a tree type `T`
-([connes-kreimer-1998]; [foissy-introduction-hopf-algebras-trees] §1.2) is
-the formal `R`-linear span of forests (multisets of trees), with product =
-forest disjoint union and coproduct = sum over admissible cuts. This file
-provides the carrier, its algebra structure, and the counit, generic over
-`T`; the coproducts and the `Bialgebra`/`HopfAlgebra` instances are in the
-sibling `Coproduct/` files and `HopfAlgebra.lean`.
+`ConnesKreimer R T` is the commutative `R`-algebra with a basis indexed by the forests of `T`
+(finite multisets of elements of `T`), multiplied by disjoint union, with the empty forest as
+unit. It is the free commutative `R`-algebra on `T`. When `T` is a type of rooted trees, cutting
+trees makes it the Connes–Kreimer Hopf algebra; the coproducts are in the sibling `Coproduct/`
+files and the antipode in `HopfAlgebra.lean`.
 
-## Main declarations
+## Main definitions
 
-* `UnorderedTree.Forest`: forests as multisets of trees; multiset addition is
-  disjoint union.
-* `ConnesKreimer`: one-field wrapper around
-  `AddMonoidAlgebra R (Forest T)`.
-* `ConnesKreimer.single`, `ConnesKreimer.of'`, `ConnesKreimer.ofTree`,
-  `ConnesKreimer.coeff`: basis embeddings and coefficient extraction.
-* `ConnesKreimer.lift`, `ConnesKreimer.aeval`, `ConnesKreimer.algHom_ext`,
-  `ConnesKreimer.algHom_ext_ofTree`, `ConnesKreimer.addHom_ext`,
-  `ConnesKreimer.linearLift`: the wrapper-native hom API.
-* `ConnesKreimer.rename`: the algebra hom induced by a map of trees.
-* `ConnesKreimer.counit`: the counit ε (coefficient of the empty forest)
-  as an algebra hom.
+* `UnorderedTree.Forest T`: forests of `T`, as multisets.
+* `ConnesKreimer R T`: the algebra.
+* `ConnesKreimer.single`, `ConnesKreimer.of'`, `ConnesKreimer.ofTree`: basis vectors.
+* `ConnesKreimer.coeff`: the coefficient of a forest.
+* `ConnesKreimer.aeval`: the algebra hom determined by its values on trees.
+* `ConnesKreimer.basisSingleOne`, `ConnesKreimer.linearLift`: the forest basis and linear maps
+  defined on it.
+* `ConnesKreimer.counit`: the coefficient of the empty forest, as an algebra hom.
 
 ## Implementation notes
 
-`ConnesKreimer R T` wraps `AddMonoidAlgebra R (Forest T)` as a one-field
-structure (mathlib's `Polynomial` pattern): the bare carrier already carries
-the group-like `AddMonoidAlgebra.instBialgebra`, and a `def`-synonym leaks
-parent instance paths (an `SMul ℤ` diamond). Consumers speak the
-wrapper-native API rather than applying `AddMonoidAlgebra`/`Finsupp` lemmas
-to `ConnesKreimer` values; `toFinsuppAlgEquiv` is the bridge for wholesale
-transport.
+`ConnesKreimer R T` wraps `AddMonoidAlgebra R (Forest T)` in a one-field structure, as
+`Polynomial` does. The bare carrier already has the group-like bialgebra structure
+`AddMonoidAlgebra.instBialgebra`, and a `def` synonym would leak parent instance paths (an
+`SMul ℤ` diamond). Consumers use the API of this file; `toFinsuppAlgEquiv` is the bridge to the
+bare carrier.
 
 `[UPSTREAM]` candidate.
 
@@ -56,27 +48,17 @@ transport.
 
 noncomputable section
 
-
-/-! ## Forests
-
-A **forest** is a multiset of trees. Multiset addition is the disjoint
-union (forest concatenation). -/
-
-/-- A forest of T-shaped trees: finite multiset. -/
+/-- Forests of elements of `T`, as multisets; addition is disjoint union. -/
 abbrev UnorderedTree.Forest (T : Type*) : Type _ := Multiset T
 
 open UnorderedTree
 
-/-! ## The carrier -/
-
-/-- The **Connes-Kreimer Hopf algebra** on tree type T: a one-field wrapper
-    around `AddMonoidAlgebra R (Forest T)`. As an algebra: product = forest
-    disjoint union (commutative), unit = empty forest. The Bialgebra
-    structure (coproduct + coassoc + counit laws) is in sibling files. -/
+/-- The Connes–Kreimer algebra on `T`, the `R`-span of the forests of `T` with disjoint union
+as product. -/
 structure ConnesKreimer (R : Type*) [CommSemiring R] (T : Type*) where
-  /-- Wrap an `AddMonoidAlgebra` as a Connes-Kreimer element. -/
+  /-- Wrap an `AddMonoidAlgebra` as an element of the Connes–Kreimer algebra. -/
   ofFinsupp ::
-  /-- The underlying forest-indexed `Finsupp`. -/
+  /-- The underlying forest-indexed `AddMonoidAlgebra`. -/
   toFinsupp : AddMonoidAlgebra R (Forest T)
 
 namespace ConnesKreimer
@@ -186,13 +168,6 @@ instance instAlgebra : Algebra R (ConnesKreimer R T) where
     (algebraMap R (ConnesKreimer R T) r).toFinsupp
       = algebraMap R (AddMonoidAlgebra R (Forest T)) r := rfl
 
-/-- A Connes-Kreimer element is a function from forests
-    to coefficients. -/
-instance instFunLike : FunLike (ConnesKreimer R T) (Forest T) R where
-  coe p := ⇑p.toFinsupp.coeff
-  coe_injective := fun _ _ h =>
-    ext (AddMonoidAlgebra.coeff_inj.mp (DFunLike.coe_injective (F := Forest T →₀ R) h))
-
 /-! ### Global ring instance
 
 `zsmul` is the pulled-back structural operation and no parent-type path to
@@ -221,8 +196,8 @@ end Ring
 
 /-! ### The algebra equivalence to the bare carrier -/
 
-/-- `toFinsupp` as an `R`-algebra equivalence — the sanctioned bridge between
-    the wrapper and the bare `AddMonoidAlgebra`. -/
+/-- `toFinsupp` as an `R`-algebra equivalence, the bridge between the wrapper and the bare
+`AddMonoidAlgebra`. -/
 def toFinsuppAlgEquiv :
     ConnesKreimer R T ≃ₐ[R] AddMonoidAlgebra R (Forest T) where
   toFun := toFinsupp
@@ -239,7 +214,7 @@ def toFinsuppAlgEquiv :
 @[simp] theorem toFinsuppAlgEquiv_symm_apply (x : AddMonoidAlgebra R (Forest T)) :
     (toFinsuppAlgEquiv (R := R) (T := T)).symm x = ⟨x⟩ := rfl
 
-/-! ## Basis embeddings -/
+/-! ## Basis vectors -/
 
 /-- `single F r` is the basis vector with coefficient `r` on the forest `F`. -/
 def single (F : Forest T) (r : R) : ConnesKreimer R T :=
@@ -248,42 +223,27 @@ def single (F : Forest T) (r : R) : ConnesKreimer R T :=
 @[simp] theorem toFinsupp_single (F : Forest T) (r : R) :
     (single F r).toFinsupp = .single F r := rfl
 
-theorem smul_single_one (F : Forest T) (r : R) :
-    single F r = r • single F (1 : R) := by
-  ext; simp
-
-/-- To prove `p` for every element it suffices to prove it at `0`, under `+`, and on every
-    `single`. -/
+/-- To prove a property of every element it suffices to prove it at `0`, under `+`, and on every
+`single`. -/
 @[elab_as_elim]
-theorem induction_linear {p : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
-    (zero : p 0) (add : ∀ f g, p f → p g → p (f + g))
-    (single : ∀ (F : Forest T) (r : R), p (ConnesKreimer.single F r)) : p x :=
-  AddMonoidAlgebra.induction_linear (motive := fun y => p (⟨y⟩ : ConnesKreimer R T)) x.toFinsupp
-    zero (fun f g hf hg => add ⟨f⟩ ⟨g⟩ hf hg) single
+theorem induction_linear {motive : ConnesKreimer R T → Prop} (x : ConnesKreimer R T)
+    (zero : motive 0) (add : ∀ f g, motive f → motive g → motive (f + g))
+    (single : ∀ (F : Forest T) (r : R), motive (ConnesKreimer.single F r)) : motive x :=
+  AddMonoidAlgebra.induction_linear (motive := fun y => motive (⟨y⟩ : ConnesKreimer R T))
+    x.toFinsupp zero (fun f g hf hg => add ⟨f⟩ ⟨g⟩ hf hg) single
 
 /-- `of' F` is the forest `F` as the basis vector `single F 1`. -/
 def of' (F : Forest T) : ConnesKreimer R T := single F 1
 
-/-- `of` embeds forests as a monoid homomorphism
-    `Multiplicative (Forest T) →* ConnesKreimer R T`, multiplicative by construction as
-    `AddMonoidAlgebra.of` transported through the wrapper equivalence. -/
-def of : Multiplicative (Forest T) →* ConnesKreimer R T :=
-  (toFinsuppAlgEquiv (R := R) (T := T)).symm.toAlgHom.toMonoidHom'.comp
-    (AddMonoidAlgebra.of R (Forest T))
-
-/-- Embed a single tree as a singleton-forest basis vector. -/
+/-- `ofTree t` is the forest with the single tree `t`. -/
 def ofTree (t : T) : ConnesKreimer R T :=
   of' ({t} : Forest T)
-
-@[simp] theorem toFinsupp_of (F : Multiplicative (Forest T)) :
-    (of (R := R) (T := T) F).toFinsupp = AddMonoidAlgebra.of R (Forest T) F := rfl
 
 theorem toFinsupp_of' (F : Forest T) :
     (of' (R := R) F : ConnesKreimer R T).toFinsupp = .single F 1 := rfl
 
-theorem of_apply (F : Multiplicative (Forest T)) :
-    (of (R := R) F : ConnesKreimer R T) = of' F.toAdd :=
-  ext (by simp [toFinsupp_of, toFinsupp_of', AddMonoidAlgebra.of_apply])
+theorem smul_of' (F : Forest T) (r : R) : r • of' F = single F r := by
+  ext; simp [toFinsupp_of']
 
 @[simp] theorem of'_zero :
     (of' (R := R) (0 : Forest T) : ConnesKreimer R T) = 1 :=
@@ -298,16 +258,20 @@ theorem of_apply (F : Multiplicative (Forest T)) :
 @[simp] theorem of'_singleton (t : T) :
     (of' (R := R) ({t} : Forest T) : ConnesKreimer R T) = ofTree t := rfl
 
-/-! ### Coefficients
+@[simp] theorem of'_cons (t : T) (F : Forest T) :
+    (of' (R := R) (t ::ₘ F) : ConnesKreimer R T) = ofTree t * of' F := by
+  rw [← Multiset.singleton_add, of'_add, of'_singleton]
 
-`coeff` is the simp-normal spelling of coefficient extraction
-(`Polynomial.coeff` analogue); the `FunLike` application `p F` reduces to it. -/
+/-- A forest is the product of its trees. -/
+theorem prod_map_ofTree (F : Forest T) : (F.map (ofTree (R := R))).prod = of' F := by
+  induction F using Multiset.induction with
+  | empty => simp
+  | cons t F ih => rw [Multiset.map_cons, Multiset.prod_cons, ih, of'_cons]
+
+/-! ### Coefficients -/
 
 /-- The coefficient of the forest `F`. -/
 def coeff (p : ConnesKreimer R T) (F : Forest T) : R := p.toFinsupp.coeff F
-
-@[simp] theorem coe_apply (p : ConnesKreimer R T) (F : Forest T) :
-    p F = p.coeff F := rfl
 
 theorem coeff_def (p : ConnesKreimer R T) (F : Forest T) :
     p.coeff F = p.toFinsupp.coeff F := rfl
@@ -368,74 +332,52 @@ def lcoeff (F : Forest T) : ConnesKreimer R T →ₗ[R] R where
 @[simp] theorem lcoeff_apply (F : Forest T) (p : ConnesKreimer R T) :
     lcoeff R F p = p.coeff F := rfl
 
-/-! ## Lifts and hom extensionality
+/-! ## The universal property
 
-Consumers use these instead of reaching for `AddMonoidAlgebra.lift` /
-`Finsupp.addHom_ext` on the bare carrier. -/
+`ConnesKreimer R T` is the free commutative algebra on `T`, as `MvPolynomial T R` is: a function
+on trees extends uniquely to an algebra hom. The carrier is not literally `MvPolynomial T R`,
+whose monomials `T →₀ ℕ` match `Multiset T` only under `DecidableEq T`. -/
 
-section Lift
+section Aeval
 variable {A : Type*} [CommSemiring A] [Algebra R A]
 
-/-- Lift a monoid hom off the forest monoid to an algebra hom off the
-    Connes-Kreimer algebra (the wrapper-native `AddMonoidAlgebra.lift`). -/
-def lift (f : Multiplicative (Forest T) →* A) :
-    ConnesKreimer R T →ₐ[R] A :=
-  (AddMonoidAlgebra.lift R A (Forest T) f).comp toFinsuppAlgEquiv.toAlgHom
+/-- `aeval f` is the algebra hom sending each tree `t` to `f t`, and so each forest to the
+product of the values of its trees (`MvPolynomial.aeval` analogue). -/
+def aeval (f : T → A) : ConnesKreimer R T →ₐ[R] A :=
+  (AddMonoidAlgebra.lift R A (Forest T)
+    { toFun F := (F.toAdd.map f).prod
+      map_one' := by simp
+      map_mul' F G := by simp [Multiset.prod_add] }).comp toFinsuppAlgEquiv.toAlgHom
 
-@[simp] theorem lift_of' (f : Multiplicative (Forest T) →* A) (F : Forest T) :
-    lift f (of' (R := R) F) = f (Multiplicative.ofAdd F) := by
-  show AddMonoidAlgebra.lift R A (Forest T) f (.single F 1) = _
+@[simp] theorem aeval_of' (f : T → A) (F : Forest T) :
+    aeval (R := R) f (of' F) = (F.map f).prod := by
+  show AddMonoidAlgebra.lift R A (Forest T) _ (.single F 1) = _
   rw [AddMonoidAlgebra.lift_single, one_smul]
+  rfl
 
-/-- Algebra homs off `ConnesKreimer` agree if they agree on `of'`. -/
+@[simp] theorem aeval_ofTree (f : T → A) (t : T) : aeval (R := R) f (ofTree t) = f t := by
+  simp [← of'_singleton]
+
+/-- Algebra homs out of `ConnesKreimer` agree if they agree on forests. -/
 theorem algHom_ext {φ ψ : ConnesKreimer R T →ₐ[R] A}
     (h : ∀ F : Forest T, φ (of' F) = ψ (of' F)) : φ = ψ :=
   (AlgHom.cancel_right (f := toFinsuppAlgEquiv.symm.toAlgHom)
     toFinsuppAlgEquiv.symm.surjective).mp
     (AddMonoidAlgebra.algHom_ext (fun F => h F) (Subsingleton.elim _ _))
 
-/-- `ConnesKreimer R T` is the free commutative algebra on `T`: a function on trees extends
-    multiplicatively to forests (`MvPolynomial.aeval` with `ofTree` as the variables). The carrier
-    is not literally `MvPolynomial T R`, whose monomials `T →₀ ℕ` match `Multiset T` only under
-    `DecidableEq T`. -/
-def aeval (f : T → A) : ConnesKreimer R T →ₐ[R] A :=
-  lift
-    { toFun F := (F.toAdd.map f).prod
-      map_one' := by simp
-      map_mul' F G := by simp [Multiset.prod_add] }
-
-@[simp] theorem aeval_of' (f : T → A) (F : Forest T) :
-    aeval (R := R) f (of' F) = (F.map f).prod :=
-  lift_of' _ F
-
-@[simp] theorem aeval_ofTree (f : T → A) (t : T) : aeval (R := R) f (ofTree t) = f t := by
-  simp [← of'_singleton]
-
-/-- Algebra homs off `ConnesKreimer` agree if they agree on trees. -/
+/-- Algebra homs out of `ConnesKreimer` agree if they agree on trees. -/
 @[ext] theorem algHom_ext_ofTree {φ ψ : ConnesKreimer R T →ₐ[R] A}
     (h : ∀ t : T, φ (ofTree t) = ψ (ofTree t)) : φ = ψ :=
-  algHom_ext fun F ↦ by
-    induction F using Multiset.induction with
-    | empty => simp
-    | cons t F ih => rw [← Multiset.singleton_add, of'_add, map_mul, map_mul, of'_singleton, h, ih]
+  algHom_ext fun F ↦ by simp only [← prod_map_ofTree, map_multiset_prod, Multiset.map_map,
+    Function.comp_def, h]
 
-end Lift
-
-/-- A forest is the product of its trees. -/
-theorem prod_map_ofTree (F : Forest T) : (F.map (ofTree (R := R))).prod = of' F := by
-  induction F using Multiset.induction with
-  | empty => simp
-  | cons t F ih =>
-    rw [Multiset.map_cons, Multiset.prod_cons, ih, ← of'_singleton, ← of'_add,
-      Multiset.singleton_add]
-
-/-! ### Renaming trees -/
+end Aeval
 
 section Rename
 variable {T' : Type*}
 
-/-- `rename f` replaces each tree `t` of every forest by `f t`, the action of a map of generators
-    on the free commutative algebra (`MvPolynomial.rename` analogue). -/
+/-- `rename f` replaces each tree `t` of every forest by `f t` (`MvPolynomial.rename`
+analogue). -/
 def rename (f : T → T') : ConnesKreimer R T →ₐ[R] ConnesKreimer R T' :=
   aeval fun t ↦ ofTree (f t)
 
@@ -450,125 +392,9 @@ def rename (f : T → T') : ConnesKreimer R T →ₐ[R] ConnesKreimer R T' :=
 
 end Rename
 
-/-- `ofFinsupp` as an `AddMonoidHom` (transport vehicle for `addHom_ext`). -/
-def ofFinsuppAddHom :
-    AddMonoidAlgebra R (Forest T) →+ ConnesKreimer R T where
-  toFun := ofFinsupp
-  map_zero' := rfl
-  map_add' _ _ := rfl
+/-! ## The forest basis and linear maps -/
 
-/-- Additive homs off `ConnesKreimer` agree if they agree on `single`. -/
-theorem addHom_ext {M : Type*} [AddZeroClass M] {f g : ConnesKreimer R T →+ M}
-    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g :=
-  (AddMonoidHom.cancel_right (f := ofFinsuppAddHom) fun p => ⟨p.toFinsupp, rfl⟩).mp
-    (AddMonoidAlgebra.addMonoidHom_ext fun F r => h F r)
-
-section LinearApi
-variable {M : Type*} [AddCommMonoid M] [Module R M]
-
-/-- Linear maps off `ConnesKreimer` agree if they agree on `single`. -/
-theorem lhom_ext {f g : ConnesKreimer R T →ₗ[R] M}
-    (h : ∀ (F : Forest T) (r : R), f (single F r) = g (single F r)) : f = g :=
-  LinearMap.toAddMonoidHom_injective (addHom_ext h)
-
-/-- Linear maps off `ConnesKreimer` agree if they agree on the basis `of'`. -/
-theorem lhom_ext' {f g : ConnesKreimer R T →ₗ[R] M}
-    (h : ∀ F : Forest T, f (of' F) = g (of' F)) : f = g :=
-  lhom_ext fun F r => by
-    rw [smul_single_one, map_smul, map_smul]
-    exact congrArg (r • ·) (h F)
-
-/-- Linearly extend a function off the forest basis
-    (wrapper-native `Finsupp.lift`). -/
-def linearLift (f : Forest T → M) : ConnesKreimer R T →ₗ[R] M :=
-  (Finsupp.lift M R (Forest T) f).comp
-    ((AddMonoidAlgebra.coeffLinearEquiv R).toLinearMap.comp
-      (toFinsuppAlgEquiv (R := R) (T := T)).toLinearEquiv.toLinearMap)
-
-@[simp] theorem linearLift_single (f : Forest T → M) (F : Forest T) (r : R) :
-    linearLift f (single F r) = r • f F := by
-  show Finsupp.lift M R (Forest T) f
-    ((AddMonoidAlgebra.single F r : AddMonoidAlgebra R (Forest T)).coeff) = r • f F
-  rw [AddMonoidAlgebra.coeff_single, Finsupp.lift_apply, Finsupp.sum_single_index (by simp)]
-
-@[simp] theorem linearLift_of' (f : Forest T → M) (F : Forest T) :
-    linearLift f (of' (R := R) F) = f F := by
-  rw [of', linearLift_single, one_smul]
-
-end LinearApi
-
-/-! ### Base change
-
-Coefficient-wise base change along a ring hom (`Polynomial.map`
-analogue), wrapper-native over `AddMonoidAlgebra.map`. -/
-
-section Map
-variable {S : Type*} [CommSemiring S] (f : R →+* S)
-
-/-- Base change along `f : R →+* S` applies `f` to each coefficient
-    (`Polynomial.map` analogue). -/
-def map (p : ConnesKreimer R T) : ConnesKreimer S T :=
-  ⟨AddMonoidAlgebra.map f p.toFinsupp⟩
-
-@[simp] theorem toFinsupp_map (p : ConnesKreimer R T) :
-    (map f p).toFinsupp = AddMonoidAlgebra.map f p.toFinsupp := rfl
-
-@[simp] theorem coeff_map (p : ConnesKreimer R T) (F : Forest T) :
-    (map f p).coeff F = f (p.coeff F) := by
-  simp [coeff_def, AddMonoidAlgebra.coeff_map]
-
-@[simp] theorem map_single (F : Forest T) (r : R) :
-    map f (single F r) = single F (f r) :=
-  ext (AddMonoidAlgebra.map_single _ _ _)
-
-@[simp] theorem map_of' (F : Forest T) :
-    map f (of' (R := R) F) = of' F := by
-  rw [of', of', map_single, map_one]
-
-protected theorem map_zero : map f (0 : ConnesKreimer R T) = 0 :=
-  ext (by simp)
-
-protected theorem map_one : map f (1 : ConnesKreimer R T) = 1 :=
-  ext (AddMonoidAlgebra.map_one f)
-
-protected theorem map_add (p q : ConnesKreimer R T) :
-    map f (p + q) = map f p + map f q :=
-  ext (AddMonoidAlgebra.map_add _ p.toFinsupp q.toFinsupp)
-
-protected theorem map_smul (r : R) (p : ConnesKreimer R T) :
-    map f (r • p) = f r • map f p :=
-  ext_coeff fun F => by simp [smul_eq_mul]
-
-protected theorem map_mul (p q : ConnesKreimer R T) :
-    map f (p * q) = map f p * map f q :=
-  ext (map_mul (AddMonoidAlgebra.mapRingHom (Forest T) f) p.toFinsupp q.toFinsupp)
-
-theorem map_injective (hf : Function.Injective f) :
-    Function.Injective (map (T := T) f) := fun _ _ h =>
-  toFinsupp_injective (AddMonoidAlgebra.map_injective _ hf (congrArg toFinsupp h))
-
-variable (T) in
-/-- `map` bundled as a ring hom (`Polynomial.mapRingHom` analogue); the
-    ring structure is the disjoint-union product. -/
-def mapRingHom : ConnesKreimer R T →+* ConnesKreimer S T where
-  toFun := map f
-  map_zero' := ConnesKreimer.map_zero f
-  map_one' := ConnesKreimer.map_one f
-  map_add' := ConnesKreimer.map_add f
-  map_mul' := ConnesKreimer.map_mul f
-
-@[simp] theorem coe_mapRingHom : ⇑(mapRingHom T f) = map f := rfl
-
-protected theorem map_multiset_sum (s : Multiset (ConnesKreimer R T)) :
-    map f s.sum = (s.map (map f)).sum := by
-  simpa using map_multiset_sum (mapRingHom T f) s
-
-end Map
-
-/-! ### The forest basis -/
-
-/-- The forests, via `of'`, as an `R`-basis of the Connes-Kreimer algebra
-    (`Polynomial.basisMonomials` analogue). -/
+/-- The forests, via `of'`, as an `R`-basis (`Polynomial.basisMonomials` analogue). -/
 def basisSingleOne :
     Module.Basis (Forest T) R (ConnesKreimer R T) :=
   (AddMonoidAlgebra.basis (Forest T) R).map (toFinsuppAlgEquiv (R := R) (T := T)).symm.toLinearEquiv
@@ -578,18 +404,37 @@ def basisSingleOne :
   simp only [basisSingleOne, Module.Basis.map_apply, AddMonoidAlgebra.basis_apply]
   rfl
 
-/-! ## The counit
+section LinearMap
+variable {M : Type*} [AddCommMonoid M] [Module R M]
 
-The counit ε : ConnesKreimer R T → R extracts the coefficient of the
-empty forest, packaged as an algebra hom. -/
+/-- Linear maps out of `ConnesKreimer` agree if they agree on forests. -/
+@[ext high] theorem lhom_ext' {f g : ConnesKreimer R T →ₗ[R] M}
+    (h : ∀ F : Forest T, f (of' F) = g (of' F)) : f = g :=
+  basisSingleOne.ext fun F ↦ by simpa using h F
 
-/-- The counit takes the coefficient of the empty forest; it is the algebra homomorphism
-    sending every tree to `0`. -/
+/-- `linearLift f` is the linear map sending each forest `F` to `f F`. -/
+def linearLift (f : Forest T → M) : ConnesKreimer R T →ₗ[R] M :=
+  basisSingleOne.constr R f
+
+@[simp] theorem linearLift_of' (f : Forest T → M) (F : Forest T) :
+    linearLift f (of' (R := R) F) = f F := by
+  simpa [linearLift] using basisSingleOne.constr_basis R f F
+
+@[simp] theorem linearLift_single (f : Forest T → M) (F : Forest T) (r : R) :
+    linearLift f (single F r) = r • f F := by
+  rw [← smul_of', map_smul, linearLift_of']
+
+end LinearMap
+
+/-! ## The counit -/
+
+/-- The counit takes the coefficient of the empty forest; it is the algebra hom sending every
+tree to `0`. -/
 def counit : ConnesKreimer R T →ₐ[R] R :=
   aeval fun _ ↦ 0
 
-/-- `counit (of' F) = if F.card = 0 then 1 else 0`. The `card`
-    formulation avoids needing `DecidableEq T`. -/
+/-- `counit (of' F)` is `1` on the empty forest and `0` otherwise, stated with `card` to avoid
+`DecidableEq T`. -/
 @[simp] theorem counit_of' (F : Forest T) :
     (counit : ConnesKreimer R T →ₐ[R] R) (of' F)
       = (if F.card = 0 then 1 else 0 : R) := by
@@ -604,6 +449,5 @@ def counit : ConnesKreimer R T →ₐ[R] R :=
   aeval_ofTree _ t
 
 end ConnesKreimer
-
 
 end

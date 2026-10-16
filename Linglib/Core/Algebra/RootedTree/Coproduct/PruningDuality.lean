@@ -243,9 +243,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho (x y z : ConnesKreimer R (UnorderedT
           simp only [TensorProduct.tmul_add, map_add, LinearMap.add_apply]
           exact congrArg₂ (· + ·) iha ihb
         · intro A rA
-          rw [show (ConnesKreimer.single A rA : ConnesKreimer R (UnorderedTree α)) =
-                rA • (ConnesKreimer.of' (R := R) A) from
-              ConnesKreimer.smul_single_one A rA]
+          rw [← ConnesKreimer.smul_of']
           simp only [TensorProduct.tmul_smul, map_smul, LinearMap.smul_apply]
           refine congrArg (rA • ·) ?_
           refine ConnesKreimer.induction_linear y ?_ ?_ ?_
@@ -254,9 +252,7 @@ theorem pairing_gl_eq_pairing_coproduct_Rho (x y z : ConnesKreimer R (UnorderedT
             simp only [TensorProduct.add_tmul, map_add, LinearMap.add_apply]
             exact congrArg₂ (· + ·) iha ihb
           · intro B rB
-            rw [show (ConnesKreimer.single B rB : ConnesKreimer R (UnorderedTree α)) =
-                  rB • (ConnesKreimer.of' (R := R) B) from
-                ConnesKreimer.smul_single_one B rB]
+            rw [← ConnesKreimer.smul_of']
             simp only [← TensorProduct.smul_tmul', map_smul, LinearMap.smul_apply]
             refine congrArg (rB • ·) ?_
             -- Basis case: split off the head tree and use both product rules.
@@ -282,7 +278,8 @@ theorem toConv_pairing_product (x y : ConnesKreimer R (UnorderedTree α)) :
   ext z
   have h : LinearMap.mul' R R ∘ₗ TensorProduct.map (pairing (R := R) y) (pairing x) =
       pairing₂ (y ⊗ₜ[R] x) := TensorProduct.ext' fun _ _ ↦ rfl
-  exact (pairing_gl_eq_pairing_coproduct_Rho x y z).trans (LinearMap.congr_fun h _).symm
+  exact (pairing_gl_eq_pairing_coproduct_Rho x y (ConnesKreimer.of' z)).trans
+    (LinearMap.congr_fun h _).symm
 
 /-- The two triple Grossman–Larson products pair equally against everything, since the
 convolution product is associative. -/

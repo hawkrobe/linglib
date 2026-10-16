@@ -6,10 +6,6 @@ public import Linglib.Core.Combinatorics.RootedTree.Cut
 public import Linglib.Core.Data.UnorderedTree.Basic
 public import Mathlib.RingTheory.Bialgebra.Basic
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
 # Generic admissible-cut coproduct on `ConnesKreimer R (UnorderedTree α)`
 
@@ -21,19 +17,26 @@ summands `(crown, trunk)` of `of' crown ⊗ ofTree trunk`. They differ only in t
 
 ## Main definitions
 
-* `comulTreeNG cuts` / `comulForestNG cuts` — the generic coproduct.
-* `comulAlgHomNG cuts` — packaged as an `AlgHom`.
-* `comulTreeNG_eq_sum` / `comulForestNG_eq_sum` — the coproduct as a single
-  sum over the cut convolutions `treeCutsG`/`forestCutsG`
-  (`Combinatorics/RootedTree/Cut.lean`).
-* `WithCuts R cuts` — the policy-indexed carrier, with `Bialgebra` gated
-  on `IsAdmissibleCuts cuts`.
+* `ConnesKreimer.comulTreeNG`, `ConnesKreimer.comulForestNG`: the generic coproduct on trees and
+  forests.
+* `ConnesKreimer.comulAlgHomNG`: the generic coproduct as an algebra hom.
+* `ConnesKreimer.WithCuts R cuts`: the carrier indexed by a cut enumeration, a bialgebra when
+  `IsAdmissibleCuts cuts` holds.
+
+## Main results
+
+* `ConnesKreimer.comulTreeNG_eq_sum`, `ConnesKreimer.comulForestNG_eq_sum`: the coproduct as one
+  sum over the cut convolutions `treeCutsG` and `forestCutsG`.
 
 ## References
 
 * [connes-kreimer-1998]
 * [foissy-introduction-hopf-algebras-trees]
 -/
+
+@[expose] public section
+
+open RoseTree UnorderedTree
 
 namespace ConnesKreimer
 
@@ -78,38 +81,25 @@ noncomputable def comulForestNG
   unfold comulForestNG
   rw [Multiset.map_cons, Multiset.prod_cons]
 
-/-- Forest-level generic coproduct as a `MonoidHom` on the additive forest monoid. -/
-noncomputable def comulMonoidHomNG
-    (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) :
-    Multiplicative (Forest (UnorderedTree α)) →*
-      (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) where
-  toFun F := comulForestNG (R := R) cuts F.toAdd
-  map_one' := comulForestNG_zero cuts
-  map_mul' F G := comulForestNG_add cuts F.toAdd G.toAdd
-
 /-- The **generic admissible-cut coproduct as an algebra hom**, parameterized by
     the cut enumeration `cuts`. -/
 noncomputable def comulAlgHomNG
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) :
     ConnesKreimer R (UnorderedTree α) →ₐ[R]
       ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
-  ConnesKreimer.lift (comulMonoidHomNG cuts)
+  aeval (comulTreeNG cuts)
 
 @[simp] theorem comulAlgHomNG_apply_of'
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
     (F : Forest (UnorderedTree α)) :
-    comulAlgHomNG (R := R) cuts (of' F) = comulForestNG cuts F := by
-  rw [comulAlgHomNG, ConnesKreimer.lift_of']
-  rfl
+    comulAlgHomNG (R := R) cuts (of' F) = comulForestNG cuts F :=
+  aeval_of' _ F
 
 @[simp] theorem comulAlgHomNG_apply_ofTree
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
     (T : UnorderedTree α) :
-    comulAlgHomNG (R := R) cuts (ofTree T) = comulTreeNG cuts T := by
-  rw [show (ofTree T : ConnesKreimer R (UnorderedTree α)) = of' ({T} : Forest (UnorderedTree α))
-        from rfl, comulAlgHomNG_apply_of',
-      show ({T} : Forest (UnorderedTree α)) = T ::ₘ (0 : Forest (UnorderedTree α)) from rfl,
-      comulForestNG_cons, comulForestNG_zero, mul_one]
+    comulAlgHomNG (R := R) cuts (ofTree T) = comulTreeNG cuts T :=
+  aeval_ofTree _ T
 
 /-! ### The generic coproduct as a sum over cut convolutions
 
