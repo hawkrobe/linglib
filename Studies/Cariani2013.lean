@@ -13,7 +13,7 @@ This file formalizes [cariani-2013]'s resolution semantics for *ought*. Reading 
 universal quantifier over the best worlds validates INHERITANCE, closure of *ought* under
 entailment of the prejacent, and the paper takes the classical counterexamples at face value:
 *Joan ought to attend her classes* does not entail *Joan ought to either attend her classes or
-burn down the philosophy department* ([ross-1941]), and *Procrastinate ought to accept and write
+burn down the philosophy department* ([ross-1944]), and *Procrastinate ought to accept and write
 the review* does not entail *Procrastinate ought to accept* ([jackson-pargetter-1986]). The
 account keeps COARSENESS, on which an ought-sentence can be true although some way of making its
 prejacent true is impermissible, by relativizing *ought* to a resolution: a partition of the
@@ -47,7 +47,7 @@ of the finest resolution with a benchmark every option meets (`ought_bot_iff`).
 ## References
 
 * [cariani-2013]
-* [ross-1941]
+* [ross-1944]
 * [jackson-pargetter-1986]
 * [kratzer-1981]
 -/
