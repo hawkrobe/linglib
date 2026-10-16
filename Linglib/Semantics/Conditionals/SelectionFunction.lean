@@ -4,6 +4,7 @@ public import Linglib.Semantics.Conditionals.Basic
 public import Mathlib.Order.Extension.Linear
 public import Mathlib.Data.Prod.Lex
 public import Mathlib.Data.Fintype.Card
+public import Mathlib.Order.Hom.CompleteLattice
 
 /-!
 # Selection functions
@@ -23,12 +24,16 @@ the conditional of the closest worlds.
 * `SelectionFunction.IsCSO`: Stalnaker's condition (4), that antecedents each true at the world
   selected for the other select the same world.
 * `SelectionFunction.restrict`: a selection function restricted to a set of worlds.
+* `SelectionFunction.along`, `SelectionFunction.modal`: selection along an accessibility relation
+  and the selectional modal it defines.
 * `Completion`: a linear extension of a family of preorders at each center.
 * `SelectionFunction.Compatible`: selection by a completion of a family of preorders.
 
 ## Main results
 
 * `SelectionFunction.exists_sel_eq`: outside a proposition any of its worlds can be selected.
+* `SelectionFunction.modal_eq_core`, `SelectionFunction.modal_inter_refl`: the selectional modal
+  along a relation is necessity along a function, idle where the relation is reflexive.
 * `SelectionFunction.Compatible.isCSO`: selection by a completion satisfies condition (4).
 * `mem_closestImp_iff_forall_compatible`: the conditional of the closest worlds is the
   supervaluation over completions.
@@ -131,6 +136,60 @@ theorem selectionConditional_subset_materialImp : selectionConditional s p q ⊆
   fun _ h hp ↦ (mem_selectionConditional_of_mem s hp).1 h
 
 end SelectionConditional
+
+/-! ### Selection along a relation
+
+A selection function selects along an accessibility relation by selecting from the successors of
+a world, and the selectional modal along the relation is necessity along the graph of this
+selection: the preimage of a function, so a complete lattice homomorphism. Selection is idle at
+the worlds that access themselves. -/
+
+section Along
+
+open scoped SetRel
+
+variable {W : Type*} (s : SelectionFunction W) (R : SetRel W W) {A : Set W} {w : W}
+
+namespace SelectionFunction
+
+/-- The world selected along `R` at `w`, from the `R`-successors of `w`. -/
+def along (w : W) : W := s.sel w {v | w ~[R] v}
+
+/-- The selectional modal along `R`, sending `A` to the worlds whose selection along `R` is an
+`A`-world. -/
+def modal : CompleteLatticeHom (Set W) (Set W) := .setPreimage (s.along R)
+
+variable {s R}
+
+@[simp] theorem mem_modal : w ∈ s.modal R A ↔ s.along R w ∈ A := Iff.rfl
+
+/-- The selectional modal is necessity along the graph of the selection. -/
+theorem modal_eq_core (A : Set W) : s.modal R A = (Function.graph (s.along R)).core A :=
+  Set.preimage_eq_core _ A
+
+/-- A world that accesses itself selects itself. -/
+theorem along_eq_self (h : w ~[R] w) : s.along R w = w := s.centering w _ h
+
+/-- A world with a successor selects one of its successors. -/
+theorem rel_along (h : ∃ v, w ~[R] v) : w ~[R] s.along R w := s.inclusion w {v | w ~[R] v} h
+
+/-- At the worlds that access themselves, the selectional modal of `A` holds where `A` does. -/
+theorem modal_inter_refl (A : Set W) : s.modal R A ∩ {w | w ~[R] w} = A ∩ {w | w ~[R] w} :=
+  Set.ext fun w ↦ and_congr_left fun h ↦ by
+    change s.along R w ∈ A ↔ w ∈ A
+    rw [along_eq_self (R := R) h]
+
+end SelectionFunction
+
+variable {s}
+
+/-- On a possible antecedent, the selection conditional is the selectional modal along the
+constant relation to the antecedent-worlds. -/
+theorem selectionConditional_eq_modal {p : Set W} (hp : p.Nonempty) (q : Set W) :
+    selectionConditional s p q = s.modal (SetRel.ofSuccessors fun _ ↦ p) q :=
+  Set.ext fun _ ↦ mem_selectionConditional_of_nonempty s hp
+
+end Along
 
 /-! ### Condition (4) and restriction -/
 

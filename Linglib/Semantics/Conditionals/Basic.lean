@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Set.Basic
 public import Linglib.Logic.Nonmonotonic.Preferential
 public import Linglib.Semantics.Modality.OrderingSemantics
+public import Linglib.Logic.Modal.Defs
 
 /-!
 # Conditional operators
@@ -25,6 +26,7 @@ antecedent-worlds for the variably strict conditional under the Limit Assumption
 
 ## Main results
 
+* `ofDomain_eq_core`: the conditional over a domain is necessity along the relation of its domain.
 * `closestImp_eq_variablyStrictImp`: on a total ordering the two variably strict conditionals
   coincide wherever the Limit Assumption holds.
 * `mem_variablyStrictImp_compl_singleton`: without closest antecedent-worlds, *if p, it would not
@@ -102,6 +104,10 @@ def ofDomain (D : I → Set W → Set W) (p q : Set W) : Set I := {i | D i p ⊆
 @[simp]
 theorem mem_ofDomain : i ∈ ofDomain D p q ↔ D i p ⊆ q := Iff.rfl
 
+/-- The conditional over a domain is necessity along the relation sending `i` to the worlds of
+its domain, `SetRel.core` of `SetRel.ofSuccessors`. -/
+theorem ofDomain_eq_core : ofDomain D p q = (SetRel.ofSuccessors (D · p)).core q := rfl
+
 theorem ofDomain_mono_right (hq : q ⊆ q') : ofDomain D p q ⊆ ofDomain D p q' :=
   fun _ h ↦ h.trans hq
 
@@ -144,13 +150,10 @@ theorem not_mem_ofDomain_and_compl {v v' : W} (hv : v ∈ D i p) (hv' : v' ∈ D
   ⟨fun h ↦ hq' (h hv'), fun h ↦ h hv hq⟩
 
 /-- Conditional Excluded Middle for every consequent characterizes the domains with at most one
-world. -/
+world, the Alt₁ correspondence along the relation of the domain. -/
 theorem forall_mem_ofDomain_or_compl_iff :
-    (∀ r : Set W, i ∈ ofDomain D p r ∨ i ∈ ofDomain D p rᶜ) ↔ (D i p).Subsingleton := by
-  refine ⟨fun h v hv v' hv' ↦ ?_, fun h _ ↦ mem_ofDomain_or_compl h⟩
-  rcases h {v} with h | h
-  · exact (h hv').symm
-  · exact absurd rfl (h hv)
+    (∀ r : Set W, i ∈ ofDomain D p r ∨ i ∈ ofDomain D p rᶜ) ↔ (D i p).Subsingleton :=
+  ModalLogic.box_or_box_not_at_iff (R := SetRel.ofSuccessors (D · p))
 
 /-- Modus ponens holds when every antecedent-world lies in its own domain. -/
 theorem ofDomain_subset_materialImp {D : W → Set W → Set W} (hD : ∀ w ∈ p, w ∈ D w p) :

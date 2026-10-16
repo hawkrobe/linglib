@@ -14,7 +14,10 @@ propositions stated as sets use the mathlib operators directly. Of the frame con
 correspondence theory, reflexivity, symmetry and transitivity are mathlib's `SetRel.IsRefl`,
 `SetRel.IsSymm` and `SetRel.IsTrans`; this file adds seriality and the Euclidean property and
 proves the axioms K, T, D, B, 4, 5 and Alt₁ over their frames, each axiom defining its frame
-condition. Along a composite relation necessity nests in necessity (`box_comp`).
+condition. Along a composite relation necessity nests in necessity (`box_comp`). Negation Swap,
+`□¬p ↔ ¬□p` for every `p`, defines functionality (`box_not_iff_not_box_at_iff`): a modal that
+commutes with negation is necessity along the graph of a function, which is precomposition
+(`box_compl_eq_iff`, `box_graph`).
 
 ## Main definitions
 
@@ -39,10 +42,10 @@ section Operators
 
 variable {W W' : Type*} (R : SetRel W' W) (p : W → Prop) (w : W')
 
-/-- Necessity along `R`: `p` holds at every `R`-successor of `w`. -/
+/-- Necessity along `R` holds of `p` at `w` when `p` holds at every `R`-successor of `w`. -/
 def Box : Prop := ∀ v, w ~[R] v → p v
 
-/-- Possibility along `R`: `p` holds at some `R`-successor of `w`. -/
+/-- Possibility along `R` holds of `p` at `w` when `p` holds at some `R`-successor of `w`. -/
 def Diamond : Prop := ∃ v, w ~[R] v ∧ p v
 
 @[inherit_doc] scoped notation:max "□[" R "]" => Box R
@@ -75,7 +78,7 @@ theorem box_iUnion {ι : Sort*} (R : ι → SetRel W' W) : □[⋃ i, R i] p w �
   simp only [Box, Set.mem_iUnion, forall_exists_index]
   exact forall_comm
 
-/-- Necessity depends only on the worlds accessed: two worlds accessing the same worlds
+/-- Necessity depends only on the worlds accessed, so two worlds accessing the same worlds
 carry the same box. -/
 theorem box_congr_left {w'' : W'} (h : ∀ v, w ~[R] v ↔ w'' ~[R] v) : □[R] p w ↔ □[R] p w'' :=
   forall_congr' fun v ↦ imp_congr_left (h v)
@@ -131,35 +134,35 @@ instance [R.IsSymm] [R.IsTrans] : IsEuclidean R where
 
 variable {p q : W → Prop} {w : W}
 
-/-- **K**: `□(p → q) → □p → □q`, over any relation. -/
+/-- Axiom **K**, `□(p → q) → □p → □q`, holds over any relation. -/
 theorem box_K (hpq : □[R] (fun v ↦ p v → q v) w) (hp : □[R] p w) : □[R] q w :=
   fun v hwv ↦ hpq v hwv (hp v hwv)
 
-/-- **T**: over a reflexive relation, `□p → p`. -/
+/-- Axiom **T**, `□p → p`, holds over a reflexive relation. -/
 theorem box_T [R.IsRefl] (h : □[R] p w) : p w := h w R.rfl
 
-/-- **D**: over a serial relation, `□p → ◇p`. -/
+/-- Axiom **D**, `□p → ◇p`, holds over a serial relation. -/
 theorem box_D [IsSerial R] (h : □[R] p w) : ◇[R] p w :=
   let ⟨v, hwv⟩ := IsSerial.serial (R := R) w; ⟨v, hwv, h v hwv⟩
 
 /-- Necessity along `R` gives possibility along a relation sharing an `R`-successor of the
-world: `box_D` is the case `S = R`. -/
+world, and `box_D` is the case `S = R`. -/
 theorem diamond_of_box {S : SetRel W W} (h : ◇[R] (w ~[S] ·) w) (hp : □[R] p w) : ◇[S] p w :=
   let ⟨v, hR, hS⟩ := h; ⟨v, hS, hp v hR⟩
 
-/-- **B**: over a symmetric relation, `p → □◇p`. -/
+/-- Axiom **B**, `p → □◇p`, holds over a symmetric relation. -/
 theorem box_B [R.IsSymm] (h : p w) : □[R] (◇[R] p) w := fun _ hwv ↦ ⟨w, R.symm hwv, h⟩
 
-/-- **4**: over a transitive relation, `□p → □□p`. -/
+/-- Axiom **4**, `□p → □□p`, holds over a transitive relation. -/
 theorem box_four [R.IsTrans] (h : □[R] p w) : □[R] (□[R] p) w :=
   fun _ hwv u hvu ↦ h u (R.trans hwv hvu)
 
-/-- **5**: over a Euclidean relation, `◇p → □◇p`. -/
+/-- Axiom **5**, `◇p → □◇p`, holds over a Euclidean relation. -/
 theorem box_five [IsEuclidean R] (h : ◇[R] p w) : □[R] (◇[R] p) w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv ↦ ⟨u, IsEuclidean.eucl w v u hwv hwu, hpu⟩
 
-/-- Over a Euclidean relation, `◇□p → □p`: what is possibly necessary is necessary. -/
+/-- Over a Euclidean relation what is possibly necessary is necessary, `◇□p → □p`. -/
 theorem box_of_diamond_box [IsEuclidean R] (h : ◇[R] (□[R] p) w) : □[R] p w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv ↦ hpu v (IsEuclidean.eucl w u v hwu hwv)
@@ -178,7 +181,7 @@ theorem box_T_iff : Box R ≤ id ↔ R.IsRefl where
   mp h := ⟨fun w ↦ h (w ~[R] ·) w fun _ hv ↦ hv⟩
   mpr _ _ _ := box_T
 
-/-- **T** for the diamond defines reflexivity: what holds is possible. -/
+/-- Axiom **T** for the diamond, that what holds is possible, defines reflexivity. -/
 theorem diamond_T_iff : id ≤ Diamond R ↔ R.IsRefl where
   mp h := ⟨fun w ↦ match h (· = w) w rfl with | ⟨_, hv, rfl⟩ => hv⟩
   mpr hR _ w hp := ⟨w, hR.refl w, hp⟩
@@ -203,7 +206,20 @@ theorem box_five_iff : Diamond R ≤ Box R ∘ Diamond R ↔ IsEuclidean R where
   mp h := ⟨fun w v u hwv hwu ↦ match h (· = u) w ⟨u, hwu, rfl⟩ v hwv with | ⟨_, hvu, rfl⟩ => hvu⟩
   mpr _ _ _ := box_five
 
-/-- **Alt₁** at a world: `◇p → □p` for every `p` at `w` iff `w` sees at most one world. -/
+/-! ### Seriality and functionality at a world
+
+Excluded middle and non-contradiction for necessity at a world, read for every prejacent, each
+define a condition on the successors of the world, and Negation Swap defines their conjunction:
+`□p ∨ □¬p` holds for every `p` iff the world sees at most one world (Alt₁), `¬(□p ∧ □¬p)` iff it
+sees at least one (D), and `□¬p ↔ ¬□p` iff it sees exactly one. A relation satisfying Negation
+Swap at every world is the graph of a function, and necessity along a graph is precomposition
+with the function. -/
+
+section Functional
+
+variable {W W' : Type*} {R : SetRel W' W} {w : W'}
+
+/-- Axiom **Alt₁**, `◇p → □p` for every `p`, holds at `w` iff `w` sees at most one world. -/
 theorem diamond_le_box_at_iff :
     (∀ p : W → Prop, ◇[R] p w → □[R] p w) ↔ ∀ ⦃v⦄, w ~[R] v → ∀ ⦃u⦄, w ~[R] u → v = u where
   mp h v hv _ hu := (h (· = v) ⟨v, hv, rfl⟩ _ hu).symm
@@ -231,5 +247,40 @@ theorem box_not_of_not_box_at_iff :
       ∀ ⦃v⦄, w ~[R] v → ∀ ⦃u⦄, w ~[R] u → v = u := by
   rw [← box_or_box_not_at_iff]
   exact forall_congr' fun p ↦ (or_iff_not_imp_left).symm
+
+/-- Non-contradiction for every `p` at `w`, `¬(□p ∧ □¬p)`, holds iff `w` sees some world. -/
+theorem not_box_and_box_not_at_iff :
+    (∀ p : W → Prop, ¬ (□[R] p w ∧ □[R] (fun v ↦ ¬ p v) w)) ↔ ∃ v, w ~[R] v := by
+  refine ⟨fun h ↦ ?_, fun ⟨v, hv⟩ p ⟨h₁, h₂⟩ ↦ h₂ v hv (h₁ v hv)⟩
+  by_contra hn
+  exact h (fun _ ↦ True) ⟨fun _ _ ↦ trivial, fun v hv _ ↦ hn ⟨v, hv⟩⟩
+
+/-- **Negation Swap** for every `p` at `w`, `□¬p ↔ ¬□p`, holds iff `w` sees exactly one world. -/
+theorem box_not_iff_not_box_at_iff :
+    (∀ p : W → Prop, □[R] (fun v ↦ ¬ p v) w ↔ ¬ □[R] p w) ↔ ∃! v, w ~[R] v := by
+  constructor
+  · intro h
+    obtain ⟨v, hv⟩ := not_box_and_box_not_at_iff.1 fun p ⟨h₁, h₂⟩ ↦ (h p).1 h₂ h₁
+    exact ⟨v, hv, fun u hu ↦ box_or_box_not_at_iff.1 (fun p ↦ (em _).imp_right (h p).2) hu hv⟩
+  · rintro ⟨v, hv, hu⟩ p
+    have key (q : W → Prop) : □[R] q w ↔ q v := ⟨fun h ↦ h v hv, fun hq u hwu ↦ hu u hwu ▸ hq⟩
+    rw [key, key]
+
+/-- Necessity along the graph of a function is precomposition with the function. -/
+@[simp] theorem box_graph (f : W' → W) (p : W → Prop) : □[Function.graph f] p = p ∘ f :=
+  funext fun _ ↦ propext ⟨fun h ↦ h _ rfl, fun h _ hv ↦ hv ▸ h⟩
+
+/-- Negation Swap at every world holds iff the relation is the graph of a function. -/
+theorem box_compl_eq_iff :
+    (∀ p : W → Prop, □[R] pᶜ = (□[R] p)ᶜ) ↔ ∃ f : W' → W, Function.graph f = R := by
+  have : (∀ p : W → Prop, □[R] pᶜ = (□[R] p)ᶜ) ↔ ∀ w, ∃! v, w ~[R] v := by
+    simp only [← box_not_iff_not_box_at_iff, funext_iff, Pi.compl_apply, compl_iff_not,
+      eq_iff_iff]
+    exact forall_comm
+  rw [this, ← R.exists_graph_eq_iff]
+  exact ⟨fun ⟨f, hf, _⟩ ↦ ⟨f, hf⟩,
+    fun ⟨f, hf⟩ ↦ ⟨f, hf, fun _ hg ↦ Function.graph_injective (hg.trans hf.symm)⟩⟩
+
+end Functional
 
 end ModalLogic
