@@ -23,9 +23,8 @@ subject, which in the Agent Focus languages must front.
 ## Implementation notes
 
 `focusRealize` covers the fronted construction only; Kaqchikel in-situ focus is not in these
-sources, so no claim that every focus is overtly marked is made. Recipients and themes of
-ditransitives are relational-noun phrases outside the core roles, so the `R` and `T` cells are
-placeholders.
+sources, so no claim that every focus is overtly marked is made. A focused recipient, a phrase
+with a relational noun, also brings *wi*, as its extraction does.
 
 ## References
 
@@ -44,7 +43,8 @@ def ja : Morphology.Morph := .free "ja"
 *ja*, on top of the reflexes its extraction licenses ([erlewine-2016]). -/
 def focusRealize (c : Mayan.VerbClass) (agent patient : Person) (r : ArgumentRole) :
     Finset (Reflex Mayan.Host) :=
-  Extraction.realize c agent patient (.core r) ∪ {.displacement .phrase, .morpheme .phrase [ja]}
+  Extraction.realize c agent patient (.argument r) ∪
+    {.displacement .phrase, .morpheme .phrase [ja]}
 
 /-- Agent Focus marks the focus of a transitive subject, not of an intransitive one, unless both
 arguments are speech-act participants. -/

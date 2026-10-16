@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
-public import Linglib.Syntax.Reflex
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Clause.ArgumentRole
 
@@ -22,8 +21,7 @@ A, the pattern Vázquez Álvarez calls nominative–accusative and Coon, reading
 clause as a nominalization under an aspectual predicate, extended ergative. Within the
 perfective the intransitives divide further: agentive verbs such as *k'ay* 'sing' index their
 subject with Set A on the light verb *cha'l*, non-agentive verbs such as *majl* 'go' with Set B
-on the verb, and a third class such as *wäy* 'sleep' allows both. Chol has no Agent Focus
-form, so any argument extracts without a reflex on the verb. Vázquez Álvarez's grammar and
+on the verb, and a third class such as *wäy* 'sleep' allows both. Vázquez Álvarez's grammar and
 Coon's sketch are the sources.
 
 ## Main definitions
@@ -35,7 +33,6 @@ Coon's sketch are the sources.
 * `Chol.IntransitiveClass`, `Chol.Intransitive`, `Chol.intransitives`: the three classes of
   intransitive verb by the marking of their subject in the perfective, with the grammar's
   examples.
-* `Chol.Extraction.realize`: no reflex for any extraction.
 
 ## Implementation notes
 
@@ -160,15 +157,5 @@ def tyijp' : Intransitive := ⟨"tyijp'", "jump", .fluid⟩
 /-- The intransitives of the grammar's alignment examples. -/
 def intransitives : List Intransitive :=
   [ajñel, oñel, tse'ñal, k'ay, majl, lets, chäm, tyojm, jil, wäy, uk', ts'äm, tyijp']
-
-/-! ### Extraction -/
-
-namespace Extraction
-
-/-- No extraction leaves a reflex on the verb, since Chol has no Agent Focus form, so a
-question with two third person arguments is ambiguous between subject and object extraction. -/
-def realize : ArgumentRole → Finset (Reflex Empty) := fun _ ↦ ∅
-
-end Extraction
 
 end Chol

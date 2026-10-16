@@ -10,11 +10,12 @@ public import Linglib.Fragments.Mayan.Mam.Voice
 Mam (Mamean Mayan) has no Agent Focus form. In every dialect but possibly two, a transitive
 subject is extracted by putting the verb in the antipassive *-n*, so that the argument extracted
 is an absolutive one; the antipassive is the Mam response to the Mayan ban on extracting an
-ergative argument. San Juan Ostuncalco Mam further marks the extraction of a non-core argument
-or adjunct with the movement enclitic =(y)a', which may attach to the verbal complex and to a
-directional auxiliary when the clause has one, each optionally. Instruments, benefactives,
-datives, locatives, reasons, purposes and manners license the enclitic; temporals do not, and
-absolutive extraction is unmarked.
+ergative argument. San Juan Ostuncalco Mam further marks the extraction of a recipient, which
+like a benefactive is introduced by the relational noun *e*, or of an adjunct with the movement
+enclitic =(y)a', which may attach to the verbal complex and to a directional auxiliary when the
+clause has one, each optionally. Recipients, instruments, benefactives, locatives, reasons,
+purposes and manners license the enclitic; temporals do not, and absolutive extraction is
+unmarked.
 
 ## Main declarations
 
@@ -26,8 +27,8 @@ absolutive extraction is unmarked.
 
 * `Mam.Extraction.antipassive_mem_realize_iff`: the antipassive is the reflex of
   transitive-subject extraction alone.
-* `Mam.Extraction.enclitic_notMem_realize_core`: no core-argument extraction licenses the
-  enclitic.
+* `Mam.Extraction.enclitic_mem_realize_argument_iff`: among the arguments, the recipient alone
+  licenses the enclitic.
 * `Mam.Extraction.enclitic_directional_mem_realize_iff`: the directional hosts the enclitic at
   exactly the sites the verbal complex does.
 
@@ -51,22 +52,26 @@ namespace Mam.Extraction
 /-- The movement enclitic =(y)a'. -/
 def movementEnclitic : Morphology.Morph := .encl "(y)a'"
 
-/-- Transitive-subject extraction antipassivizes the verb; extraction of an adjunct of any class
-but the temporals licenses =(y)a' on the verbal complex and on a directional, each optional and
-independent of the other; absolutive and temporal extraction are unmarked. -/
+/-- Transitive-subject extraction antipassivizes the verb; extraction of the recipient or of an
+adjunct of any class but the temporals licenses =(y)a' on the verbal complex and on a
+directional, each optional and independent of the other; absolutive and temporal extraction are
+unmarked. -/
 def realize : Mayan.ExtractionSite → Finset (Reflex Mayan.Host)
-  | .core .A => {.morpheme .verb antipassive.marker}
-  | .adjunct .temporal => ∅
-  | .adjunct _ =>
+  | .argument .A => {.morpheme .verb antipassive.marker}
+  | .argument .R | .adjunct .instrument | .adjunct .benefactive | .adjunct .locative
+  | .adjunct .reason | .adjunct .purpose | .adjunct .manner =>
       {.morpheme .verbalComplex [movementEnclitic], .morpheme .directional [movementEnclitic]}
   | _ => ∅
 
-@[simp] theorem realize_core_A : realize (.core .A) = {.morpheme .verb antipassive.marker} := rfl
+@[simp] theorem realize_argument_A :
+    realize (.argument .A) = {.morpheme .verb antipassive.marker} := rfl
 
 @[simp] theorem realize_adjunct_temporal : realize (.adjunct .temporal) = ∅ := rfl
 
-/-- The extraction of a core argument other than the transitive subject is unmarked. -/
-theorem realize_core_of_ne_A {r : ArgumentRole} (h : r ≠ .A) : realize (.core r) = ∅ := by
+/-- The extraction of an argument is unmarked unless it is the transitive subject or the
+recipient. -/
+theorem realize_argument_eq_empty_iff (r : ArgumentRole) :
+    realize (.argument r) = ∅ ↔ r ≠ .A ∧ r ≠ .R := by
   decide +revert
 
 theorem realize_adjunct_of_ne_temporal {a : Mayan.Adjunct} (h : a ≠ .temporal) :
@@ -81,12 +86,12 @@ theorem realize_adjunct_nonempty_iff (a : Mayan.Adjunct) :
 
 /-- The antipassive is the reflex of transitive-subject extraction alone. -/
 theorem antipassive_mem_realize_iff (s : Mayan.ExtractionSite) :
-    Reflex.morpheme .verb antipassive.marker ∈ realize s ↔ s = .core .A := by
+    Reflex.morpheme .verb antipassive.marker ∈ realize s ↔ s = .argument .A := by
   decide +revert
 
-/-- No core-argument extraction licenses the enclitic. -/
-theorem enclitic_notMem_realize_core (r : ArgumentRole) :
-    Reflex.morpheme .verbalComplex [movementEnclitic] ∉ realize (.core r) := by
+/-- Among the arguments, the recipient alone licenses the enclitic. -/
+theorem enclitic_mem_realize_argument_iff (r : ArgumentRole) :
+    Reflex.morpheme .verbalComplex [movementEnclitic] ∈ realize (.argument r) ↔ r = .R := by
   decide +revert
 
 /-- The directional hosts the enclitic at exactly the sites the verbal complex does. -/

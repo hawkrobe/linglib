@@ -17,10 +17,10 @@ triggers it on the embedded verb alone, material between the extracted subject a
 obviates it, and when both arguments are first or second person the full transitive appears
 instead. In the elicited production of Heaton, Deen and O'Grady, subject relative clauses mostly
 keep the transitive verb with Set A, while the subject questions of speakers over thirty take
-Agent Focus or the antipassive. Extraction of a locative, instrument, dative or benefactive
-phrase may add the fronting particle *wi* to the verbal complex, optionally in this variety and
-with benefactives, which some varieties exclude; reasons and temporals never license it, and
-manners and purposes are unattested with it.
+Agent Focus or the antipassive. Extraction of a recipient, a phrase with a relational noun, or of
+a locative, instrument or benefactive phrase may add the fronting particle *wi* to the verbal
+complex, optionally in this variety and with benefactives, which some varieties exclude; reasons
+and temporals never license it, and manners and purposes are unattested with it.
 
 ## Main declarations
 
@@ -61,14 +61,14 @@ namespace Extraction
 def wi : Morphology.Morph := .free "wi"
 
 /-- Extraction of a transitive subject switches the verb to Agent Focus unless both arguments are
-speech-act participants ([erlewine-2016]); extraction of a locative, instrument, dative or
-benefactive phrase licenses *wi* on the verbal complex ([mendes-ranero-2021]); nothing else is
-marked. -/
+speech-act participants ([erlewine-2016]); extraction of a recipient or of a locative,
+instrument or benefactive phrase licenses *wi* on the verbal complex ([mendes-ranero-2021]);
+nothing else is marked. -/
 def realize (c : Mayan.VerbClass) (agent patient : Person) :
     Mayan.ExtractionSite → Finset (Reflex Mayan.Host)
-  | .core .A =>
+  | .argument .A =>
       if agent.IsSAP ∧ patient.IsSAP then ∅ else {.morpheme .verb (agentFocus c).marker}
-  | .adjunct .instrument | .adjunct .benefactive | .adjunct .dative | .adjunct .locative =>
+  | .argument .R | .adjunct .instrument | .adjunct .benefactive | .adjunct .locative =>
       {.morpheme .verbalComplex [wi]}
   | _ => ∅
 
@@ -77,8 +77,8 @@ participants, and nothing else. -/
 theorem agentFocus_mem_realize_iff (c : Mayan.VerbClass) (agent patient : Person)
     (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verb (agentFocus c).marker ∈ realize c agent patient s ↔
-      s = .core .A ∧ ¬ (agent.IsSAP ∧ patient.IsSAP) := by
-  rcases s with (_ | _ | _ | _ | _) | (_ | _ | _ | _ | _ | _ | _ | _) <;>
+      s = .argument .A ∧ ¬ (agent.IsSAP ∧ patient.IsSAP) := by
+  rcases s with (_ | _ | _ | _ | _) | (_ | _ | _ | _ | _ | _ | _) <;>
     by_cases h : agent.IsSAP ∧ patient.IsSAP <;> cases c <;> simp [realize, agentFocus, h]
 
 end Extraction

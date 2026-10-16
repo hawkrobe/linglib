@@ -267,42 +267,46 @@ theorem origin_only_fails :
 
 /-! ### Which movers trigger the reflex (§2, §5.3) -/
 
-/-- By the article's featural hypothesis ((9), footnotes 3 and 12, §5.3), every adjunct class but
-the temporals bears the [obl] Case feature that Voice⁰ and Dir⁰ copy. -/
-def BearsObl (a : Mayan.Adjunct) : Prop := a ≠ .temporal
-
-instance : DecidablePred BearsObl := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
-
-/-- [mendes-ranero-2021]'s low adjuncts, merged in Spec,ApplP with [appl], which alone trigger
-*wi* (§5.3). -/
-def IsLow (a : Mayan.Adjunct) : Prop :=
-  a = .instrument ∨ a = .benefactive ∨ a = .dative ∨ a = .locative
-
-instance : DecidablePred IsLow := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _))
-
-/-- By Table 4, the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
-theorem table4 (a : Mayan.Adjunct) :
-    ¬ (BearsObl a ↔ IsLow a) ↔ a = .reason ∨ a = .purpose ∨ a = .manner := by
-  decide +revert
-
-/-- The extracted element, if any, is an absolutive argument, an ergative argument or an adjunct. -/
+/-- The extracted element, if any, is an absolutive or an ergative argument, a dative, the
+recipient that a relational noun introduces (§2.2.2), or an adjunct. -/
 inductive Mover
   | none
   | absolutive
   | ergative
+  | dative
   | adjunct (a : Mayan.Adjunct)
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
-/-- Only an adjunct with [obl] feeds the reflex: absolutives and ergatives lack it (§4.2). -/
+/-- By the article's featural hypothesis ((9), footnotes 3 and 12, §5.3), a dative and every
+adjunct but the temporals bear the [obl] Case feature that Voice⁰ and Dir⁰ copy, while
+absolutives and ergatives lack it (§4.2). -/
 def Mover.BearsObl : Mover → Prop
-  | .adjunct a => ElkinsTorrenceBrown2026.BearsObl a
-  | _ => False
+  | .dative => True
+  | .adjunct a => a ≠ .temporal
+  | .none | .absolutive | .ergative => False
 
-instance : ∀ m : Mover, Decidable m.BearsObl
-  | .adjunct a => inferInstanceAs (Decidable (BearsObl a))
-  | .none => inferInstanceAs (Decidable False)
-  | .absolutive => inferInstanceAs (Decidable False)
-  | .ergative => inferInstanceAs (Decidable False)
+instance : DecidablePred Mover.BearsObl
+  | .dative => inferInstanceAs (Decidable True)
+  | .adjunct a => inferInstanceAs (Decidable (a ≠ _))
+  | .none | .absolutive | .ergative => inferInstanceAs (Decidable False)
+
+/-- [mendes-ranero-2021]'s low movers, the dative and the instrument, benefactive and locative
+adjuncts, are merged in Spec,ApplP with [appl], which alone triggers *wi* (§5.3). -/
+def Mover.IsLow : Mover → Prop
+  | .dative => True
+  | .adjunct a => a = .instrument ∨ a = .benefactive ∨ a = .locative
+  | .none | .absolutive | .ergative => False
+
+instance : DecidablePred Mover.IsLow
+  | .dative => inferInstanceAs (Decidable True)
+  | .adjunct _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+  | .none | .absolutive | .ergative => inferInstanceAs (Decidable False)
+
+/-- By Table 4, the Mam and K'ichean triggers differ exactly at reasons, purposes and manners. -/
+theorem table4 (m : Mover) :
+    ¬ (m.BearsObl ↔ m.IsLow) ↔
+      m = .adjunct .reason ∨ m = .adjunct .purpose ∨ m = .adjunct .manner := by
+  decide +revert
 
 /-- The reflex is realizable in clause `i` when the mover bears [obl] and the path has a site
 there. -/
@@ -311,11 +315,12 @@ def Realizable (m : Mover) (d : Dependency) (i : ℕ) : Prop := m.BearsObl ∧ L
 instance (m : Mover) (d : Dependency) (i : ℕ) : Decidable (Realizable m d i) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The paper partitions the extraction sites (§2.1) so that a core argument is absolutive unless
-it is the transitive subject, which the antipassive demotes. -/
+/-- An extracted argument is absolutive unless it is the transitive subject, which the
+antipassive demotes, or the recipient, a dative; an extracted adjunct is that adjunct. -/
 def Mover.ofSite : Mayan.ExtractionSite → Mover
-  | .core .A => .ergative
-  | .core _ => .absolutive
+  | .argument .A => .ergative
+  | .argument .R => .dative
+  | .argument _ => .absolutive
   | .adjunct a => .adjunct a
 
 /-- At every extraction site the analysis licenses the enclitic on the verbal complex exactly
@@ -326,31 +331,20 @@ theorem realizable_iff_mem_realize (s : Mayan.ExtractionSite) :
         Mam.Extraction.realize s := by
   decide +revert
 
-/-- The mover is a low adjunct, merged in Spec,ApplP with [appl] (§5.3). -/
-def Mover.IsLow : Mover → Prop
-  | .adjunct a => ElkinsTorrenceBrown2026.IsLow a
-  | _ => False
-
-instance : ∀ m : Mover, Decidable m.IsLow
-  | .adjunct a => inferInstanceAs (Decidable (IsLow a))
-  | .none => inferInstanceAs (Decidable False)
-  | .absolutive => inferInstanceAs (Decidable False)
-  | .ergative => inferInstanceAs (Decidable False)
-
-/-- The K'iche' fragment puts *wi* on the verbal complex exactly for the low adjunct movers,
-Agent Focus being a reflex on the verb (§5.1, §5.3). -/
+/-- The K'iche' fragment puts *wi* on the verbal complex exactly for the low movers, Agent Focus
+being a reflex on the verb (§5.1, §5.3). -/
 theorem kiche_mem_realize_iff (c : Mayan.VerbClass) (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verbalComplex [Kiche.Extraction.wi] ∈ Kiche.Extraction.realize c s ↔
       (Mover.ofSite s).IsLow := by
   decide +revert
 
-/-- The Kaqchikel fragment marks adjunct extraction as the K'iche' one does, the pattern of the
-K'ichean rows (51) and (64). -/
-theorem kaqchikel_realize_adjunct (c : Mayan.VerbClass) (agent patient : Person)
-    (a : Mayan.Adjunct) :
-    Kaqchikel.Extraction.realize c agent patient (.adjunct a) =
-      Kiche.Extraction.realize c (.adjunct a) := by
-  cases a <;> rfl
+/-- The Kaqchikel fragment marks every extraction but the transitive subject's as the K'iche' one
+does, the pattern of the K'ichean rows (51) and (64). -/
+theorem kaqchikel_realize_eq_kiche (c : Mayan.VerbClass) (agent patient : Person)
+    {s : Mayan.ExtractionSite} (hs : s ≠ .argument .A) :
+    Kaqchikel.Extraction.realize c agent patient s = Kiche.Extraction.realize c s := by
+  rcases s with (_ | _ | _ | _ | _) | (_ | _ | _ | _ | _ | _ | _) <;>
+    first | rfl | exact absurd rfl hs
 
 /-! ### Agree and insertion (§4.2) -/
 
@@ -379,7 +373,7 @@ theorem no_obl_no_agree : voice.features.applyAgree ⊥ .oblique = none :=
 def moverTable : List (String × Mover) :=
   [("none", .none), ("absolutive", .absolutive), ("ergative", .ergative),
     ("instrument", .adjunct .instrument), ("benefactive", .adjunct .benefactive),
-    ("dative", .adjunct .dative), ("locative", .adjunct .locative), ("reason", .adjunct .reason),
+    ("dative", .dative), ("locative", .adjunct .locative), ("reason", .adjunct .reason),
     ("purpose", .adjunct .purpose), ("manner", .adjunct .manner), ("temporal", .adjunct .temporal)]
 
 /-- Whether the reflex may appear, as recorded in the rows. -/
@@ -398,8 +392,8 @@ theorem mamRows_realizable :
 /-- In the K'ichean rows, (51) for K'iche' and (64) for Patzún Kaqchikel, *wi* is licensed exactly
 for the low adjuncts. -/
 theorem kicheanRows_low :
-    ∀ e ∈ [ex_51, ex_64], ∀ a, e.parse? "mover" moverTable = some (.adjunct a) →
-      ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ IsLow a) := by
+    ∀ e ∈ [ex_51, ex_64], ∀ m, e.parse? "mover" moverTable = some m →
+      ∀ b, e.parse? "reflex" reflexTable = some b → (b = true ↔ m.IsLow) := by
   decide
 
 /-- The rows with directionals, (22) and (63), have one host per Voice⁰ and directional. -/

@@ -2,7 +2,6 @@ module
 
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Phonology.Segmental.Defs
-public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -13,16 +12,14 @@ vowel *k-*, *aw-* and *y-*, indexes the transitive subject and the possessor and
 only; a plural person adds a suffix, *-tik* for the inclusive first person and *-ik* for the
 second and the third, the exclusive first person varying by dialect. Set B, which indexes the
 intransitive subject and the transitive object, is suffixal throughout, *-on*, *-at* and zero,
-with the plurals *-otik*, *-ex* and *-ik*. The alignment is ergative in every aspect, the verbal
-complex runs aspect, Set A, stem, Set B, and Tseltal has no Agent Focus form, so a transitive
-subject extracts without a reflex on the verb. Polian's sketch of Tseltal and Tsotsil and
+with the plurals *-otik*, *-ex* and *-ik*. The alignment is ergative in every aspect, and the
+verbal complex runs aspect, Set A, stem, Set B. Polian's sketch of Tseltal and Tsotsil and
 Aissen and Polian's summary of the two sets are the sources.
 
 ## Main definitions
 
 * `Tseltal.setAExponent`, `Tseltal.setAPlural`, `Tseltal.setBExponent`: the paradigms.
 * `Tseltal.template`, `Tseltal.assignCase`: the verbal complex and the ergative case function.
-* `Tseltal.Extraction.realize`: no reflex for any extraction.
 
 ## References
 
@@ -73,14 +70,5 @@ def setBExponent : ExponentTable :=
   [(.personNumber .first .singular, [.suff "on"]), (.personNumber .second .singular, [.suff "at"]),
    (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "otik"]),
    (.personNumber .second .plural, [.suff "ex"]), (.personNumber .third .plural, [.suff "ik"])]
-
-/-! ### Extraction -/
-
-namespace Extraction
-
-/-- No extraction leaves a reflex on the verb, since Tseltal has no Agent Focus form. -/
-def realize : ArgumentRole → Finset (Reflex Empty) := fun _ ↦ ∅
-
-end Extraction
 
 end Tseltal
