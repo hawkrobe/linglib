@@ -5,23 +5,21 @@ public import Mathlib.Order.GaloisConnection.Defs
 public import Mathlib.Order.Hom.CompleteLattice
 
 /-!
-# Type ⟨1⟩ quantifiers
+# Individuals
 
-This file is the API of `NP E`, the type ⟨1⟩ quantifier that a noun phrase denotes, and of the
-type shifts between it and the predicates `E → Prop`. Predicative content `BE` is a complete
-lattice homomorphism sending each individual to its singleton, and the existential determiner
-`GQ.some`, Partee's `A`, is a section of it, so `BE ∘ A` is the identity. On the monotone
-quantifiers the two form a Galois coinsertion. A quantifier survives the round trip `A ∘ BE`
-exactly when it is existential, as an individual is.
+This file is about the Montagovian individuals, the type ⟨1⟩ quantifiers `NP.individual a` of
+the properties of an entity, and the type shifts they fix. The individuals generate `NP E` under
+complete Boolean operations: every quantifier is the join of the quantifiers true of one of its
+properties alone, and the quantifier true of `R` alone, *every `R` and no non-`R`*, is a meet of
+individuals and their complements. A complete homomorphism out of `NP E` is therefore fixed by
+its values on the individuals. The individuals are exactly the quantifiers that commute with
+negation and with arbitrary conjunction, Keenan and Faltz's characterization of proper-noun
+denotations, and an existential is one exactly when its restrictor is a singleton.
 
-The individuals generate the quantifiers under complete Boolean operations: every quantifier is
-the join of the quantifiers true of one of its properties alone, and the quantifier true of `R`
-alone, *every `R` and no non-`R`*, is a meet of individuals and their complements. A complete
-homomorphism out of `NP E` is therefore fixed by its values on the individuals, which makes `BE`
-the only one sending each individual to its singleton. The individuals are exactly the
-quantifiers that commute with negation and with arbitrary conjunction, Keenan and Faltz's
-characterization of proper-noun denotations, and an existential is one exactly when its
-restrictor is a singleton.
+Predicative content `BE` is the complete homomorphism sending each individual to its singleton,
+and the existential determiner `GQ.some`, Partee's `A`, is a section of it, so `BE ∘ A` is the
+identity. On the monotone quantifiers the two form a Galois coinsertion, and a quantifier
+survives the round trip `A ∘ BE` exactly when it is existential, as an individual is.
 
 ## Main definitions
 

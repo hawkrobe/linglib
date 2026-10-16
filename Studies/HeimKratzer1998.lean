@@ -5,7 +5,6 @@ public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Composition.Toy
 public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Composition.Lexicon
-public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Quantification.Polyadic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998

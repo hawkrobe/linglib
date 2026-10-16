@@ -4,7 +4,7 @@ public import Linglib.Core.Data.Fintype.Flat
 public import Linglib.Data.Examples.Elliott2025
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Quantification.Lattice
-public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.Individual
 public import Studies.GroenendijkStokhof1984
 public import Studies.KeenanStavi1986
 public import Mathlib.Data.Set.Card

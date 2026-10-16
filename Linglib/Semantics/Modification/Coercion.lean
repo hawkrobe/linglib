@@ -34,7 +34,7 @@ The principles are Kamp and Partee's (NVP) and (HPP), Partee's (18) and (20), wi
 in its simplest form, which makes the local domain the positive extension of the head.
 `IsNonVacuous` is bivalent, simplifying the partial setting of Kamp and Partee. Complement
 coercion (`Studies/Pustejovsky1995.lean`) and the type shifts of noun phrases
-(`Semantics/Quantification/NP.lean`) are different notions.
+(`Semantics/Quantification/Individual.lean`) are different notions.
 
 ## References
 

@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Set.Functor
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.Individual
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Studies.Charlow2014
 public import Linglib.Data.Examples.Charlow2020

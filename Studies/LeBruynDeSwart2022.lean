@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Plurality.Algebra
-public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.Individual
 public import Linglib.Data.Examples.LeBruynDeSwart2022
 
 /-!
