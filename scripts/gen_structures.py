@@ -12,7 +12,9 @@ Writes  Linglib/Data/Structures/<AuthorYear>.lean, declaring `namespace <AuthorY
 JSON file format, the CLDF StructureDataset tables under CLDF column names:
 
   {
-    "bibkey": "bobaljik-2012", "source": "bobaljik-2012[Table A.1]", "description": "...",
+    "bibkey": "bobaljik-2012", "description": "...",
+    "ContributionTable": [{"ID": "broad_sample", "Name": "Table A.1", "Lean": "broadSample",
+                           "Source": "bobaljik-2012[Table A.1]", "Description": "..."}],
     "LanguageTable": [{"ID": "tamashek", "Name": "Tamashek", "Glottocode": "tama1365",
                        "Lineage": "Afro-Asiatic, Berber"}],
     "ParameterTable": [{"ID": "cmpr_typ", "Name": "CMPR TYP", "Lean": "CmprTyp",
@@ -20,15 +22,19 @@ JSON file format, the CLDF StructureDataset tables under CLDF column names:
     "CodeTable": [{"ID": "cmpr_typ_ex", "Parameter_ID": "cmpr_typ", "Name": "EX",
                    "Lean": "exceed", "Description": "..."}],
     "ValueTable": [{"Language_ID": "tamashek", "Parameter_ID": "cmpr_typ",
-                    "Code_ID": "cmpr_typ_st", "Questionable": false, "Optional": false}]
+                    "Code_ID": "cmpr_typ_st", "Contribution_ID": "broad_sample",
+                    "Questionable": false, "Optional": false}]
   }
 
-`Glottocode` may be null, with a `comment` saying why. A parameter's `Lean` is the name of its
-generated type and a code's `Lean` the name of its constructor. Each language becomes one row
-with a list-valued field per parameter, the values in the order of the `ValueTable`. `comment`
-(any table) and `Lineage` are validated and not emitted. The generator rejects malformed input,
-unknown keys, dangling references and unknown bibkeys; it is idempotent, and `--check` exits 1
-on drift.
+Each contribution is one table of the source, and languages, parameters and codes are shared
+among them. `Glottocode` may be null, with a `comment` saying why. A parameter's `Lean` is the
+name of its generated type, a code's `Lean` the name of its constructor, and a contribution's
+`Lean` the name of its list of rows. Within a contribution each language becomes one row with a
+list-valued field per parameter, the rows in the order of the language's first value and the
+values in the order of the `ValueTable`. `Value` (the printed form, where it differs from the
+code's `Name`), `comment` (any table) and `Lineage` are validated and not emitted. The generator
+rejects malformed input, unknown keys, dangling references, unused languages and unknown
+bibkeys; it is idempotent, and `--check` exits 1 on drift.
 """
 
 import json
@@ -51,11 +57,12 @@ KEYWORDS = {"def", "if", "then", "else", "do", "fun", "let", "in", "at", "by", "
             "with", "where", "from", "have", "show", "open", "for", "return", "import", "true",
             "false", "theorem", "structure", "class", "instance", "section", "namespace"}
 
-TABLES = {"LanguageTable": {"ID", "Name", "Glottocode", "Lineage", "comment"},
+TABLES = {"ContributionTable": {"ID", "Name", "Lean", "Source", "Description", "comment"},
+          "LanguageTable": {"ID", "Name", "Glottocode", "Lineage", "comment"},
           "ParameterTable": {"ID", "Name", "Lean", "Description", "comment"},
           "CodeTable": {"ID", "Parameter_ID", "Name", "Lean", "Description", "comment"},
-          "ValueTable": {"Language_ID", "Parameter_ID", "Code_ID", "Questionable", "Optional",
-                         "comment"}}
+          "ValueTable": {"Language_ID", "Parameter_ID", "Code_ID", "Contribution_ID", "Value",
+                         "Questionable", "Optional", "comment"}}
 
 
 def fail(msg: str):
@@ -76,7 +83,7 @@ def check_keys(row: dict, table: str, where: str):
     extra = set(row) - TABLES[table]
     if extra:
         fail(f"{where}: unknown keys {sorted(extra)}")
-    for k in ("comment", "Lineage"):
+    for k in ("comment", "Lineage", "Value"):
         if k in row and not isinstance(row[k], str):
             fail(f"{where}: {k} must be a string")
 
@@ -93,16 +100,33 @@ def lower_first(s: str) -> str:
 
 
 def emit_module(paper: str, data: dict) -> str:
-    unknown = set(data) - set(TABLES) - {"bibkey", "source", "description"}
+    unknown = set(data) - set(TABLES) - {"bibkey", "description"}
     if unknown:
         fail(f"unknown top-level keys {sorted(unknown)}")
     keys = set(re.findall(r"^@\w+\{([^,]+),", BIB.read_text(encoding="utf-8"), re.M))
     if data.get("bibkey") not in keys:
         fail(f"bibkey {data.get('bibkey')!r} is not in references.bib")
-    m = SOURCE_RE.match(data.get("source") or "")
-    if not m or m.group(1) not in keys:
-        fail("source must be bibkey[locator] with a bibkey in references.bib")
-    source = f"{m.group(1)}, {m.group(2)}" if m.group(2) else m.group(1)
+
+    contribs = {}
+    for r in data.get("ContributionTable") or []:
+        where = f"contribution {r.get('ID')!r}"
+        check_keys(r, "ContributionTable", where)
+        cid = req(r, "ID", where)
+        if not ID_RE.match(cid) or cid in contribs:
+            fail(f"{where}: bad or duplicate ID")
+        lean = req(r, "Lean", where)
+        if (not CTOR_RE.match(lean) or lean in KEYWORDS
+                or lean in [c["Lean"] for c in contribs.values()]):
+            fail(f"{where}: Lean {lean!r} is not a fresh definition name")
+        m = SOURCE_RE.match(r.get("Source") or "")
+        if not m or m.group(1) not in keys:
+            fail(f"{where}: Source must be bibkey[locator] with a bibkey in references.bib")
+        req(r, "Name", where)
+        req(r, "Description", where)
+        contribs[cid] = {**r, "source": f"{m.group(1)}, {m.group(2)}" if m.group(2) else m.group(1),
+                         "rows": {}}
+    if not contribs:
+        fail("ContributionTable is required and non-empty")
 
     params = {}
     for r in data.get("ParameterTable") or []:
@@ -148,24 +172,32 @@ def emit_module(paper: str, data: dict) -> str:
         elif not (isinstance(g, str) and GLOTTO_RE.match(g)):
             fail(f"{where}: Glottocode {g!r} is not a Glottocode")
         req(r, "Name", where)
-        langs[lid] = {**r, "values": {p: [] for p in params}}
+        if lid in [c["Lean"] for c in contribs.values()]:
+            fail(f"{where}: ID {lid!r} is the Lean name of a contribution")
+        langs[lid] = r
 
     for k, r in enumerate(data.get("ValueTable") or []):
         where = f"value {k}"
         check_keys(r, "ValueTable", where)
-        lid, pid, cid = (req(r, x, where) for x in ("Language_ID", "Parameter_ID", "Code_ID"))
+        lid, pid, cid, con = (req(r, x, where) for x in
+                              ("Language_ID", "Parameter_ID", "Code_ID", "Contribution_ID"))
         if lid not in langs:
             fail(f"{where}: language {lid!r} not in LanguageTable")
         if pid not in params:
             fail(f"{where}: parameter {pid!r} not in ParameterTable")
         if cid not in codes or codes[cid]["Parameter_ID"] != pid:
             fail(f"{where}: code {cid!r} is not a code of {pid!r}")
+        if con not in contribs:
+            fail(f"{where}: contribution {con!r} not in ContributionTable")
         for flag in ("Questionable", "Optional"):
             if flag in r and not isinstance(r[flag], bool):
                 fail(f"{where}: {flag} must be a boolean")
-        langs[lid]["values"][pid].append(
-            f"⟨.{codes[cid]['Lean']}, {str(r.get('Questionable', False)).lower()}, "
-            f"{str(r.get('Optional', False)).lower()}⟩")
+        row = contribs[con]["rows"].setdefault(lid, {p: [] for p in params})
+        row[pid].append(f"⟨.{codes[cid]['Lean']}, {str(r.get('Questionable', False)).lower()}, "
+                        f"{str(r.get('Optional', False)).lower()}⟩")
+    unused = set(langs) - {lid for c in contribs.values() for lid in c["rows"]}
+    if unused:
+        fail(f"languages without values: {sorted(unused)}")
 
     out = []
     for p in params.values():
@@ -175,25 +207,27 @@ def emit_module(paper: str, data: dict) -> str:
                    f"inductive {p['Lean']} where\n{ctors}\n  deriving DecidableEq, Repr")
     fields = "\n".join(f"  /-- The codes for {p['Name']}. -/\n  {lower_first(p['Lean'])} : "
                        f"List (Coded {p['Lean']})" for p in params.values())
-    out.append(f"/-- A row of the sample: a language with its codes for each parameter. -/\n"
+    out.append(f"/-- A row of a sample: a language with its codes for each parameter. -/\n"
                f"structure Row where\n  /-- The language. -/\n  language : Language\n{fields}\n"
                f"  deriving DecidableEq, Repr")
     for lid, r in langs.items():
         g = f"some {lean_string(r['Glottocode'])}" if r.get("Glottocode") else "none"
         out.append(f"def {lid} : Language :=\n  {{ id := {lean_string(lid)}, "
                    f"name := {lean_string(r['Name'])}, glottocode := {g} }}")
-    rows = []
-    for lid, r in langs.items():
-        vs = ",\n    ".join(f"{lower_first(params[p]['Lean'])} := [{', '.join(r['values'][p])}]"
-                            for p in params)
-        rows.append(f"  {{ language := {lid},\n    {vs} }}")
-    out.append(f"/-- Every row of the sample, in the order of the source ({source}). -/\n"
-               f"def rows : List Row := [\n" + ",\n".join(rows) + "]")
+    for c in contribs.values():
+        rows = []
+        for lid, vals in c["rows"].items():
+            vs = ",\n    ".join(f"{lower_first(params[p]['Lean'])} := [{', '.join(vals[p])}]"
+                                for p in params)
+            rows.append(f"  {{ language := {lid},\n    {vs} }}")
+        out.append(f"/-- {doc(c['Description'], c['ID'])} The rows of {c['Name']}, in the order "
+                   f"of the source ({c['source']}). -/\n"
+                   f"def {c['Lean']} : List Row := [\n" + ",\n".join(rows) + "]")
     body = "\n\n".join(out)
     return f"""import Linglib.Data.Structures.Schema
 
 /-!
-# `{paper}`: language sample
+# `{paper}`: language samples
 
 Auto-generated from `Linglib/Data/Structures/{paper}.json` by `scripts/gen_structures.py`. Do not
 edit by hand; edit the JSON and re-run the generator. Declarations live in

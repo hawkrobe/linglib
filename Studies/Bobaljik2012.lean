@@ -44,6 +44,8 @@ positive, is ABA without any homophony.
   and the triples of quantifiers.
 * `BearsOnCSG`: a language of the broad sample with suppletion and a
   morphological superlative.
+* `MorphComparative`, `MorphSuperlative`, `Records`: a table row's `M`
+  columns, and the synthetic extents of a language's adjectives they record.
 
 ## Main results
 
@@ -63,6 +65,9 @@ positive, is ABA without any homophony.
   sample, read from `Data/Structures/Bobaljik2012`, four have suppletion and
   a morphological superlative, every language with suppletion is in Eurasia,
   and each of the four has a triple in Table 4.1.
+* `exists_records_iff`, `ssg_exceptions`: a row records synthetic extents
+  exactly when it satisfies the SSG, and of the rows of Tables A.1 and B.1
+  only the four counterexamples §3.4.2 and §3.4.3 discuss fail it.
 * `english_patterns`, `latin_patterns`, `latin_all_three`: the Fragments
   show the attested patterns of (191) and no others.
 * `english_ssg`, `english_rsg`: (3) and (4) on the English Fragment.
@@ -342,7 +347,7 @@ def rootPattern (r : RootClasses) : Paradigm 3 ℕ := fun g ↦
 adjectives in every language (p. 105). -/
 def Quantifier (r : Data.Paradigms.RootClasses) : Prop := r.lexeme.meaning ∈ ["many, much", "few"]
 
-instance : DecidablePred Quantifier := fun r ↦ inferInstanceAs (Decidable (_ ∈ _))
+instance : DecidablePred Quantifier := fun r ↦ inferInstanceAs (Decidable (r.lexeme.meaning ∈ _))
 
 /-- Of the more than 300 languages considered, 73 adjectival cognate triples (p. 105). -/
 theorem adjectival_length : (Paradigms.rootClasses.filter (¬ Quantifier ·)).length = 73 := by
@@ -405,21 +410,23 @@ instance (r : Structures.Row) : Decidable (BearsOnCSG r) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Four of the 148 languages bear on the CSG. -/
-theorem bearsOnCSG_names : (Structures.rows.filter (BearsOnCSG ·)).map (·.language.name) =
+theorem bearsOnCSG_names : (Structures.broadSample.filter (BearsOnCSG ·)).map (·.language.name) =
     ["Persian (Farsi)", "Czech", "Finnish", "Basque"] := by
   decide
 
 /-- Every language of the sample with suppletion is in Eurasia: comparative suppletion with
 morphological superlatives is confined to a Greater European area (p. 17). -/
-theorem eurasia_of_suppletion : ∀ r ∈ Structures.rows, (∃ v ∈ r.suppl, v.code = .yes) →
+theorem eurasia_of_suppletion : ∀ r ∈ Structures.broadSample, (∃ v ∈ r.suppl, v.code = .yes) →
     ∃ v ∈ r.region, v.code = .eurasia := by
   decide +kernel
 
 /-- Each language of the sample that bears on the CSG has a cognate triple in Table 4.1. -/
-theorem exists_rootClasses_of_bearsOnCSG : ∀ r ∈ Structures.rows, BearsOnCSG r →
+theorem exists_rootClasses_of_bearsOnCSG : ∀ r ∈ Structures.broadSample, BearsOnCSG r →
     ∃ t ∈ Paradigms.rootClasses,
       ¬ Quantifier t ∧ some t.lexeme.languageId = r.language.glottocode := by
   decide +kernel
+
+/-! ### The English Fragment -/
 
 /-- *Best* does not return to the root of *good*, as CSG1 requires. -/
 theorem good_csg1 : good.comparison.suppletion 2 ≠ good.comparison.suppletion 0 :=
@@ -447,6 +454,68 @@ theorem english_rsg :
     ∀ e ∈ allEntries, e.comparison.suppletion 1 ≠ e.comparison.suppletion 0 →
       Synthetic e.comparison.comparative := by
   decide
+
+/-! ### The Synthetic Superlative Generalization over both samples (§3.4)
+
+The focused survey of Table B.1 adds 174 languages with morphological comparison or comparative
+suppletion and their relatives (section 1.3). A table row records the synthetic extents of the
+language's adjectives, so Merger's downward closure predicts the SSG (89) of every row. Over both
+tables four rows fail it, the apparent counterexamples of §3.4.2 and §3.4.3: Western and Eastern
+Armenian, whose superlative *amen-a-* may be a compound or sit on a null comparative affix; Zulu,
+whose questionable *-kazi* may form absolute superlatives; and Alutor, whose brief description
+omits the comparative suffix that the longer description of its sister Koryak records. -/
+
+/-- The row has `M` in its CMPR column, optional or questionable included. -/
+def MorphComparative (r : Structures.Row) : Prop := ∃ v ∈ r.cmpr, v.code = .morphological
+
+/-- The row has `M` in its SPRL column, optional or questionable included. -/
+def MorphSuperlative (r : Structures.Row) : Prop := ∃ v ∈ r.sprl, v.code = .morphological
+
+instance : DecidablePred MorphComparative := fun r ↦
+  inferInstanceAs (Decidable (∃ v ∈ r.cmpr, _))
+
+instance : DecidablePred MorphSuperlative := fun r ↦
+  inferInstanceAs (Decidable (∃ v ∈ r.sprl, _))
+
+/-- A row records the synthetic extents `S` of a language's adjectives when its CMPR and SPRL
+columns have `M` exactly when some adjective's comparative, respectively superlative, is
+synthetic. -/
+def Records (r : Structures.Row) (S : Set (Synthesis 3)) : Prop :=
+  (MorphComparative r ↔ ∃ s ∈ S, s.SyntheticAt 1) ∧ (MorphSuperlative r ↔ ∃ s ∈ S, s.SyntheticAt 2)
+
+/-- The SSG (89) of a recorded row: Merger reaches the comparative head before the superlative
+head (`Synthesis.syntheticAt_of_le`). -/
+theorem Records.morphComparative {r : Structures.Row} {S : Set (Synthesis 3)} (h : Records r S)
+    (hs : MorphSuperlative r) : MorphComparative r :=
+  let ⟨s, hS, h2⟩ := h.2.1 hs
+  h.1.2 ⟨s, hS, Synthesis.syntheticAt_of_le h2 (by decide)⟩
+
+/-- A row records some synthetic extents exactly when it satisfies the SSG. -/
+theorem exists_records_iff {r : Structures.Row} :
+    (∃ S, Records r S) ↔ (MorphSuperlative r → MorphComparative r) := by
+  refine ⟨fun ⟨S, h⟩ ↦ h.morphComparative, fun h ↦ ⟨{s | (MorphComparative r ∧ s.wordTop = 1) ∨
+    (MorphSuperlative r ∧ s.wordTop = 2)}, ⟨fun hc ↦ ⟨⟨1⟩, .inl ⟨hc, rfl⟩, le_rfl⟩, ?_⟩,
+    fun hs ↦ ⟨⟨2⟩, .inr ⟨hs, rfl⟩, le_rfl⟩, ?_⟩⟩
+  · rintro ⟨s, (⟨hc, -⟩ | ⟨hs, -⟩), -⟩
+    exacts [hc, h hs]
+  · rintro ⟨⟨t⟩, (⟨-, rfl⟩ | ⟨hs, -⟩), ht⟩
+    exacts [absurd ht (by decide), hs]
+
+instance (r : Structures.Row) : Decidable (∃ S, Records r S) :=
+  decidable_of_iff _ exists_records_iff.symm
+
+/-- The rows of the two samples that record no synthetic extents are the four of §3.4.2 and
+§3.4.3. -/
+theorem ssg_exceptions :
+    ((Structures.broadSample ++ Structures.focusedSurvey).filter
+      (fun r ↦ ¬ ∃ S, Records r S)).map (·.language.name) =
+    ["Zulu", "Armenian (Western)", "Armenian (Eastern)", "Alutor"] := by
+  decide
+
+/-- Koryak, whose longer description §3.4.3 sets beside Alutor's, has `M` in both columns. -/
+theorem koryak_morph : ∃ r ∈ Structures.focusedSurvey, r.language.name = "Koryak" ∧
+    MorphComparative r ∧ MorphSuperlative r := by
+  decide +kernel
 
 /-! ### The book's vocabularies (ch. 2, ch. 5)
 
