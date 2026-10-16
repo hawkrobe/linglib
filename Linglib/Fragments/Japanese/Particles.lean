@@ -26,7 +26,7 @@ not tired? — Yes (I'm not tired)'.
 
 * [dayal-2025]
 * [holmberg-2016]
-* [roelofsen-uegaki-2020]
+* [roelofsen-uegaki-2021]
 * [sauerland-yatsushiro-2017]
 * [uegaki-roelofsen-2018]
 -/
@@ -102,7 +102,7 @@ def kke : Particle where
 With declarative complement: "x thinks p" (⟦daroo⟧({p})(x) = INQ_x ⊆ {p}↓).
 With interrogative complement: "x wonders Q" (⟦daroo⟧(Q)(x) = INQ_x ⊆ Q).
 The dual reading arises from the absence of an ignorance component,
-unlike wonder ([roelofsen-uegaki-2020], [uegaki-roelofsen-2018]).
+unlike wonder ([roelofsen-uegaki-2021], [uegaki-roelofsen-2018]).
 Appears in matrix and quasi-subordinated contexts but not in subordinated
 interrogatives (which use *ka*). -/
 def daroo : Particle where
