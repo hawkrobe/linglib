@@ -35,7 +35,6 @@ stated over closed intervals of times that may run to the end of time.
   absent here.
 * *He has still won* is excluded by the paper as well known rather than derived; the German
   *noch* pattern that rests on it is a row, not a theorem.
-* `WOLL` is stated but unconsumed: the paper gives no data for *will* and *would*.
 
 ## References
 
@@ -118,6 +117,15 @@ the forward interval. -/
     obtain rfl : t₀ = now := (WithTop.coe_eq_coe.1 ht₀).symm
     exact h
   · exact fun h ↦ ⟨now, rfl, h⟩
+
+/-- At the present, WOLL holds when every world of the base at the present has the property
+throughout the forward interval. -/
+@[simp] theorem pres_woll_iff :
+    PRES now (WOLL MB Q) w ↔ ∀ w' ∈ MB w now, At (Interval.Ici ↑now) w' Q := by
+  rw [PRES, Interval.pure]
+  refine ⟨fun ⟨t₀, ht₀, h⟩ ↦ ?_, fun h ↦ ⟨now, Interval.isLeast_coe_fst, h⟩⟩
+  obtain rfl : t₀ = now := WithTop.coe_eq_coe.1 (ht₀.unique Interval.isLeast_coe_fst)
+  exact h
 
 /-- The perfect of an event holds at a ray when the event ended before the ray starts. -/
 @[simp] theorem at_Ici_perf_eventive_iff {t : T} :
