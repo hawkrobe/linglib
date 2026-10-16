@@ -1,0 +1,63 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+module
+
+public import Linglib.Data.Examples.Schema
+
+/-!
+# Language samples
+
+This file defines the rows of a paper's language sample, after the CLDF StructureDataset: the
+languages of the sample, and the codes a language takes for a parameter the paper records. The
+parameters, their codes and the rows of a sample are generated per paper.
+
+## Main definitions
+
+* `Data.Structures.Language`: a row of the `LanguageTable`.
+* `Data.Structures.Coded`: a value of the `ValueTable`, a code with the marks a source puts on it.
+
+## Implementation notes
+
+* Per-paper data lives in `Linglib/Data/Structures/{AuthorYear}.json`, an object holding the
+  CLDF tables `LanguageTable`, `ParameterTable`, `CodeTable` and `ValueTable` under CLDF column
+  names, and is compiled by `scripts/gen_structures.py` into `{AuthorYear}.lean`, declaring
+  `namespace {AuthorYear}.Structures`.
+* Each parameter becomes an inductive type with a constructor for each code. The values, long
+  in the JSON as CLDF has them, are emitted as one row per language with a field for each
+  parameter, so a theorem about the sample reads each language once.
+* A language may take several codes for a parameter, or none: a row's field is a list.
+* A language without a Glottocode is one the source names without saying which Glottolog
+  language it means; the JSON records why.
+* Comments, footnotes and the lineage a source prints are its record: the generator validates
+  them and does not emit them.
+-/
+
+@[expose] public section
+
+namespace Data.Structures
+
+/-- A `Language` is a row of a CLDF `LanguageTable`, a language of the sample. -/
+structure Language where
+  /-- The `ID` column holds a stable identifier keyed to the paper. -/
+  id : String
+  /-- The `Name` column holds the language's name as the source prints it. -/
+  name : String
+  /-- The `Glottocode` column holds the Glottocode, when the source's name determines one. -/
+  glottocode : Option Glottocode
+  deriving DecidableEq, Repr
+
+/-- A `Coded C` is a value of a CLDF `ValueTable`: a code of the parameter `C`, with the marks a
+source may put on it. -/
+structure Coded (C : Type*) where
+  /-- The code. -/
+  code : C
+  /-- The source marks the code as questionable. -/
+  questionable : Bool := false
+  /-- The source marks the strategy the code names as optional. -/
+  optional : Bool := false
+  deriving DecidableEq, Repr
+
+end Data.Structures

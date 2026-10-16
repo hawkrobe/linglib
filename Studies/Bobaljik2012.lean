@@ -6,6 +6,7 @@ public import Linglib.Fragments.English.Adjectives
 public import Linglib.Fragments.Latin.Adjectives
 public import Linglib.Fragments.Slavic.Russian.Adjectives
 public import Linglib.Data.Paradigms.Bobaljik2012
+public import Linglib.Data.Structures.Bobaljik2012
 
 /-!
 # Universals in comparative morphology
@@ -40,6 +41,8 @@ positive, is ABA without any homophony.
 * `latinBonusNS`: the Latin entries in nanosyntax form.
 * `Synthetic`, `Periphrastic`: a grade form of one word, and one of several.
 * `rootPattern`: the root classes of a triple of Table 4.1 over the grades.
+* `BearsOnCSG`: a language of the broad sample with suppletion and a
+  morphological superlative.
 
 ## Main results
 
@@ -49,6 +52,11 @@ positive, is ABA without any homophony.
   are the triples (31) and p. 112 name.
 * `csg1_of_ne_basque`, `basque_not_realized`: CSG1 holds of every other
   triple, and no antihomophonous vocabulary realizes the Basque one.
+* `bearsOnCSG_names`, `eurasia_of_suppletion`,
+  `exists_rootClasses_of_bearsOnCSG`: of the 148 languages of the broad
+  sample, read from `Data/Structures/Bobaljik2012`, four have suppletion and
+  a morphological superlative, every language with suppletion is in Eurasia,
+  and each of the four has a triple in Table 4.1.
 * `english_patterns`, `latin_patterns`, `latin_all_three`: the Fragments
   show the attested patterns of (191) and no others.
 * `english_ssg`, `english_rsg`: (3) and (4) on the English Fragment.
@@ -364,6 +372,36 @@ theorem basque_not_realized {v : RuleSet (SpanRule 3 ℕ)} (hv : v.Antihomophono
   have hc := isContiguous_realize hv
   rw [h, isContiguous_comp_iff (Option.some_injective ℕ)] at hc
   exact absurd hc (by decide)
+
+/-! ### The broad sample (Appendix A)
+
+The 148 languages of Table A.1, chosen on a quasi-random basis (section 1.3). Most languages
+satisfy the generalizations for trivial reasons, lacking suppletion, superlatives or adjectives
+(p. 16): a language bears on the CSG only with suppletion and a morphological superlative. -/
+
+/-- A language of the sample bears on the CSG when the table gives it suppletion and a
+morphological superlative not marked questionable. -/
+def BearsOnCSG (r : Structures.Row) : Prop :=
+  (∃ v ∈ r.suppl, v.code = .yes) ∧ ∃ v ∈ r.sprl, v.code = .morphological ∧ v.questionable = false
+
+instance (r : Structures.Row) : Decidable (BearsOnCSG r) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Four of the 148 languages bear on the CSG. -/
+theorem bearsOnCSG_names : (Structures.rows.filter (BearsOnCSG ·)).map (·.language.name) =
+    ["Persian (Farsi)", "Czech", "Finnish", "Basque"] := by
+  decide
+
+/-- Every language of the sample with suppletion is in Eurasia: comparative suppletion with
+morphological superlatives is confined to a Greater European area (p. 17). -/
+theorem eurasia_of_suppletion : ∀ r ∈ Structures.rows, (∃ v ∈ r.suppl, v.code = .yes) →
+    ∃ v ∈ r.region, v.code = .eurasia := by
+  decide +kernel
+
+/-- Each language of the sample that bears on the CSG has a cognate triple in Table 4.1. -/
+theorem exists_rootClasses_of_bearsOnCSG : ∀ r ∈ Structures.rows, BearsOnCSG r →
+    ∃ t ∈ Paradigms.rootClasses, some t.lexeme.languageId = r.language.glottocode := by
+  decide +kernel
 
 /-- *Best* does not return to the root of *good*, as CSG1 requires. -/
 theorem good_csg1 : good.comparison.suppletion 2 ≠ good.comparison.suppletion 0 :=
