@@ -7,10 +7,11 @@ module
 
 public import Studies.CarianiSantorio2018
 public import Studies.Condoravdi2002
+public import Linglib.Semantics.Modality.BranchingTime
 public import Linglib.Logic.Modal.Basic
 
 /-!
-# Cariani (2021): *The Modal Future*, chapters 5 to 8
+# Cariani (2021): *The Modal Future*, chapters 5 to 8 and 11
 
 Cariani develops the selection semantics of Cariani and Santorio, on which *will* selects a
 world from its modal domain, from the perspective of the world of evaluation, and evaluates its
@@ -23,6 +24,8 @@ base. *Will B* and historical *might not B* are then consistent at a world but a
 by no information state that respects the partition. Chapter 7 states *will* in Condoravdi's
 terms, selecting a world and extending the interval forward, and chapter 8 lets *if* restrict
 the modal base, which gives will-conditionals Stalnaker's truth conditions and import–export.
+Chapter 11 keeps contexts classical and locates the open future in indeterminacy over which
+context an utterance has, and rejects the convergent thin red line of Belnap and Green.
 
 ## Main results
 
@@ -43,6 +46,9 @@ the modal base, which gives will-conditionals Stalnaker's truth conditions and i
 * `willIf_willIf`, `willIf_univ_eq_selectionConditional`: import–export for will-conditionals,
   and over the universal base they are Stalnaker's conditional.
 * `not_accepts_willIf_and_mightIf_not`: Fact 8.3, the conditional future-might contradiction.
+* `indeterminate_sat`: the lifting argument, Fact 11.1, which needs only the K logic of `D`.
+* `not_exists_convergent_centered_trl`: convergence and centering of a thin red line are
+  inconsistent on a branching moment (Figure 11.4).
 
 ## Implementation notes
 
@@ -56,14 +62,15 @@ the modal base, which gives will-conditionals Stalnaker's truth conditions and i
 
 ## TODO
 
-* Chapter 11: the lifting argument of Fact 11.1 and the contextual and selectional thin red
-  lines.
+* The counterhistorical restriction of §8.6 and the identity collapse of §8.8 (Fact 8.4).
 
 ## References
 
 * [cariani-2021]
 * [cariani-santorio-2018]
 * [kissine-2008]
+* [condoravdi-2002]
+* [belnap-green-1994]
 -/
 
 @[expose] public section
@@ -373,5 +380,55 @@ theorem not_accepts_willIf_and_mightIf_not [R.IsRefl] {S : Set W} (hS : IsEligib
   exact hv this
 
 end Conditionals
+
+/-! ### Indeterminacy and the thin red line
+
+Chapter 11 keeps every context classical, fixing a world, and reads the open future as
+indeterminacy over which of the contexts of a cloud an utterance has. A bare prediction has one
+content across the cloud, generalized transparency, and its truth there is indeterminate, so the
+normative status of asserting it is indeterminate too, the lifting argument of Fact 11.1 (p. 211,
+proof pp. 222-223). The determinacy operator `D` is necessity along a relation between contexts,
+and its indeterminacy `I φ` is `¬ D φ ∧ ¬ D ¬φ` (p. 211). Against a flexible thin red line,
+convergence, that moments on one history share a thin red line, and centering, that the thin
+red line at a moment passes through it, are inconsistent once two branches leave a moment
+(Figure 11.4, p. 217). -/
+
+section ThinRedLine
+
+variable {C : Type*} (R : SetRel C C)
+
+/-- Indeterminacy along the determinacy relation `R`, `¬ D φ ∧ ¬ D ¬φ` (p. 211). -/
+def Indeterminate (φ : C → Prop) (c : C) : Prop := ¬ □[R] φ c ∧ ¬ □[R] (fun c' ↦ ¬ φ c') c
+
+variable {R}
+
+/-- The lifting argument, Fact 11.1. If the truth of `A` in the context of the utterance is
+indeterminate, every context of the cloud has the speaker assert `A`, this is then determinate,
+and the truth norm determinately ties satisfaction of the norm to the truth of what is asserted,
+then whether the norm is satisfied is indeterminate. The argument uses only the K logic of `D`,
+though the book assumes S5 (p. 210). -/
+theorem indeterminate_sat (cloud : Set C) {cu : C} {holds asserts sat : C → Prop}
+    (hind : Indeterminate R holds cu)
+    (hbridge : (∀ c ∈ cloud, asserts c) → □[R] asserts cu)
+    (hcontent : ∀ c ∈ cloud, asserts c)
+    (hnorm : □[R] (fun c ↦ sat c ↔ (asserts c → holds c)) cu) :
+    Indeterminate R sat cu :=
+  have ha := hbridge hcontent
+  ⟨fun h ↦ hind.1 fun c hc ↦ (hnorm c hc).1 (h c hc) (ha c hc),
+    fun h ↦ hind.2 fun c hc ht ↦ h c hc ((hnorm c hc).2 fun _ ↦ ht)⟩
+
+/-- A thin red line assigning each moment a history cannot be both convergent and centered once
+two incomparable moments follow a common one (Figure 11.4). -/
+theorem not_exists_convergent_centered_trl {M : Type*} [PartialOrder M] [IsLeftLinear M]
+    {m₁ m₂ m₃ : M} (h₂ : m₁ ≤ m₂) (h₃ : m₁ ≤ m₃) (h₂₃ : ¬ (m₂ ≤ m₃ ∨ m₃ ≤ m₂)) :
+    ¬ ∃ trl : M → Flag M, (∀ m, m ∈ trl m) ∧
+      ∀ m m' (h : Flag M), m ∈ h → m' ∈ h → trl m = trl m' := by
+  rintro ⟨trl, hcen, hconv⟩
+  obtain ⟨h, hm₁, hm₂⟩ := BranchingTime.histories_inter_nonempty_iff.2 (.inl h₂)
+  obtain ⟨h', hm₁', hm₃⟩ := BranchingTime.histories_inter_nonempty_iff.2 (.inl h₃)
+  have htrl : trl m₂ = trl m₃ := (hconv _ _ h hm₁ hm₂).symm.trans (hconv _ _ h' hm₁' hm₃)
+  exact h₂₃ ((trl m₂).le_or_le (hcen m₂) (htrl ▸ hcen m₃))
+
+end ThinRedLine
 
 end Cariani2021
