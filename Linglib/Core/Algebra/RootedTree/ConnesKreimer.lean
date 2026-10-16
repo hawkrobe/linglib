@@ -365,11 +365,16 @@ theorem algHom_ext {φ ψ : ConnesKreimer R T →ₐ[R] A}
     toFinsuppAlgEquiv.symm.surjective).mp
     (AddMonoidAlgebra.algHom_ext (fun F => h F) (Subsingleton.elim _ _))
 
+/-- Algebra homs agree on a forest if they agree on each of its trees. -/
+theorem algHom_of'_eq_of_ofTree {φ ψ : ConnesKreimer R T →ₐ[R] A} {F : Forest T}
+    (h : ∀ t ∈ F, φ (ofTree t) = ψ (ofTree t)) : φ (of' F) = ψ (of' F) := by
+  simp only [← prod_map_ofTree, map_multiset_prod, Multiset.map_map, Function.comp_def]
+  exact congrArg _ (Multiset.map_congr rfl h)
+
 /-- Algebra homs out of `ConnesKreimer` agree if they agree on trees. -/
 @[ext] theorem algHom_ext_ofTree {φ ψ : ConnesKreimer R T →ₐ[R] A}
     (h : ∀ t : T, φ (ofTree t) = ψ (ofTree t)) : φ = ψ :=
-  algHom_ext fun F ↦ by simp only [← prod_map_ofTree, map_multiset_prod, Multiset.map_map,
-    Function.comp_def, h]
+  algHom_ext fun _ ↦ algHom_of'_eq_of_ofTree fun t _ ↦ h t
 
 end Aeval
 
