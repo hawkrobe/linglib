@@ -15,15 +15,17 @@ theory says which contexts accept that formula (`Theory.accepts`). The linking h
 subjects infer the presupposition a sentence is predicted to carry (the paper's §2.3.1), turns the
 acceptance conditions into a predicted inference: the unconditional one if the theory predicts it,
 otherwise the conditional one if the theory predicts that, and nothing if it predicts neither
-(`predicted`). The verdict compares prediction and fact (`verdict`), for a registered account or
-for a theory under development alike.
+(`predicted`). Each experiment scores a theory cell by cell (`experiment1`, `experiment4`), for a
+registered account or for a theory under development alike.
 
 Every account accepts a target sentence iff the context entails `if p, q`, except that the
 incremental accounts, which coincide on the fragment (`Eval.Projection.edges`), require the
 unconditional `q` in the inverse order (`accepts_target_iff`). The conditional inference is
-endorsed more in every tested cell of both experiments. So every incremental account is wrong on
+endorsed more in every tested cell of both experiments (`observed_experiment1`,
+`observed_experiment4`). So every incremental account is wrong on
 each inverse-order sentence and right on each canonical one, and every other account, the
-symmetric ones and Limited Symmetry, is right on all (`verdict_eq`).
+symmetric ones and Limited Symmetry, is right on all (`verdict_experiment1`,
+`verdict_experiment4`).
 
 ## References
 
@@ -196,30 +198,57 @@ def observed4 : Construction → Order → Option Inference :=
   observedIn experiment4Inferences (fun r ↦ (r.construction, r.order)) (·.inference)
     (·.mean.toRat)
 
-/-- The verdict on a theory in a cell of an experiment. -/
-noncomputable def verdict (observed : Construction → Order → Option Inference) (T : Theory)
-    (k : Construction) (o : Order) : Eval.Verdict :=
-  .of (predicted T k o) (observed k o)
+/-- Experiment 1 of [chemla-schlenker-2012], whose inferences are rated in Table 4. -/
+noncomputable def experiment1 : Experiment Theory (Construction × Order) Inference where
+  observed c := observed1 c.1 c.2
+  predicted T c := predicted T c.1 c.2
 
-/-- By Tables 4 and 7, in both experiments the conditional inference is endorsed more in every
-tested cell, and the *unless*-sentence in the canonical order was not tested. -/
-theorem observed_eq (k : Construction) (o : Order) :
-    observed1 k o = observed4 k o ∧
-      observed1 k o = if k = .unlessSentence ∧ o = .canonical then none else some .conditional := by
+/-- Experiment 4 of [chemla-schlenker-2012], whose inferences are rated in Table 7. -/
+noncomputable def experiment4 : Experiment Theory (Construction × Order) Inference where
+  observed c := observed4 c.1 c.2
+  predicted T c := predicted T c.1 c.2
+
+/-- By Table 4, the conditional inference is endorsed more in every tested cell, and the
+*unless*-sentence in the canonical order was not tested. -/
+theorem observed_experiment1 (k : Construction) (o : Order) :
+    experiment1.observed (k, o) =
+      if k = .unlessSentence ∧ o = .canonical then none else some .conditional := by
   cases k <;> cases o <;> decide +kernel
 
-/-- On both inferential experiments, every incremental account is wrong on each
-inverse-order sentence and right on each canonical one, and every other account is right on all. -/
-theorem verdict_eq (a : Account) (k : Construction) (o : Order) :
-    verdict observed1 a.theory k o = verdict observed4 a.theory k o ∧
-      verdict observed1 a.theory k o =
-        if k = .unlessSentence ∧ o = .canonical then .silent
-        else if a ∈ incremental ∧ o = .inverse then .wrong else .correct := by
-  obtain ⟨h14, h1⟩ := observed_eq k o
-  refine ⟨by simp only [verdict, h14], ?_⟩
-  simp only [verdict, h1, predicted_eq]
+/-- By Table 7, the conditional inference is endorsed more in every tested cell, and the
+*unless*-sentence in the canonical order was not tested. -/
+theorem observed_experiment4 (k : Construction) (o : Order) :
+    experiment4.observed (k, o) =
+      if k = .unlessSentence ∧ o = .canonical then none else some .conditional := by
+  cases k <;> cases o <;> decide +kernel
+
+/-- Where the conditional inference is endorsed more in every tested cell, every incremental
+account is wrong on each inverse-order sentence and right on each canonical one, and every other
+account is right on all. -/
+private theorem verdict_of_observed {X : Experiment Theory (Construction × Order) Inference}
+    (hp : ∀ T c, X.predicted T c = predicted T c.1 c.2)
+    (ho : ∀ k o, X.observed (k, o) =
+      if k = .unlessSentence ∧ o = .canonical then none else some .conditional)
+    (a : Account) (k : Construction) (o : Order) :
+    X.verdict a.theory (k, o) = if k = .unlessSentence ∧ o = .canonical then .silent
+      else if a ∈ incremental ∧ o = .inverse then .wrong else .correct := by
+  rw [Experiment.verdict, hp, ho, predicted_eq]
   by_cases hk : k = .unlessSentence ∧ o = .canonical
   · simp [hk, Eval.Verdict.of]
   · by_cases ha : a ∈ incremental ∧ o = .inverse <;> simp [hk, ha, Eval.Verdict.of]
+
+/-- On Experiment 1, every incremental account is wrong on each inverse-order sentence and right
+on each canonical one, and every other account is right on all. -/
+theorem verdict_experiment1 (a : Account) (k : Construction) (o : Order) :
+    experiment1.verdict a.theory (k, o) = if k = .unlessSentence ∧ o = .canonical then .silent
+      else if a ∈ incremental ∧ o = .inverse then .wrong else .correct :=
+  verdict_of_observed (fun _ _ ↦ rfl) observed_experiment1 a k o
+
+/-- On Experiment 4, as on Experiment 1, every incremental account is wrong on each inverse-order
+sentence and right on each canonical one, and every other account is right on all. -/
+theorem verdict_experiment4 (a : Account) (k : Construction) (o : Order) :
+    experiment4.verdict a.theory (k, o) = if k = .unlessSentence ∧ o = .canonical then .silent
+      else if a ∈ incremental ∧ o = .inverse then .wrong else .correct :=
+  verdict_of_observed (fun _ _ ↦ rfl) observed_experiment4 a k o
 
 end Eval.Projection.ChemlaSchlenker2012

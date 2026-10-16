@@ -23,16 +23,20 @@ into a predicted order of the two rates (`predicted`).
 The verdicts hold of every theory that accepts a clause only where symmetric Transparency does and
 accepts every clause without a trigger: Schlenker's Transparency and local satisfaction, checked
 incrementally or symmetrically, and any theory under development with these two properties. With
-every presupposition accommodated in the context (`global`), such a theory predicts the universal
-inference from all five quantifiers, and so no difference between the groups, and it is wrong
-(`verdict_global_of`). Chemla's §4.1.2 considers an amendment: the universal presupposition is not
-accommodated after the numerical quantifiers. A parser can stipulate this sentence by sentence, at
-the cost of three stipulations (`stipulated`). The section and Appendix F suggest a rule instead:
-keep the presupposition in the context where transparency derives it in one step (`oneStep`). The
-rule parses every sentence as the stipulations do, without any of them (`parse_oneStep`), so the
-two give every theory the same verdict (`verdict_stipulated_eq`), and by the rule such a theory is
-right (`verdict_oneStep_of`). A theory silent on quantified clauses is silent here
-(`verdict_eq_silent`).
+every presupposition accommodated in the context (`Accommodation.global`), such a theory predicts
+the universal inference from all five quantifiers, and so no difference between the groups, and it
+is wrong (`verdict_global_of`). Chemla's §4.1.2 considers an amendment: the universal presupposition
+is not accommodated after the numerical quantifiers. A parser can stipulate this sentence by
+sentence, at the cost of three stipulations (`Accommodation.stipulated`). The section and Appendix F
+suggest a rule instead: keep the presupposition in the context where transparency derives it in one
+step (`Accommodation.oneStep`). The rule parses every sentence as the stipulations do, without any
+of them (`parse_oneStep`), so the two give every theory the same verdict (`verdict_stipulated_eq`),
+and by the rule such a theory is right (`verdict_oneStep_of`). A theory silent on quantified clauses
+is silent here (`verdict_eq_silent`).
+
+The experiment scores a theory together with where it accommodates the presupposition
+(`experiment1`), since that is part of the theory, not of the fact. The registered accounts get
+their verdicts from the general theorems (`verdict_experiment1`).
 
 ## Implementation notes
 
@@ -161,38 +165,61 @@ noncomputable def verdict (T : Theory) (π : ClauseParser) : Eval.Verdict :=
 
 /-! ### Parsers -/
 
-/-- Every presupposition accommodated in the context. -/
-def global : ClauseParser := .ofRule some
-
-/-- §4.1.2: the universal presupposition is not accommodated after the numerical quantifiers,
-stipulated for each of their sentences. -/
-def stipulated : ClauseParser where
-  rule := some
-  table := List.toFinmap
-    [⟨.lessThan3, accommodateScope (clause .lessThan3)⟩,
-     ⟨.moreThan3, accommodateScope (clause .moreThan3)⟩,
-     ⟨.exactly3, accommodateScope (clause .exactly3)⟩]
+/-- Where a theory accommodates the presupposition of the trigger, which fixes how it parses the
+experiment's sentences. -/
+inductive Accommodation where
+  /-- Every presupposition in the context. -/
+  | global
+  /-- §4.1.2: the universal presupposition is not accommodated after the numerical quantifiers,
+  stipulated for each of their sentences. -/
+  | stipulated
+  /-- Appendix F: the presupposition of the scope is accommodated in the context where
+  transparency derives it in one step, and in the scope otherwise. -/
+  | oneStep
+  deriving DecidableEq
 
 open Classical in
-/-- Appendix F: the presupposition of the scope is accommodated in the context where transparency
-derives it in one step, and in the scope otherwise. -/
-noncomputable def oneStep : ClauseParser :=
-  .ofRule fun c ↦ some (if OneStep c.quantifier then c else accommodateScope c)
+/-- The parser of an accommodation. -/
+noncomputable def Accommodation.parser : Accommodation → ClauseParser
+  | .global => .ofRule some
+  | .stipulated =>
+    ⟨some, List.toFinmap
+      [⟨.lessThan3, accommodateScope (clause .lessThan3)⟩,
+       ⟨.moreThan3, accommodateScope (clause .moreThan3)⟩,
+       ⟨.exactly3, accommodateScope (clause .exactly3)⟩]⟩
+  | .oneStep => .ofRule fun c ↦ some (if OneStep c.quantifier then c else accommodateScope c)
 
 /-- Appendix F's rule parses every sentence as §4.1.2's stipulations do, with none of them. -/
-theorem parse_oneStep : oneStep.parse clause = stipulated.parse clause := by
+theorem parse_oneStep :
+    Accommodation.oneStep.parser.parse clause = Accommodation.stipulated.parser.parse clause := by
   refine Parser.parse_ofRule_eq _ _ (fun d p h ↦ ?_) fun d hd ↦ ?_
-  · cases d <;> simp_all [stipulated, clause, oneStep_tree_iff, experiment1Groups]
-  · cases d <;> simp_all [stipulated, clause, Parser.stipulations, Finmap.mem_keys,
+  · cases d <;> simp_all [Accommodation.parser, clause, oneStep_tree_iff, experiment1Groups]
+  · cases d <;> simp_all [Accommodation.parser, clause, Parser.stipulations, Finmap.mem_keys,
       Finmap.mem_list_toFinmap, oneStep_tree_iff, experiment1Groups]
 
-theorem stipulations_global : global.stipulations = ∅ := Parser.stipulations_ofRule _
+/-- Accommodating every presupposition in the context stipulates no parse. -/
+theorem stipulations_global : Accommodation.global.parser.stipulations = ∅ :=
+  Parser.stipulations_ofRule _
 
+/-- §4.1.2's parser stipulates the parses of the three numerical quantifiers' sentences. -/
 theorem stipulations_stipulated :
-    stipulated.stipulations = {.lessThan3, .moreThan3, .exactly3} := by
+    Accommodation.stipulated.parser.stipulations = {.lessThan3, .moreThan3, .exactly3} := by
   decide
 
-theorem stipulations_oneStep : oneStep.stipulations = ∅ := Parser.stipulations_ofRule _
+/-- Appendix F's rule stipulates no parse. -/
+theorem stipulations_oneStep : Accommodation.oneStep.parser.stipulations = ∅ :=
+  Parser.stipulations_ofRule _
+
+/-- Experiment 1 of [chemla-2009a]: whether the universal inference is endorsed more after *each*
+and *no* than after the numerical quantifiers (§2.3.4), for a theory with where it accommodates the
+presupposition. -/
+noncomputable def experiment1 : Experiment (Theory × Accommodation) Unit Ordering where
+  observed _ := observed
+  predicted T _ := predicted T.1 (T.2.parser.parse clause)
+
+theorem verdict_experiment1_eq (T : Theory) (p : Accommodation) :
+    experiment1.verdict (T, p) () = verdict T p.parser :=
+  rfl
 
 /-! ### Predictions -/
 
@@ -234,14 +261,19 @@ private theorem predicted_of_parse (hacc : T.acceptsClause = some acc)
   rw [hacc]
   simp
 
-theorem observed_eq : observed = some .gt := by decide +kernel
+private theorem observed_eq : observed = some .gt := by decide +kernel
+
+/-- By §2.3.4, the universal inference is endorsed more after *each* and *no* than after the
+numerical quantifiers. -/
+theorem observed_experiment1 : experiment1.observed () = some .gt := observed_eq
 
 /-- With every presupposition accommodated in the context, a theory within symmetric Transparency
 predicts no difference between the groups and is wrong. -/
 theorem verdict_global_of (hacc : T.acceptsClause = some acc)
     (hT : ∀ Atom W E I C c, acc Atom W E I C c → Schlenker2009.QuantifiedClause.TranspS I C c) :
-    verdict T global = .wrong := by
-  have : global.parse clause = fun d ↦ some (clause d) := by funext d; simp [global]
+    verdict T Accommodation.global.parser = .wrong := by
+  have : Accommodation.global.parser.parse clause = fun d ↦ some (clause d) := by
+    funext d; simp [Accommodation.parser]
   rw [verdict, this, predicted_of_parse hacc, observed_eq]
   unfold orderOf
   rw [ite_eq_left (.inl ⟨fun d _ ↦ predictsUniversal_clause hT d,
@@ -253,10 +285,11 @@ trigger predicts the universal inference from *each* and *no* alone and is right
 theorem verdict_oneStep_of (hacc : T.acceptsClause = some acc)
     (hT : ∀ Atom W E I C c, acc Atom W E I C c → Schlenker2009.QuantifiedClause.TranspS I C c)
     (hU : ∀ Atom W E I C (c : QuantifiedClause Atom), c.occurrences = [] → acc Atom W E I C c) :
-    verdict T oneStep = .correct := by
-  have : oneStep.parse clause = fun d ↦ some (if (experiment1Groups d).group = .eachOrNo
-      then clause d else accommodateScope (clause d)) := by
-    funext d; simp [oneStep, clause, oneStep_tree_iff]
+    verdict T Accommodation.oneStep.parser = .correct := by
+  have : Accommodation.oneStep.parser.parse clause = fun d ↦
+      some (if (experiment1Groups d).group = .eachOrNo then clause d
+        else accommodateScope (clause d)) := by
+    funext d; simp [Accommodation.parser, clause, oneStep_tree_iff]
   rw [verdict, this, predicted_of_parse hacc, observed_eq]
   have he := predictsUniversal_clause hT
   have hn := not_predictsUniversal_accommodateScope hU
@@ -277,7 +310,8 @@ theorem verdict_eq_silent (h : T.acceptsClause = none) (π : ClauseParser) :
   rfl
 
 /-- §4.1.2's stipulations give every theory the verdict that Appendix F's rule gives it. -/
-theorem verdict_stipulated_eq (T : Theory) : verdict T stipulated = verdict T oneStep := by
+theorem verdict_stipulated_eq (T : Theory) :
+    verdict T Accommodation.stipulated.parser = verdict T Accommodation.oneStep.parser := by
   rw [verdict, verdict, parse_oneStep]
 
 /-! ### The registered accounts -/
@@ -293,26 +327,20 @@ private theorem acceptsClause_spec {a : Account} (h : a.AcceptsClause = some acc
   · exact ⟨fun _ _ _ _ _ _ h ↦ h.transpI.transpS, fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho⟩
   · exact ⟨fun _ _ _ _ _ _ h ↦ h.transpS, fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho⟩
 
-/-- With every presupposition accommodated in the context, each registered account that covers
-quantified clauses is wrong, and the others are silent. -/
-theorem verdict_global (a : Account) :
-    verdict a.theory global = if a.AcceptsClause.isSome then .wrong else .silent := by
+/-- On Experiment 1, each registered account that covers quantified clauses is wrong with every
+presupposition accommodated in the context and right by §4.1.2's stipulations or Appendix F's rule,
+and the others are silent. -/
+theorem verdict_experiment1 (a : Account) (p : Accommodation) :
+    experiment1.verdict (a.theory, p) () = if a.AcceptsClause.isSome then
+      (if p = .global then .wrong else .correct) else .silent := by
+  rw [verdict_experiment1_eq]
   cases h : a.AcceptsClause with
   | none => exact verdict_eq_silent h _
-  | some acc => exact verdict_global_of h (acceptsClause_spec h).1
-
-/-- By Appendix F's rule, each registered account that covers quantified clauses is right, and the
-others are silent. -/
-theorem verdict_oneStep (a : Account) :
-    verdict a.theory oneStep = if a.AcceptsClause.isSome then .correct else .silent := by
-  cases h : a.AcceptsClause with
-  | none => exact verdict_eq_silent h _
-  | some acc => exact verdict_oneStep_of h (acceptsClause_spec h).1 (acceptsClause_spec h).2
-
-/-- By §4.1.2's stipulations, each registered account that covers quantified clauses is right, and
-the others are silent. -/
-theorem verdict_stipulated (a : Account) :
-    verdict a.theory stipulated = if a.AcceptsClause.isSome then .correct else .silent :=
-  (verdict_stipulated_eq _).trans (verdict_oneStep a)
+  | some acc =>
+    obtain ⟨hT, hU⟩ := acceptsClause_spec h
+    cases p
+    · exact verdict_global_of h hT
+    · exact (verdict_stipulated_eq _).trans (verdict_oneStep_of h hT hU)
+    · exact verdict_oneStep_of h hT hU
 
 end Eval.Projection.Chemla2009a

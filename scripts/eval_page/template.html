@@ -195,8 +195,9 @@ footer p { margin: 0; }
   <section aria-labelledby="board-h">
     <div class="section-head">
       <h2 id="board-h">Verdicts</h2>
-      <p class="prose">Rows are theories, columns the observations. On Chemla (2009) each column is a different
-        way for a theory to parse the same sentences, with the number of sentences whose parse it stipulates.</p>
+      <p class="prose">Rows are theories, columns the cells of each experiment. Where a theory is scored with a
+        way of parsing the sentences, each column is one such way, with the number of sentences whose parse it
+        stipulates.</p>
     </div>
     <div class="board-scroll"><table class="board" id="board"></table></div>
   </section>
@@ -245,75 +246,130 @@ footer p { margin: 0; }
   const strip = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d.textContent; };
   const WORD = { correct: "Right", wrong: "Wrong", silent: "Silent" };
   const MARK = { correct: "✓", wrong: "✗", silent: "–" };
-  const byId = Object.fromEntries(data.datasets.map((d) => [d.id, d]));
-  const cs = byId["chemla-schlenker-2012"];
-  const ch = byId["chemla-2009a"];
-  const cite = (d) => `${esc(d.cite.who)} (${esc(d.cite.year)})`;
+  const cite = (c) => c ? `${esc(c.who)} (${esc(c.year)})` : "";
+  const exps = data.experiments;
 
   // Header meta.
-  const meta = document.getElementById("meta");
-  meta.innerHTML = `<span>${data.theories.length} theories · ${Object.keys(data.cells).length} verdicts</span>` +
+  document.getElementById("meta").innerHTML =
+    `<span>${data.theories.length} theories · ${exps.length} experiments · ${Object.keys(data.cells).length} verdicts</span>` +
     (data.commit.sha ? `<span>built from <a href="${esc(data.commit.href)}"><code>${esc(data.commit.short)}</code></a> on ${esc(data.built)}</span>` : "");
 
+  // The printed rows of a paper's table for an experiment and a cell, for tooltips.
+  function printed(e, col) {
+    const paper = data.papers[e.paper];
+    if (!paper) return "";
+    const prefix = e.decl.short;
+    const out = [];
+    for (const t of paper.tables) {
+      if (!t.name.startsWith(prefix)) continue;
+      for (const r of t.rows) {
+        const vals = Object.values(r).map(String);
+        if (col.cell.length && col.cell.every((x) => vals.includes(x)) && "mean" in r)
+          out.push(`${r.inference ?? ""} ${r.mean}`.trim());
+      }
+    }
+    return out.join(", ");
+  }
+  // A group of quantifiers, named by its members or, for the numerical ones, as such.
+  const groupLabel = (g) => (g.split(",").length > 2 ? "numerals" : g);
+  // What was observed, in words.
+  function observedText(e, col) {
+    if (col.observed === null) return null;
+    const paper = data.papers[e.paper];
+    const rates = paper && paper.tables.find((t) => t.name.startsWith(e.decl.short) && t.rows.length && "acceptance" in t.rows[0]);
+    if (rates && rates.rows.length === 2) {
+      const [a, b] = rates.rows;
+      const rel = { gt: "&gt;", lt: "&lt;", eq: "=" }[col.observed] || esc(col.observed);
+      return `${esc(groupLabel(a.group))} ${esc(a.acceptance)}% ${rel} ${esc(groupLabel(b.group))} ${esc(b.acceptance)}%`;
+    }
+    return esc(col.observed);
+  }
+
   // Scoreboard.
-  const columns = [];
-  for (const g of cs.groups) for (const c of g.cols) columns.push({ ds: cs, col: c });
-  for (const g of ch.groups) for (const c of g.cols) columns.push({ ds: ch, col: c });
-  const csCount = cs.groups.reduce((n, g) => n + g.cols.length, 0);
-  const chCount = ch.groups.reduce((n, g) => n + g.cols.length, 0);
-  const split = (i) => (i === 0 || i === csCount ? " split" : "");
-
-  let h = "<thead>";
-  h += `<tr class="datasets"><th class="corner" rowspan="3" scope="col">Theory</th>` +
-    `<th class="split" colspan="${csCount}">${cite(cs)}<small>which presupposition is endorsed more</small></th>` +
-    `<th class="split" colspan="${chCount}">${cite(ch)}<small>universal inference after <i>each</i>, <i>no</i> vs. the numerals</small></th></tr>`;
-  h += `<tr class="groups">` +
-    cs.groups.map((g, i) => `<th colspan="${g.cols.length}" class="${i === 0 ? "split" : ""}"><i>${esc(g.label)}</i></th>`).join("") +
-    `<th class="split" colspan="${chCount}">how the theory parses the sentences</th></tr>`;
-  h += `<tr>` + columns.map((c, i) => {
-    if (c.ds === cs) return `<th scope="col" class="${split(i).trim()}">${esc(c.col.label)}</th>`;
-    const n = c.col.stipulations.length;
-    return `<th scope="col" class="${split(i).trim()}"><a href="${esc(c.col.decl.href)}" title="${esc(strip(c.col.decl.doc))}">${esc(c.col.label)}</a>` +
-      `<span class="stip"><b>${n}</b> stipulated</span></th>`;
-  }).join("") + `</tr>`;
-  h += `<tr class="observed"><th class="corner" scope="row" style="font-weight:500;color:var(--muted)">Observed</th>` +
-    cs.groups.flatMap((g) => g.cols).map((c, i) => {
-      if (!c.observed) return `<td class="${split(i).trim()}"><span class="obs none">not tested</span></td>`;
-      const t = c.means.map((m) => `Experiment ${m.experiment}: conditional ${m.conditional}, unconditional ${m.unconditional}`).join("; ");
-      return `<td class="${split(i).trim()}"><span class="obs" title="${esc(t)}">${esc(c.observed)}</span></td>`;
-    }).join("") +
-    `<td class="split" colspan="${chCount}"><span class="obs" title="${esc(ch.rates.map((r) => r.group + ": " + r.acceptance + "%").join("; "))}">` +
-    `<i>each</i>, <i>no</i> ${esc(ch.rates[0].acceptance)}% &gt; numerals ${esc(ch.rates[1].acceptance)}%</span></td></tr>`;
-  h += "</thead><tbody>";
-
+  let h = "<thead><tr class=\"datasets\"><th class=\"corner\" rowspan=\"3\" scope=\"col\">Theory</th>";
+  for (const e of exps) h += `<th class="split" colspan="${e.columns.length}">${cite(e.cite)}<small>${esc(e.label)}</small></th>`;
+  h += "</tr><tr class=\"groups\">";
+  for (const e of exps) {
+    if (e.variants) { h += `<th class="split" colspan="${e.columns.length}">how the theory parses the sentences</th>`; continue; }
+    const groups = [];
+    for (const c of e.columns) {
+      const g = c.cell.length > 1 ? c.cell[0] : "";
+      if (groups.length && groups[groups.length - 1].g === g) groups[groups.length - 1].n++;
+      else groups.push({ g, n: 1 });
+    }
+    groups.forEach((g, i) => { h += `<th colspan="${g.n}" class="${i === 0 ? "split" : ""}"><i>${esc(g.g)}</i></th>`; });
+  }
+  h += "</tr><tr>";
+  for (const e of exps) {
+    e.columns.forEach((c, i) => {
+      const cls = i === 0 ? "split" : "";
+      if (c.variant) {
+        const v = c.variant, n = v.stipulations ? v.stipulations.length : null;
+        h += `<th scope="col" class="${cls}"><a href="${esc(v.decl.href)}" title="${esc(strip(v.decl.doc))}">${esc(v.label)}</a>` +
+          (n === null ? "" : `<span class="stip"><b>${n}</b> stipulated</span>`) + `</th>`;
+      } else {
+        h += `<th scope="col" class="${cls}">${esc(c.cell.length ? c.cell[c.cell.length - 1] : "")}</th>`;
+      }
+    });
+  }
+  h += `</tr><tr class="observed"><th class="corner" scope="row" style="font-weight:500;color:var(--muted)">Observed</th>`;
+  for (const e of exps) {
+    let i = 0;
+    while (i < e.columns.length) {
+      const c = e.columns[i];
+      let n = 1;
+      while (i + n < e.columns.length && e.columns[i + n].cell.join() === c.cell.join()) n++;
+      const text = observedText(e, c);
+      const tip = printed(e, c);
+      h += `<td class="${i === 0 ? "split" : ""}" colspan="${n}">` +
+        (text === null ? `<span class="obs none">not tested</span>` : `<span class="obs"${tip ? ` title="${esc(tip)}"` : ""}>${text}</span>`) + `</td>`;
+      i += n;
+    }
+  }
+  h += "</tr></thead><tbody>";
+  const span = 1 + exps.reduce((n, e) => n + e.columns.length, 0);
   const groups = [
     ["Registered accounts", data.theories.filter((t) => t.source === "registered")],
     ["Lab: theories under development", data.theories.filter((t) => t.source === "lab")],
   ];
-  const span = columns.length + 1;
   for (const [label, rows] of groups) {
     if (!rows.length) continue;
     h += `<tr class="group"><th colspan="${span}" scope="colgroup">${esc(label)}</th></tr>`;
     for (const t of rows) {
       h += `<tr><th scope="row"><a class="name" href="${esc(t.decl.href)}">${esc(t.label)}</a>` +
-        (t.source === "lab" ? `<span class="pill">Lab</span>` : "") +
-        `<span class="desc">${t.decl.doc}</span></th>`;
-      columns.forEach((c, i) => {
-        const cell = data.cells[`${c.ds.id}|${t.id}|${c.col.id}`];
-        if (!cell) { h += `<td class="${split(i).trim()}"></td>`; return; }
-        const what = `${WORD[cell.verdict]}: ${t.label}, ${c.ds.cite.who} ${c.ds.cite.year}, ${c.col.id}. By ${cell.theorem.name}`;
-        h += `<td class="${split(i).trim()}"><a class="v v-${esc(cell.verdict)}" href="${esc(cell.theorem.href)}" ` +
-          `title="${esc(what)}" aria-label="${esc(what)}">${MARK[cell.verdict] || "?"}</a></td>`;
-      });
+        (t.source === "lab" ? `<span class="pill">Lab</span>` : "") + `<span class="desc">${t.decl.doc}</span></th>`;
+      for (const e of exps) {
+        e.columns.forEach((c, i) => {
+          const cell = data.cells[`${e.id}|${t.id}|${c.key}`];
+          const cls = i === 0 ? "split" : "";
+          if (!cell) { h += `<td class="${cls}"></td>`; return; }
+          const where = [cite(e.cite).replace(/<[^>]*>/g, ""), e.label, ...c.cell, c.variant ? c.variant.label : ""].filter(Boolean).join(", ");
+          const what = `${WORD[cell.verdict] || cell.verdict}: ${t.label} on ${where}. By ${cell.theorem.name}`;
+          h += `<td class="${cls}"><a class="v v-${esc(cell.verdict)}" href="${esc(cell.theorem.href)}" title="${esc(what)}" aria-label="${esc(what)}">${MARK[cell.verdict] || "?"}</a></td>`;
+        });
+      }
       h += "</tr>";
     }
   }
   h += "</tbody>";
   document.getElementById("board").innerHTML = h;
 
-  // Observations, drawn to scale on 0 to 100.
-  function dotPlot(ds) {
-    const items = ds.groups.flatMap((g) => g.cols.filter((c) => c.means.length).map((c) => ({ label: `${g.label}, ${c.label}`, means: c.means })));
+  // Observations, drawn to scale from the papers' printed tables.
+  function dotPlot(paper) {
+    const tables = paper.tables.filter((t) => t.rows.length && "inference" in t.rows[0] && "mean" in t.rows[0]);
+    if (!tables.length) return "";
+    const items = [];
+    for (const t of tables) {
+      const exp = (t.name.match(/\d+/) || [""])[0];
+      for (const r of t.rows) {
+        const label = `${r.construction}, ${r.order}`;
+        let it = items.find((x) => x.label === label);
+        if (!it) { it = { label, means: [] }; items.push(it); }
+        let m = it.means.find((x) => x.experiment === exp);
+        if (!m) { m = { experiment: exp }; it.means.push(m); }
+        m[r.inference] = r.mean;
+      }
+    }
     const W = 420, L = 118, R = 404, rowH = 18, gap = 12;
     const x = (v) => L + (R - L) * (Number(v) / 100);
     let y = 8, body = "";
@@ -331,44 +387,60 @@ footer p { margin: 0; }
     }
     let grid = "";
     for (const t of [0, 25, 50, 75, 100]) grid += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${y - gap + 4}"/><text x="${x(t)}" y="${y + 8}" text-anchor="middle">${t}</text>`;
-    return `<svg viewBox="0 0 ${W} ${y + 14}" role="img" aria-label="Mean ratings of the conditional and unconditional inference in each tested cell">${grid}${body}</svg>`;
+    return `<svg viewBox="0 0 ${W} ${y + 14}" role="img" aria-label="Mean ratings of the conditional and unconditional inference in each tested cell">${grid}${body}</svg>` +
+      `<div class="key"><span><i class="cond"></i>conditional</span><span><i class="uncond"></i>unconditional</span><span>mean rating, as a percentage of the scale from no to yes; E1 and E4 are Experiments 1 and 4</span></div>`;
   }
-  function bars(ds) {
+  function bars(paper) {
+    const t = paper.tables.find((t) => t.rows.length && "acceptance" in t.rows[0]);
+    if (!t) return "";
     const W = 420, L = 118, R = 380, rowH = 26;
     const x = (v) => L + (R - L) * (Number(v) / 100);
-    const labels = { "each, no": "each, no", "less than 3, more than 3, exactly 3": "numerals" };
     let body = "", y = 6;
-    for (const r of ds.rates) {
-      body += `<text class="label" x="0" y="${y + 15}">${esc(labels[r.group] || r.group)}</text>` +
+    for (const r of t.rows) {
+      const label = groupLabel(r.group);
+      body += `<text class="label" x="0" y="${y + 15}">${esc(label)}</text>` +
         `<rect class="bar" x="${L}" y="${y + 4}" width="${x(r.acceptance) - L}" height="15" rx="3"><title>${esc(r.group)}: ${esc(r.acceptance)}%</title></rect>` +
         `<text class="value" x="${x(r.acceptance) + 6}" y="${y + 15}">${esc(r.acceptance)}%</text>`;
       y += rowH;
     }
     let grid = "";
-    for (const t of [0, 50, 100]) grid += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${y}"/><text x="${x(t)}" y="${y + 12}" text-anchor="middle">${t}%</text>`;
+    for (const v of [0, 50, 100]) grid += `<line class="grid" x1="${x(v)}" x2="${x(v)}" y1="0" y2="${y}"/><text x="${x(v)}" y="${y + 12}" text-anchor="middle">${v}%</text>`;
     return `<svg viewBox="0 0 ${W} ${y + 18}" role="img" aria-label="Acceptance of the universal inference by group of quantifiers">${grid}${body}</svg>`;
   }
-  const source = (ds) => `<p class="small">${ds.locators.map(esc).join("; ")}; ${ds.verified === "page-image" ? "checked against the page images" : esc(ds.verified)}. ` +
-    `The order of the observations: <a href="${esc(ds.observedTheorem.href)}"><code>${esc(ds.observedTheorem.short)}</code></a>.</p>`;
-  const header = (ds) => `<p class="cite">${cite(ds)}, <em>${esc(ds.cite.title)}</em>` +
-    (ds.cite.doi ? `. <a href="https://doi.org/${esc(ds.cite.doi)}">doi</a>` : "") + `</p><p>${esc(ds.task)}</p>`;
-  document.getElementById("cards").innerHTML =
-    `<article class="card">${header(cs)}${dotPlot(cs)}` +
-    `<div class="key"><span><i class="cond"></i>conditional</span><span><i class="uncond"></i>unconditional</span><span>mean rating, as a percentage of the scale from no to yes; E1 and E4 are Experiments 1 and 4</span></div>${source(cs)}</article>` +
-    `<article class="card">${header(ch)}${bars(ch)}` +
-    `<h3>Three ways to parse the sentences</h3><ul class="parsers">` +
-    ch.groups[0].cols.map((p) => `<li><span><a href="${esc(p.decl.href)}">${esc(p.label)}</a> <span class="count">${p.stipulations.length} stipulated${p.stipulations.length ? ": " + p.stipulations.map(esc).join(", ") : ""}</span></span><span>${p.decl.doc}</span></li>`).join("") +
-    `</ul><p class="small">The rule reproduces the stipulations: <a href="${esc(ch.graduation.href)}"><code>${esc(ch.graduation.short)}</code></a>. ${ch.graduation.doc}</p>${source(ch)}</article>`;
+  function variantsOf(paper) {
+    const seen = new Map();
+    for (const e of exps) if (e.paper === paper) for (const c of e.columns) if (c.variant && !seen.has(c.variant.id)) seen.set(c.variant.id, c.variant);
+    if (!seen.size) return "";
+    let h = `<h3>How a theory may parse the sentences</h3><ul class="parsers">`;
+    for (const v of seen.values()) {
+      const n = v.stipulations ? v.stipulations.length : null;
+      h += `<li><span><a href="${esc(v.decl.href)}">${esc(v.label)}</a> ` +
+        (n === null ? "" : `<span class="count">${n} stipulated${n ? ": " + v.stipulations.map(esc).join(", ") : ""}</span>`) +
+        `</span><span>${v.decl.doc}</span>` +
+        (v.sameAs ? `<span class="small">Parses every sentence as <i>${esc(v.sameAs)}</i> does: <a href="${esc(v.sameAsTheorem.href)}"><code>${esc(v.sameAsTheorem.short)}</code></a>.</span>` : "") + `</li>`;
+    }
+    return h + "</ul>";
+  }
+  const verified = { "page-image": "checked against the page images", "text-layer": "checked against the text", "raw-data": "from the released data" };
+  let cards = "";
+  for (const [paper, p] of Object.entries(data.papers)) {
+    const used = p.tables.filter((t) => exps.some((e) => e.paper === paper && t.name.startsWith(e.decl.short)));
+    cards += `<article class="card"><p class="cite">${cite(p.cite)}${p.cite ? `, <em>${esc(p.cite.title)}</em>` : ""}` +
+      (p.cite && p.cite.doi ? `. <a href="https://doi.org/${esc(p.cite.doi)}">doi</a>` : "") + `</p>` +
+      p.experiments.map((d) => `<p>${d.doc}</p>`).join("") +
+      dotPlot(p) + bars(p) + variantsOf(paper) +
+      `<p class="small">${used.map((t) => `${esc(t.locator)}, ${esc(verified[t.verified] || t.verified)}`).filter((x, i, a) => a.indexOf(x) === i).join("; ")}.</p></article>`;
+  }
+  document.getElementById("cards").innerHTML = cards;
 
   // Theorems.
-  const thms = [...data.theorems, ch.graduation];
-  document.getElementById("theorems").innerHTML = thms.map((t) =>
+  document.getElementById("theorems").innerHTML = data.theorems.map((t) =>
     `<div><dt><a href="${esc(t.href)}">${esc(t.name)}</a></dt><dd>${t.doc || "<i>No docstring.</i>"}</dd></div>`).join("");
 
   // Footer.
   document.getElementById("footer").innerHTML =
-    `<p>Generated by <code>scripts/gen_eval_page.py</code> from <code>scripts/eval_page/Export.lean</code>, which reduces each verdict theorem with Lean.</p>` +
-    `<p>Regenerate: <code>lake build Lab &amp;&amp; python3 scripts/gen_eval_page.py --export</code>.</p>`;
+    `<p>Generated by <code>scripts/gen_eval_page.py</code> from <code>scripts/eval_page/Export.lean</code>, which reads every theorem of <code>Eval</code> and <code>Lab</code> about an <code>Eval.Experiment</code> and reduces it with Lean.</p>` +
+    `<p>Regenerate: <code>lake build &amp;&amp; python3 scripts/gen_eval_page.py --export</code>.</p>`;
 })();
 </script>
 </body>
