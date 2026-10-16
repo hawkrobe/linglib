@@ -9,42 +9,32 @@ public import Linglib.Data.Examples.Stankova2026
 public import Linglib.Data.Examples.StankovaSimik2025
 
 /-!
-# Czech three-way negation in polar questions (Staňková 2026)
+# Staňková (2026): A Three-Way Distinction of Negation Interpretation in Czech
 
-[stankova-2026] proposes that negation in Czech polar questions occupies
-three LF positions (her (16)) — outer (PolP), medial (ModP), inner (TP)
-— fingerprinted by polarity items and the diagnostic particles
-*náhodou* / *ještě* / *fakt* (her Table 1, `licensed`):
-
-| Position | ne- > PPI | NCI | náhodou | ještě | fakt |
-|----------|-----------|-----|---------|-------|------|
-| outer    | ✓         | ✗   | ✓       | ✗     | ✗    |
-| medial   | ✓         | ✗   | ✗       | ✗     | ✓    |
-| inner    | ✗         | ✓   | ✗       | ✓     | ✓    |
-
-The positions refine [simik-2024]'s two readings of negation
-(`Position.ofReading`): medial negation is the paper's addition, low
-like inner negation but non-propositional like FALSUM.
+Staňková proposes that negation in Czech polar questions occupies one of three LF positions,
+outer (PolP), medial (ModP) or inner (TP), and that the polarity items and the particles
+*náhodou*, *ještě* and *fakt* fingerprint them (her Table 1, `licensed`). The positions refine
+Šimík's two readings of negation (`Position.ofReading`): medial negation is the paper's addition,
+low like inner negation but non-propositional like FALSUM.
 
 ## Main results
 
-* `licensed_injective` — Table 1 fingerprints the three positions;
-  `particle_signatures_distinct` — the three particle columns alone do.
-* `licenses_nciLicensed_iff` and its siblings — each column
-  characterized by scope; the polarity columns agree with
-  [stankova-2025]'s licensing of the indefinites
-  (`licenses_nciLicensed_iff_licensedAt`).
-* `nahodou_identifies_outer`, `jeste_identifies_inner`,
-  `fakt_plus_no_jeste_identifies_medial` — per-particle pinning.
-* `czech_refines_nonPreposed` — Czech splits [romero-2024]'s LoNQ, the form with
-  non-preposed negation, into inner and medial.
-* `examples_match_table1` — the paper's examples
-  (`Data.Examples.Stankova2026`) check against Table 1.
+* `licensed_injective`, `particle_signatures_distinct`: Table 1 fingerprints the three
+  positions, and its three particle columns alone do.
+* `licenses_nciLicensed_iff_licensedAt`, `licenses_ppiOutscoping_iff_licensedAt`: the polarity
+  columns agree with Staňková and Šimík's licensing of the indefinites.
+* `czech_refines_nonPreposed`: Czech splits Romero's low negation form into inner and medial.
+* `examples_match_table1`: the paper's examples check against Table 1.
 
 ## References
 
-* [stankova-2026], [stankova-2025], [stankova-2023], [zeijlstra-2004],
-  [romero-2024], [simik-2024], [gartner-gyuris-2017].
+* [stankova-2026]
+* [stankova-simik-2025]
+* [stankova-2023]
+* [zeijlstra-2004]
+* [romero-2024]
+* [simik-2024]
+* [gartner-gyuris-2017]
 -/
 
 @[expose] public section
@@ -56,21 +46,23 @@ open StankovaSimik2025 (VerbPosition LicensedAt)
 
 /-! ### The three positions -/
 
-/-- The LF positions of negation in a Czech polar question, ordered by scope width: inner
-negation in TP is propositional negation, medial negation in ModP scopes over the evidential
-modal, and outer negation in PolP is the commitment operator FALSUM (the paper's (16)). -/
+/-- Negation in a Czech polar question takes one of three LF positions, listed by scope width.
+Inner negation in TP is propositional negation, medial negation in ModP scopes over the
+evidential modal, and outer negation in PolP is the commitment operator FALSUM (the paper's
+(16)). -/
 inductive Position where
-  /-- Inner negation: propositional ¬p in TP, licensing negative concord items by Agree
-      ([zeijlstra-2004]). -/
+  /-- Inner negation is propositional ¬p in TP, which licenses negative concord items by Agree
+  ([zeijlstra-2004]). -/
   | inner
-  /-- Medial negation: over the evidential modal in ModP, part of the bias presupposition. -/
+  /-- Medial negation scopes over the evidential modal in ModP, in the bias presupposition. -/
   | medial
-  /-- Outer negation: FALSUM in PolP, high negation with obligatory focus. -/
+  /-- Outer negation is FALSUM in PolP, high negation with obligatory focus. -/
   | outer
   deriving DecidableEq, Repr, Fintype
 
-/-- [simik-2024]'s two readings as positions: the inner reading, double-checking the negation of
-the prejacent (`.negative`), and the outer one, double-checking the prejacent (`.positive`). -/
+/-- Each reading of [simik-2024] is a position. The inner reading, double-checking the negation
+of the prejacent (`.negative`), is inner negation, and the outer reading, double-checking the
+prejacent (`.positive`), is outer negation. -/
 def Position.ofReading : Polarity → Position
   | .negative => .inner
   | .positive => .outer
@@ -141,13 +133,13 @@ theorem licenses_fakt_iff : Licenses pos .fakt ↔ pos ≠ .outer := by
   cases pos <;> decide
 
 /-- On the two readings of [simik-2024], the concord column of Table 1 is
-[stankova-2025]'s licensing of *žádný*. -/
+[stankova-simik-2025]'s licensing of *žádný*. -/
 theorem licenses_nciLicensed_iff_licensedAt (n : Polarity) :
     Licenses (.ofReading n) .nciLicensed ↔ LicensedAt StankovaSimik2025.Indefinite.nci.entry n := by
   cases n <;> decide
 
 /-- On the two readings of [simik-2024], the polarity column of Table 1 is
-[stankova-2025]'s licensing of *nějaký*. -/
+[stankova-simik-2025]'s licensing of *nějaký*. -/
 theorem licenses_ppiOutscoping_iff_licensedAt (n : Polarity) :
     Licenses (.ofReading n) .ppiOutscoping ↔
       LicensedAt StankovaSimik2025.Indefinite.ppi.entry n := by
@@ -163,15 +155,7 @@ canonical reading (§2.2.3, (15), fn. 8), *vůbec* an NPI licensed by
 inner only ((9)-(10)) — plus the Table 1 assignments and the
 fingerprint results. -/
 
-open Czech.Particles (nahodou jeste fakt vubec snad copak)
-open StankovaSimik2025 (ParticleSemantics)
-
-/-- This paper's classification of its three particles (the others are
-classified in `StankovaSimik2025.classification`). The paper defers
-*fakt*'s semantics, noting the parallels to English *really* (Romero &
-Han's VERUM) and Russian *razve*. -/
-def classification : List (Particle × ParticleSemantics) :=
-  [(jeste, .temporalEndpoint), (fakt, .veridicalEmphasis), (vubec, .npi)]
+open Czech.Particles (nahodou jeste fakt copak)
 
 /-- [stankova-2026]'s Table 1: which diagnostic each particle
 realizes. -/
@@ -182,8 +166,8 @@ def table1 : List (Particle × Diagnostic) :=
 def diagnostic? (p : Particle) : Option Diagnostic :=
   table1.lookup p
 
-/-- Table 1 compatibility of a particle with a negation position: the position licenses
-the particle's diagnostic, vacuously for a particle outside the table. -/
+/-- A particle is compatible with a negation position when the position licenses the
+particle's Table 1 diagnostic, vacuously for a particle outside the table. -/
 def Compatible (p : Particle) (pos : Position) : Prop :=
   ∀ d ∈ diagnostic? p, Licenses pos d
 
@@ -215,22 +199,22 @@ theorem particle_signatures_distinct (pos pos' : Position)
   cases pos <;> cases pos' <;> decide
 
 /-- *copak* is outside Table 1: it appears in positive and negative PQs
-alike ([stankova-2025] exs. 19a-b). -/
+alike ([stankova-simik-2025] exs. 19a-b). -/
 theorem copak_no_diagnostic : diagnostic? copak = none := by decide
 
 /-! ### Word order and PQ-form typology
 
 Czech PQs come in V1 (interrogative) and nonV1 (declarative) word
 orders; since *ne-* is inseparable from the finite verb, verb position
-determines the syntactic position of negation ([stankova-2025] §2,
+determines the syntactic position of negation ([stankova-simik-2025] §2,
 [stankova-2026] §1). The `VerbPosition` API lives with the experiment
 that established it, in `StankovaSimik2025`. Crossing word order with
 polarity gives [simik-2024]'s 2×2 grid of PQ forms (`Simik2024.CzechPQForm`),
 which maps onto [romero-2024]'s PosQ/LoNQ/HiNQ typology. -/
 
-/-- The position of the negated verb for a negation position: outer negation preposes it, V1,
-[romero-2024]'s high negation form (HiNQ); inner and medial negation leave it in situ, the low
-negation form (LoNQ). -/
+/-- Outer negation preposes the negated verb, giving the high negation form (HiNQ) of
+[romero-2024], and inner and medial negation leave it in situ, giving the low negation form
+(LoNQ). -/
 def Position.negationPosition : Position → NegationPosition
   | .inner | .medial => .nonPreposed
   | .outer => .preposed
@@ -244,14 +228,13 @@ def Position.RequiresFocus : Position → Prop
 instance : DecidablePred Position.RequiresFocus := fun pos => by
   cases pos <;> unfold Position.RequiresFocus <;> infer_instance
 
-/-- Verb position realizing a negation position: outer is V1, inner and
-medial are nonV1. -/
+/-- Outer negation has the verb clause-initial, inner and medial negation in situ. -/
 def Position.toVerbPosition : Position → VerbPosition
   | .inner | .medial => .nonV1
   | .outer => .v1
 
-/-- [simik-2024] PQ form of a negation position: outer is InterNPQ,
-inner and medial are DeclNPQ. -/
+/-- In the grid of [simik-2024], outer negation gives an interrogative negative question
+(InterNPQ), and inner and medial negation a declarative one (DeclNPQ). -/
 def Position.toCzechPQForm : Position → CzechPQForm
   | .inner | .medial => .declNPQ
   | .outer => .interNPQ
@@ -279,11 +262,11 @@ theorem only_outer_requires_focus (p : Position) : p.RequiresFocus → p = .oute
 /-! ### Verb position and context sensitivity
 
 The verb-position API (`availableReadings`, `defaultReading`) is
-[stankova-2025]'s and lives in `StankovaSimik2025`; this paper adds
+[stankova-simik-2025]'s and lives in `StankovaSimik2025`; this paper adds
 the link to evidential bias strength. -/
 
-/-- Context sensitivity tracks evidential bias strength: V1/outer none,
-nonV1/inner strong. -/
+/-- Context sensitivity tracks evidential bias strength, none for a clause-initial verb and
+outer negation and strong for a verb in situ and inner negation. -/
 theorem context_tracks_bias_strength :
     (Position.ofReading VerbPosition.v1.defaultReading).biasStrength = .none_ ∧
     (Position.ofReading VerbPosition.nonV1.defaultReading).biasStrength = .strong :=
@@ -312,14 +295,14 @@ acceptable. -/
 theorem examples_match_table1 :
     ∀ x ∈ analyzedExamples, x.1.judgment = .acceptable ↔ Licenses x.2.1 x.2.2 := by decide
 
-/-- [stankova-2025]'s positive-evidence stimulus ((14): V1 negative PQ
-after evidence for p) with the bias-profile cell it occupies. -/
+/-- The positive-evidence stimulus of [stankova-simik-2025], their (14), a negative question
+with a clause-initial verb after evidence for p, with the bias-profile cell it occupies. -/
 def biasCheckedExamples :
     List (Datum × SignType × SignType × CzechPQForm) :=
   [ (StankovaSimik2025.Examples.ex14, 1, 0, .interNPQ) ]
 
-/-- The bias profile predicts the positive-evidence stimulus — the form
-is felicitous iff it appears in its evidence × original-bias cell. -/
+/-- The bias profile predicts the positive-evidence stimulus, the form being felicitous iff it
+appears in its evidence × original-bias cell. -/
 theorem bias_examples_match_profile :
     ∀ x ∈ biasCheckedExamples,
       x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechBiasProfile x.2.1 x.2.2.1 := by
