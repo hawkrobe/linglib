@@ -10,26 +10,19 @@ public import Mathlib.Data.Multiset.Antidiagonal
 public import Linglib.Core.Data.List.Zip
 
 /-!
-# Counting pairs in `Multiset.antidiagonal`
+# Splits in `Multiset.antidiagonal`
 
-`Multiset.antidiagonal w` enumerates the ordered splits `w = p.1 + p.2` *with
-multiplicities*; this file computes those multiplicities: `(u, v)` occurs
-`∏ x, (w.count x).choose (v.count x)` times when `u + v = w`, and `0` times otherwise.
+`Multiset.antidiagonal w` enumerates the ordered splits `w = p.1 + p.2` with multiplicities.
+This file reads it off a list's `sublists'`, slices it by the size of the first part, and counts
+a split through `Multiset.powerset`.
 
 ## Main results
 
+* `Multiset.antidiagonal_coe_sublists'`: the splits of a list are its `sublists'.revzip`.
 * `Multiset.filter_card_fst_eq_antidiagonal`: the splits whose first part has `k` elements
   are indexed by `powersetCard k`.
-* `Multiset.powerset_partition_swap`: a partition sum over `C.powerset` is invariant
-  under the involution `C₁ ↦ C - C₁`.
-* `Multiset.count_antidiagonal`: the closed form for `(antidiagonal w).count (u, v)`.
-* `Multiset.count_antidiagonal_eq_count_powerset`: the guard-free bridge to
-  `Multiset.count_powerset_of_le`.
-* `Multiset.count_antidiagonal_swap`: the multiplicity is symmetric in the two slots.
-
-`[UPSTREAM]` candidate; eventual mathlib home `Mathlib.Data.Multiset.Antidiagonal`, where
-the closed form also evaluates `Finsupp.antidiagonal'`.
-
+* `Multiset.count_antidiagonal_eq_count_powerset`: the multiplicity of a split is that of its
+  second part in the powerset.
 -/
 
 @[expose] public section
@@ -56,30 +49,6 @@ theorem filter_card_fst_eq_antidiagonal (s : Multiset α) (k : ℕ) :
     powersetCard_eq_filter]
   rfl
 
-/-- Reindex a partition-sum over `C.powerset` by the involution `C₁ ↦ C - C₁`: summing
-    `f C₁ (C - C₁)` equals summing `f (C - C₁) C₁`. Specialisation of
-    `map_swap_antidiagonal` to the `(C₁, C - C₁)` parametrisation. -/
-theorem powerset_partition_swap {β : Type*} [AddCommMonoid β] (C : Multiset α)
-    (f : Multiset α → Multiset α → β) :
-    (C.powerset.map fun C₁ => f C₁ (C - C₁)).sum =
-      (C.powerset.map fun C₁ => f (C - C₁) C₁).sum := by
-  -- Mathlib's convention: `s.antidiagonal = s.powerset.map (fun t => (s - t, t))`
-  -- (complement first, subset second). So a powerset sum of `f C₁ (C - C₁)` lifts
-  -- to an antidiagonal sum of `f p.2 p.1` (subset = p.2, complement = p.1).
-  have h_lift_lhs : (C.powerset.map fun C₁ => f C₁ (C - C₁)).sum =
-      (C.antidiagonal.map fun p => f p.2 p.1).sum := by
-    rw [antidiagonal_eq_map_powerset, map_map]; rfl
-  have h_lift_rhs : (C.powerset.map fun C₁ => f (C - C₁) C₁).sum =
-      (C.antidiagonal.map fun p => f p.1 p.2).sum := by
-    rw [antidiagonal_eq_map_powerset, map_map]; rfl
-  -- The two antidiagonal forms agree by `map_swap_antidiagonal`.
-  have h_swap : (C.antidiagonal.map fun p => f p.2 p.1).sum =
-      (C.antidiagonal.map fun p => f p.1 p.2).sum := by
-    conv_lhs => rw [show (fun p : Multiset α × Multiset α => f p.2 p.1) =
-                      ((fun p => f p.1 p.2) ∘ Prod.swap) from funext fun _ => rfl,
-                    ← map_map _ Prod.swap, map_swap_antidiagonal]
-  rw [h_lift_lhs, h_swap, ← h_lift_rhs]
-
 /-- The multiplicity of `(s, t)` in `antidiagonal (s + t)` is the number of ways to
     select the sub-multiset `t` from `s + t`. -/
 theorem count_antidiagonal_eq_count_powerset (s t : Multiset α) :
@@ -87,21 +56,5 @@ theorem count_antidiagonal_eq_count_powerset (s t : Multiset α) :
   rw [antidiagonal_eq_map_powerset,
       show (s, t) = (s + t - t, t) by rw [Multiset.add_sub_cancel_right]]
   exact count_map_eq_count' _ _ (fun _ _ h => congrArg Prod.snd h) t
-
-/-- An ordered split `(u, v)` of `w` occurs `∏ x, (w.count x).choose (v.count x)` times in
-    `Multiset.antidiagonal w`, and a pair with `u + v ≠ w` does not occur. -/
-theorem count_antidiagonal (u v w : Multiset α) :
-    (antidiagonal w).count (u, v) =
-      if u + v = w then ∏ x ∈ w.toFinset, (w.count x).choose (v.count x) else 0 := by
-  split_ifs with h
-  · subst h
-    rw [count_antidiagonal_eq_count_powerset, count_powerset_of_le (le_add_left v u)]
-  · exact count_eq_zero.mpr fun hmem => h (mem_antidiagonal.mp hmem)
-
-/-- The antidiagonal multiplicity is symmetric in the two slots. -/
-theorem count_antidiagonal_swap (u v w : Multiset α) :
-    (antidiagonal w).count (u, v) = (antidiagonal w).count (v, u) := by
-  conv_lhs => rw [← map_swap_antidiagonal w]
-  exact count_map_eq_count' _ _ Prod.swap_injective (v, u)
 
 end Multiset

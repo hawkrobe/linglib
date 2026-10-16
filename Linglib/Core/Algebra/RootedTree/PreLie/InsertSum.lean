@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
+public import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 
 /-!
 # The grafting pre-Lie product on rooted trees
@@ -16,14 +16,14 @@ vertex. Chapoton and Livernet show that this product makes the rooted trees a ba
 pre-Lie algebra; Foissy extends it to typed decorated trees.
 
 The product is the one-guest case of the multi-insertion `insertion T gs`, which grafts every
-guest of `gs` at once. Everything here is read off that general construction: the
-sum-over-vertices formula, the recursion on the root, and the invariance under reordering of
-children that descends the product to `UnorderedTree`.
+guest of `gs` at once, on planar trees and on nonplanar ones alike. Everything here is read off
+that general construction: the sum-over-vertices formula, the recursion on the root, and the
+pre-Lie identity.
 
 ## Main definitions
 
 * `RoseTree.insertSum`: the grafting product on planar trees, with notation `T ◁ S`.
-* `UnorderedTree.insertSum`: its descent to nonplanar trees.
+* `UnorderedTree.insertSum`: the grafting product on nonplanar trees.
 
 ## Main results
 
@@ -31,8 +31,8 @@ children that descends the product to `UnorderedTree`.
   of `T`.
 * `RoseTree.insertSum_node`: grafting at the root, or recursively inside one child.
 * `RoseTree.card_insertSum`, `UnorderedTree.card_insertSum`: one summand per vertex of `T`.
-* `RoseTree.map_mk_bind_insertSum`: grafting `S₁` into `T` and then `S₂` into the result is
-  grafting `S₁ ◁ S₂` into `T` plus grafting `S₁` and `S₂` into `T` at once.
+* `UnorderedTree.insertSum_bind_insertSum`: grafting `S₁` into `T` and then `S₂` into the result
+  is grafting `S₁ ◁ S₂` into `T` plus grafting `S₁` and `S₂` into `T` at once.
 * `UnorderedTree.insertSum_assoc_symm`: the associator of the grafting product is symmetric in
   its last two arguments, the right pre-Lie identity.
 
@@ -167,16 +167,6 @@ theorem map_mk_bind_insertionForest : ∀ (F : List (RoseTree α)) (S₁ S₂ : 
     abel
 end
 
-open UnorderedTree in
-/-- The associator of the grafting product is symmetric in its last two arguments, once children
-are unordered. -/
-theorem map_mk_insertSum_assoc_symm (T S₁ S₂ : RoseTree α) :
-    ((T ◁ S₁).bind (· ◁ S₂)).map mk + ((S₂ ◁ S₁).bind (T ◁ ·)).map mk =
-      ((T ◁ S₂).bind (· ◁ S₁)).map mk + ((S₁ ◁ S₂).bind (T ◁ ·)).map mk := by
-  rw [map_mk_bind_insertSum, map_mk_bind_insertSum T S₂ S₁,
-    insertion_perm_guests T (List.Perm.swap S₁ S₂ [])]
-  abel
-
 /-- Grafting is not associative, since `(0 ◁ 1) ◁ 2` has two summands and `0 ◁ (1 ◁ 2)` one. -/
 example : (leaf 0 ◁ leaf 1).bind (· ◁ leaf 2) ≠ (leaf 1 ◁ leaf 2).bind (leaf 0 ◁ ·) := by
   decide
@@ -187,21 +177,31 @@ namespace UnorderedTree
 
 variable {α : Type*}
 
-/-- The grafting product on nonplanar trees, descended from `RoseTree.insertSum`. -/
-def insertSum : UnorderedTree α → UnorderedTree α → Multiset (UnorderedTree α) :=
-  Quotient.lift₂ (fun T S => (RoseTree.insertSum T S).map mk) fun _ _ _ _ h₁ h₂ =>
-    (RoseTree.insertion_perm_host h₁ _).trans
-      (RoseTree.insertion_forall₂_perm_guests _ (.cons h₂ .nil))
+/-- The grafting product on nonplanar trees, the insertion of a single guest. -/
+def insertSum (T S : UnorderedTree α) : Multiset (UnorderedTree α) :=
+  insertion T {S}
 
 @[inherit_doc] scoped infixl:65 " ◁ " => UnorderedTree.insertSum
 
 @[simp] theorem mk_insertSum (T S : RoseTree α) :
-    mk T ◁ mk S = (RoseTree.insertSum T S).map mk := rfl
+    mk T ◁ mk S = (RoseTree.insertSum T S).map mk :=
+  insertion_mk T [S]
 
 theorem card_insertSum (T S : UnorderedTree α) : Multiset.card (T ◁ S) = T.numNodes :=
   Quotient.inductionOn₂ T S fun t s => by
     change Multiset.card (mk t ◁ mk s) = (mk t).numNodes
     rw [mk_insertSum, Multiset.card_map, RoseTree.card_insertSum, numNodes_mk]
+
+/-- Grafting `S₁` into `T` and then `S₂` into the result is grafting `S₁ ◁ S₂` into `T`, plus
+grafting `S₁` and `S₂` into `T` at once. This is the degree-two case
+`T ∘ BX = (T ∘ B) ∘ X - T ∘ (B ∘ X)` of Oudom and Guin's Proposition 3.7. -/
+theorem insertSum_bind_insertSum (T S₁ S₂ : UnorderedTree α) :
+    (T ◁ S₁).bind (· ◁ S₂) = (S₁ ◁ S₂).bind (T ◁ ·) + insertion T {S₁, S₂} := by
+  induction T using Quotient.inductionOn with | h t =>
+  induction S₁ using Quotient.inductionOn with | h s₁ =>
+  induction S₂ using Quotient.inductionOn with | h s₂ =>
+  simp only [quot_mk_eq_mk, mk_insertSum, Multiset.bind_map, ← Multiset.map_bind]
+  exact (RoseTree.map_mk_bind_insertSum t s₁ s₂).trans (congrArg _ (insertion_mk t [s₁, s₂]).symm)
 
 /-- The associator of the grafting product is symmetric in its last two arguments, so that
 `(T ◁ S₁) ◁ S₂ - T ◁ (S₁ ◁ S₂) = (T ◁ S₂) ◁ S₁ - T ◁ (S₂ ◁ S₁)`, here stated without
@@ -209,10 +209,18 @@ subtraction. -/
 theorem insertSum_assoc_symm (T S₁ S₂ : UnorderedTree α) :
     (T ◁ S₁).bind (· ◁ S₂) + (S₂ ◁ S₁).bind (T ◁ ·) =
       (T ◁ S₂).bind (· ◁ S₁) + (S₁ ◁ S₂).bind (T ◁ ·) := by
-  induction T using Quotient.inductionOn with | h t =>
-  induction S₁ using Quotient.inductionOn with | h s₁ =>
-  induction S₂ using Quotient.inductionOn with | h s₂ =>
-  simp only [quot_mk_eq_mk, mk_insertSum, Multiset.bind_map, ← Multiset.map_bind]
-  exact RoseTree.map_mk_insertSum_assoc_symm t s₁ s₂
+  rw [insertSum_bind_insertSum, insertSum_bind_insertSum T S₂ S₁, Multiset.pair_comm]
+  abel
+
+/-- One host and one guest give the grafting product, each output a one-tree forest. -/
+theorem insertionMultiset_singleton_singleton (T S : UnorderedTree α) :
+    insertionMultiset {T} {S} = (T ◁ S).map ({·}) :=
+  insertionMultiset_singleton T {S}
+
+/-- Two one-tree forests multiply to their disjoint union and their graftings. -/
+theorem productMultiset_singleton_singleton (T S : UnorderedTree α) :
+    productMultiset {T} {S} = {T, S} ::ₘ (T ◁ S).map ({·}) := by
+  rw [productMultiset, ← Multiset.cons_zero, Multiset.antidiagonal_cons, Multiset.antidiagonal_zero]
+  simp [insertionMultiset_zero_right, insertionMultiset_singleton_singleton, add_comm]
 
 end UnorderedTree
