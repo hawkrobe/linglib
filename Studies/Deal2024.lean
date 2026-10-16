@@ -12,32 +12,29 @@ public import Linglib.Data.Examples.Deal2024
 /-!
 # Deal (2024): Interaction, Satisfaction, and the PCC
 
-The interaction–satisfaction theory of the Person Case Constraint of [deal-2024]. A probe is
-specified by an interaction condition, the features it copies from a goal, and a satisfaction
-condition, the feature that halts its search, with no uninterpretable features anywhere.
-Cliticization of both objects requires Agree with both, and the probe meets the direct object
-first, so a direct object that satisfies the probe bleeds Agree with the indirect object:
-satisfaction by [PART] gives the strong PCC, by [SPKR] the me-first PCC, and an insatiable probe
-no PCC. Dynamic interaction lets a feature copied from the direct object narrow the interaction
-condition, so that the indirect object must bear it too: [PART] interacting dynamically on an
-insatiable probe gives the weak PCC and on a [SPKR]-satisfied probe the strictly descending PCC.
-The probe's walk over the goal sequence is run, and the paper's typology tables, (53) over [PART]
-and [SPKR] and (57) over [ADDR] as well, are derived from the runs by classifying each grammar's
-licit region over the six cells of table (1) against the descriptive statements (2), you-first
-and A-descending. A probe that meets the indirect object first yields the reverse PCC of section
-6.2. The clitic combinations of French, Bulgarian, Italian, Spanish, Shapsug Adyghe and Slovenian
-are rows, and on the six cells the four varieties coincide with the P-Constraint grammars of
-[pancheva-zubizarreta-2018] and the gluttony probes of [coon-keine-2021], the competitors of
-section 7. The cells of table (1) are scenarios (`Clause.Scenario`), and read as an argument
-coding, the clitic cluster where licit and the longer repair where not (`PCCType.coding`), each
-variety is checked against [haspelmath-2021]'s scenario universal, which section 7.1 there claims
-the person-case constraint instantiates: under 1 > 2 > 3 the strong, weak, me-first and strictly
-descending varieties obey it and the addressee-first ones do not, under 2 > 1 > 3 the reverse
-(`universal5_prominence`, `universal5_addressee`); every variety allows the participant-over-
-third cells, the person-role universal 9b (`participant_third_licit`); the strong variety is
-Modern Greek's T coding (`strong_iff_greekT`), and the two descending statements are the
-condition that the scenario be downstream under their rankings
-(`strictlyDescending_iff_downstream`, `aDescending_iff_downstream`).
+Deal derives the Person Case Constraint from a probe specified by an interaction condition, the
+features it copies from a goal, and a satisfaction condition, the feature that halts its search,
+with no uninterpretable features anywhere. The probe meets the direct object first, so a direct
+object that satisfies it bleeds Agree with the indirect object: satisfaction by [PART] gives the
+strong PCC, by [SPKR] the me-first PCC, and an insatiable probe no PCC. Dynamic interaction lets
+a feature copied from the direct object narrow the interaction condition, so that the indirect
+object must bear it too, which gives the weak and the strictly descending PCC. A probe that
+meets the indirect object first yields the reverse PCC of section 6.2.
+
+## Main results
+
+* `Deal2024.typology`: the runs of the probes derive the typology tables (53) and (57).
+* `Deal2024.rows`: the clitic combinations of French, Bulgarian, Italian, Spanish, Shapsug
+  Adyghe and Slovenian are grammatical exactly when the language's grammar licenses them.
+* `Deal2024.agrees_with_pConstraint`, `Deal2024.agrees_with_gluttony`: on the six cells of
+  table (1) the four varieties coincide with the P-Constraint grammars of Pancheva and
+  Zubizarreta and the gluttony probes of Coon and Keine, the competitors of section 7.
+* `Deal2024.universal5_prominence`, `Deal2024.universal5_addressee`: with the cells read as
+  scenarios and each variety as an argument coding, the strong, weak, me-first and strictly
+  descending varieties obey Haspelmath's scenario universal under 1 > 2 > 3, and the strong,
+  weak, you-first and A-descending ones under 2 > 1 > 3, as his section 7.1 claims of the PCC.
+* `Deal2024.strictlyDescending_iff_downstream`, `Deal2024.aDescending_iff_downstream`: the two
+  descending statements say that the scenario is downstream under their rankings.
 
 ## Implementation notes
 
@@ -103,7 +100,8 @@ def step (g : Grammar) (st : ProbeState) (t : Person × ℕ) : ProbeState :=
 def runProbe (g : Grammar) (goals : List Person) : ProbeState :=
   goals.zipIdx.foldl (step g) .initial
 
-/-- Dynamic interaction only narrows: the interaction condition only grows along a run. -/
+/-- Dynamic interaction only narrows the probe, since the interaction condition only grows along
+a run. -/
 theorem int_subset_step (g : Grammar) (st : ProbeState) (t : Person × ℕ) :
     st.int ⊆ (step g st t).int := by
   unfold step
@@ -207,14 +205,14 @@ instance : (t : PCCType) → (io do_ : Person) → Decidable (t.Licit io do_)
 downstream on 1 > 2 > 3. -/
 theorem strictlyDescending_iff_downstream (io do_ : Person) :
     PCCType.Licit .strictlyDescending io do_ ↔
-      (Clause.Scenario.mk io do_).kindBy Person.prominence = .downstream :=
-  (Clause.Scenario.kindBy_eq_downstream_iff (s := ⟨io, do_⟩) _).symm
+      ((Scenario.mk io do_).map Person.prominence).kind = .downstream :=
+  (Scenario.kind_eq_downstream_iff (s := (Scenario.mk io do_).map Person.prominence)).symm
 
 /-- The A-descending PCC holds exactly when the scenario is downstream on 2 > 1 > 3. -/
 theorem aDescending_iff_downstream (io do_ : Person) :
     PCCType.Licit .aDescending io do_ ↔
-      (Clause.Scenario.mk io do_).kindBy addresseeRank = .downstream :=
-  (Clause.Scenario.kindBy_eq_downstream_iff (s := ⟨io, do_⟩) _).symm
+      ((Scenario.mk io do_).map addresseeRank).kind = .downstream :=
+  (Scenario.kind_eq_downstream_iff (s := (Scenario.mk io do_).map addresseeRank)).symm
 
 /-- A variety codes a combination as the clitic cluster where it is licit and as the longer
 repair where it is not. -/
@@ -224,7 +222,7 @@ def PCCType.coding (t : PCCType) (s : Scenario Person) : ℕ :=
 /-- Under a person ranking, a cell of table (1) is more usual than another when its kind is
 higher. -/
 def MoreUsualOn {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Person) : Prop :=
-  s ∈ cells ∧ t ∈ cells ∧ t.kindBy rank < s.kindBy rank
+  s ∈ cells ∧ t ∈ cells ∧ (t.map rank).kind < (s.map rank).kind
 
 instance {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Person) :
     Decidable (MoreUsualOn rank s t) :=
@@ -253,7 +251,7 @@ theorem participant_third_licit (t : PCCType) (io : Person) (h : io.IsSAP) :
     t.Licit io .third := by
   revert h; cases t <;> cases io <;> decide
 
-/-- The strong PCC is Modern Greek's T coding in [haspelmath-2021]'s (45): the clitic is
+/-- The strong PCC is Modern Greek's T coding in [haspelmath-2021]'s (45), the clitic being
 available exactly where the DO is aliophoric. -/
 theorem strong_iff_greekT (io do_ : Person) :
     PCCType.Licit .strong io do_ ↔
@@ -289,12 +287,12 @@ def table57 (g : Grammar) : Option PCCType :=
         else if .addressee ∈ g.dynamic then .youFirst
         else .none)
 
-/-- The runs derive the tables: every grammar derives the variety table (57) gives it. -/
+/-- Every grammar derives the variety that table (57) gives it, so the runs derive the tables. -/
 theorem typology (g : Grammar) : g.pattern = table57 g := by
   revert g
   decide +kernel
 
-/-- Satisfaction by [PART] absorbs dynamic interaction: a direct object bearing a dynamic
+/-- Satisfaction by [PART] absorbs dynamic interaction. A direct object bearing a dynamic
 feature bears [PART] and satisfies the probe first, so every column-one grammar of the table
 licenses exactly what the strong PCC does, for every pair of persons. -/
 theorem licit_of_sat_part (d : Finset PersonSegment) (io do_ : Person) :
@@ -324,7 +322,7 @@ theorem agrees_with_pConstraint :
   decide +kernel
 
 /-- On the six cells the four varieties coincide with the gluttony probes of
-[coon-keine-2021]: a probe that stops too early and one that agrees too much draw the same
+[coon-keine-2021], so a probe that stops too early and one that agrees too much draw the same
 lines there. -/
 theorem agrees_with_gluttony :
     ∀ c ∈ cells,

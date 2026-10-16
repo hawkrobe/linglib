@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Order.Monotone.Basic
 public import Linglib.Core.Order.Atoms
 public import Mathlib.Tactic.DeriveFintype
 
@@ -9,30 +10,32 @@ public import Mathlib.Tactic.DeriveFintype
 
 A scenario is the pair of co-arguments of a clause ordered by role rank, A over P in a
 monotransitive clause and R over T in a ditransitive one, each carried as its value on a
-referential prominence scale. Its kind compares the two values: downstream when the
-higher-ranked argument is the more prominent, upstream when it is the less prominent, and
-balanced when they tie. The direct and inverse contexts of cyclic Agree, the IO–DO
-combinations the person-case constraint restricts, and co-argument-sensitive indexing are all
-scenarios over the person scale; the argument coding splits of [haspelmath-2021] are scenarios
-over its prominence scales.
+referential prominence scale. Scenarios are ordered componentwise with the lower-ranked value
+reversed, so a scenario lies above another when its higher-ranked argument is at least as
+prominent and its lower-ranked one at most as prominent. The kind of a scenario compares its two
+values: downstream when the higher-ranked argument is the more prominent, upstream when it is
+the less prominent, and balanced when they tie. The direct and inverse contexts of cyclic Agree,
+the IO–DO combinations the person-case constraint restricts, and co-argument-sensitive indexing
+are all scenarios over the person scale, and Haspelmath's argument coding splits are scenarios
+over his prominence scales.
 
 ## Main declarations
 
-* `Clause.Scenario`: the two prominence values, `high` and `low`, with `Scenario.map`.
+* `Clause.Scenario`: the two prominence values, `high` and `low`, with `Scenario.map`, ordered
+  with `⊤ = ⟨⊤, ⊥⟩`.
 * `Clause.Scenario.Kind`: upstream, balanced, downstream, as a bounded linear order in that
   order.
-* `Clause.Scenario.kindBy`: the kind of a scenario under a scale given as a rank map, and
-  `Scenario.kind` for a linearly ordered scale.
-* `Clause.Scenario.kind_eq_downstream_iff_eq`, `Clause.Scenario.not_kind_lt_kind`: on a
-  two-element scale the downstream scenario is `⟨⊤, ⊥⟩` alone, and which scenarios can be
-  the more usual.
+* `Clause.Scenario.kind`: the kind of a scenario over a linearly ordered scale, monotone
+  (`kind_mono`) and unchanged by a strictly monotone map of the scale (`kind_map`).
+* `Clause.Scenario.kind_lt_kind_iff`: on a two-element scale one scenario's kind is below
+  another's exactly when the scenario is below the other.
 
 ## Implementation notes
 
 The kind is the three-way comparison `compare` read into the three labels by
-`Kind.ofOrdering`; the usualness order on kinds, downstream above upstream, is
-[haspelmath-2021]'s (11). A scale need not be linearly ordered: `kindBy p` compares through
-a rank map `p`, as `Person.prominence` ranks persons.
+`Kind.ofOrdering`, and the order on kinds, downstream above upstream, is Haspelmath's order of
+usualness (11). A scenario over a scale that is not linearly ordered, such as persons, is read
+on a rank map `p` as `s.map p`.
 
 ## References
 
@@ -46,8 +49,9 @@ a rank map `p`, as `Person.prominence` ranks persons.
 
 namespace Clause
 
-/-- A scenario: the prominence values of the two co-arguments of a clause, the higher-ranked
-one first. [haspelmath-2021] writes `X > Y` for `⟨X, Y⟩`. -/
+/-- A scenario records the prominence values of the two co-arguments of a clause, the
+higher-ranked one first. Haspelmath writes `X > Y` for `⟨X, Y⟩`. -/
+@[ext]
 structure Scenario (α : Type*) where
   /-- The prominence of the higher-ranked argument, A or R. -/
   high : α
@@ -66,6 +70,56 @@ def map (f : α → β) (s : Scenario α) : Scenario β := ⟨f s.high, f s.low�
 
 @[simp] theorem map_low (f : α → β) (s : Scenario α) : (s.map f).low = f s.low := rfl
 
+/-! ### The order on scenarios -/
+
+section LE
+
+variable [LE α] {s t : Scenario α}
+
+instance : LE (Scenario α) := ⟨fun s t ↦ s.high ≤ t.high ∧ t.low ≤ s.low⟩
+
+theorem le_def : s ≤ t ↔ s.high ≤ t.high ∧ t.low ≤ s.low := Iff.rfl
+
+instance [DecidableLE α] : DecidableLE (Scenario α) := fun _ _ ↦ decidable_of_iff' _ le_def
+
+/-- The top scenario is `⟨⊤, ⊥⟩` and the bottom one `⟨⊥, ⊤⟩`. -/
+instance [BoundedOrder α] : BoundedOrder (Scenario α) where
+  top := ⟨⊤, ⊥⟩
+  le_top _ := ⟨le_top, bot_le⟩
+  bot := ⟨⊥, ⊤⟩
+  bot_le _ := ⟨bot_le, le_top⟩
+
+@[simp] theorem top_high [BoundedOrder α] : (⊤ : Scenario α).high = ⊤ := rfl
+
+@[simp] theorem top_low [BoundedOrder α] : (⊤ : Scenario α).low = ⊥ := rfl
+
+@[simp] theorem bot_high [BoundedOrder α] : (⊥ : Scenario α).high = ⊥ := rfl
+
+@[simp] theorem bot_low [BoundedOrder α] : (⊥ : Scenario α).low = ⊤ := rfl
+
+end LE
+
+section Preorder
+
+variable [Preorder α]
+
+instance : Preorder (Scenario α) where
+  le_refl _ := ⟨le_rfl, le_rfl⟩
+  le_trans _ _ _ h₁ h₂ := ⟨h₁.1.trans h₂.1, h₂.2.trans h₁.2⟩
+
+instance [DecidableLE α] : DecidableLT (Scenario α) := decidableLTOfDecidableLE
+
+theorem high_mono : Monotone (high : Scenario α → α) := fun _ _ h ↦ h.1
+
+theorem low_anti : Antitone (low : Scenario α → α) := fun _ _ h ↦ h.2
+
+end Preorder
+
+instance [PartialOrder α] : PartialOrder (Scenario α) where
+  le_antisymm _ _ h₁ h₂ := Scenario.ext (h₁.1.antisymm h₂.1) (h₂.2.antisymm h₁.2)
+
+/-! ### Kinds -/
+
 /-- The kinds of scenario, in order of usualness. -/
 inductive Kind where
   | upstream
@@ -75,13 +129,7 @@ inductive Kind where
 
 namespace Kind
 
-/-- Usualness of a kind: downstream scenarios are the most usual, upstream the least. -/
-def usualness : Kind → ℕ
-  | .upstream => 0
-  | .balanced => 1
-  | .downstream => 2
-
-instance : LinearOrder Kind := LinearOrder.lift' usualness (by decide)
+instance : LinearOrder Kind := LinearOrder.lift' (·.ctorIdx) (by decide)
 
 instance : Nontrivial Kind := ⟨⟨.upstream, .downstream, by decide⟩⟩
 
@@ -115,64 +163,67 @@ def ofOrdering : Ordering → Kind
 
 end Kind
 
-section KindBy
+section LinearOrder
 
-variable [LinearOrder β] (p : α → β)
+variable [LinearOrder α] {s t : Scenario α}
 
-/-- The kind of a scenario under the scale `p`: downstream when the higher-ranked argument
-ranks higher, upstream when it ranks lower, and balanced when the two tie. -/
-def kindBy (s : Scenario α) : Kind := .ofOrdering (compare (p s.high) (p s.low))
+/-- A scenario is downstream when its higher-ranked argument ranks higher on the scale,
+upstream when it ranks lower, and balanced when the two tie. -/
+def kind (s : Scenario α) : Kind := .ofOrdering (compare s.high s.low)
 
-theorem kindBy_eq_downstream_iff {s : Scenario α} :
-    kindBy p s = .downstream ↔ p s.low < p s.high := by
-  rw [kindBy, Kind.ofOrdering_eq_downstream, compare_gt_iff_gt]
+theorem kind_eq_downstream_iff : s.kind = .downstream ↔ s.low < s.high := by
+  rw [kind, Kind.ofOrdering_eq_downstream, compare_gt_iff_gt]
 
-theorem kindBy_eq_upstream_iff {s : Scenario α} :
-    kindBy p s = .upstream ↔ p s.high < p s.low := by
-  rw [kindBy, Kind.ofOrdering_eq_upstream, compare_lt_iff_lt]
+theorem kind_eq_upstream_iff : s.kind = .upstream ↔ s.high < s.low := by
+  rw [kind, Kind.ofOrdering_eq_upstream, compare_lt_iff_lt]
 
-theorem kindBy_eq_balanced_iff {s : Scenario α} :
-    kindBy p s = .balanced ↔ p s.high = p s.low := by
-  rw [kindBy, Kind.ofOrdering_eq_balanced, compare_eq_iff_eq]
+theorem kind_eq_balanced_iff : s.kind = .balanced ↔ s.high = s.low := by
+  rw [kind, Kind.ofOrdering_eq_balanced, compare_eq_iff_eq]
 
-end KindBy
+theorem kind_le_balanced_iff : s.kind ≤ .balanced ↔ s.high ≤ s.low := by
+  rw [Kind.le_balanced_iff, Ne, kind_eq_downstream_iff, not_lt]
 
-variable [LinearOrder α]
+theorem balanced_le_kind_iff : .balanced ≤ s.kind ↔ s.low ≤ s.high := by
+  rw [Kind.balanced_le_iff, Ne, kind_eq_upstream_iff, not_lt]
 
-/-- The kind of a scenario over a linearly ordered scale. -/
-abbrev kind : Scenario α → Kind := kindBy id
+/-- Raising the higher-ranked argument or lowering the lower-ranked one never lowers the
+kind. -/
+theorem kind_mono : Monotone (kind : Scenario α → Kind) := fun s t h ↦ by
+  rcases lt_trichotomy t.high t.low with ht | ht | ht
+  · rw [kind_eq_upstream_iff.2 ((h.1.trans_lt ht).trans_le h.2), kind_eq_upstream_iff.2 ht]
+  · exact (kind_le_balanced_iff.2 (h.1.trans (ht.le.trans h.2))).trans
+      (balanced_le_kind_iff.2 ht.ge)
+  · exact (kind_eq_downstream_iff.2 ht).symm ▸ le_top
 
-omit [LinearOrder α] in
-theorem kindBy_eq_kind_map {β : Type*} [LinearOrder β] (p : α → β) (s : Scenario α) :
-    kindBy p s = (s.map p).kind := rfl
+variable [LinearOrder β] {f : α → β}
 
-theorem kind_eq_downstream_iff {s : Scenario α} : s.kind = .downstream ↔ s.low < s.high :=
-  kindBy_eq_downstream_iff id
+/-- A strictly monotone map of the scale preserves the kind. -/
+theorem kind_map (hf : StrictMono f) (s : Scenario α) : (s.map f).kind = s.kind := by
+  simp only [kind, map_high, map_low, ← cmp_eq_compare, hf.cmp_map_eq]
 
-theorem kind_eq_upstream_iff {s : Scenario α} : s.kind = .upstream ↔ s.high < s.low :=
-  kindBy_eq_upstream_iff id
+theorem map_le_map_iff (hf : StrictMono f) : s.map f ≤ t.map f ↔ s ≤ t := by
+  simp only [le_def, map_high, map_low, hf.le_iff_le]
 
-theorem kind_eq_balanced_iff {s : Scenario α} : s.kind = .balanced ↔ s.high = s.low :=
-  kindBy_eq_balanced_iff id
+theorem map_lt_map_iff (hf : StrictMono f) : s.map f < t.map f ↔ s < t := by
+  simp only [lt_iff_le_not_ge, map_le_map_iff hf]
 
-/-- On a two-element scale the downstream scenario is `⟨⊤, ⊥⟩` alone. -/
-theorem kind_eq_downstream_iff_eq [BoundedOrder α] [IsSimpleOrder α] {s : Scenario α} :
-    s.kind = .downstream ↔ s = ⟨⊤, ⊥⟩ := by
-  obtain ⟨h, l⟩ := s
-  rw [kind_eq_downstream_iff, IsSimpleOrder.lt_iff_eq_bot_and_eq_top]
-  simp [and_comm]
+/-! ### Two-element scales -/
 
-/-- A scenario whose higher-ranked argument is `⊥` or whose lower-ranked one is `⊤` is at most
-balanced, and one whose higher-ranked argument is `⊤` or whose lower-ranked one is `⊥` at least
-balanced, so the first is never the more usual. -/
-theorem not_kind_lt_kind [BoundedOrder α] {s t : Scenario α} (hs : s.high = ⊥ ∨ s.low = ⊤)
-    (ht : t.high = ⊤ ∨ t.low = ⊥) : ¬ t.kind < s.kind := by
-  refine not_lt.2 <|
-    (Kind.le_balanced_iff.2 fun h ↦ ?_).trans (Kind.balanced_le_iff.2 fun h ↦ ?_)
-  · rw [kind_eq_downstream_iff] at h
-    exact hs.elim (fun e ↦ not_lt_bot (e ▸ h)) fun e ↦ not_top_lt (e ▸ h)
-  · rw [kind_eq_upstream_iff] at h
-    exact ht.elim (fun e ↦ not_top_lt (e ▸ h)) fun e ↦ not_lt_bot (e ▸ h)
+variable [BoundedOrder α] [IsSimpleOrder α]
+
+/-- On a two-element scale a scenario's kind is below another's exactly when the scenario is
+below the other, since such a scale is `Bool`. -/
+theorem kind_lt_kind_iff : s.kind < t.kind ↔ s < t := by
+  have he := (IsSimpleOrder.orderIsoBool (α := α)).strictMono
+  have key : ∀ s t : Scenario Bool, s.kind < t.kind ↔ s < t := by decide
+  rw [← kind_map he s, ← kind_map he t, key, map_lt_map_iff he]
+
+/-- On a two-element scale the downstream scenario is `⊤ = ⟨⊤, ⊥⟩` alone. -/
+theorem kind_eq_downstream_iff_eq_top : s.kind = .downstream ↔ s = ⊤ := by
+  rw [kind_eq_downstream_iff, IsSimpleOrder.lt_iff_eq_bot_and_eq_top, Scenario.ext_iff, top_high,
+    top_low, and_comm]
+
+end LinearOrder
 
 end Scenario
 

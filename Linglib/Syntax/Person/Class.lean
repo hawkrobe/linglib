@@ -8,17 +8,17 @@ public import Linglib.Syntax.Person.Features
 /-!
 # The binary person scale
 
-The load-bearing cut of person prominence: speech-act participants, first and second
-person, above the rest. It is the person scale of [haspelmath-2021]'s (8a), locuphoric
-above aliophoric in his terms, the cut the person-case constraint's strong variety draws
-([bonet-1991]), and the coarsening of `Person.prominence` at the participant level.
+The load-bearing cut of person prominence puts the speech-act participants, first and second
+person, above the rest. It is Haspelmath's person scale (8a), locuphoric above aliophoric in
+his terms, the cut that Bonet's strong person-case constraint draws, and the coarsening of
+`Person.prominence` at the participant level.
 
 ## Main declarations
 
 * `Person.Class`: `nonParticipant < participant`, a two-element bounded linear order.
 * `Person.toClass`: the class of a person, `participant` exactly when it `IsSAP`, and
   `toClass_mono` for its agreement with `prominence`.
-* `Person.kindBy_toClass_eq_downstream_iff`: a scenario is downstream on the binary scale
+* `Person.kind_map_toClass_eq_downstream_iff`: a scenario is downstream on the binary scale
   exactly when its higher-ranked argument alone is a speech-act participant.
 
 ## References
@@ -39,13 +39,8 @@ inductive Class where
 
 namespace Class
 
-/-- `Class.rank` is the position on the binary person scale. -/
-def rank : Class → ℕ
-  | .nonParticipant => 0
-  | .participant => 1
-
 /-- The scale orders `nonParticipant < participant`. -/
-instance : LinearOrder Class := LinearOrder.lift' rank (by decide)
+instance : LinearOrder Class := LinearOrder.lift' (·.ctorIdx) (by decide)
 
 /-- The scale is bounded, `⊥ = nonParticipant` and `⊤ = participant`. -/
 instance : BoundedOrder Class where
@@ -77,10 +72,9 @@ theorem toClass_mono {p q : Person} (h : p.prominence ≤ q.prominence) :
 
 /-- A scenario is downstream on the binary person scale exactly when its higher-ranked argument
 alone is a speech-act participant. -/
-theorem kindBy_toClass_eq_downstream_iff {s : Clause.Scenario Person} :
-    s.kindBy toClass = .downstream ↔ s.high.IsSAP ∧ ¬ s.low.IsSAP := by
-  rw [Clause.Scenario.kindBy_eq_kind_map, Clause.Scenario.kind_eq_downstream_iff_eq]
-  simp only [Clause.Scenario.map, Clause.Scenario.mk.injEq]
+theorem kind_map_toClass_eq_downstream_iff {s : Clause.Scenario Person} :
+    (s.map toClass).kind = .downstream ↔ s.high.IsSAP ∧ ¬ s.low.IsSAP := by
+  rw [Clause.Scenario.kind_eq_downstream_iff_eq_top, Clause.Scenario.ext_iff]
   exact and_congr toClass_eq_participant_iff toClass_eq_nonParticipant_iff
 
 end Person
