@@ -11,86 +11,71 @@ public import Mathlib.GroupTheory.Perm.ViaEmbedding
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
-# Permutations realizing an order pattern
+# Order patterns of a random permutation
 
-Fix an injective tuple `q : Fin k ↪ α` in a finite linear order. Each
-permutation of `α` sorts `q` in exactly one of the `k !` possible orders, and
-the resulting classes are equinumerous, so one permutation in `k !` leaves `q`
-in increasing order.
+Fix an injective tuple `q : Fin k ↪ α` in a finite linear order. A permutation `σ` of `α`
+realizes on `q` the order pattern `Tuple.sort (σ ∘ q)`, the reordering of `Fin k` that sorts
+`σ ∘ q`. Each of the `k !` patterns is realized by the same number of permutations, so a
+uniformly random permutation realizes each one with probability `1 / k !`.
 
-## Main declarations
+## Main statements
 
-* `factorial_mul_card_monotone_comp` — `k ! * #{σ | Monotone (σ ∘ q)} = n !`.
-* `card_monotone_comp_eq` — the `k !` classes are equinumerous.
+* `Equiv.Perm.factorial_mul_card_sort_comp_eq`: `k ! * #{σ | sort (σ ∘ q) = ρ} = (card α)!`.
+* `Equiv.Perm.factorial_mul_card_monotone_comp`: `k ! * #{σ | Monotone (σ ∘ q)} = (card α)!`.
 
 ## Implementation notes
 
-`Tuple.comp_sort_eq_comp_iff_monotone` supplies uniqueness of the sorting
-reordering and `Equiv.Perm.viaEmbedding` transports a reordering of `Fin k`
-to a permutation of `α` fixing everything off the tuple, which turns
-precomposition into postcomposition and gives the bijections between classes.
+Sorting a reordered injective tuple undoes the reordering, and `ρ.viaEmbedding q` turns
+precomposition of `q` by `ρ` into postcomposition, so right multiplication by it carries the
+permutations realizing `ρ` onto those realizing the identity pattern.
 
-[UPSTREAM] Mathlib has no permutation-pattern material; this belongs at
-`Mathlib/Combinatorics/Enumerative/PermutationPattern.lean`.
+[UPSTREAM] `Tuple.sort_comp_perm_of_injective` belongs in `Mathlib/Data/Fin/Tuple/Sort.lean`, the
+counts in `Mathlib/Combinatorics/Enumerative/PermutationPattern.lean`.
 -/
 
 @[expose] public section
 
-open Finset Equiv Nat
+open Finset Nat
+
+namespace Tuple
+
+variable {n : ℕ} {α : Type*} [LinearOrder α] {f : Fin n → α}
+
+/-- Sorting a reordering of an injective tuple undoes the reordering. -/
+theorem sort_comp_perm_of_injective (hf : Function.Injective f) (σ : Equiv.Perm (Fin n)) :
+    sort (f ∘ σ) = σ⁻¹ * sort f := by
+  refine Equiv.ext fun i ↦ ?_
+  rw [Equiv.Perm.mul_apply, Equiv.Perm.eq_inv_iff_eq]
+  exact hf (congrFun comp_perm_comp_sort_eq_comp_sort i)
+
+end Tuple
+
+namespace Equiv.Perm
 
 variable {α : Type*} [LinearOrder α] [Fintype α] [DecidableEq α] {k : ℕ}
 
-omit [LinearOrder α] [Fintype α] [DecidableEq α] in
-/-- Transporting `ρ` along `q` turns precomposition by `ρ` into postcomposition. -/
-private theorem viaEmbedding_comp (q : Fin k ↪ α) (ρ : Perm (Fin k)) (i : Fin k) :
-    (ρ.viaEmbedding q) (q i) = q (ρ i) := Perm.viaEmbedding_apply ρ q i
+private theorem card_sort_comp_eq (q : Fin k ↪ α) (ρ : Perm (Fin k)) :
+    #{σ : Perm α | Tuple.sort (σ ∘ q) = ρ} = #{σ : Perm α | Tuple.sort (σ ∘ q) = 1} := by
+  refine card_equiv (Equiv.mulRight (ρ.viaEmbedding q)) fun σ ↦ ?_
+  have : (σ ∘ ρ.viaEmbedding q) ∘ q = (σ ∘ q) ∘ ρ :=
+    funext fun i ↦ congrArg σ (viaEmbedding_apply ρ q i)
+  simp only [mem_filter, mem_univ, true_and, coe_mulRight, coe_mul, this,
+    Tuple.sort_comp_perm_of_injective (σ.injective.comp q.injective), inv_mul_eq_one]
+  exact eq_comm
 
-/-- The permutations sorting a fixed injective tuple into a given order all
-    number the same: `Perm α` splits into `k !` equinumerous classes, one per
-    reordering of the tuple. -/
-theorem card_monotone_comp_eq (q : Fin k ↪ α) (ρ : Perm (Fin k)) :
-    #{σ : Perm α | Monotone (σ ∘ q ∘ ρ)} = #{σ : Perm α | Monotone (σ ∘ q)} := by
-  apply Finset.card_bij (fun σ _ => σ * (ρ.viaEmbedding q))
-  · intro σ hσ
-    simp only [mem_filter, mem_univ, true_and] at hσ ⊢
-    have : (σ * ρ.viaEmbedding q) ∘ q = σ ∘ q ∘ ρ := by
-      funext i; simp [viaEmbedding_comp]
-    rwa [this]
-  · intro σ _ τ _ h
-    exact mul_right_cancel h
-  · intro τ hτ
-    refine ⟨τ * (ρ.viaEmbedding q)⁻¹, ?_, inv_mul_cancel_right _ _⟩
-    simp only [mem_filter, mem_univ, true_and] at hτ ⊢
-    have : (τ * (ρ.viaEmbedding q)⁻¹) ∘ q ∘ ρ = τ ∘ q := by
-      funext i
-      simp only [Function.comp_apply, Perm.mul_apply]
-      simp [← viaEmbedding_comp q ρ i]
-    rwa [this]
+/-- **Order patterns are uniform**: each reordering of `Fin k` is the order pattern of one
+permutation in `k !` on a fixed injective tuple. -/
+theorem factorial_mul_card_sort_comp_eq (q : Fin k ↪ α) (ρ : Perm (Fin k)) :
+    k ! * #{σ : Perm α | Tuple.sort (σ ∘ q) = ρ} = (Fintype.card α)! := by
+  have h := card_eq_sum_card_fiberwise (s := (univ : Finset (Perm α))) (t := univ)
+    (f := fun σ : Perm α ↦ Tuple.sort (σ ∘ q)) fun _ _ ↦ mem_coe.2 (mem_univ _)
+  rw [sum_const_nat fun τ _ ↦ (card_sort_comp_eq q τ).trans (card_sort_comp_eq q ρ).symm,
+    card_univ, card_univ, Fintype.card_perm, Fintype.card_perm, Fintype.card_fin] at h
+  exact h.symm
 
-omit [Fintype α] [DecidableEq α] in
-private theorem sort_eq_iff_monotone {f : Fin k → α} (hf : Function.Injective f)
-    (ρ : Perm (Fin k)) : Tuple.sort f = ρ ↔ Monotone (f ∘ ρ) := by
-  constructor
-  · rintro rfl; exact Tuple.monotone_sort f
-  · intro h
-    exact (Equiv.ext fun i =>
-      hf (congrFun (Tuple.comp_sort_eq_comp_iff_monotone.mpr h) i)).symm
-
-/-- **A fixed injective tuple is sorted by one permutation in `k !`.** -/
+/-- One permutation in `k !` leaves a fixed injective tuple in increasing order. -/
 theorem factorial_mul_card_monotone_comp (q : Fin k ↪ α) :
     k ! * #{σ : Perm α | Monotone (σ ∘ q)} = (Fintype.card α)! := by
-  have hfib : ∀ ρ : Perm (Fin k),
-      #{σ : Perm α | Tuple.sort (σ ∘ q) = ρ} = #{σ : Perm α | Monotone (σ ∘ q)} := by
-    intro ρ
-    rw [← card_monotone_comp_eq q ρ]
-    congr 1
-    ext σ
-    simp only [mem_filter, mem_univ, true_and]
-    exact sort_eq_iff_monotone ((σ : Perm α).injective.comp q.injective) ρ
-  have key : (Fintype.card α)! =
-      ∑ ρ : Perm (Fin k), #{σ : Perm α | Tuple.sort (σ ∘ q) = ρ} := by
-    rw [← Fintype.card_perm (α := α), ← Finset.card_univ]
-    exact Finset.card_eq_sum_card_fiberwise (fun _ _ => Finset.mem_univ _)
-  rw [key, Finset.sum_congr rfl (fun ρ _ => hfib ρ), Finset.sum_const,
-    Finset.card_univ, Fintype.card_perm, Fintype.card_fin]
-  simp
+  simpa only [one_def, Tuple.sort_eq_refl_iff_monotone] using factorial_mul_card_sort_comp_eq q 1
+
+end Equiv.Perm
