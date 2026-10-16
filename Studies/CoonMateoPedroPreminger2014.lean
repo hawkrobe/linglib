@@ -36,7 +36,7 @@ subject of a regular transitive extract.
 
 ## Main statements
 
-* `tada`: a registered language marks the extraction of an argument from a finite transitive
+* `tada`: a registered language marks the extraction of a core argument from a finite transitive
   exactly when the regular derivation fails, which for the subject is when the absolutive is
   high.
 * `converges_iff_verbForm`: in Q'anjob'al the derivation that converges uses the verb form the
@@ -422,11 +422,11 @@ and its value is a junk `False`. -/
 def MarksExtraction : Language → ArgumentRole → Prop
   | .chol, r => (Chol.Extraction.realize r).Nonempty
   | .qanjobal, r => (Qanjobal.Extraction.realize .third r).Nonempty
-  | .kaqchikel, r => ∃ c, (Kaqchikel.Extraction.realize c .third .third (.core r)).Nonempty
+  | .kaqchikel, r => ∃ c, (Kaqchikel.Extraction.realize c .third .third (.argument r)).Nonempty
   | .tseltal, r => (Tseltal.Extraction.realize r).Nonempty
   | .tsotsil, r => (Tsotsil.Extraction.realize r).Nonempty
-  | .mam, r => (Mam.Extraction.realize (.core r)).Nonempty
-  | .kiche, r => ∃ c, (Kiche.Extraction.realize c (.core r)).Nonempty
+  | .mam, r => (Mam.Extraction.realize (.argument r)).Nonempty
+  | .kiche, r => ∃ c, (Kiche.Extraction.realize c (.argument r)).Nonempty
   | .yukatek, _ => False
 
 instance : ∀ L r, Decidable (MarksExtraction L r)
@@ -447,16 +447,20 @@ theorem thirdSgZero_of_isErgativePerfective {L : Language} (h : L.IsErgativePerf
     L.setB.IsThirdSgZero := by
   cases L <;> first | decide | exact absurd h (by decide)
 
-/-- Tada's generalization over the fragments (19), extended to every argument. A registered
-language marks the extraction of an argument from a finite transitive exactly when the regular
-derivation fails, so its subject's extraction is marked when the absolutive is high and its
-object's never. Footnote 8 leaves Tsotsil out of table (19), its two absolutive series
-resisting the classification, and calls Yucatec an apparent outlier; the Yukatek fragment
-records no extraction reflexes, so both stay outside. -/
-theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) (r : ArgumentRole) :
+/-- Tada's generalization over the fragments (19), extended to every core argument. A registered
+language marks the extraction of a core argument from a finite transitive exactly when the
+regular derivation fails, so its subject's extraction is marked when the absolutive is high and
+its object's never. The recipient, an oblique whose extraction the K'ichean languages and Mam
+mark as a low adjunct's, is outside the generalization. Footnote 8 leaves Tsotsil out of table
+(19), its two absolutive series resisting the classification, and calls Yucatec an apparent
+outlier; the Yukatek fragment records no extraction reflexes, so both stay outside. -/
+theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) {r : ArgumentRole}
+    (hr : r ∈ ArgumentRole.core) :
     L.MarksExtraction r ↔
       ¬ Converges ⟨L.licenser, true, .transitive agentive .dp, some r, false⟩ := by
-  cases L <;> first | exact (h₁ rfl).elim | exact (h₂ rfl).elim | cases r <;> decide
+  simp only [ArgumentRole.core, List.mem_cons, List.not_mem_nil, or_false] at hr
+  cases L <;> first | exact (h₁ rfl).elim | exact (h₂ rfl).elim |
+    rcases hr with rfl | rfl | rfl <;> decide
 
 /-- Tsotsil, low absolutive by its template, still marks the extraction of a transitive subject
 that the regular derivation allows, with its optional Agent Focus. -/

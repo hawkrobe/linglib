@@ -23,17 +23,21 @@ marker of the voice the verb switches to, Agent Focus or the antipassive.
 ## Main declarations
 
 * `Mayan.VerbForm`: the transitive and Agent Focus forms, with `Mayan.VerbForm.HasSetA`.
-* `Mayan.Adjunct`, `Mayan.ExtractionSite`: the adjunct classes and the extraction sites the
-  marking distinguishes.
+* `Mayan.Adjunct`, `Mayan.ExtractionSite`: the adjunct classes, and the extraction sites, an
+  argument by its role or an adjunct by its class.
 * `Mayan.Host`: the constituents an extraction reflex is hosted by.
 
 ## Implementation notes
 
-A Mayan recipient is a relational-noun phrase, so its extraction is the `dative` cell; the
-sites `.core .R` and `.core .T` are placeholders that the fragments leave unmarked.
+The argument sites are the comparative roles, so a recipient is `.argument .R` however a
+language codes it. The K'ichean languages and Mam code it as an oblique introduced by a relational
+noun, the indirect object or dative of Mendes and Ranero and of Elkins, Torrence and Brown, and
+its extraction is marked as a low adjunct's is.
 
 ## References
 
+* [elkins-torrence-brown-2026]
+* [mendes-ranero-2021]
 * [polian-2017]
 * [stiebels-2006]
 -/
@@ -55,17 +59,17 @@ def VerbForm.HasSetA (f : VerbForm) : Prop := f = .transitive
 
 instance : DecidablePred VerbForm.HasSetA := fun f ↦ inferInstanceAs (Decidable (f = _))
 
-/-- The classes of non-core argument and adjunct that Mayan extraction morphology
-distinguishes. Comitatives, which the K'ichean particle also tracks, are not carried. -/
+/-- The classes of adjunct that Mayan extraction morphology distinguishes. Comitatives, which the
+K'ichean particle also tracks, are not carried. -/
 inductive Adjunct where
-  | instrument | benefactive | dative | locative | reason | purpose | manner | temporal
+  | instrument | benefactive | locative | reason | purpose | manner | temporal
   deriving DecidableEq, Repr, Fintype
 
-/-- An extraction site is a core argument, by its role, or an adjunct, by its class, the
-granularity the marking distinguishes. A fragment whose sources document core-argument
-extraction only indexes `realize` by `ArgumentRole`. -/
+/-- An extraction site is an argument, by its role, or an adjunct, by its class, the granularity
+the marking distinguishes. A fragment whose sources document only the reflexes on the verb
+indexes `realize` by `ArgumentRole`. -/
 inductive ExtractionSite where
-  | core (r : ArgumentRole)
+  | argument (r : ArgumentRole)
   | adjunct (a : Adjunct)
   deriving DecidableEq, Repr, Fintype
 

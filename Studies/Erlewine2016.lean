@@ -341,8 +341,9 @@ both participants, which is when the Kaqchikel fragment records the Agent Focus 
 theorem exists_optimal_agentFocus_iff (c : Mayan.VerbClass) (s o : Person) :
     (∃ d ∈ (kaqchikel.tableau (subjectExtraction s o)).optimal,
         d.form (argsOf true) = .agentFocus) ↔
-      (Kaqchikel.Extraction.realize c s o (.core .A)).Nonempty := by
-  have h : (Kaqchikel.Extraction.realize c s o (.core .A)).Nonempty ↔ ¬ (s.IsSAP ∧ o.IsSAP) := by
+      (Kaqchikel.Extraction.realize c s o (.argument .A)).Nonempty := by
+  have h :
+      (Kaqchikel.Extraction.realize c s o (.argument .A)).Nonempty ↔ ¬ (s.IsSAP ∧ o.IsSAP) := by
     simp only [Kaqchikel.Extraction.realize]
     split_ifs with h <;> simp [h]
   rw [h]
