@@ -122,9 +122,9 @@ theorem PermList.of_perm {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
 
 /-- `Multiset.Rel Perm` between coerced children lists gives `PermList`. -/
 theorem PermList.of_rel {cs ds : List (RoseTree α)}
-    (h : Multiset.Rel (Perm (α := α)) ↑cs ↑ds) : PermList cs ds := by
-  obtain ⟨l', hf, hp⟩ := Multiset.rel_coe_iff_exists.mp h
-  exact (PermList.of_forall₂ hf).trans (PermList.of_perm hp)
+    (h : Multiset.Rel (Perm (α := α)) ↑cs ↑ds) : PermList cs ds :=
+  let ⟨_, hf, hp⟩ := Multiset.rel_coe_iff.mp h
+  (PermList.of_forall₂ hf).trans (PermList.of_perm hp)
 
 /-- A plain `List.Perm` of the children relates the nodes. -/
 theorem Perm.node_of_perm {a : α} {cs ds : List (RoseTree α)} (h : cs.Perm ds) :
@@ -151,10 +151,8 @@ private theorem PermList.rel : ∀ {cs ds : List (RoseTree α)}, PermList cs ds 
 
 /-- `PermList` is `Multiset.Rel Perm` on the coerced lists. -/
 theorem permList_iff_rel {cs ds : List (RoseTree α)} :
-    PermList cs ds ↔ Multiset.Rel Perm (↑cs : Multiset (RoseTree α)) ↑ds := by
-  refine ⟨PermList.rel, fun h ↦ ?_⟩
-  obtain ⟨ds', hf, hperm⟩ := Multiset.rel_coe_iff_exists.mp h
-  exact (PermList.of_forall₂ hf).trans (PermList.of_perm hperm)
+    PermList cs ds ↔ Multiset.Rel Perm (↑cs : Multiset (RoseTree α)) ↑ds :=
+  ⟨PermList.rel, PermList.of_rel⟩
 
 private theorem Perm.value_children : ∀ {t s : RoseTree α}, Perm t s →
     t.value = s.value ∧ Multiset.Rel Perm (↑t.children : Multiset (RoseTree α)) ↑s.children
@@ -188,7 +186,7 @@ theorem PermList.length_eq {cs ds : List (RoseTree α)} (h : PermList cs ds) :
 
 /-- `PermList [c] [d]` is `Perm c d`. -/
 theorem PermList.singleton_inv {c d : RoseTree α} (h : PermList [c] [d]) : Perm c d := by
-  obtain ⟨l, hf, hp⟩ := Multiset.rel_coe_iff_exists.mp (permList_iff_rel.mp h)
+  obtain ⟨l, hf, hp⟩ := Multiset.rel_coe_iff.mp (permList_iff_rel.mp h)
   rw [List.perm_singleton.mp hp] at hf
   exact (List.forall₂_cons.mp hf).1
 
@@ -221,11 +219,6 @@ carries `Perm` to `S` (`fold_rel`): the generic dissolver of per-function invari
 inductions, relational so that tree-valued folds descend too. `fold_perm` is the
 `S := Eq` case; the counts below are such folds. -/
 
-private theorem rel_refl_coe {β : Type*} {S : β → β → Prop} (hrefl : ∀ b, S b b) :
-    ∀ L : List β, Multiset.Rel S ↑L ↑L
-  | [] => Multiset.Rel.zero
-  | b :: L => Multiset.Rel.cons (hrefl b) (rel_refl_coe hrefl L)
-
 mutual
 /-- A `fold` whose algebra is congruent along `Multiset.Rel S` carries `Perm` to any
 reflexive transitive `S`. -/
@@ -252,7 +245,7 @@ theorem foldList_rel {β : Type*} {S : β → β → Prop} {g : α → List β �
   | _, _, .swap c d cs => by
     simp only [List.map_cons, ← Multiset.cons_coe]
     rw [Multiset.cons_swap]
-    exact Multiset.Rel.cons (hrefl _) (Multiset.Rel.cons (hrefl _) (rel_refl_coe hrefl _))
+    exact .cons (hrefl _) (.cons (hrefl _) (Multiset.rel_refl_of_refl_on fun _ _ ↦ hrefl _))
   | _, _, .trans h₁ h₂ =>
     Multiset.rel_trans_of_trans_on (fun _ _ _ _ _ _ h₁' h₂' ↦ htrans h₁' h₂')
       (foldList_rel hrefl htrans hg h₁) (foldList_rel hrefl htrans hg h₂)

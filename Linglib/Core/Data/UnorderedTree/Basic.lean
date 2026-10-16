@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Data.RoseTree.Basic
-public import Linglib.Core.Data.Multiset.Rel
 public import Linglib.Core.Data.RoseTree.Perm
 public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Data.List.Forall2
@@ -15,8 +14,8 @@ public import Mathlib.Data.Multiset.MapFold
 
 An unordered rooted tree with vertices labelled in `α` is a `RoseTree α` modulo the permutation
 of children at every vertex: the quotient `UnorderedTree α := Quotient RoseTree.isSetoid`. In the
-Connes–Kreimer literature these are the rooted trees and the ordered ones the planar rooted
-trees ([foissy-introduction-hopf-algebras-trees]). The identity criterion is `RoseTree.Perm`
+Connes–Kreimer literature, as in Foissy's introduction, these are the rooted trees and the
+ordered ones the planar rooted trees. The identity criterion is `RoseTree.Perm`
 (`Core/Data/RoseTree/Perm.lean`); this file owns the quotient: the projection `mk`, the lifting
 API, the lifted invariants, and the constructor `node` on `Multiset` children, under which the
 grafting `B⁺` of a multiset of trees is well defined.
@@ -43,8 +42,8 @@ open RoseTree
 /-! ### The quotient type -/
 
 
-/-- An unordered rooted tree with `α`-labelled vertices: the quotient of `RoseTree α` by the
-    permutation of children at every vertex, `RoseTree.Perm`. -/
+/-- An unordered rooted tree with `α`-labelled vertices, the quotient of `RoseTree α` by the
+permutation of children at every vertex (`RoseTree.Perm`). -/
 def UnorderedTree (α : Type*) : Type _ := Quotient (RoseTree.isSetoid : Setoid (RoseTree α))
 
 namespace UnorderedTree
@@ -73,7 +72,7 @@ abbrev leaf (a : α) : UnorderedTree α := mk (RoseTree.leaf a)
 /-- The **node count** (number of vertices) of a nonplanar tree, lifted
     from `RoseTree.numNodes` via `RoseTree.Perm`-invariance. -/
 def numNodes : UnorderedTree α → Nat :=
-  Quotient.lift RoseTree.numNodes (fun _ _ h => RoseTree.numNodes_perm h)
+  Quotient.lift RoseTree.numNodes (fun _ _ ↦ RoseTree.numNodes_perm)
 
 @[simp] theorem numNodes_mk (t : RoseTree α) : (mk t).numNodes = t.numNodes := rfl
 
@@ -82,7 +81,7 @@ def numNodes : UnorderedTree α → Nat :=
 /-- The **leaf count** (number of childless vertices) of a nonplanar tree,
     lifted from `RoseTree.numLeaves` via `RoseTree.Perm`-invariance. -/
 def numLeaves : UnorderedTree α → Nat :=
-  Quotient.lift RoseTree.numLeaves (fun _ _ h => RoseTree.numLeaves_perm h)
+  Quotient.lift RoseTree.numLeaves (fun _ _ ↦ RoseTree.numLeaves_perm)
 
 @[simp] theorem numLeaves_mk (t : RoseTree α) : (mk t).numLeaves = t.numLeaves := rfl
 
@@ -91,7 +90,7 @@ def numLeaves : UnorderedTree α → Nat :=
 
 /-- The **arity** (root child count) of a nonplanar tree. -/
 def arity : UnorderedTree α → Nat :=
-  Quotient.lift RoseTree.arity (fun _ _ h => RoseTree.arity_perm h)
+  Quotient.lift RoseTree.arity (fun _ _ ↦ RoseTree.arity_perm)
 
 @[simp] theorem arity_mk (t : RoseTree α) : (mk t).arity = t.arity := rfl
 
@@ -99,7 +98,7 @@ def arity : UnorderedTree α → Nat :=
 
 /-- The **height** (number of vertices on a longest root-to-leaf path) of a nonplanar tree. -/
 def height : UnorderedTree α → Nat :=
-  Quotient.lift RoseTree.height (fun _ _ h => RoseTree.height_perm h)
+  Quotient.lift RoseTree.height (fun _ _ ↦ RoseTree.height_perm)
 
 @[simp] theorem height_mk (t : RoseTree α) : (mk t).height = t.height := rfl
 
@@ -108,47 +107,36 @@ def height : UnorderedTree α → Nat :=
 /-! ### Destructors and node injectivity
 
 The root value and the children (as a multiset of nonplanar trees) are
-`RoseTree.Perm`-invariant, so they descend to `UnorderedTree`. `congrArg` on these destructors
-inverts `mk`-equality at a node with no induction, giving the injectivity
-characterization `mk_node_eq_mk_node_iff`. -/
+`RoseTree.Perm`-invariant, so they descend to `UnorderedTree`. Node injectivity,
+`mk_node_eq_mk_node_iff`, is `RoseTree.perm_node_iff` read through `mk`. -/
 
 /-- The root value of a nonplanar tree. -/
 def value : UnorderedTree α → α :=
-  Quotient.lift RoseTree.value (fun _ _ h => h.value_eq)
+  Quotient.lift RoseTree.value (fun _ _ h ↦ h.value_eq)
 
 @[simp] theorem value_mk (t : RoseTree α) : (mk t).value = t.value := rfl
 
-/-- The mk-image of the root children, as a multiset, is a `RoseTree.Perm`-invariant:
-    `Perm.children_rel` collapses under `mk`. -/
+/-- The multiset of `mk`-images of the root children is a `RoseTree.Perm`-invariant. -/
 theorem perm_children_map_mk {t s : RoseTree α} (h : RoseTree.Perm t s) :
     (↑(t.children.map mk) : Multiset (UnorderedTree α)) = ↑(s.children.map mk) := by
   rw [← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq, Multiset.rel_map]
-  exact h.children_rel.mono fun _ _ _ _ => mk_eq_mk_iff.mpr
+  exact h.children_rel.mono fun _ _ _ _ ↦ mk_eq_mk_iff.mpr
 
 /-- The children of a nonplanar tree, as a multiset of nonplanar trees. -/
 def children : UnorderedTree α → Multiset (UnorderedTree α) :=
-  Quotient.lift (fun t => ↑(t.children.map mk)) (fun _ _ h => perm_children_map_mk h)
+  Quotient.lift (fun t ↦ ↑(t.children.map mk)) (fun _ _ ↦ perm_children_map_mk)
 
 @[simp] theorem children_mk (t : RoseTree α) :
     (mk t).children = ↑(t.children.map mk) := rfl
 
-/-- The node constructor is injective on the quotient: `mk`-images of two nodes are
-    equal iff the root values agree and the children agree as multisets of nonplanar
-    trees. The forward direction is `congrArg` on the `value` and `children`
-    destructors; the backward direction assembles a `RoseTree.Perm` componentwise. -/
+/-- The `mk`-images of two nodes are equal iff their root values agree and their children agree
+as multisets of nonplanar trees. -/
 theorem mk_node_eq_mk_node_iff {a b : α} {cs ds : List (RoseTree α)} :
     mk (.node a cs) = mk (.node b ds) ↔
       a = b ∧ (↑(cs.map mk) : Multiset (UnorderedTree α)) = ↑(ds.map mk) := by
-  constructor
-  · intro h
-    exact ⟨by simpa [RoseTree.value] using congrArg value h,
-           by simpa [RoseTree.children] using congrArg children h⟩
-  · rintro ⟨rfl, hc⟩
-    rw [← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq, Multiset.rel_map] at hc
-    obtain ⟨ds', hf, hperm⟩ := Multiset.rel_coe_iff_exists.mp
-      (hc.mono fun x _ y _ h => mk_eq_mk_iff.mp h)
-    exact mk_eq_mk_iff.mpr ((RoseTree.Perm.node_of_forall₂ hf).trans
-      (RoseTree.Perm.node_of_perm hperm))
+  rw [mk_eq_mk_iff, perm_node_iff, ← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq,
+    Multiset.rel_map]
+  simp only [mk_eq_mk_iff]
 
 /-! ### Adjoining a child, and the node constructor
 
@@ -159,7 +147,7 @@ children `F` starting from the leaf `a`. Both are computable, and `node_mk_tree_
 
 /-- Adjoin a tree as a further child of the root. -/
 def cons (c t : UnorderedTree α) : UnorderedTree α :=
-  Quotient.liftOn₂ c t (fun c t => mk (.node t.value (c :: t.children))) fun _ _ _ _ hc ht =>
+  Quotient.liftOn₂ c t (fun c t ↦ mk (.node t.value (c :: t.children))) fun _ _ _ _ hc ht ↦
     mk_eq_mk_iff.mpr (perm_node_iff.mpr ⟨ht.value_eq, by
       rw [← Multiset.cons_coe, ← Multiset.cons_coe]
       exact ht.children_rel.cons hc⟩)
@@ -168,7 +156,7 @@ def cons (c t : UnorderedTree α) : UnorderedTree α :=
     cons (mk c) (mk (.node a cs)) = mk (.node a (c :: cs)) := rfl
 
 instance : LeftCommutative (cons (α := α)) :=
-  ⟨fun c d t => Quotient.inductionOn₃ c d t fun _ _ t => by
+  ⟨fun c d t ↦ Quotient.inductionOn₃ c d t fun _ _ t ↦ by
     obtain ⟨a, cs⟩ := t
     exact mk_eq_mk_iff.mpr (.node (.swap ..))⟩
 
@@ -207,10 +195,10 @@ theorem node_pair_mk (a : α) (p q : RoseTree α) :
 theorem forest_inductionOn {motive : Multiset (UnorderedTree α) → Prop}
     (F : Multiset (UnorderedTree α))
     (h : ∀ cs : List (RoseTree α), motive (Multiset.ofList (cs.map mk))) : motive F := by
-  refine Quotient.inductionOn F fun lst => ?_
+  refine Quotient.inductionOn F fun lst ↦ ?_
   have hrep : (lst.map Quotient.out).map mk = lst := by
     rw [List.map_map]
-    exact (List.map_congr_left fun x _ => x.out_eq).trans (List.map_id lst)
+    exact (List.map_congr_left fun x _ ↦ x.out_eq).trans (List.map_id lst)
   exact hrep ▸ h (lst.map Quotient.out)
 
 /-! ### Structural induction and recursion
@@ -276,8 +264,7 @@ theorem numNodes_pos (t : UnorderedTree α) : 0 < t.numNodes := by
   induction t using Quotient.inductionOn with
   | h p => exact RoseTree.numNodes_pos p
 
-/-- Node count of a smart-constructor `node`: one (the root) plus the
-    total node count of the children multiset. -/
+/-- The node count of `node a F` is one (the root) plus the total node count of `F`. -/
 @[simp] theorem numNodes_node (a : α) (F : Multiset (UnorderedTree α)) :
     (node a F).numNodes = (F.map numNodes).sum + 1 := by
   induction F using forest_inductionOn with
@@ -320,7 +307,7 @@ relabeling every vertex. -/
     Lifted from `RoseTree.map` via `Quotient.map`. -/
 def map (f : α → β) : UnorderedTree α → UnorderedTree β :=
   Quotient.map (RoseTree.map f)
-    (fun _ _ h => RoseTree.Perm.map f h)
+    (fun _ _ ↦ RoseTree.Perm.map f)
 
 /-- Quotient-unfolding for `UnorderedTree.map`. Plain lemma (not `@[simp]`)
     since mathlib's generic `Quotient.map_mk` covers the same ground. -/
@@ -345,10 +332,10 @@ theorem map_map (f : α → β) (g : β → γ) (t : UnorderedTree α) :
   show map g (map f (mk p)) = map (g ∘ f) (mk p)
   rw [map_mk, map_mk, map_mk, RoseTree.comp_map]
 
-/-- `map` commutes with `node`: relabel the root and map the children. -/
+/-- `map` commutes with `node`, relabelling the root and mapping the children. -/
 theorem map_node (f : α → β) (a : α) (cs : Multiset (UnorderedTree α)) :
     map f (node a cs) = node (f a) (cs.map (map f)) := by
-  refine forest_inductionOn cs fun ps => ?_
+  refine forest_inductionOn cs fun ps ↦ ?_
   rw [node_mk_tree_list, map_mk, RoseTree.map_node,
     show (Multiset.ofList (ps.map mk)).map (map f)
         = Multiset.ofList ((ps.map (RoseTree.map f)).map mk) by
