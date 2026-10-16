@@ -7,24 +7,32 @@ module
 
 public import Linglib.Core.Data.RoseTree.Get
 public import Linglib.Core.Data.UnorderedTree.Basic
+public import Mathlib.Data.Multiset.Bind
 
 /-!
 # Subtrees of nonplanar trees
 
 `UnorderedTree.subtrees t` is the multiset of all subtrees of `t`, the root included, one per
-vertex, so its cardinality is `t.numNodes`. It is defined on planar representatives and descends to
-the quotient because a permutation of children permutes the subtree multiset.
+vertex, so its cardinality is `t.numNodes`. It is computed on a planar representative by
+`RoseTree.unorderedSubtrees`, which also serves proofs that recurse over planar children.
 
 ## Main definitions
 
-* `UnorderedTree.subtrees`
+* `UnorderedTree.subtrees`, `RoseTree.unorderedSubtrees`
 
 ## Main results
 
+* `UnorderedTree.subtrees_node`: a node's subtrees are the node itself and its children's
+  subtrees.
 * `UnorderedTree.card_subtrees`: one subtree per vertex.
-* `UnorderedTree.mem_subtrees_node_pair`: membership at a binary node.
 * `RoseTree.mem_unorderedSubtrees`: the nonplanar subtrees of a planar tree are the images of its
   subtrees at its positions.
+
+## Implementation notes
+
+`subtrees` is lifted from the planar recursion, not defined by `UnorderedTree.para`, whose
+tupling rebuilds every subtree with `node` and so slows kernel `decide` on c-command. It is
+well-defined because the planar recursion computes the paramorphism.
 -/
 
 @[expose] public section
@@ -41,37 +49,6 @@ def unorderedSubtrees : RoseTree α → Multiset (UnorderedTree α)
 def unorderedSubtreesList : List (RoseTree α) → Multiset (UnorderedTree α)
   | []      => 0
   | c :: cs => unorderedSubtrees c + unorderedSubtreesList cs
-end
-
-mutual
-theorem unorderedSubtrees_perm : ∀ {t s : RoseTree α}, Perm t s →
-    unorderedSubtrees t = unorderedSubtrees s
-  | _, _, .node h => by
-    simp only [unorderedSubtrees]
-    rw [UnorderedTree.mk_eq_mk_iff.mpr (Perm.node h), unorderedSubtreesList_permList h]
-  | _, _, .trans h₁ h₂ => (unorderedSubtrees_perm h₁).trans (unorderedSubtrees_perm h₂)
-
-theorem unorderedSubtreesList_permList : ∀ {cs ds : List (RoseTree α)},
-    PermList cs ds → unorderedSubtreesList cs = unorderedSubtreesList ds
-  | _, _, .nil => rfl
-  | _, _, .cons h hs => by
-    simp only [unorderedSubtreesList, unorderedSubtrees_perm h, unorderedSubtreesList_permList hs]
-  | _, _, .swap _ _ _ => by simp only [unorderedSubtreesList]; rw [add_left_comm]
-  | _, _, .trans h₁ h₂ =>
-    (unorderedSubtreesList_permList h₁).trans (unorderedSubtreesList_permList h₂)
-end
-
-mutual
-theorem card_unorderedSubtrees (p : RoseTree α) :
-    (unorderedSubtrees p).card = p.numNodes := by
-  obtain ⟨a, cs⟩ := p
-  rw [unorderedSubtrees, Multiset.card_cons, card_unorderedSubtreesList, numNodes_node]
-theorem card_unorderedSubtreesList (cs : List (RoseTree α)) :
-    (unorderedSubtreesList cs).card = (cs.map numNodes).sum := by
-  match cs with
-  | [] => rfl
-  | c :: cs => rw [unorderedSubtreesList, Multiset.card_add, card_unorderedSubtrees,
-                   card_unorderedSubtreesList, List.map_cons, List.sum_cons]
 end
 
 mutual
@@ -105,22 +82,42 @@ namespace UnorderedTree
 
 variable {α : Type*}
 
+/-- The planar subtrees of a tree are the paramorphism that conses each node onto its children's
+subtrees, so they do not depend on the representative. -/
+private theorem unorderedSubtrees_eq_para (t : RoseTree α) : unorderedSubtrees t =
+    para (fun a ps ↦ node a (ps.map Prod.fst) ::ₘ (ps.map Prod.snd).sum) (mk t) := by
+  induction t with
+  | node a cs ih =>
+    rw [← node_mk_tree_list, para_node, Multiset.map_map, Multiset.map_map]
+    simp only [Function.comp_def, Multiset.map_id', node_mk_tree_list, unorderedSubtrees]
+    congr 1
+    induction cs with
+    | nil => rfl
+    | cons c cs ihcs =>
+      rw [List.map_cons, ← Multiset.cons_coe, Multiset.map_cons, Multiset.sum_cons,
+        unorderedSubtreesList, ih c List.mem_cons_self,
+        ihcs fun c hc ↦ ih c (List.mem_cons_of_mem _ hc)]
+
 /-- All subtrees of a nonplanar tree, root included. -/
 def subtrees : UnorderedTree α → Multiset (UnorderedTree α) :=
-  Quotient.lift unorderedSubtrees fun _ _ h => unorderedSubtrees_perm h
+  Quotient.lift unorderedSubtrees fun _ _ h ↦ by
+    rw [unorderedSubtrees_eq_para, unorderedSubtrees_eq_para, mk, mk, Quotient.sound h]
 
 @[simp] theorem subtrees_mk (t : RoseTree α) : subtrees (mk t) = unorderedSubtrees t := rfl
 
+@[simp] theorem subtrees_node (a : α) (F : Multiset (UnorderedTree α)) :
+    subtrees (node a F) = node a F ::ₘ (F.map subtrees).sum := by
+  have h (t : UnorderedTree α) :
+      subtrees t = para (fun a ps ↦ node a (ps.map Prod.fst) ::ₘ (ps.map Prod.snd).sum) t :=
+    Quotient.inductionOn t unorderedSubtrees_eq_para
+  simp only [h, para_node, Multiset.map_map, Function.comp_def, Multiset.map_id']
+
 theorem subtrees_leaf (a : α) : subtrees (leaf a) = {leaf a} := by
-  show unorderedSubtrees (RoseTree.leaf a) = _
-  simp only [unorderedSubtrees, unorderedSubtreesList]
-  rfl
+  simpa using subtrees_node a 0
 
 theorem subtrees_node_pair (a : α) (l r : UnorderedTree α) :
     subtrees (node a {l, r}) = node a {l, r} ::ₘ (subtrees l + subtrees r) := by
-  refine Quotient.inductionOn₂ l r fun pl pr => ?_
-  rw [quot_mk_eq_mk, quot_mk_eq_mk, node_pair_mk]
-  simp only [subtrees_mk, unorderedSubtrees, unorderedSubtreesList, add_zero]
+  simp [Multiset.insert_eq_cons]
 
 @[simp] theorem mem_subtrees_leaf {m : UnorderedTree α} {a : α} :
     m ∈ subtrees (leaf a) ↔ m = leaf a := by
@@ -131,13 +128,16 @@ theorem subtrees_node_pair (a : α) (l r : UnorderedTree α) :
   rw [subtrees_node_pair, Multiset.mem_cons, Multiset.mem_add]
 
 theorem self_mem_subtrees (t : UnorderedTree α) : t ∈ subtrees t := by
-  refine Quotient.inductionOn t fun p => ?_
-  obtain ⟨a, cs⟩ := p
-  show mk (RoseTree.node a cs) ∈ unorderedSubtrees (RoseTree.node a cs)
-  rw [unorderedSubtrees]; exact Multiset.mem_cons_self _ _
+  induction t with
+  | node a F _ => simp
 
 /-- One subtree per vertex. -/
-theorem card_subtrees (t : UnorderedTree α) : (subtrees t).card = t.numNodes :=
-  Quotient.inductionOn t card_unorderedSubtrees
+theorem card_subtrees (t : UnorderedTree α) : (subtrees t).card = t.numNodes := by
+  induction t with
+  | node a F ih =>
+    rw [subtrees_node, Multiset.card_cons, numNodes_node,
+      show (F.map subtrees).sum.card = ((F.map subtrees).map Multiset.card).sum from
+        Multiset.card_join _, Multiset.map_map]
+    exact congrArg (·.sum + 1) (Multiset.map_congr rfl ih)
 
 end UnorderedTree
