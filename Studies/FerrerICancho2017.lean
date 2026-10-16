@@ -1,8 +1,3 @@
-/-
-Copyright (c) 2026 Robert Hawkins. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Robert Hawkins
--/
 module
 
 public import Linglib.Syntax.DependencyGrammar.Projectivity
@@ -12,45 +7,32 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Data.Fin.VecNotation
 
 /-!
-# Crossings under random linearization
+# Ferrer-i-Cancho (2017): Random crossings in dependency trees
 
-This file proves that if a sentence's word order were lost and replaced by
-a uniformly random one, the expected number of crossings would depend only
-on the arc structure: two links cross in a third of the linearizations
-when they share no endpoint, and in none otherwise. No tree hypothesis is
-needed; the identity holds for any link structure.
-
-## Main definitions
-
-* `Graph.disjointLinkPairs` is the number of unordered pairs of links
-  sharing no endpoint, the pairs that can cross at all.
-
-## Main statements
-
-* `Graph.three_mul_sum_crossings_map`: the expected-crossings identity
-  `3 * ∑ σ, (g.map σ).crossings = n ! * g.disjointLinkPairs`.
+Ferrer-i-Cancho asks how many crossings a sentence would show if its word order were lost and
+replaced by a uniformly random one. Two links cross in a third of the linearizations when they
+share no endpoint and in none otherwise, so the expected number of crossings is a third of the
+number of pairs of links that can cross (eq. 13). `three_mul_sum_crossings_map` states this as a
+count over all `n !` linearizations. The paper states it for trees; the proof here needs no tree
+hypothesis and holds for any link structure.
 
 ## Implementation notes
 
-Crossings are counted as ordered quadruples. Four distinct linked positions
-alternate in one of their `4 !` equally likely relative orders
-(`Equiv.Perm.factorial_mul_card_monotone_comp`), and each unordered pair of
-disjoint links has eight ordered witnesses.
+Crossings are counted as ordered quadruples. Four distinct linked positions alternate in one of
+their `4 !` equally likely relative orders (`Equiv.Perm.factorial_mul_card_monotone_comp`), and
+each unordered pair of disjoint links has eight ordered witnesses.
 
 ## References
 
-[ferrer-i-cancho-2017] — Random crossings in dependency trees, source of
-the expected-crossings identity (eq. 13)
-[ferrer-i-cancho-2013] — Hubiness, length, crossings and their
-relationships in dependency trees, expresses the disjoint-pair count of a
-tree through its length and degree second moment
+* [ferrer-i-cancho-2017]
+* [ferrer-i-cancho-2013]
 -/
 
 @[expose] public section
 
-namespace DependencyGrammar
+namespace FerrerICancho2017
 
-open Finset Equiv Nat
+open DependencyGrammar Finset Equiv Nat
 
 variable {n : ℕ} (g : Graph n)
 
@@ -58,7 +40,7 @@ variable {n : ℕ} (g : Graph n)
 cross at all, [ferrer-i-cancho-2017]'s potential crossings. Each pair is
 counted once, by the representative with both links least-endpoint-first
 and the earlier-starting link first. -/
-def Graph.disjointLinkPairs : ℕ :=
+def disjointLinkPairs : ℕ :=
   #{x : Fin n × Fin n × Fin n × Fin n | g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
     x.1 < x.2.1 ∧ x.2.2.1 < x.2.2.2 ∧ x.1 < x.2.2.1 ∧ x.2.1 ≠ x.2.2.1 ∧ x.2.1 ≠ x.2.2.2}
 
@@ -68,7 +50,7 @@ variable {g}
 
 /-- Relabelling scores the crossing quadruples in the positions the
 permutation assigns rather than in `g`'s own. -/
-theorem Graph.crossings_map (σ : Perm (Fin n)) :
+theorem crossings_map (σ : Perm (Fin n)) :
     (g.map σ).crossings = #{x : Fin n × Fin n × Fin n × Fin n |
       g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2 ∧
         Alternate (σ x.1) (σ x.2.1) (σ x.2.2.1) (σ x.2.2.2)} := by
@@ -121,7 +103,7 @@ private theorem sum_crossings_map :
       ∑ x ∈ univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
           g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2),
         #{σ : Perm (Fin n) | Alternate (σ x.1) (σ x.2.1) (σ x.2.2.1) (σ x.2.2.2)} := by
-  simp only [Graph.crossings_map, Finset.card_filter]
+  simp only [crossings_map, Finset.card_filter]
   rw [Finset.sum_comm, Finset.sum_filter]
   refine Finset.sum_congr rfl (fun x _ ↦ ?_)
   by_cases h1 : g.Linked x.1 x.2.1 <;> by_cases h2 : g.Linked x.2.2.1 x.2.2.2 <;>
@@ -170,14 +152,14 @@ orientation for each link and the order of the two links. -/
 private theorem card_linked_distinct :
     #(univ.filter (fun x : Fin n × Fin n × Fin n × Fin n ↦
         (g.Linked x.1 x.2.1 ∧ g.Linked x.2.2.1 x.2.2.2) ∧ distinct4 x)) =
-      8 * g.disjointLinkPairs := by
+      8 * disjointLinkPairs g := by
   rw [card_filter_eq_two_mul (C := fun x ↦ x.1 < x.2.1) (fun x ↦ (x.2.1, x.1, x.2.2))
       (fun _ ↦ rfl) ?_ ?_,
     card_filter_eq_two_mul (C := fun x ↦ x.2.2.1 < x.2.2.2)
       (fun x ↦ (x.1, x.2.1, x.2.2.2, x.2.2.1)) (fun _ ↦ rfl) ?_ ?_,
     card_filter_eq_two_mul (C := fun x ↦ x.1 < x.2.2.1)
       (fun x ↦ (x.2.2.1, x.2.2.2, x.1, x.2.1)) (fun _ ↦ rfl) ?_ ?_,
-    ← Nat.mul_assoc, ← Nat.mul_assoc, Graph.disjointLinkPairs]
+    ← Nat.mul_assoc, ← Nat.mul_assoc, disjointLinkPairs]
   · congr 2
     refine filter_congr fun x _ ↦ ?_
     simp only [distinct4]
@@ -191,10 +173,10 @@ eq. 13): summed over all `n !` linearizations, three times the crossing
 count is `n !` times the number of disjoint link pairs. So a uniformly
 random ordering expects a third of a crossing per pair of links sharing no
 endpoint, whatever the sentence's own order was. -/
-theorem Graph.three_mul_sum_crossings_map :
-    3 * ∑ σ : Perm (Fin n), (g.map σ).crossings = n ! * g.disjointLinkPairs := by
+theorem three_mul_sum_crossings_map :
+    3 * ∑ σ : Perm (Fin n), (g.map σ).crossings = n ! * disjointLinkPairs g := by
   have key := mul_sum_crossings_map (g := g)
   rw [card_linked_distinct, Nat.mul_left_comm] at key
   omega
 
-end DependencyGrammar
+end FerrerICancho2017
