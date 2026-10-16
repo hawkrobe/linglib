@@ -3,34 +3,29 @@ module
 public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 
 /-!
-# Kaqchikel Focus Fragment
+# Kaqchikel focus
 
-Realization data for the Kaqchikel focus construction, from the Patzún
-variety described by [erlewine-2016]: a focused argument fronts to
-immediately preverbal position marked by the particle *ja*, and a
-focused transitive subject (A) additionally switches the verb to Agent
-Focus (`Extraction.lean`) — the ergative split, since S
-fronts like A but intransitive verbs have no AF form.
+In Patzún Kaqchikel a focused argument fronts to the position immediately before the verb and
+is marked by the particle *ja*; a focused transitive subject also switches the verb to Agent
+Focus, which an intransitive verb lacks, so the subjects split by transitivity. Erlewine counts
+focus as one of four constructions that trigger Agent Focus, with wh-questions, relative clauses
+and argument existentials, and a subject-initial clause without *ja* is a topic, not a focus.
+Across Mayan, Aissen finds, information focus stays in situ and unmarked except on a transitive
+subject, which in the Agent Focus languages must front.
 
 ## Main declarations
 
-* `Kaqchikel.focusRealize`: focus realization by focused argument
-  role, the extraction reflexes plus the fronting and *ja*.
-* `Kaqchikel.af_reflex_iff`: the verb-hosted AF reflex appears exactly
-  under transitive-subject (A) focus.
-* `Kaqchikel.marked_subject_is_A_not_S`: the A-focus vs S-focus split.
+* `Kaqchikel.focusRealize`: the reflexes of focusing an argument, those of its extraction with
+  the fronting and *ja*.
+* `Kaqchikel.agentFocus_mem_focusRealize_iff`: Agent Focus marks the focus of a transitive
+  subject unless both arguments are speech-act participants.
 
 ## Implementation notes
 
-Focus fronting is one of four AF triggers ([erlewine-2016] §2.2); the
-others (wh-questions, relative clauses, argument existentials) differ
-only in the fronted phrase's own marking and are not separately
-encoded. Preverbal subject-initial orders are topicalization, not
-focus (no *ja*, no AF). Across Mayan, information focus stays in situ
-and unmarked except for the transitive subject, which in AF-languages
-must front and trigger AF ([aissen-2017]); Kaqchikel-specific in-situ
-data are not in the sources here, so `focusRealize` covers the fronted
-construction only, and no claim that every focus is overtly marked is made.
+`focusRealize` covers the fronted construction only; Kaqchikel in-situ focus is not in these
+sources, so no claim that every focus is overtly marked is made. Recipients and themes of
+ditransitives are relational-noun phrases outside the core roles, so the `R` and `T` cells are
+placeholders.
 
 ## References
 
@@ -42,34 +37,21 @@ construction only, and no claim that every focus is overtly marked is made.
 
 namespace Kaqchikel
 
-/-! ### Realization -/
-
 /-- The focus particle *ja*. -/
 def ja : Morphology.Morph := .free "ja"
 
-/-- Focus realization by focused argument role ([erlewine-2016]): every
-focused argument fronts (VOS base order, so fronting is never
-string-vacuous) and hosts *ja*, on top of whatever extraction from its
-role licenses — for a transitive subject (A), Agent Focus on the verb.
-Recipients and themes of ditransitives are relational-noun phrases
-outside the core roles, the dative cell of `Extraction.realize`, so the
-R and T cells here are vacuous; adjunct focus is outside this
-function's domain. -/
-def focusRealize (c : Mayan.VerbClass) (r : ArgumentRole) : Finset (Reflex Extraction.Host) :=
-  Extraction.realize c (.core r) ∪ {.displacement .phrase, .morpheme .phrase [ja]}
+/-- A focused argument fronts, never string-vacuously since the base order is VOS, and hosts
+*ja*, on top of the reflexes its extraction licenses ([erlewine-2016]). -/
+def focusRealize (c : Mayan.VerbClass) (agent patient : Person) (r : ArgumentRole) :
+    Finset (Reflex Mayan.Host) :=
+  Extraction.realize c agent patient (.core r) ∪ {.displacement .phrase, .morpheme .phrase [ja]}
 
-/-- The verb-hosted reflex (AF) appears under transitive-subject focus
-    only. -/
-theorem af_reflex_iff (c : Mayan.VerbClass) (p : ArgumentRole) :
-    Reflex.morpheme Extraction.Host.verb [Extraction.agentFocusSuffix c] ∈ focusRealize c p ↔
-      p = .A := by
-  decide +revert
-
-/-- A-focus switches the verb to AF while S-focus does not, the ergative
-split in focus marking. -/
-theorem marked_subject_is_A_not_S (c : Mayan.VerbClass) :
-    Reflex.morpheme Extraction.Host.verb [Extraction.agentFocusSuffix c] ∈ focusRealize c .A ∧
-    Reflex.morpheme Extraction.Host.verb [Extraction.agentFocusSuffix c] ∉ focusRealize c .S := by
-  decide +revert
+/-- Agent Focus marks the focus of a transitive subject, not of an intransitive one, unless both
+arguments are speech-act participants. -/
+theorem agentFocus_mem_focusRealize_iff (c : Mayan.VerbClass) (agent patient : Person)
+    (r : ArgumentRole) :
+    Reflex.morpheme .verb (agentFocus c).marker ∈ focusRealize c agent patient r ↔
+      r = .A ∧ ¬ (agent.IsSAP ∧ patient.IsSAP) := by
+  simp [focusRealize, Extraction.agentFocus_mem_realize_iff]
 
 end Kaqchikel

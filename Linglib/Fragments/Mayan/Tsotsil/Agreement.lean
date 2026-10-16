@@ -2,7 +2,6 @@ module
 
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Phonology.Segmental.Defs
-public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
@@ -16,18 +15,14 @@ intransitive subject and the transitive object, has two subsets: the suffixes *-
 zero, with the plurals *-otik*, *-oxuk* and *-ik*, and the prefixes *i-*, *a-* and zero, which
 appear only after a verbal aspect prefix and never before the second person Set A, so *l-i-tal*
 'I came' has the prefix and *tal-em-on* 'I have come' the suffix. The alignment is ergative in
-every aspect. The verbal complex in citation order runs aspect, Set A, stem, Set B. The
-extraction of a transitive subject may switch the verb to the Agent Focus form in *-on*, which
-Aissen shows to be optional and governed by obviation, the form of a clause whose object
-outranks its subject. Polian's sketch of Tseltal and Tsotsil, Aissen's clause-structure
-monograph and her Agent Focus article are the sources.
+every aspect. The verbal complex in citation order runs aspect, Set A, stem, Set B. Polian's
+sketch of Tseltal and Tsotsil and Aissen's clause-structure monograph are the sources.
 
 ## Main definitions
 
 * `Tsotsil.setAExponent`, `Tsotsil.setAPlural`, `Tsotsil.setBExponent`,
   `Tsotsil.setBPrefixExponent`: the paradigms.
 * `Tsotsil.template`, `Tsotsil.assignCase`: the verbal complex and the ergative case function.
-* `Tsotsil.Extraction.realize`: the optional Agent Focus reflex of subject extraction.
 
 ## Implementation notes
 
@@ -38,7 +33,6 @@ distribution is dialectally heterogeneous, is a second paradigm rather than a se
 
 * [polian-2017b]
 * [aissen-1987]
-* [aissen-1999a]
 * [aissen-polian-2025]
 -/
 
@@ -94,26 +88,5 @@ def setBPrefixExponent : ExponentTable :=
    (.personNumber .third .singular, []), (.personNumber .first .plural, [.pref "ij"]),
    (.personNumber .second .plural, [.pref "a", .suff "ik"]),
    (.personNumber .third .plural, [.suff "ik"])]
-
-/-! ### Extraction -/
-
-namespace Extraction
-
-/-- The host of the extraction reflex. -/
-inductive Host where
-  | verb
-  deriving DecidableEq, Repr
-
-/-- The Agent Focus suffix *-on*. -/
-def agentFocusSuffix : Morphology.Morph := .suff "on"
-
-/-- The extraction of a transitive subject may switch the verb to the Agent Focus form, which
-is optional and used when the object outranks the subject in obviation; no other extraction is
-marked. -/
-def realize : ArgumentRole → Finset (Reflex Host)
-  | .A => {.morpheme .verb [agentFocusSuffix]}
-  | _ => ∅
-
-end Extraction
 
 end Tsotsil

@@ -9,20 +9,28 @@ public import Linglib.Syntax.Clause.ArgumentRole
 
 In most Mayan languages the focusing, questioning or relativization of a transitive subject
 changes the verb: it takes the Agent Focus form, which lacks the Set A marker and carries a
-suffix of its own, so that a clause with two arguments is inflected like an intransitive
-([stiebels-2006], [polian-2017]). The form is obligatory in the languages with the ergative
-extraction constraint, optional in Tsotsil, and absent in Chol and Tseltal. Several languages
-also mark the extraction of non-core arguments and adjuncts, K'iche' and Kaqchikel with the
-particle *wi* and Mam with the enclitic =(y)a', and which classes of adjunct license the marker
-varies. The sites an extraction morphology distinguishes are the core arguments by their role
-and the adjuncts by their class; each language's `Extraction.realize` records the reflexes an
-extraction from each site licenses.
+suffix of its own, so that a clause with two arguments is inflected like an intransitive, as
+Stiebels and Polian describe it. The form is obligatory in the languages with the ergative
+extraction constraint, optional in Tsotsil, and absent in Chol and Tseltal; Mam extracts a
+transitive subject through its antipassive instead. Several languages also mark the extraction
+of non-core arguments and adjuncts, K'iche' and Kaqchikel with the particle *wi* and Mam with
+the enclitic =(y)a', and which classes of adjunct license the marker varies.
+
+Each language's `Extraction.realize` records the reflexes an extraction from each site licenses,
+as a finite set of `Reflex Mayan.Host`. The reflex of transitive-subject extraction is the
+marker of the voice the verb switches to, Agent Focus or the antipassive.
 
 ## Main declarations
 
 * `Mayan.VerbForm`: the transitive and Agent Focus forms, with `Mayan.VerbForm.HasSetA`.
 * `Mayan.Adjunct`, `Mayan.ExtractionSite`: the adjunct classes and the extraction sites the
   marking distinguishes.
+* `Mayan.Host`: the constituents an extraction reflex is hosted by.
+
+## Implementation notes
+
+A Mayan recipient is a relational-noun phrase, so its extraction is the `dative` cell; the
+sites `.core .R` and `.core .T` are placeholders that the fragments leave unmarked.
 
 ## References
 
@@ -34,8 +42,8 @@ extraction from each site licenses.
 
 namespace Mayan
 
-/-- The two forms of a transitive verb: the canonical transitive and the Agent Focus form
-that transitive-subject extraction selects wherever a language has it. -/
+/-- A transitive verb has the canonical transitive form and the Agent Focus form, which
+transitive-subject extraction selects wherever a language has it. -/
 inductive VerbForm where
   | transitive
   | agentFocus
@@ -53,12 +61,22 @@ inductive Adjunct where
   | instrument | benefactive | dative | locative | reason | purpose | manner | temporal
   deriving DecidableEq, Repr, Fintype
 
-/-- The site of an extraction at the granularity the marking distinguishes: a core argument by
-its role, or an adjunct by its class. A fragment whose sources document core-argument
+/-- An extraction site is a core argument, by its role, or an adjunct, by its class, the
+granularity the marking distinguishes. A fragment whose sources document core-argument
 extraction only indexes `realize` by `ArgumentRole`. -/
 inductive ExtractionSite where
   | core (r : ArgumentRole)
   | adjunct (a : Adjunct)
+  deriving DecidableEq, Repr, Fintype
+
+/-- An extraction reflex is hosted by the verb stem, which a voice suffix alters, by the verbal
+complex, the word a particle or enclitic closes, by a directional auxiliary, or by the extracted
+phrase itself. -/
+inductive Host where
+  | verb
+  | verbalComplex
+  | directional
+  | phrase
   deriving DecidableEq, Repr, Fintype
 
 end Mayan
