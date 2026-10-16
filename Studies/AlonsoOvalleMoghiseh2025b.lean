@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Studies.AlonsoOvalleMenendezBenito2010
 public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
@@ -13,8 +13,8 @@ public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 Farsi singular *what* interrogatives, bare (*chi*) and complex (*che ketab-i*), allow both
 singular and plural answers (20), (23); with the differential object marker *-ro* only the
 bare ones do (26)–(27). The paper derives this from three assumptions: interrogatives range
-over the conjunctions and disjunctions of nonempty subdomains (29), built with the
-`Quantifier.NP.conjGQ`/`disjGQ` generators (`hamblin`, `mem_conjProp`); singular marking on
+over the conjunctions and disjunctions of nonempty subdomains (29), the meets and joins of
+their individuals (`hamblin`, `mem_conjProp`); singular marking on
 bare interrogatives is a default over atoms and pluralities (37), while SING on complex
 interrogatives keeps atoms only (42) (`neutral`, `atoms`); and *-ro* restricts the subset
 selection function to singletons (52), the `IsSingleton` functions of
@@ -78,7 +78,7 @@ def atoms : Finset Entity := univ.filter (·.card = 1)
 
 /-! ### Hamblin sets over generalized quantifiers (29) -/
 
-variable {W : Type*} [Fintype W] [DecidableEq W] (P : Entity → W → Prop)
+variable {W : Type*} [Fintype W] (P : Entity → W → Prop)
   [∀ e, DecidablePred (P e)]
 
 /-- The proposition that the conjunction ⊓X holds of `P`. -/
@@ -87,15 +87,15 @@ def conjProp (X : Finset Entity) : Finset W := univ.filter fun w => ∀ e ∈ X,
 /-- The proposition that the disjunction ⊔X holds of `P`. -/
 def disjProp (X : Finset Entity) : Finset W := univ.filter fun w => ∃ e ∈ X, P e w
 
-omit [DecidableEq W] in
 theorem mem_conjProp (X : Finset Entity) (w : W) :
-    w ∈ conjProp P X ↔ conjGQ ↑X (P · w) := by
-  simp [conjProp]
+    w ∈ conjProp P X ↔ (⨅ e ∈ X, individual e) (P · w) := by
+  simp [conjProp, individual]
 
-omit [DecidableEq W] in
 theorem mem_disjProp (X : Finset Entity) (w : W) :
-    w ∈ disjProp P X ↔ disjGQ ↑X (P · w) := by
-  simp [disjProp]
+    w ∈ disjProp P X ↔ (⨆ e ∈ X, individual e) (P · w) := by
+  simp [disjProp, individual]
+
+variable [DecidableEq W]
 
 /-- The Hamblin set (29), the meets and joins over every nonempty subdomain of `D`, applied to
 `P`. -/

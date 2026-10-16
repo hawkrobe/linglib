@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Presupposition.Trivalent
 public import Linglib.Logic.Aristotelian.Square
-public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Data.Examples.Belnap1970
 
 /-!

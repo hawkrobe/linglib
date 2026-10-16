@@ -115,7 +115,7 @@ theorem poss_scopeDownMono_of_down_up {Q₁ Q₂ : GQ α} (C : α → Prop)
 `Q₁`, such as the proportional *most students'*. -/
 theorem poss_eq_possNP_restrict {Q₁ : GQ α} (hSym : Std.Symm Q₁) (hCons : Conservative Q₁)
     (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop) :
-    Poss Q₁ C Q₂ R = PossNP (restrict Q₁ C) Q₂ R :=
+    Poss Q₁ C Q₂ R = PossNP (Q₁ C) Q₂ R :=
   funext fun _ ↦ funext fun _ ↦
     propext ((conserv_symm_iff_int Q₁ hCons).mp hSym _ _ _ _ fun _ ↦ and_assoc)
 

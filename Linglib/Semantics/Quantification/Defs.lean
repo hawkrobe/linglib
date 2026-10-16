@@ -17,8 +17,8 @@ conservativity, monotonicity, symmetry and strength, Peters and Westerståhl's l
 smoothness and anti-additivity, van Benthem's relational properties and quantity invariance in
 the sense of Mostowski. The operations are the negations and the dual, the Boolean operations
 named for determiner conjunction and disjunction, and restriction by an adjective. The concrete
-denotations are in `Quantification/Basic.lean` and the type ⟨1⟩ quantifiers in
-`Quantification/NP.lean`.
+denotations are in `Quantification/Basic.lean`, and the individuals and the type shifts they fix
+in `Quantification/Individual.lean`.
 
 ## Main definitions
 
@@ -255,9 +255,6 @@ def dual (q : GQ α) : GQ α := (innerNeg q)ᶜ
 so that *tall student* is *student* and *tall*. -/
 def adjRestrict (q : GQ α) (adj : α → Prop) : GQ α :=
   fun R S => q (fun x => R x ∧ adj x) S
-
-/-- The type ⟨1⟩ quantifier a determiner and a restrictor denote, `restrict Q A B = Q A B`. -/
-def restrict (q : GQ α) (A : α → Prop) : NP α := q A
 
 end GQ
 

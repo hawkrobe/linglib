@@ -5,7 +5,6 @@ public import Linglib.Semantics.Composition.Assignment
 public import Linglib.Semantics.Composition.Toy
 public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Composition.Lexicon
-public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Quantification.Polyadic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.HeimKratzer1998
@@ -70,12 +69,21 @@ def toDenotation (d : Family.{0}) (E W : Type) [Fintype E] : Denotation E W := �
 def terminals (s : Set Family.{0}) (E W : Type) [Fintype E] : Set (Denotation E W) :=
   (toDenotation · E W) '' s
 
+/-- `objectShift D` is the object-position entry of the determiner `D`, which the book's lexical
+rule (§7.2.1) derives from the basic one: it takes an object-first two-place predicate and the
+subject and quantifies over the object. -/
+def objectShift {E : Type*} (D : GQ E) : (E → Prop) → (E → E → Prop) → E → Prop :=
+  fun P R x ↦ D P fun y ↦ R y x
+
+@[simp] theorem objectShift_apply {E : Type*} (D : GQ E) (P : E → Prop) (R : E → E → Prop)
+    (x : E) : objectShift D P R x = D P fun y ↦ R y x := rfl
+
 /-- The object-position entry of a terminal of the determiner type, the book's lexical rule
 applied to a lexical item, and `none` at any other type. -/
 def objectShift? {E W : Type} (d : Denotation E W) : Option (Denotation E W) :=
   if h : d.1 = Ty.det then
     Option.some ⟨(.e ⇒ .t) ⇒ (.e ⇒ .e ⇒ .t) ⇒ .e ⇒ .t,
-      GQ.objectShift (h ▸ d.2 : Ty.Domain E W Ty.det)⟩
+      objectShift (h ▸ d.2 : Ty.Domain E W Ty.det)⟩
   else none
 
 /-- The object-position entries the lexical rule derives from a set of readings. -/

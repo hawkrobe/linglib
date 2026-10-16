@@ -288,7 +288,7 @@ end Scoreboard
 /-- *Nobody* restricted to the addressees (68). The second-person pronoun (66), overt or null,
 is the Montague lift `NP.individual` of an addressee, which lives on the set of addressees by
 `NP.individual_livesOn`. -/
-def nobody (addr : E → Prop) : NP E := GQ.restrict GQ.no addr
+def nobody (addr : E → Prop) : NP E := GQ.no addr
 
 /-- Restricted *nobody* satisfies the conservativity presupposition, since *no* is
 conservative. -/

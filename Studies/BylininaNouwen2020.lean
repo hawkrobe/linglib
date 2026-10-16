@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Semantics.Quantification.NP
+public import Linglib.Semantics.Quantification.Individual
 public import Mathlib.Data.Fintype.EquivFin
 
 /-!
