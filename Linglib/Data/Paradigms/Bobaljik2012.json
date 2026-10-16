@@ -3292,6 +3292,17 @@
       ]
     },
     {
+      "form_id": "krl_many_superlative_questionnaire",
+      "lexeme": "krl_many",
+      "cell": "superlative",
+      "analysed_orth_form": "äij-in",
+      "judgment": "ungrammatical",
+      "source": [
+        "bobaljik-2012[p. 130]"
+      ],
+      "comment": "none of the seven respondents to the 2009 questionnaire gave äijin as the superlative of 'many' or recognized it when asked; four gave enin"
+    },
+    {
       "form_id": "hun_many_positive",
       "lexeme": "hun_many",
       "cell": "positive",

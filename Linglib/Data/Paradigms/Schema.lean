@@ -33,6 +33,9 @@ whose rows are CLDF word forms.
   `Degree=Cmp`, and becomes a `UD.MorphFeatures`.
 * A form keeps the source's segmentation as `analysed`, Paralex's `analysed_orth_form`; `form` is
   `analysed` without its hyphens.
+* A form carries the source's `Judgment`, a linglib extension column after CLDF's
+  `grammaticalityJudgement`, which Paralex lacks. A source that rejects a form another source
+  gives is a row of its own, marked `ungrammatical`, so disagreeing sources sit side by side.
 * Root identity is a judgment rather than a function of the forms: *better* and *best* share a
   root that no identity of strings shows. A source's classes are therefore rows of their own,
   citing where the source states them, and a root pattern over cells is computed from them.
@@ -77,6 +80,9 @@ structure Form where
   form : String
   /-- The `analysed_orth_form` column holds the form as the source segments it. -/
   analysed : String
+  /-- The `judgment` column holds the source's mark on the form in the cell; a form the source
+  rejects is a candidate for the cell, not its content. -/
+  judgment : Judgment := .acceptable
   /-- The `source` column holds the references, each a bibkey with a locator. -/
   source : List SourceRef := []
   deriving DecidableEq, Repr

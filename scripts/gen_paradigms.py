@@ -28,7 +28,9 @@ JSON file format, the Paralex tables under Paralex column names plus one extensi
 
 A cell's `ud` is its Universal Dependencies features in the CoNLL-U syntax (`Case=Nom|Number=Sing`),
 checked against the constructors of `Linglib/Data/UD/Features.lean`. A form's Lean `form` is its
-`analysed_orth_form` without hyphens. `comment` (any table) and `cognates` are validated and not
+`analysed_orth_form` without hyphens. A form's optional `judgment`, a linglib extension column after
+CLDF's `grammaticalityJudgement`, names the source's mark on the form in its cell (`ungrammatical`
+for a form the source rejects); a form without one is `acceptable`. `comment` (any table) and `cognates` are validated and not
 emitted. The generator rejects malformed input, unknown keys, dangling references and unknown
 bibkeys; it is idempotent, and `--check` exits 1 on drift.
 """
@@ -57,10 +59,13 @@ FEATURES = {"Number": ("number", "Number"), "Gender": ("gender", "Gender"),
             "Tense": ("tense", "Tense"), "Aspect": ("aspect", "Aspect"), "Mood": ("mood", "Mood"),
             "Voice": ("voice", "Voice"), "Polarity": ("polarity", "Polarity")}
 PERSON = {"0": "zero", "1": "first", "2": "second", "3": "third"}
+# the names `Judgment.ofName?` reads, `Linglib/Data/Examples/Judgment.lean`
+JUDGMENTS = {"acceptable", "marginal", "questionable", "unacceptable", "ungrammatical"}
 
 TABLES = {"cells": {"cell_id", "label", "ud", "comment"},
           "lexemes": {"lexeme_id", "language_ID", "label", "meaning", "comment"},
-          "forms": {"form_id", "lexeme", "cell", "analysed_orth_form", "source", "comment"},
+          "forms": {"form_id", "lexeme", "cell", "analysed_orth_form", "judgment", "source",
+                    "comment"},
           "root_classes": {"classes_id", "lexeme", "forms", "classes", "source", "cognates",
                            "comment"}}
 
@@ -195,10 +200,14 @@ def emit_module(paper: str, data: dict) -> str:
         if cell not in cells:
             fail(f"{where}: cell {cell!r} not in cells")
         a = req(r, "analysed_orth_form", where)
+        j = r.get("judgment", "acceptable")
+        if j not in JUDGMENTS or j == "acceptable" and "judgment" in r:
+            fail(f"{where}: judgment {j!r} is not one of {sorted(JUDGMENTS - {'acceptable'})}")
         forms[fid] = r
+        mark = "" if j == "acceptable" else f"judgment := .{j}, "
         out.append(f"def {fid} : Form :=\n  {{ id := {lean_string(fid)}, lexeme := {lx}, cell := {cell}, "
                    f"form := {lean_string(a.replace('-', ''))},\n    analysed := {lean_string(a)}, "
-                   f"source := {emit_sources(r.get('source'), keys, where)} }}")
+                   f"{mark}source := {emit_sources(r.get('source'), keys, where)} }}")
 
     classes = []
     for r in data.get("root_classes") or []:
