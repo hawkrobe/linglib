@@ -40,7 +40,7 @@ size in the data and is not represented.
 
 ## References
 
-* [arnold-wasow-losongco-ginstrom-2000]
+* [arnold-losongco-wasow-ginstrom-2000]
 * [behaghel-1909] — the law of growing constituents
 * [prince-1992] — discourse-given, inferable, and new
 -/

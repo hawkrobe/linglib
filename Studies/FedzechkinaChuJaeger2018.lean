@@ -50,7 +50,7 @@ Fig. 5 to the order proportions of Fig. 4.
 ## References
 
 * [fedzechkina-chu-jaeger-2018]
-* [arnold-wasow-losongco-ginstrom-2000]
+* [arnold-losongco-wasow-ginstrom-2000]
 * [fedzechkina-newport-2012]
 * [fedzechkina-newport-2017]
 -/
