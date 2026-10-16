@@ -7,15 +7,20 @@ public import Studies.Kalomoiros2023
 /-!
 # Accounts of presupposition projection
 
-The accounts of projection in the propositional fragment that linglib formalizes
-(`Eval.Projection.Account`), each registered by the theory's own acceptability predicate, from
-`Semantics/Presupposition` or the paper's study (`Account.Accepts`): [heim-1983]'s context change
-potentials with [beaver-2001]'s disjunction, [peters-1979]'s filtering connectives, the
-Transparency, local satisfaction, Strong Kleene and supervaluationist theories of
-[schlenker-2009] and its manuscript [schlenker-2008b], each checked incrementally and
-symmetrically, and [kalomoiros-2023]'s Limited Symmetry. An account is stronger than another when
-every context that accepts a formula by the first accepts it by the second, so that it predicts
-presuppositions at least as strong (`Account.Stronger`).
+A theory of projection over the propositional fragment says when a context accepts a formula
+under an interpretation of its atoms (`Eval.Projection.Theory`). A theory predicts an inference
+from a formula when every context that accepts the formula entails it (`Theory.Predicts`). This is
+the linking hypothesis by which a theory's acceptance conditions meet the judgments of an
+inference task, stated once and shared by every task that uses it.
+
+The accounts linglib formalizes are registered as theories by their own acceptability predicates,
+from `Semantics/Presupposition` or the paper's study (`Account.Accepts`): Heim's context change
+potentials with Beaver's disjunction, Peters's filtering connectives, Schlenker's Transparency,
+local satisfaction, Strong Kleene and supervaluationist theories, each checked incrementally and
+symmetrically, and Kalomoiros's Limited Symmetry. A theory under development in `Lab` is scored the
+same way. A theory is stronger than another when every context that accepts a formula by the first
+accepts it by the second, so that it predicts presuppositions at least as strong
+(`Theory.Stronger`).
 
 ## References
 
@@ -32,6 +37,41 @@ presuppositions at least as strong (`Account.Stronger`).
 namespace Eval.Projection
 
 open Presupposition
+
+/-- A theory of projection over the propositional fragment says when a context accepts a formula,
+under an interpretation of its atoms. -/
+structure Theory where
+  /-- Whether the theory accepts a formula in a context. -/
+  accepts : ∀ {Atom W : Type}, (Atom → Set W) → Set W → Formula Atom → Prop
+
+namespace Theory
+
+/-- `T` predicts presuppositions at least as strong as `T'` when every context that accepts a
+formula by `T` accepts it by `T'`. -/
+def Stronger (T T' : Theory) : Prop :=
+  ∀ (Atom W : Type) (I : Atom → Set W) (C : Set W) (F : Formula Atom),
+    T.accepts I C F → T'.accepts I C F
+
+theorem Stronger.refl (T : Theory) : T.Stronger T := fun _ _ _ _ _ h ↦ h
+
+theorem Stronger.trans {T T' T'' : Theory} (h : T.Stronger T') (h' : T'.Stronger T'') :
+    T.Stronger T'' :=
+  fun Atom W I C F hT ↦ h' Atom W I C F (h Atom W I C F hT)
+
+/-- The linking hypothesis of inference tasks. A theory predicts the inference `φ` from `F` when,
+under every interpretation of the atoms, every context that accepts `F` entails `φ`, so that a
+hearer who accommodates what the sentence needs draws the inference. -/
+def Predicts (T : Theory) {Atom : Type} (F : Formula Atom)
+    (φ : ∀ {W : Type}, (Atom → Set W) → Set W) : Prop :=
+  ∀ (W : Type) (I : Atom → Set W) (C : Set W), T.accepts I C F → C ⊆ φ I
+
+/-- A stronger theory predicts every inference that a weaker one predicts. -/
+theorem Predicts.of_stronger {T T' : Theory} (h : T.Stronger T') {Atom : Type}
+    {F : Formula Atom} {φ : ∀ {W : Type}, (Atom → Set W) → Set W} (hT' : T'.Predicts F φ) :
+    T.Predicts F φ :=
+  fun W I C hC ↦ hT' W I C (h Atom W I C F hC)
+
+end Theory
 
 /-- The accounts of projection in the propositional fragment. -/
 inductive Account where
@@ -64,8 +104,8 @@ namespace Account
 
 variable {Atom W : Type*}
 
-/-- When an account accepts a formula in a context, under an interpretation of the atoms: the
-theory's own predicate. -/
+/-- Whether an account accepts a formula in a context, under an interpretation of the atoms, is
+given by the theory's own predicate. -/
 noncomputable def Accepts : Account → (Atom → Set W) → Set W → Formula Atom → Prop
   | dynamic => fun I C F ↦ (F.ccp I).Admits C
   | filtering => fun I C F ↦ (F.filter I).Admits C
@@ -79,17 +119,17 @@ noncomputable def Accepts : Account → (Atom → Set W) → Set W → Formula A
   | supervaluationSymmetric => Schlenker2009.SuperS
   | limitedSymmetry => Kalomoiros2023.TranspLS
 
-/-- `a` predicts presuppositions at least as strong as `b`: every context that accepts a formula
-by `a` accepts it by `b`. -/
-def Stronger (a b : Account) : Prop :=
-  ∀ (Atom W : Type) (I : Atom → Set W) (C : Set W) (F : Formula Atom),
-    a.Accepts I C F → b.Accepts I C F
+/-- The theory an account registers. -/
+def theory (a : Account) : Theory := ⟨a.Accepts⟩
 
-theorem Stronger.refl (a : Account) : a.Stronger a := fun _ _ _ _ _ h ↦ h
+/-- `a` predicts presuppositions at least as strong as `b`. -/
+def Stronger (a b : Account) : Prop := a.theory.Stronger b.theory
+
+theorem Stronger.refl (a : Account) : a.Stronger a := Theory.Stronger.refl _
 
 theorem Stronger.trans {a b c : Account} (hab : a.Stronger b) (hbc : b.Stronger c) :
     a.Stronger c :=
-  fun Atom W I C F h ↦ hbc Atom W I C F (hab Atom W I C F h)
+  Theory.Stronger.trans hab hbc
 
 end Account
 

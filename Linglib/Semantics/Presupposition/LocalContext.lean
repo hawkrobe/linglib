@@ -26,8 +26,9 @@ the truth value depends on the gap for some continuation (`isLocalContext_of_isT
 
 A restriction is stably transparent when it never settles the truth value across a set of
 continuations unless the unrestricted gap settles it the same way (`StablyTransparent`), the
-condition Kalomoiros's Limited Symmetry imposes at each parse point after a trigger. It is weaker than
-transparency, and the two coincide for a single continuation.
+condition Kalomoiros's Limited Symmetry imposes at each parse point after a trigger. It is weaker
+than transparency, and the two coincide for a single continuation. Transparency, unlike stability,
+is unchanged when the gap is negated (`transparent_image_compl_iff`).
 
 ## Main definitions
 
@@ -150,6 +151,32 @@ theorem isLocalContext_of_dependsOn
       (Set.subset_compl_singleton_iff.2 hiy))
 
 end Dependence
+
+/-! ### Negating the gap -/
+
+section Compl
+
+variable {β : Type*} [BooleanAlgebra β]
+
+private theorem forall_inf_compl_iff {P : β → Prop} {x : β} :
+    (∀ d, P (x ⊓ d)ᶜ ↔ P dᶜ) ↔ ∀ d, P (x ⊓ d) ↔ P d := by
+  have hY : (∀ d, P (x ⊓ d)ᶜ ↔ P dᶜ) ↔ ∀ y, P (xᶜ ⊔ y) ↔ P y :=
+    ⟨fun h y ↦ by simpa [compl_inf] using h yᶜ, fun h d ↦ by simpa [compl_inf] using h dᶜ⟩
+  rw [hY]
+  refine ⟨fun h d ↦ ?_, fun h y ↦ ?_⟩
+  · rw [← h (x ⊓ d), sup_inf_left, compl_sup_eq_top, top_inf_eq, h d]
+  · rw [← h (xᶜ ⊔ y), inf_sup_left, inf_compl_eq_bot, bot_sup_eq, h y]
+
+/-- Transparency is invariant under negating the gap. A restriction is transparent for a set of
+continuations iff it is transparent for the same continuations applied to the gap's negation. -/
+theorem transparent_image_compl_iff {C : Set W} {env : Set (β → Set W)} {x : β} :
+    Transparent C ((fun f d ↦ f dᶜ) '' env) x ↔ Transparent C env x := by
+  simp only [Transparent, Set.forall_mem_image]
+  refine forall₂_congr fun f _ ↦ ⟨fun h d w hw ↦ ?_, fun h d w hw ↦ ?_⟩
+  · exact (forall_inf_compl_iff (P := (w ∈ f ·))).1 (fun d ↦ h d w hw) d
+  · exact (forall_inf_compl_iff (P := (w ∈ f ·))).2 (fun d ↦ h d w hw) d
+
+end Compl
 
 /-! ### Stable transparency -/
 
