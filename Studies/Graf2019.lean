@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Adjectives
+public import Studies.Bobaljik2012
 public import Linglib.Morphology.Exponence.Containment.Contiguity
 public import Linglib.Syntax.Person.Features
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
@@ -20,8 +20,8 @@ constraint. A Person Case Constraint is a monotone map from the reduced dual per
 ## Main results
 
 * `isContiguous_tfae`: the four characterizations coincide over a linear hierarchy.
-* `english_suppletion_feasiblyMonotone`, `aba_not_feasiblyMonotone`: Table 1's adjectival
-  patterns over the English fragment.
+* `feasiblyMonotone_of_ne_basque`, `aba_not_feasiblyMonotone`: Table 1's adjectival patterns,
+  over the triples of [bobaljik-2012]'s Table 4.1.
 * `person_attested_feasiblyMonotone`, `personGap_not_feasiblyMonotone`: Table 2's person
   systems over Zwicky's hierarchy.
 * `aab_feasiblyMonotone`, `aab_not_groundedly_realizable`: monotonicity leaves the
@@ -68,7 +68,6 @@ syncretisms and the nominative stem-allomorphy generalization (16) remain.
 namespace Graf2019
 
 open Morphology Morphology.Exponence Morphology.Containment
-open English.Adjectives
 
 /-! ### Four characterizations coincide over a linear hierarchy -/
 
@@ -88,14 +87,13 @@ theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Paradigm n F) :
 
 /-! ### Table 1: adjectival gradation -/
 
-/-- Every suppletion pattern of the English fragment is feasibly monotonic, Table 1's attested
-rows AAA *smart* and ABB *good*. -/
-theorem english_suppletion_feasiblyMonotone :
-    ∀ e ∈ allEntries, FeasiblyMonotone e.comparison.suppletion := by
-  intro e he
-  rw [← isContiguous_iff_feasiblyMonotone]
-  revert e he
-  decide +kernel
+/-- Every adjectival triple of [bobaljik-2012]'s Table 4.1 but the Basque doublet is feasibly
+monotonic, as Table 1's attested rows AAA *smart* and ABB *good* are. -/
+theorem feasiblyMonotone_of_ne_basque {r : Data.Paradigms.RootClasses}
+    (hr : r ∈ Bobaljik2012.Paradigms.rootClasses) (hq : ¬ Bobaljik2012.Quantifier r)
+    (hb : r.id ≠ Bobaljik2012.Paradigms.eus_good_on.roots.id) :
+    FeasiblyMonotone (Bobaljik2012.rootPattern r) :=
+  (isContiguous_iff_feasiblyMonotone _).1 ((Bobaljik2012.isContiguous_iff_ne_basque r hr hq).2 hb)
 
 /-- No order on the forms makes *good, better, goodest* monotone, whatever the order of the
 codomain, so the *ABA row is unattested. -/

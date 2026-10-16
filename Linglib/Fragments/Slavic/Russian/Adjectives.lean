@@ -30,11 +30,9 @@ def samyj : Morph := .free "samyj"
 
 /-- The adjective `form` with the comparative `comparative`, whose superlative is *samyj* with
 the positive. -/
-def entry (form script comparative : String) (suppletion : Paradigm 3 ℕ := Paradigm.aaa) :
-    Adjective :=
+def entry (form script comparative : String) : Adjective :=
   { form, script := some script
-    comparison :=
-      { comparative := [.root comparative], superlative := [samyj, .root form], suppletion } }
+    comparison := { comparative := [.root comparative], superlative := [samyj, .root form] } }
 
 /-! ### Regular adjectives -/
 
@@ -48,11 +46,11 @@ def prostoj : Adjective := entry "prostoj" "простой" "prošče"
 
 /-- *xoroš-ij – luč-še – samyj xoroš-ij* 'good'. *Samyj luč-š-ij* also occurs, which
 [bobaljik-2012] takes to be a vestigial morphological superlative reinforced by *samyj*. -/
-def xoroshij : Adjective := entry "xorošij" "хороший" "lučše" Paradigm.aba
+def xoroshij : Adjective := entry "xorošij" "хороший" "lučše"
 
 /-- *plox-oj – xuž-e – samyj plox-oj* 'bad', with the comparative root *xud-* mutated before
 *-e*. -/
-def ploxoj : Adjective := entry "ploxoj" "плохой" "xuže" Paradigm.aba
+def ploxoj : Adjective := entry "ploxoj" "плохой" "xuže"
 
 /-! ### Inventory -/
 

@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Degree.Antonymy
 public import Linglib.Semantics.Degree.Scale
-public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Morphology.Morph
 
 /-!
@@ -16,8 +15,7 @@ without one. The degree semantics, with the positive standard and the Kennedy cl
 
 ## Main definitions
 
-* `Adjective.Comparison`: the comparative and the superlative of an adjective as morphs, with the
-  root pattern over the three grades.
+* `Adjective.Comparison`: the comparative and the superlative of an adjective as morphs.
 * `Adjective`: the lexeme, with `Adjective.IsGradable`.
 
 ## References
@@ -32,17 +30,15 @@ open Degree Morphology
 /-! ### Comparison morphology -/
 
 /-- The comparison paradigm of an adjective records its comparative and its superlative, each as
-the morphs of the form and empty where the entry gives none, and the root pattern over the three
-grades. A grade formed with a degree word is a form of two words, and suppletion is the root
-pattern alone, so that *better* is one word on another root. -/
+the morphs of the form and empty where the entry gives none. A grade formed with a degree word is a
+form of two words, and a suppletive grade is one word on another root, as *better* is. Which roots
+of the grades are one root is a source's judgment, recorded with the source in
+`Data/Paradigms/`. -/
 structure Adjective.Comparison where
   /-- The comparative. -/
   comparative : List Morph := []
   /-- The superlative. -/
   superlative : List Morph := []
-  /-- The root pattern over the positive, the comparative and the superlative, in the
-  classification of [bobaljik-2012]. -/
-  suppletion : Paradigm 3 ℕ := Paradigm.aaa
   deriving DecidableEq, Repr, BEq
 
 /-! ### The adjective object -/
