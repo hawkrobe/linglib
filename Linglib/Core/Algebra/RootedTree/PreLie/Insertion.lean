@@ -27,22 +27,19 @@ to several guests, in the form Foissy gives for decorated trees.
 
 ## Main results
 
-* `bind_sections_filter`: a sum over assignments, split by a predicate on vertices, is a sum
-  over the splittings `gs.sublists'.revzip` of the guests of independent assignments to the two
-  classes. `insertion_node`, `insertionForest_cons` and `insertionForest_append` are instances.
+* `insertion_node`, `insertionForest_cons`, `insertionForest_append`: the guests split between
+  the root and the children, or between two parts of the host forest.
 * `insertionForest_bind_revzip_sublists'`: splitting an output forest splits the hosts and the
   guests, each guest following its host.
-* `insertion_perm_guests`, `insertion_forall₂_perm_guests`, `insertion_perm_host`: once outputs
-  are read through `UnorderedTree.mk`, insertion depends on neither the order of the guests nor
-  the order of any children.
-* `insertionForest_perm_host_msform`, `insertionForest_msform_invariance_guests`: the forest
-  versions, which make `UnorderedTree.insertionMultiset` well defined.
+* `insertion_node_msform`, `insertionForest_cons_msform`: the two recursions read through
+  `UnorderedTree.mk`.
 
 ## References
 
 * [foissy-2021]
 * [foissy-introduction-hopf-algebras-trees]
 -/
+
 @[expose] public section
 
 namespace RoseTree
@@ -95,28 +92,6 @@ private theorem bind_sections_filter {β γ δ : Type*} (P : β → Prop) [Decid
       have hv : P v := by simpa using (List.mem_filter.mp (Multiset.mem_coe.mp hv)).2
       simp only [List.filter_cons, decide_eq_true_eq, hv, not_true_eq_false, ite_true, ite_false]
       exact ih fun a b => G ((v, g) :: a) b
-
-/-- A sum over assignments of a `Perm`-invariant function of `ch.zip gs` does not depend on the
-order of `gs`, since permuting the guests permutes the zipped pair lists. -/
-private theorem bind_sections_zip_perm {β γ δ : Type*} (xs : List β) {gs gs' : List γ}
-    (h : gs.Perm gs') (G : List (β × γ) → Multiset δ)
-    (hG : ∀ {ps ps' : List (β × γ)}, ps.Perm ps' → G ps = G ps') :
-    ((List.replicate gs.length xs).sections : Multiset (List β)).bind (fun ch => G (ch.zip gs)) =
-      ((List.replicate gs'.length xs).sections : Multiset (List β)).bind fun ch =>
-        G (ch.zip gs') := by
-  induction h generalizing G with
-  | nil => rfl
-  | cons g _ ih =>
-    simp only [List.length_cons, List.coe_sections_replicate_succ, Multiset.bind_assoc,
-      Multiset.bind_map, List.zip_cons_cons]
-    exact Multiset.bind_congr fun v _ => ih (fun ps => G ((v, g) :: ps)) fun hp => hG (hp.cons _)
-  | swap a b l =>
-    simp only [List.length_cons, List.coe_sections_replicate_succ, Multiset.bind_assoc,
-      Multiset.bind_map, List.zip_cons_cons]
-    rw [Multiset.bind_bind]
-    exact Multiset.bind_congr fun v _ => Multiset.bind_congr fun w _ =>
-      Multiset.bind_congr fun ch _ => hG (List.Perm.swap _ _ _)
-  | trans _ _ ih₁ ih₂ => exact (ih₁ G hG).trans (ih₂ G hG)
 
 /-! ## `insertion`: single-tree host -/
 
@@ -366,191 +341,14 @@ theorem insertion_node (a : α) (cs gs : List (RoseTree α)) :
     Multiset.map_map, ← Multiset.bind_singleton]
   rfl
 
-/-! ## Reordering the pairs of `multiGraft`
+/-! ## Reading the recursion through `UnorderedTree.mk`
 
-Permuting the pair list of `multiGraft` only permutes children: grafts at distinct vertices
-commute, and grafts at one vertex are reordered among its children. -/
-
-mutual
-/-- Permuting the pair list of `multiGraft` gives a `Perm`-related tree. -/
-private theorem multiGraft_perm_pair : ∀ (T : RoseTree α)
-    {pairs pairs' : List (List ℕ × RoseTree α)},
-    pairs.Perm pairs' →
-    Perm (multiGraft T pairs) (multiGraft T pairs')
-  | .node a cs, pairs, pairs', h => by
-    rw [multiGraft_node, multiGraft_node]
-    exact (Perm.node_of_perm
-            ((h.filterMap rootPrependFilter).append_right _)).trans
-          (Perm.node_of_forall₂
-            (List.rel_append
-              (List.forall₂_same.mpr fun _ _ => Perm.refl _)
-              (multiGraftChildren_perm_pair cs h)))
-/-- Permuting the pair list of `multiGraftChildren` gives `Perm`-related forests, tree by
-tree. -/
-private theorem multiGraftChildren_perm_pair : ∀ (cs : List (RoseTree α))
-    {pairs pairs' : List (List ℕ × RoseTree α)},
-    pairs.Perm pairs' →
-    List.Forall₂ Perm
-      (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
-  | [],      _, _, _ => List.Forall₂.nil
-  | c :: cs, pairs, pairs', h => by
-    rw [multiGraftChildren_cons_cs, multiGraftChildren_cons_cs]
-    refine List.Forall₂.cons ?_ ?_
-    · exact multiGraft_perm_pair c (h.filterMap _)
-    · exact multiGraftChildren_perm_pair cs (h.filterMap _)
-end
-
-/-! ### Replacing the grafted trees
-
-Replacing each grafted tree by a `Perm`-related one, at the same address, only permutes
-children. -/
-
-private theorem zip_pair_Forall₂ {β γ : Type*} {R : γ → γ → Prop}
-    (choice : List β) :
-    ∀ {Ts Ts' : List γ}, List.Forall₂ R Ts Ts' →
-      List.Forall₂ (fun p p' : β × γ => p.fst = p'.fst ∧ R p.snd p'.snd)
-        (choice.zip Ts) (choice.zip Ts') := by
-  induction choice with
-  | nil => intro Ts Ts' _; exact List.Forall₂.nil
-  | cons c cs ih =>
-    intro Ts Ts' h
-    cases h with
-    | nil => exact List.Forall₂.nil
-    | cons hTT' hrest =>
-      simp only [List.zip_cons_cons]
-      exact List.Forall₂.cons ⟨rfl, hTT'⟩ (ih hrest)
-
-mutual
-/-- Replacing the grafted trees by `Perm`-related ones at the same addresses gives a
-`Perm`-related tree. -/
-private theorem multiGraft_perm_pair_Forall₂ : ∀ (T : RoseTree α)
-    {pairs pairs' : List (List ℕ × RoseTree α)},
-    List.Forall₂ (fun p p' : List ℕ × RoseTree α =>
-        p.fst = p'.fst ∧ Perm p.snd p'.snd) pairs pairs' →
-    Perm (multiGraft T pairs) (multiGraft T pairs')
-  | .node a cs, pairs, pairs', h => by
-    rw [multiGraft_node, multiGraft_node]
-    apply Perm.node_of_forall₂
-    apply List.rel_append
-    · -- root-prepended children: Forall₂ Perm after filterMap
-      refine List.rel_filterMap (P := Perm) ?_ h
-      rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
-      simp only at hfst
-      subst hfst
-      cases xfst with
-      | nil       => exact Option.Rel.some hsnd
-      | cons _ _  => exact Option.Rel.none
-    · -- children: Forall₂ Perm on multiGraftChildren output
-      exact multiGraftChildren_perm_pair_Forall₂ cs h
-
-/-- Replacing the grafted trees by `Perm`-related ones gives `Perm`-related forests. -/
-private theorem multiGraftChildren_perm_pair_Forall₂ :
-    ∀ (cs : List (RoseTree α))
-    {pairs pairs' : List (List ℕ × RoseTree α)},
-    List.Forall₂ (fun p p' : List ℕ × RoseTree α =>
-        p.fst = p'.fst ∧ Perm p.snd p'.snd) pairs pairs' →
-    List.Forall₂ Perm
-      (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
-  | [],      _, _, _ => List.Forall₂.nil
-  | c :: cs, pairs, pairs', h => by
-    rw [multiGraftChildren_cons_cs, multiGraftChildren_cons_cs]
-    refine List.Forall₂.cons ?_ ?_
-    · apply multiGraft_perm_pair_Forall₂
-      refine List.rel_filterMap ?_ h
-      rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
-      simp only at hfst
-      subst hfst
-      cases xfst with
-      | nil => exact Option.Rel.none
-      | cons k _ =>
-        cases k with
-        | zero   => exact Option.Rel.some ⟨rfl, hsnd⟩
-        | succ _ => exact Option.Rel.none
-    · apply multiGraftChildren_perm_pair_Forall₂
-      refine List.rel_filterMap ?_ h
-      rintro ⟨xfst, xsnd⟩ ⟨yfst, ysnd⟩ ⟨hfst, hsnd⟩
-      simp only at hfst
-      subst hfst
-      cases xfst with
-      | nil => exact Option.Rel.none
-      | cons k _ =>
-        cases k with
-        | zero   => exact Option.Rel.none
-        | succ _ => exact Option.Rel.some ⟨rfl, hsnd⟩
-end
-
-/-! ## Guest invariance
-
-`bind_sections_zip_perm` permutes the zipped pair lists along a guest permutation, and
-`multiGraft` is `Perm`-invariant in its pair list. -/
-
-/-- Single-tree `insertion` is `mk`-invariant under `List.Perm` of guests. -/
-theorem insertion_perm_guests (t : RoseTree α)
-    {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
-    (insertion t Ts).map UnorderedTree.mk =
-      (insertion t Ts').map UnorderedTree.mk := by
-  rw [insertion_def, insertion_def, ← Multiset.map_coe, ← Multiset.map_coe, Multiset.map_map,
-    Multiset.map_map, ← Multiset.bind_singleton, ← Multiset.bind_singleton]
-  exact bind_sections_zip_perm (vertices t) h
-    (fun ps => {UnorderedTree.mk (multiGraft t ps)})
-    fun hp => by rw [UnorderedTree.mk_eq_mk_iff.mpr (multiGraft_perm_pair t hp)]
-
-/-- Single-tree `insertion` is `mk`-invariant under replacing each guest by a `Perm`-related
-    tree. -/
-theorem insertion_forall₂_perm_guests (t : RoseTree α) {Ts Ts' : List (RoseTree α)}
-    (h : List.Forall₂ Perm Ts Ts') :
-    (insertion t Ts).map UnorderedTree.mk = (insertion t Ts').map UnorderedTree.mk := by
-  rw [insertion_def, insertion_def, Multiset.map_coe, Multiset.map_coe, List.map_map,
-    List.map_map, h.length_eq]
-  exact congrArg _ <| List.map_congr_left fun choice _ => UnorderedTree.mk_eq_mk_iff.mpr
-    (multiGraft_perm_pair_Forall₂ t (zip_pair_Forall₂ choice h))
-
-/-- Forests related tree by tree by `Perm` have the same image under `UnorderedTree.mk`. -/
-private theorem map_mk_eq_of_forall2_perm {F F' : List (RoseTree α)}
-    (h : List.Forall₂ Perm F F') :
-    F.map UnorderedTree.mk = F'.map UnorderedTree.mk := by
-  induction h with
-  | nil => rfl
-  | cons hd_pe _ ih => simp [UnorderedTree.mk_eq_mk_iff.mpr hd_pe, ih]
-
-/-- Forest insertion is `mk`-invariant under `List.Perm` of the guests. -/
-theorem insertionForest_perm_guests
-    (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
-    (insertionForest F Ts).map (List.map UnorderedTree.mk) =
-      (insertionForest F Ts').map (List.map UnorderedTree.mk) := by
-  rw [insertionForest_def, insertionForest_def, ← Multiset.map_coe, ← Multiset.map_coe,
-    Multiset.map_map, Multiset.map_map, ← Multiset.bind_singleton, ← Multiset.bind_singleton]
-  exact bind_sections_zip_perm (verticesList F) h
-    (fun ps => {(multiGraftChildren F ps).map UnorderedTree.mk})
-    fun hp => by rw [map_mk_eq_of_forall2_perm (multiGraftChildren_perm_pair F hp)]
-
-/-- Forest insertion is `mk`-invariant under replacing each guest by a `Perm`-related tree. -/
-theorem insertionForest_forall₂_perm_guests
-    (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ Perm Ts Ts') :
-    (insertionForest F Ts).map (List.map UnorderedTree.mk) =
-      (insertionForest F Ts').map (List.map UnorderedTree.mk) := by
-  rw [insertionForest_def, insertionForest_def, Multiset.map_coe, Multiset.map_coe,
-    List.map_map, List.map_map, h.length_eq]
-  congr 1
-  exact List.map_congr_left fun choice _ => map_mk_eq_of_forall2_perm
-    (multiGraftChildren_perm_pair_Forall₂ F (zip_pair_Forall₂ choice h))
-
-/-! ## Descent to `UnorderedTree.mk`
-
-`UnorderedTree.insertionMultiset` reads `insertionForest` through `L ↦ ↑(L.map mk)`, which
-forgets the order of each output list. At that level the host list may be permuted, each host
-may be replaced by a `Perm`-related tree, and the guests by any list with the same `mk`-image:
-`insertion_node` and `insertionForest_cons` push `mk` through the recursion, and a host
-permutation reduces to swapping two adjacent hosts under `insertionForest_append`. -/
+`insertion_node` and `insertionForest_cons` with every output read through `UnorderedTree.mk`,
+the form in which `UnorderedTree.insertion_mk` matches them against the nonplanar recursion. -/
 
 private theorem msform_cons (T : RoseTree α) (L : List (RoseTree α)) :
     (↑((T :: L).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
       UnorderedTree.mk T ::ₘ ↑(L.map UnorderedTree.mk) := rfl
-
-private theorem msform_append (A B : List (RoseTree α)) :
-    (↑((A ++ B).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
-      ↑(A.map UnorderedTree.mk) + ↑(B.map UnorderedTree.mk) := by
-  rw [List.map_append, Multiset.coe_add]
 
 /-- The host-forest recursion under `mk`. -/
 theorem insertionForest_cons_msform (T : RoseTree α) (F gs : List (RoseTree α)) :
@@ -582,116 +380,6 @@ theorem insertion_node_msform (a : α) (cs gs : List (RoseTree α)) :
   show UnorderedTree.mk (RoseTree.node a (p.1 ++ cs')) = _
   rw [← UnorderedTree.node_mk_tree_list, List.map_append, ← Multiset.coe_add]
   rfl
-
-/-- Two hosts commute once output order is forgotten. -/
-private theorem insertionForest_pair_swap_msform (x y : RoseTree α) (gs : List (RoseTree α)) :
-    (insertionForest [y, x] gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-      (insertionForest [x, y] gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
-  rw [show [y, x] = [y] ++ [x] from rfl, show [x, y] = [x] ++ [y] from rfl,
-    insertionForest_append, insertionForest_append, Multiset.map_bind, Multiset.map_bind,
-    Multiset.bind_revzip_sublists'_swap gs fun r s =>
-      ((insertionForest [y] r).bind fun A => (insertionForest [x] s).map (A ++ ·)).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))]
-  refine Multiset.bind_congr fun p _ => ?_
-  rw [Multiset.map_bind, Multiset.map_bind]
-  simp only [Multiset.map_map]
-  simp only [← Multiset.bind_singleton]
-  rw [Multiset.bind_bind]
-  refine Multiset.bind_congr fun A _ => Multiset.bind_congr fun B _ => ?_
-  show ({(↑((B ++ A).map UnorderedTree.mk) : Multiset (UnorderedTree α))} : Multiset _) =
-    {(↑((A ++ B).map UnorderedTree.mk) : Multiset (UnorderedTree α))}
-  rw [msform_append, msform_append, add_comm]
-
-/-- Host-`Perm` invariance once output order is forgotten. -/
-theorem insertionForest_perm_host_msform {host host' : List (RoseTree α)} (h : host.Perm host')
-    (gs : List (RoseTree α)) :
-    (insertionForest host gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-      (insertionForest host' gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
-  induction h generalizing gs with
-  | nil => rfl
-  | cons x _ ih =>
-    rw [insertionForest_cons, insertionForest_cons, Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun p _ => ?_
-    rw [Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun T' _ => ?_
-    rw [Multiset.map_map, Multiset.map_map,
-      show ((fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) ∘ (T' :: ·)) =
-        ((UnorderedTree.mk T' ::ₘ ·) ∘
-          (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))) from
-        funext fun L => msform_cons T' L,
-      ← Multiset.map_map, ← Multiset.map_map, ih]
-  | swap x y l =>
-    rw [show y :: x :: l = [y, x] ++ l from rfl, show x :: y :: l = [x, y] ++ l from rfl,
-      insertionForest_append, insertionForest_append, Multiset.map_bind, Multiset.map_bind]
-    refine Multiset.bind_congr fun p _ => ?_
-    have key : ∀ hs : List (RoseTree α),
-        ((insertionForest hs p.1).bind fun A => (insertionForest l p.2).map (A ++ ·)).map
-            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-          ((insertionForest hs p.1).map
-            (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))).bind fun M =>
-            (insertionForest l p.2).map fun B => M + ↑(B.map UnorderedTree.mk) := by
-      intro hs
-      rw [Multiset.map_bind, Multiset.bind_map]
-      refine Multiset.bind_congr fun A _ => ?_
-      rw [Multiset.map_map]
-      exact Multiset.map_congr rfl fun B _ => msform_append A B
-    rw [key, key, insertionForest_pair_swap_msform]
-  | trans _ _ ih₁ ih₂ => exact (ih₁ gs).trans (ih₂ gs)
-
-mutual
-/-- `insertion` is `mk`-invariant under `Perm` of the host. -/
-theorem insertion_perm_host : ∀ {t t' : RoseTree α}, Perm t t' → ∀ Ts : List (RoseTree α),
-    (insertion t Ts).map UnorderedTree.mk = (insertion t' Ts).map UnorderedTree.mk
-  | _, _, .node h, Ts => by
-    rw [insertion_node_msform, insertion_node_msform]
-    exact Multiset.bind_congr fun p _ => by rw [insertionForest_permList_host_msform h]
-  | _, _, .trans h₁ h₂, Ts => (insertion_perm_host h₁ Ts).trans (insertion_perm_host h₂ Ts)
-/-- `insertionForest` is `mk`-invariant under `PermList` of the hosts. -/
-theorem insertionForest_permList_host_msform :
-    ∀ {cs ds : List (RoseTree α)}, PermList cs ds → ∀ gs : List (RoseTree α),
-    (insertionForest cs gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-      (insertionForest ds gs).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α)))
-  | _, _, .nil, _ => rfl
-  | _, _, .cons hcd hs, gs => by
-    rw [insertionForest_cons_msform, insertionForest_cons_msform]
-    exact Multiset.bind_congr fun p _ => by
-      rw [insertion_perm_host hcd, insertionForest_permList_host_msform hs]
-  | _, _, .swap c d cs, gs => insertionForest_perm_host_msform (List.Perm.swap c d cs) gs
-  | _, _, .trans h₁ h₂, gs =>
-    (insertionForest_permList_host_msform h₁ gs).trans
-      (insertionForest_permList_host_msform h₂ gs)
-end
-
-/-- Once output order is forgotten, guest lists with the same `mk`-image multiset give the same
-outputs. -/
-theorem insertionForest_msform_invariance_guests
-    (host : List (RoseTree α)) {gs1 gs2 : List (RoseTree α)}
-    (h : (gs1.map UnorderedTree.mk).Perm (gs2.map UnorderedTree.mk)) :
-    (insertionForest host gs1).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-      (insertionForest host gs2).map
-        (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) := by
-  obtain ⟨gs_mid, hmap, hperm⟩ : Relation.Comp (· = List.map UnorderedTree.mk ·) List.Perm
-      (gs1.map UnorderedTree.mk) gs2 := by
-    rwa [List.eq_map_comp_perm]
-  have h_forall : List.Forall₂ RoseTree.Perm gs1 gs_mid := by
-    rw [← List.forall₂_eq_eq_eq, List.forall₂_map_left_iff, List.forall₂_map_right_iff] at hmap
-    exact hmap.imp fun _ _ ↦ UnorderedTree.mk_eq_mk_iff.mp
-  have hwrap : ∀ s : Multiset (List (RoseTree α)),
-      s.map (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
-        (s.map (List.map UnorderedTree.mk)).map
-          fun L : List (UnorderedTree α) => (↑L : Multiset (UnorderedTree α)) := by
-    intro s
-    rw [Multiset.map_map]
-    rfl
-  rw [hwrap, hwrap, insertionForest_forall₂_perm_guests host h_forall,
-    insertionForest_perm_guests host hperm]
 
 /-! ## Singleton hosts and empty guest lists -/
 
