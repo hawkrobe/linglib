@@ -119,6 +119,11 @@ theorem IsLocalContext.satisfied_iff_transparent (h : IsLocalContext C env x) (P
   rw [satisfied_iff h]
   exact ⟨h.1.mono, fun hP ↦ h.2 hP⟩
 
+/-- A satisfied presupposition is transparent. -/
+theorem Satisfied.transparent (h : Satisfied C env x) : Transparent C env x :=
+  let ⟨_, hy, hyx⟩ := h
+  hy.1.mono hyx
+
 end Lattice
 
 /-! ### Transparency is dependence -/

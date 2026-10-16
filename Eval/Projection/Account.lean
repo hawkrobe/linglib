@@ -7,19 +7,22 @@ public import Studies.Kalomoiros2023
 /-!
 # Accounts of presupposition projection
 
-A theory of projection over the propositional fragment says when a context accepts a formula
-under an interpretation of its atoms (`Eval.Projection.Theory`). A theory predicts an inference
-from a formula when every context that accepts the formula entails it (`Theory.Predicts`). This is
-the linking hypothesis by which a theory's acceptance conditions meet the judgments of an
-inference task, stated once and shared by every task that uses it.
+A theory of projection says when a context accepts a sentence of the fragment that the theories
+share, under an interpretation of its atoms (`Eval.Projection.Theory`): a formula of the
+propositional fragment, and a quantified clause if the theory covers them. A theory silent on
+quantified clauses is not thereby wrong about them. A theory predicts an inference from a formula
+when every context that accepts the formula entails it (`Theory.Predicts`). This is the linking
+hypothesis by which a theory's acceptance conditions meet the judgments of an inference task,
+stated once and shared by every task that uses it.
 
 The accounts linglib formalizes are registered as theories by their own acceptability predicates,
 from `Semantics/Presupposition` or the paper's study (`Account.Accepts`): Heim's context change
 potentials with Beaver's disjunction, Peters's filtering connectives, Schlenker's Transparency,
 local satisfaction, Strong Kleene and supervaluationist theories, each checked incrementally and
-symmetrically, and Kalomoiros's Limited Symmetry. A theory under development in `Lab` is scored the
-same way. A theory is stronger than another when every context that accepts a formula by the first
-accepts it by the second, so that it predicts presuppositions at least as strong
+symmetrically, and Kalomoiros's Limited Symmetry. Schlenker's Transparency and local satisfaction
+also cover quantified clauses (`Account.AcceptsClause`). A theory under development in `Lab` is
+scored the same way. A theory is stronger than another when every context that accepts a formula by
+the first accepts it by the second, so that it predicts presuppositions at least as strong
 (`Theory.Stronger`).
 
 ## References
@@ -38,11 +41,18 @@ namespace Eval.Projection
 
 open Presupposition
 
-/-- A theory of projection over the propositional fragment says when a context accepts a formula,
-under an interpretation of its atoms. -/
+/-- When a context accepts a quantified clause, under an interpretation of its atoms as sets of
+world–individual pairs. -/
+abbrev ClauseAcceptance : Type 1 :=
+  ∀ (Atom W E : Type), (Atom → Set (W × E)) → Set W → QuantifiedClause Atom → Prop
+
+/-- A theory of projection says when a context accepts a formula, under an interpretation of its
+atoms, and, if it covers them, when a context accepts a quantified clause. -/
 structure Theory where
   /-- Whether the theory accepts a formula in a context. -/
   accepts : ∀ {Atom W : Type}, (Atom → Set W) → Set W → Formula Atom → Prop
+  /-- Whether the theory accepts a quantified clause in a context, if it covers them. -/
+  acceptsClause : Option ClauseAcceptance
 
 namespace Theory
 
@@ -119,8 +129,16 @@ noncomputable def Accepts : Account → (Atom → Set W) → Set W → Formula A
   | supervaluationSymmetric => Schlenker2009.SuperS
   | limitedSymmetry => Kalomoiros2023.TranspLS
 
+/-- Whether an account accepts a quantified clause, for the accounts defined on them. -/
+def AcceptsClause : Account → Option ClauseAcceptance
+  | transparencyIncremental => some fun _ _ _ ↦ Schlenker2009.QuantifiedClause.TranspI
+  | transparencySymmetric => some fun _ _ _ ↦ Schlenker2009.QuantifiedClause.TranspS
+  | satisfactionIncremental => some fun _ _ _ ↦ Schlenker2009.QuantifiedClause.SatI
+  | satisfactionSymmetric => some fun _ _ _ ↦ Schlenker2009.QuantifiedClause.SatS
+  | _ => none
+
 /-- The theory an account registers. -/
-def theory (a : Account) : Theory := ⟨a.Accepts⟩
+def theory (a : Account) : Theory := ⟨a.Accepts, a.AcceptsClause⟩
 
 /-- `a` predicts presuppositions at least as strong as `b`. -/
 def Stronger (a b : Account) : Prop := a.theory.Stronger b.theory

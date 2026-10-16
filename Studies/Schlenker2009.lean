@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Presupposition.SyntacticEnvironment
-public import Linglib.Semantics.Presupposition.QuantifiedLocalContext
+public import Linglib.Semantics.Presupposition.QuantifiedClause
 public import Studies.Heim1983
 public import Studies.Heim1992
 
@@ -14,9 +14,9 @@ the truth value at no world of the context. The local context of the expression 
 transparent restriction, and a presupposition is satisfied when its local context entails it. The
 incremental theory consults every good final of the string up to the expression, and the symmetric
 theory only the actual sentence. This file covers the propositional fragment of the paper's
-language after its Appendix C, the belief reports of its third section, and the comparison with
-supervaluations and Strong Kleene logic in the appendix of Schlenker's 2008 manuscript, which the
-published appendix shortens.
+language after its Appendix C, its quantified clauses, the belief reports of its third section, and
+the comparison with supervaluations and Strong Kleene logic in the appendix of Schlenker's 2008
+manuscript, which the published appendix shortens.
 
 ## Main statements
 
@@ -922,5 +922,65 @@ theorem scopeDefined_not_transparent_no :
       simp [NumberTree.no] at this
 
 end Quantified
+
+/-! ### Quantified clauses -/
+
+section QuantifiedClause
+
+open Quantifier
+
+variable {E : Type*} (J : Atom → Set (W × E)) {C : Set W} {c : QuantifiedClause Atom}
+
+namespace QuantifiedClause
+
+/-- The incremental theory consults at a gap of a quantified clause each good final of the gap's
+argument inside each good final of the clause: any scope after a restrictor, the given restrictor
+before a scope. -/
+def goodFinals (k : QuantifiedClause.Env Atom) : Set (Set (W × E) → Set W) :=
+  Set.image2 (· ∘ ·) (k.arg.finals J k.quantifier) (Schlenker2009.goodFinals J k.inner)
+
+/-- Incremental Transparency for a quantified clause: at every trigger the presupposition is a
+transparent restriction for every good final. -/
+def TranspI (C : Set W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ o ∈ c.occurrences, Transparent C (goodFinals J o.1) (J o.2.1)
+
+/-- Symmetric Transparency for a quantified clause: at every trigger the presupposition is a
+transparent restriction for the actual clause. -/
+def TranspS (C : Set W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ o ∈ c.occurrences, Transparent C {o.1.truth J} (J o.2.1)
+
+/-- Incremental local satisfaction for a quantified clause. -/
+def SatI (C : Set W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ o ∈ c.occurrences, Satisfied C (goodFinals J o.1) (J o.2.1)
+
+/-- Symmetric local satisfaction for a quantified clause. -/
+def SatS (C : Set W) (c : QuantifiedClause Atom) : Prop :=
+  ∀ o ∈ c.occurrences, Satisfied C {o.1.truth J} (J o.2.1)
+
+theorem truth_mem_goodFinals (k : QuantifiedClause.Env Atom) : k.truth J ∈ goodFinals J k :=
+  Set.mem_image2_of_mem (k.arg.truth_mem_finals J k.quantifier)
+    (Set.mem_image_of_mem _ (SyntacticEnvironment.SameInitialString.refl k.inner))
+
+theorem TranspI.transpS (h : TranspI J C c) : TranspS J C c := fun o ho ↦
+  (h o ho).anti (Set.singleton_subset_iff.2 (truth_mem_goodFinals J o.1))
+
+theorem SatI.transpI (h : SatI J C c) : TranspI J C c := fun o ho ↦ (h o ho).transparent
+
+theorem SatS.transpS (h : SatS J C c) : TranspS J C c := fun o ho ↦ (h o ho).transparent
+
+/-- In a clause whose scope is a trigger and whose restrictor holds none, symmetric Transparency is
+universal projection over the restrictor, at each world where the quantifier is not constant on
+the row of the restrictor's size. -/
+theorem transpS_trigger_iff [Finite E] {q : NumberTree} {R : Formula Atom} {p a : Atom}
+    (hR : R.occurrences = []) :
+    TranspS J C ⟨q, R, .trigger p a⟩ ↔ ∀ w ∈ C, ¬ q.ConstantOnRow {e | (w, e) ∈ R.truth J}.ncard →
+      ∀ e, (w, e) ∈ R.truth J → (w, e) ∈ J p := by
+  simp only [TranspS, QuantifiedClause.occurrences, hR, Formula.occurrences, List.map_nil,
+    List.nil_append, List.map_cons, List.mem_singleton, forall_eq]
+  exact transparent_scopeTruth_iff q
+
+end QuantifiedClause
+
+end QuantifiedClause
 
 end Schlenker2009
