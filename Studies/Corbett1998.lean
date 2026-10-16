@@ -247,12 +247,12 @@ open _root_.Chichewa.Gender Agreement.ResolutionRule
 
 /-- Coordinated plural nouns that would take one target form take it. -/
 def sharedFormRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
-  [⟨.all, (·.gender.plSubjPrefix = .a), .a⟩, ⟨.all, (·.gender.plSubjPrefix = .zi), .zi⟩]
+  [.all (·.gender.plSubjPrefix = .a) .a, .all (·.gender.plSubjPrefix = .zi) .zi]
 
 /-- The regular rule, by which humans take the plural of gender 1/2 and the rest the plural of
 7/8. -/
 def semanticRules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
-  [⟨.all, (·.animacy = .human), .a⟩, otherwise .zi]
+  [.all (·.animacy = .human) .a, otherwise .zi]
 
 /-- The shared form is preferred; the regular rule applies where there is none. -/
 def rules : List (ResolutionRule Chichewa.Gender.Noun SubjPrefix) :=
@@ -264,10 +264,9 @@ theorem resolve_of_shared {cs : List Chichewa.Gender.Noun} (hne : cs ≠ []) {f 
   obtain ⟨c, hc⟩ := List.exists_mem_of_ne_nil cs hne
   simp only [rules, sharedFormRules, List.cons_append, List.nil_append]
   cases f
-  · exact resolve_cons_of_applies _ _ _ h
-  · rw [resolve_cons_of_not_applies]
-    · exact resolve_cons_of_applies _ _ _ h
-    · exact fun h' ↦ absurd ((h' c hc).symm.trans (h c hc)) (by decide)
+  · exact resolve_cons_of_applies h
+  · rw [resolve_cons_of_not_applies fun h' ↦ absurd ((h' c hc).symm.trans (h c hc)) (by decide)]
+    exact resolve_cons_of_applies h
 
 /-- Were the forms not syncretic, the regular rule would apply. -/
 theorem resolve_of_ne {cs : List Chichewa.Gender.Noun} (ha : ∃ c ∈ cs, c.gender.plSubjPrefix ≠ .a)
@@ -276,17 +275,15 @@ theorem resolve_of_ne {cs : List Chichewa.Gender.Noun} (ha : ∃ c ∈ cs, c.gen
   obtain ⟨z, hz, hz'⟩ := hz
   have h₁ : ¬ ∀ c ∈ cs, c.gender.plSubjPrefix = .a := fun h ↦ ha' (h a ha)
   have h₂ : ¬ ∀ c ∈ cs, c.gender.plSubjPrefix = .zi := fun h ↦ hz' (h z hz)
-  simp [rules, sharedFormRules, resolve, ResolutionRule.Applies, h₁, h₂]
+  simp [rules, sharedFormRules, h₁, h₂]
 
 /-- The regular rule on its own, gender 1/2 for humans and 7/8 for the rest. -/
 theorem resolve_semanticRules (cs : List Chichewa.Gender.Noun) :
     resolve semanticRules cs = some (if ∀ c ∈ cs, c.animacy = .human then .a else .zi) := by
   unfold semanticRules
   split_ifs with hh
-  · exact resolve_cons_of_applies _ _ _ hh
-  · rw [resolve_cons_of_not_applies]
-    · exact resolve_cons_of_applies _ _ _ (otherwise_applies _ _)
-    · exact hh
+  · exact resolve_cons_of_applies hh
+  · simp [hh]
 
 /-- Corbett's *Gender* adds the cats and dogs, and the children and oranges, humans and not,
 both by the shared form. -/

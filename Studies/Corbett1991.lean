@@ -67,12 +67,12 @@ never less semantic than its assignment. The judgments the book reports are the 
   list of conjunct descriptors and returning no form when no rule applies, the book's
   ineffable coordinations; the descriptors are persons, genders, semantic features, or
   fragment nouns as each language requires. Optional rules are recorded as rows. The number
-  rules, which count the conjuncts, are stated directly and shown to be the substrate's
-  `Number.System.resolve` folded over the conjuncts, except that a coordination of plurals
-  alone resolves nothing, the book's restriction that keeps gender resolution from being
-  triggered. The gender carriers of French, Lak, Slovene and Ojibwa are declared in the
-  study, there being no fragments for them; the Icelandic rules run over the fragment's nouns,
-  as the Romanian ones do.
+  rules count the conjuncts, which no resolution rule can (`Slovene.numberResolve_ne_resolve`),
+  so they are stated directly and shown to be the substrate's `Number.System.resolve` folded
+  over the conjuncts, except that a coordination of plurals alone resolves nothing, the book's
+  restriction that keeps gender resolution from being triggered. The gender carriers of French,
+  Lak, Slovene and Ojibwa are declared in the study, there being no fragments for them; the
+  Icelandic rules run over the fragment's nouns, as the Romanian ones do.
 * Not modelled: the psycholinguistic evidence of chapter 4, the morphology of agreement and
   its limits in chapter 5, syncretism and neutral agreement in chapter 7, the diachrony of
   chapters 8 to 10, Russian acronyms and indeclinables, Chichewa's target-gender rule for
@@ -85,8 +85,10 @@ never less semantic than its assignment. The judgments the book reports are the 
   want the full paradigm tables of the book's chapter 6 in the Russian fragment.
 * The corpus-level reading of the hierarchy, proportions of semantic agreement per target,
   is recorded for *vrač* only.
-* The generalization of §9.8, that resolution is never less semantic than assignment, wants
-  resolution rules tagged by what they read, meaning or gender.
+* The generalization of §9.8, that resolution is never less semantic than assignment: a rule
+  reads gender or meaning when its sort factors through that map
+  (`Agreement.ResolutionRule.resolve_factorsThrough`), but the languages' conjuncts are not
+  yet typed by both.
 
 ## References
 
@@ -708,7 +710,7 @@ theorem stacked_rows : ∀ row ∈ Examples.all, ∀ near ∈ row.parse? "near" 
 /-- The person resolution rules of §9.1.1, Czech's and claimed universal, give the first
 person if a conjunct is first person, else the second if one is second, else the third. -/
 def personRules : List (ResolutionRule Person Person) :=
-  [⟨.any, (· = .first), .first⟩, ⟨.any, (· = .second), .second⟩, otherwise .third]
+  [.any (· = .first) .first, .any (· = .second) .second, otherwise .third]
 
 /-- On the three persons the rules are the substrate's resolution coarsened to the three
 persons, the union of the conjuncts' participant sets without clusivity. -/
@@ -731,12 +733,12 @@ open _root_.Tamil.Gender
 /-- Whether a gender is one of the rational genders. -/
 def Rational : Value → Prop := (· ≠ .neut)
 
-instance : DecidablePred Rational := fun _ ↦ by unfold Rational; infer_instance
+instance : DecidablePred Rational := fun v ↦ inferInstanceAs (Decidable (v ≠ .neut))
 
 /-- By §9.3, all rationals take the rational form and all non-rationals the neuter, and a
 mixture has no resolved form. -/
 def rules : List (ResolutionRule Value PlConcord) :=
-  [⟨.all, Rational, .rational⟩, ⟨.all, (¬ Rational ·), .neuter⟩]
+  [.all Rational .rational, .all (¬ Rational ·) .neuter]
 
 /-- Masculine and feminine together resolve to the rational form, (16). -/
 theorem resolve_masc_fem : resolve rules [.masc, .fem] = some .rational := by decide
@@ -747,14 +749,10 @@ theorem resolve_masc_neut : resolve rules [.masc, .neut] = none := by decide
 /-- Under a strict semantic assignment with a semantic resolution, the resolved form is a
 function of the conjuncts' rationality. -/
 theorem resolve_factorsThrough :
-    Function.FactorsThrough (resolve rules) (List.map (decide <| Rational ·)) := fun cs ds h ↦ by
-  have h₁ : ∀ l : List Value,
-      (∀ c ∈ l, Rational c) ↔ ∀ b ∈ l.map (decide <| Rational ·), b = true := fun l ↦ by
-    simp
-  have h₂ : ∀ l : List Value,
-      (∀ c ∈ l, ¬ Rational c) ↔ ∀ b ∈ l.map (decide <| Rational ·), b = false := fun l ↦ by
-    simp
-  simp only [resolve, rules, ResolutionRule.Applies, h₁, h₂, h]
+    Function.FactorsThrough (resolve rules) (List.map (decide <| Rational ·)) :=
+  ResolutionRule.resolve_factorsThrough fun r hr a b h ↦ by
+    simp only [rules, List.mem_cons, List.not_mem_nil, or_false] at hr
+    rcases hr with rfl | rfl <;> simp [pred, decide_eq_decide.mp h]
 
 end Tamil
 
@@ -769,7 +767,7 @@ inductive PlForm where
 
 /-- By §9.3, a conjunct denoting a rational brings gender I/II and any other III/IV; the
 descriptor is rationality, so *xalq'* 'people' resolves by what it denotes. -/
-def rules : List (ResolutionRule Bool PlForm) := [⟨.any, (· = true), .I_II⟩, otherwise .III_IV]
+def rules : List (ResolutionRule Bool PlForm) := [.any (· = true) .I_II, otherwise .III_IV]
 
 theorem resolve_rational_nonrational : resolve rules [true, false] = some .I_II := by decide
 
@@ -786,7 +784,7 @@ inductive PlForm where
 /-- By §9.3, all humans take class 2, no humans class 8, and a mixture class 8 if resolution
 is forced at all. -/
 def rules : List (ResolutionRule Bool PlForm) :=
-  [⟨.all, (· = true), .cl2⟩, ⟨.all, (· = false), .cl8⟩, otherwise .cl8]
+  [.all (· = true) .cl2, .all (· = false) .cl8, otherwise .cl8]
 
 end Luganda
 
@@ -794,18 +792,16 @@ namespace French
 
 /-- The type-A rules of §9.4 give the masculine if a conjunct is masculine and the feminine
 otherwise. -/
-def rulesA : List (ResolutionRule Value Value) := [⟨.any, (· = .masc), .masc⟩, otherwise .fem]
+def rulesA : List (ResolutionRule Value Value) := [.any (· = .masc) .masc, otherwise .fem]
 
 /-- The type-B rules give the feminine if all conjuncts are feminine and the masculine
 otherwise. -/
-def rulesB : List (ResolutionRule Value Value) := [⟨.all, (· = .fem), .fem⟩, otherwise .masc]
+def rulesB : List (ResolutionRule Value Value) := [.all (· = .fem) .fem, otherwise .masc]
 
-/-- With exactly two genders the two formulations agree on every coordination. -/
-theorem resolve_rulesA_eq_rulesB (cs : List Value) : resolve rulesA cs = resolve rulesB cs := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih =>
-    cases c <;> simp_all [rulesA, rulesB, resolve, ResolutionRule.Applies, otherwise]
+/-- With exactly two genders the two formulations are logically equivalent (p. 280), the
+feminine being the complement of the masculine. -/
+theorem resolve_rulesA_eq_rulesB (cs : List Value) : resolve rulesA cs = resolve rulesB cs :=
+  resolve_any_otherwise fun c ↦ by cases c <;> decide
 
 end French
 
@@ -839,9 +835,17 @@ theorem numberResolve_eq_resolve (c d : Number) (cs : List Number)
     · simp_all
     · split_ifs <;> simp [resolve_numbers, hpl]
 
+/-- The number rules count the conjuncts, so no resolution rules state them: two singulars take
+the dual and three the plural, though the same value occurs in both. -/
+theorem numberResolve_ne_resolve (rs : List (ResolutionRule Number Number)) :
+    numberResolve numbers ≠ resolve rs := fun h ↦ by
+  have := congrFun h [.singular, .singular]
+  rw [resolve_congr rs (ds := [.singular, .singular, .singular]) (by simp), ← congrFun h] at this
+  exact absurd this (by decide)
+
 /-- By §9.4, all feminines take the feminine and anything else the masculine, a type-B system
 in which the neuter never results from resolution. -/
-def rules : List (ResolutionRule Value Value) := [⟨.all, (· = .fem), .fem⟩, otherwise .masc]
+def rules : List (ResolutionRule Value Value) := [.all (· = .fem) .fem, otherwise .masc]
 
 /-- Three neuter singulars take the masculine plural, gender resolution triggered by number
 resolution, (52). -/
@@ -851,9 +855,8 @@ theorem resolve_neuters :
   decide
 
 /-- The neuter is excluded as a resolved form. -/
-theorem resolve_ne_neut (cs : List Value) : resolve rules cs ≠ some .neut := by
-  simp only [rules, resolve, otherwise, ResolutionRule.Applies]
-  split_ifs <;> simp
+theorem resolve_ne_neut (cs : List Value) : resolve rules cs ≠ some .neut := fun h ↦ by
+  simpa [rules] using mem_map_out_of_resolve_eq_some h
 
 end Slovene
 
@@ -863,7 +866,7 @@ namespace Icelandic
 neuter, the semantically justified gender for beings of both sexes; the rules read the
 fragment's nouns by their gender alone. -/
 def rules : List (ResolutionRule (GenderedNoun _root_.Gender) _root_.Gender) :=
-  [⟨.all, (·.gender = .masculine), .masculine⟩, ⟨.all, (·.gender = .feminine), .feminine⟩,
+  [.all (·.gender = .masculine) .masculine, .all (·.gender = .feminine) .feminine,
     otherwise .neuter]
 
 end Icelandic
@@ -878,7 +881,7 @@ abbrev Conjunct := Value × Reference.Animacy
 /-- §9.5 has two syntactic rules for homogeneous genders, a semantic rule for humans, and the
 neuter otherwise. -/
 def rules : List (ResolutionRule Conjunct Value) :=
-  [⟨.all, (·.1 = .masc), .masc⟩, ⟨.all, (·.1 = .fem), .fem⟩, ⟨.all, (·.2 = .human), .masc⟩,
+  [.all (·.1 = .masc) .masc, .all (·.1 = .fem) .fem, .all (·.2 = .human) .masc,
     otherwise .neut]
 
 end Latin
@@ -895,7 +898,7 @@ inductive PlForm where
 personal and the non-masculine personal otherwise. The optional rules of (60) to (62) are rows
 only. -/
 def rules : List (ResolutionRule Bool PlForm) :=
-  [⟨.any, (· = true), .mascPers⟩, otherwise .nonMascPers]
+  [.any (· = true) .mascPers, otherwise .nonMascPers]
 
 end Polish
 
@@ -912,7 +915,7 @@ instance : DecidablePred MaleAnimate := fun _ ↦ by unfold MaleAnimate; infer_i
 /-- Collapsed over the fragment's nouns, §9.5 gives the masculine if a conjunct is a male
 animate or all are masculine, and the feminine otherwise. -/
 def rules : List (ResolutionRule Romanian.Gender.Noun Value) :=
-  [⟨.any, MaleAnimate, .masc⟩, ⟨.all, (·.gender = .masc), .masc⟩, otherwise .fem]
+  [.any MaleAnimate .masc, .all (·.gender = .masc) .masc, otherwise .fem]
 
 /-- A masculine and a neuter inanimate resolve to the feminine, the form the neuter takes in
 the plural, (69). -/
@@ -927,8 +930,8 @@ feminine if all conjuncts are female, optionally the feminine if all are feminin
 masculine otherwise. The optional rule
 yields a second grammar. -/
 def stage2 : List (List (ResolutionRule (Slovene.Value × Bool) Slovene.Value)) :=
-  [[⟨.all, (fun c ↦ c.1 = .fem ∧ c.2), .fem⟩, ⟨.all, (·.1 = .fem), .fem⟩, otherwise .masc],
-    [⟨.all, (fun c ↦ c.1 = .fem ∧ c.2), .fem⟩, otherwise .masc]]
+  [[.all (fun c ↦ c.1 = .fem ∧ c.2) .fem, .all (·.1 = .fem) .fem, otherwise .masc],
+    [.all (fun c ↦ c.1 = .fem ∧ c.2) .fem, otherwise .masc]]
 
 /-- Feminine inanimates may take the masculine, (77) and (78). -/
 theorem feminine_inanimates_masc :
@@ -951,7 +954,7 @@ inductive Value where
 /-- By §9.7, homogeneous conjuncts keep their gender, and animate and inanimate cannot be
 conjoined. -/
 def rules : List (ResolutionRule Value Value) :=
-  [⟨.all, (· = .animate), .animate⟩, ⟨.all, (· = .inanimate), .inanimate⟩]
+  [.all (· = .animate) .animate, .all (· = .inanimate) .inanimate]
 
 theorem resolve_mixed : resolve rules [.animate, .inanimate] = none := by decide
 
