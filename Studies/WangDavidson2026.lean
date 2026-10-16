@@ -217,9 +217,9 @@ theorem sup_inf_ne_zero_iff (a b : SignType) :
 
 /-- A bathroom disjunction on the valuations of two atoms — `bathLeft` is always defined and
 `bathRight` presupposes its negation. -/
-def bathLeft : Val → SignType := fun v ↦ .ofBool v.1
+def bathLeft : Val → SignType := fun v ↦ .ofProp v.1
 
-def bathRight : Val → SignType := fun v ↦ if v.1 then 0 else .ofBool v.2
+def bathRight : Val → SignType := fun v ↦ if v.1 then 0 else .ofProp v.2
 
 /-- The alternatives of the bathroom disjunction. -/
 def bathAlts : List (Val → SignType) :=

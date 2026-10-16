@@ -41,8 +41,9 @@ conditions on the three verbs are checked.
   `Logic/Modal/Defs.lean`, and rejection the box of falsity, stronger than the paper's
   gloss "holds in none" on a trivalent proposition but the reading its analysis of (38)
   uses. *Think* and *tycka* are trivalent propositions built with the Weak Kleene
-  conjunction and ∂ of `Logic/Trivalent/Basic.lean`, so that presupposition projection
-  through negation is the logic's rather than a stipulation.
+  conjunction of `Logic/Trivalent/Basic.lean`, the paper's ∂ being the join `a ⊔ 0` with
+  the gap, so that presupposition projection through negation is the logic's rather than a
+  stipulation.
 * The formal fragment's syntax and translations (§5.1, §5.3), the context-of-utterance
   parameter, and the §4 pragmatics of assertion as a proposal are not modelled.
 
@@ -323,14 +324,14 @@ variable [Decidable (StronglyDiscretionaryOn ρ p C)]
 /-- *tycka* (32) carries the presupposition that the complement is strongly discretionary
 relative to `C`, conjoined by Weak Kleene conjunction with acceptance. -/
 def tycka : (Ω → SignType) := fun o ↦
-  meetWeak (presuppose (ofProp (StronglyDiscretionaryOn ρ p C))) (ofProp (Accepts R p o))
+  meetWeak (ofProp (StronglyDiscretionaryOn ρ p C) ⊔ 0) (ofProp (Accepts R p o))
 
 variable (o : Ω)
 
 /-- A *tycka* report is undefined exactly when its complement is not strongly discretionary
 relative to the state, so the subjectivity requirement is a presupposition, (28)–(29). -/
 theorem tycka_eq_zero_iff : tycka ρ R p C o = 0 ↔ ¬ StronglyDiscretionaryOn ρ p C := by
-  simp [tycka]
+  simp [tycka, SignType.nonpos_iff_ne_one]
 
 /-- A *tycka* report is true iff its complement is strongly discretionary and the agent
 accepts it. -/
@@ -343,7 +344,7 @@ presupposition. -/
 theorem tycka_eq_think_of_ne_zero (h : tycka ρ R p C o ≠ 0) :
     tycka ρ R p C o = think R p o := by
   have hS := not_not.1 ((tycka_eq_zero_iff ρ R p C o).not.1 h)
-  simp only [tycka, think, hS, ofProp_true, presuppose_one, meetWeak_one_left]
+  simp only [tycka, think, hS, ofProp_true, SignType.one_sup, meetWeak_one_left]
 
 /-- The presupposition projects through negation, so *I don't think[opinion] it's Tuesday*
 is undefined in the same states as the unnegated report, (28). -/
@@ -381,21 +382,21 @@ abbrev Outlook := Bool × Bool
 def world : Outlook → Bool := Prod.snd
 
 /-- `p`, *the chili is tasty*. -/
-def tasty : (Outlook → SignType) := fun o ↦ ofBool o.1
+def tasty : (Outlook → SignType) := fun o ↦ SignType.ofProp o.1
 
 /-- `q`, *I am an opera singer*. -/
-def opera : (Outlook → SignType) := fun o ↦ ofBool o.2
+def opera : (Outlook → SignType) := fun o ↦ SignType.ofProp o.2
 
 /-- *John is a sexy linguist* (10), the objective coordinate read as linguisthood. -/
-def sexyLinguist : (Outlook → SignType) := fun o ↦ ofBool (o.1 && o.2)
+def sexyLinguist : (Outlook → SignType) := fun o ↦ SignType.ofProp (o.1 && o.2)
 
 /-- *It's terrible that he dumped her* (33) is defined only where he did, the objective
 coordinate, and then settled by the discretionary one. -/
-def terribleDumped : (Outlook → SignType) := fun o ↦ if o.2 then ofBool o.1 else 0
+def terribleDumped : (Outlook → SignType) := fun o ↦ if o.2 then SignType.ofProp o.1 else 0
 
 /-- *She doesn't care that he is an idiot* (34) is defined only where he is, the
 discretionary coordinate, and then settled by the objective one. -/
-def caresNotIdiot : (Outlook → SignType) := fun o ↦ if o.1 then ofBool o.2 else 0
+def caresNotIdiot : (Outlook → SignType) := fun o ↦ if o.1 then SignType.ofProp o.2 else 0
 
 /-- Agent `a` reaches the tasty outlook of the current world. -/
 def accessA : SetRel Outlook Outlook := {p | p.2 = (.true, p.1.2)}

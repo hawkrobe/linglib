@@ -279,10 +279,11 @@ variable [DecidableEq Atom]
 /-- A participant who reads the definite homogeneously but reverses the positive judgment to
 obtain the negative one, weak negation (fn 23), responds as a universal participant. -/
 theorem homogeneous_weakNegation (hx : x.Nonempty) (w : Finset Atom) :
-    -(Reading.homogeneous.value x .positive w).metaAssert =
+    -SignType.ofProp (Reading.homogeneous.value x .positive w = 1) =
       (Reading.quantified ⟨.universal, .low⟩).value x .negative w := by
   rw [value_homogeneous hx, value_negative_of_low (by simp [Reading.construals])]
-  simp [barePlural, Construal.Holds, Construal.gq, Force.gq, GQ.every]
+  simp [barePlural, Construal.Holds, Construal.gq, Force.gq, GQ.every,
+    SignType.supervaluation_eq_one_iff]
 
 /-- A child who restricts the plurality to the objects that verify the sentence, (19) and (20),
 accepts both sentences in a GAP context, the pattern of the wide-scope existential, which no

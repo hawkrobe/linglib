@@ -68,7 +68,7 @@ to Kamp and to Lewis.
   order truth-values and the hierarchy of truth-predicates are not formalized.
 * Sentences in §3 are `Trivalent.Formula` without quantifiers, so the A-clause for `∀` is
   absent; they are classically evaluated at a point by `Formula.evalBool` on the point's atomic
-  values, which is their K3 realization on that Boolean model (`Formula.realize_ofBool`).
+  values, which is their K3 realization on that Boolean model (`Formula.realize_ofProp`).
 
 ## References
 
@@ -93,7 +93,7 @@ section TruthValue
 
 /-- A connective satisfies Fidelity when it is classical on definite values. -/
 def Faithful (f : SignType → SignType → SignType) (g : Bool → Bool → Bool) : Prop :=
-  ∀ x y, f (ofBool x) (ofBool y) = ofBool (g x y)
+  ∀ x y : Bool, f (ofProp x) (ofProp y) = ofProp (g x y)
 
 /-- A connective satisfies Stability when it preserves definite values as its arguments are
 extended, that is, when it is monotone in the knowledge order. -/
@@ -105,7 +105,8 @@ private theorem eq_zero_of_le (v : SignType) (h₁ : toFlat v ≤ toFlat 1)
   cases v <;> revert h₁ h₂ <;> decide
 
 /-- Fidelity and Stability determine negation as [kleene-1952]'s. -/
-theorem neg_eq_of_faithful_stable (n : SignType → SignType) (hF : ∀ x, n (ofBool x) = ofBool (!x))
+theorem neg_eq_of_faithful_stable (n : SignType → SignType)
+    (hF : ∀ x : Bool, n (ofProp x) = ofProp (!x))
     (hS : ∀ a a', toFlat a ≤ toFlat a' → toFlat (n a) ≤ toFlat (n a')) : n = Neg.neg := by
   have hT : n 1 = -1 := hF Bool.true
   have hFa : n (-1) = 1 := hF Bool.false
@@ -557,10 +558,11 @@ theorem sorites :
 
 /-! ### Higher-order vagueness (§5) -/
 
-/-- On the truth-value approach `D` is `SignType.metaAssert`, true of the true and false of the
-rest, and Stability fails, since `DA` is false for `A` indefinite but true for `A` true. -/
+/-- On the truth-value approach `D` is the assertion `ofProp (a = 1)`, true of the true and
+false of the rest, and Stability fails, since `DA` is false for `A` indefinite but true for `A`
+true. -/
 theorem metaAssert_not_stable :
-    ¬ ∀ a b, toFlat a ≤ toFlat b → toFlat (metaAssert a) ≤ toFlat (metaAssert b) :=
+    ¬ ∀ a b, toFlat a ≤ toFlat b → toFlat (ofProp (a = 1)) ≤ toFlat (ofProp (b = 1)) :=
   fun h ↦ absurd (h 0 1 bot_le) (by decide)
 
 section Definitely

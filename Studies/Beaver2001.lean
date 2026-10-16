@@ -362,7 +362,7 @@ noncomputable def tval : Formula P → W → SignType
   | atom p, w => .ofProp (w ∈ F p)
   | not φ, w => -tval φ w
   | and φ ψ, w => (tval φ w).meetMiddle (tval ψ w)
-  | presup φ, w => (tval φ w).presuppose
+  | presup φ, w => (tval φ w ⊔ 0)
   | might _, _ => 0
   | must _, _ => 0
 
@@ -415,8 +415,8 @@ theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
   | @presup φ _ ih =>
     funext σ; refine Part.ext fun τ ↦ ?_
     rw [mem_eval_presup, ih, CCP.Partial.mem_ofTrivalent_self]
-    simp only [CCP.Partial.mem_ofTrivalent, tval, ne_eq, SignType.presuppose_eq_zero_iff,
-      not_not, SignType.presuppose_eq_one_iff]
+    simp only [CCP.Partial.mem_ofTrivalent, tval, ne_eq, SignType.sup_zero_eq_zero_iff,
+      not_not, SignType.sup_zero_eq_one_iff]
     exact and_congr_right fun h ↦ by rw [Set.sep_eq_self_iff_mem_true.2 h]
 
 theorem admits_iff (hφ : NonModal φ) :

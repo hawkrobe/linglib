@@ -164,34 +164,34 @@ variable {Atom W : Type*} (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
 def barePlural : (W → SignType) :=
   fun w ↦ SignType.supervaluation x (P · w)
 
-/-- The *all*-sentence "all the Xs are P". Per [kriz-2016] §3.1, *all*'s
-    semantic contribution is gap removal, so the semantics is derived from
-    the bare plural via pointwise `SignType.metaAssert` rather than stipulated. -/
+/-- The *all*-sentence "all the Xs are P" asserts the bare plural pointwise. Per [kriz-2016]
+§3.1, *all*'s semantic contribution is gap removal, so its semantics is derived from the bare
+plural rather than stipulated. -/
 def allPlural : W → SignType :=
-  SignType.metaAssert ∘ barePlural P x
+  fun w ↦ SignType.ofProp (barePlural P x w = 1)
 
 /-- *all* eliminates the extension gap. -/
 theorem gapExt_allPlural : Trivalent.gapExt (allPlural P x) = ∅ :=
-  Trivalent.gapExt_comp_metaAssert _
+  Trivalent.gapExt_ofProp_eq_one _
 
 /-- The bare plural and the *all*-sentence are true in the same worlds. -/
 theorem posExt_allPlural : Trivalent.posExt (allPlural P x) = Trivalent.posExt (barePlural P x) :=
-  Trivalent.posExt_comp_metaAssert _
+  Trivalent.posExt_ofProp_eq_one _
 
 /-- *all* absorbs the gap into the negative extension. -/
 theorem negExt_allPlural :
     Trivalent.negExt (allPlural P x) =
       Trivalent.negExt (barePlural P x) ∪ Trivalent.gapExt (barePlural P x) :=
-  Trivalent.negExt_comp_metaAssert _
+  Trivalent.negExt_ofProp_eq_one _
 
 /-- *all*-sentences are bivalent. -/
 theorem isBivalent_allPlural : Trivalent.IsBivalent (allPlural P x) :=
-  Trivalent.isBivalent_comp_metaAssert _
+  Trivalent.isBivalent_ofProp_eq_one _
 
 /-- An *all*-sentence is true iff all atoms satisfy `P`. -/
 theorem allPlural_eq_one_iff (w : W) :
     allPlural P x w = 1 ↔ ∀ a ∈ x, P a w := by
-  simp [allPlural, barePlural]
+  simp [allPlural, barePlural, SignType.supervaluation_eq_one_iff]
 
 /-- An *all*-sentence is false iff some atom fails `P`. -/
 theorem allPlural_eq_neg_one_iff (w : W) :

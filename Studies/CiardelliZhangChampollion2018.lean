@@ -43,7 +43,7 @@ paper reads off them and `deMorgan_antecedents_diverge` the divergence of the eq
 namespace CiardelliZhangChampollion2018
 
 open Conditional (closestImp mem_closestImp_union selectionalCounterfactual
-  selectionalCounterfactual_eq_true_iff homogeneityCounterfactual eval_homogeneityCounterfactual)
+  selectionalCounterfactual_eq_one_iff homogeneityCounterfactual eval_homogeneityCounterfactual)
 
 /-! ### The switches scenario (Fig. 1) -/
 
@@ -137,7 +137,7 @@ theorem selectional_minimal_change_forces_notBothUp_off
     (h_a : selectionalCounterfactual ord aDn lightOff w₀ = 1)
     (h_b : selectionalCounterfactual ord bDn lightOff w₀ = 1) :
     selectionalCounterfactual ord notBothUp lightOff w₀ = 1 := by
-  rw [selectionalCounterfactual_eq_true_iff] at *
+  rw [selectionalCounterfactual_eq_one_iff] at *
   exact minimal_change_forces_notBothUp ord w₀ h_a h_b
 
 /-- The homogeneity counterfactual's true verdict, with its presupposition satisfied, is the

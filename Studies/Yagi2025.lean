@@ -166,7 +166,7 @@ theorem local_contexts_force_truth (h : Conflict φ ψ) (s : Set W)
 /-- The meta-assertion operator is the trivalent 𝒜 lifted to partial propositions, always
 defined and true where the proposition is defined and true. -/
 noncomputable def assertMeta (φ : PartialProp W) : PartialProp W :=
-  .ofTrivalent (SignType.metaAssert ∘ φ.eval)
+  .ofTrivalent ((fun v ↦ SignType.ofProp (v = 1)) ∘ φ.eval)
 
 @[simp] theorem assertMeta_presup (w : W) : (assertMeta φ).presup w := by
   cases h : φ.eval w <;> simp [assertMeta, h]

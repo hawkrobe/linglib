@@ -76,7 +76,7 @@ attribute [local instance] Set.monad
 
 namespace Elliott2020
 
-open SignType (ofProp presuppose meetWeak)
+open SignType (ofProp meetWeak)
 open DynamicSemantics
 open scoped SetRel
 
@@ -93,7 +93,7 @@ open Classical in
 /-- The value of `P n` at `g`, `∂ (n ∈ dom g) ∧ gₙ ∈ P`, with Beaver's ∂ and a weak Kleene
 conjunction (Def. 2.2 and fn. 10). -/
 noncomputable def valueAt (P : Set D) (g : PartialAssign ℕ D) (n : ℕ) : SignType :=
-  meetWeak (presuppose (ofProp (g n ≠ ⊥))) (ofProp (∃ d : D, g n = ↑d ∧ d ∈ P))
+  meetWeak (((ofProp (g n ≠ ⊥)) ⊔ 0)) (ofProp (∃ d : D, g n = ↑d ∧ d ∈ P))
 
 @[simp] theorem valueAt_of_eq_bot (P : Set D) {g : PartialAssign ℕ D} {n : ℕ} (h : g n = ⊥) :
     valueAt P g n = 0 := by

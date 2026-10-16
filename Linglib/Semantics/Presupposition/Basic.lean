@@ -239,13 +239,13 @@ theorem eval_neg (p : PartialProp W) (w : W) :
 /-- Bochvar's truth operator evaluates to meta-assertion pointwise — the plug is the 𝒜
     operator. -/
 theorem eval_truthOp (p : PartialProp W) (w : W) :
-    (truthOp p).eval w = SignType.metaAssert (p.eval w) := by
+    (truthOp p).eval w = SignType.ofProp (p.eval w = 1) := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
     simp [eval, truthOp, hp, ha]
 
 /-- External negation evaluates to negated meta-assertion pointwise. -/
 theorem eval_negExt (p : PartialProp W) (w : W) :
-    (negExt p).eval w = -SignType.metaAssert (p.eval w) := by
+    (negExt p).eval w = -SignType.ofProp (p.eval w = 1) := by
   rw [negExt, eval_neg, eval_truthOp]
 
 /-- Classical conjunction evaluates to Weak Kleene conjunction pointwise. -/

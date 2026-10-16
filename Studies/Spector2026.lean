@@ -55,7 +55,7 @@ of donkey sentences, and a strong-truth operator internalizes universal readings
 
 namespace Spector2026
 
-open SignType (meetMiddle joinMiddle ofBool ofProp)
+open SignType (meetMiddle joinMiddle ofProp)
 
 /-! ### The language -/
 

@@ -54,7 +54,7 @@ and the conditionals, generics and habituals of the closing section, are not for
 namespace AghaJeretic2022
 
 open SignType (supervaluation supervaluation_eq_one_iff supervaluation_eq_neg_one_iff
-  supervaluation_eq_zero_iff supervaluation_not metaAssert_supervaluation)
+  supervaluation_eq_zero_iff supervaluation_not)
 open Homogeneity
 
 variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
@@ -102,16 +102,16 @@ theorem must_false_of_indet (w : W) (h : should D p w = 0) :
 
 /-- *Must* is *should* with its gap removed, the universal quantifier being the meta-assertion
 of the plural predication, as *all* is of *the*. -/
-theorem must_eq_metaAssert_should : must D p = SignType.metaAssert ∘ should D p :=
-  funext fun w ↦ (metaAssert_supervaluation (D w) p).symm
+theorem must_eq_metaAssert_should : must D p = (fun v ↦ SignType.ofProp (v = 1)) ∘ should D p :=
+  funext fun w ↦ by simp [must, should, supervaluation_eq_one_iff]
 
 theorem isBivalent_must : Trivalent.IsBivalent (must D p) :=
-  must_eq_metaAssert_should D p ▸ Trivalent.isBivalent_comp_metaAssert _
+  must_eq_metaAssert_should D p ▸ Trivalent.isBivalent_ofProp_eq_one _
 
 /-- In a mixed domain the negated bare *should* is not true, while the negated *necessarily
 should* is true and compatible with the existential continuation. -/
 theorem necessarily_removes_gap (w : W) (h : should D p w = 0) :
-    should D (fun w' ↦ ¬ p w') w ≠ 1 ∧ -SignType.metaAssert (should D p w) = 1 ∧
+    should D (fun w' ↦ ¬ p w') w ≠ 1 ∧ -SignType.ofProp (should D p w = 1) = 1 ∧
       ∃ w' ∈ D w, p w' := by
   obtain ⟨⟨a, ha, hp⟩, -⟩ := (should_eq_zero_iff D p w).1 h
   refine ⟨fun h' ↦ not_exists_of_should_not D p w h' ⟨a, ha, hp⟩, ?_, a, ha, hp⟩

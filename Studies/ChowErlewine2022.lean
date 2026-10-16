@@ -256,10 +256,10 @@ def SITrigger.feature : SITrigger → ExhFeature
 /-! ### Section 2: the *also* diagnostic with disjunction -/
 
 /-- "teaches Arabic or Basque", of the focus individual. -/
-def orLex : Individual → (TeachWorld → SignType) := fun x w ↦ .ofBool (w.taught x).either
+def orLex : Individual → (TeachWorld → SignType) := fun x w ↦ .ofProp (w.taught x).either
 
 /-- "teaches Arabic and Basque", of the focus individual. -/
-def andLex : Individual → (TeachWorld → SignType) := fun x w ↦ .ofBool (w.taught x).both
+def andLex : Individual → (TeachWorld → SignType) := fun x w ↦ .ofProp (w.taught x).both
 
 /-- The base clause of (3) is *[Nina]F also teaches Arabic or Basque*, with *also* above the
 in-situ trigger. -/
@@ -424,7 +424,7 @@ def Temp.isFreezing : Temp → Bool
 
 /-- The base clause of (24a) is *it's also cold in [Paris]F*. -/
 def coldClause : BaseClause City (City → Temp) :=
-  ⟨fun c w ↦ .ofBool (w c).atLeastCold, fun c w ↦ .ofBool (w c).isFreezing, [.alsoOp], 1⟩
+  ⟨fun c w ↦ .ofProp (w c).atLeastCold, fun c w ↦ .ofProp (w c).isFreezing, [.alsoOp], 1⟩
 
 /-- Contexts where it is freezing in New York. -/
 def freezingNY : Finset (City → Temp) := Finset.univ.filter (fun w ↦ w .newYork = .freezing)
