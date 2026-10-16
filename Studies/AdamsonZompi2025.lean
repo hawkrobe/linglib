@@ -65,24 +65,25 @@ open PCC Italian.Pronouns
 
 /-! ### Person restrictions over a person valuation -/
 
-/-- `R` licenses the dative–accusative pair `dat`, `acc` under the person valuation `person`. -/
-def Licit (R : Person → Person → Prop) (person : PersonalPronoun → Option Person)
+/-- `R` licenses the dative–accusative pair `dat`, `acc` under the person valuation `person`
+when it licenses the scenario of the dative's person over the accusative's. -/
+def Licit (R : Clause.Scenario Person → Prop) (person : PersonalPronoun → Option Person)
     (dat acc : PersonalPronoun) : Prop :=
-  ∃ p q, person dat = some p ∧ person acc = some q ∧ R p q
+  ∃ p q, person dat = some p ∧ person acc = some q ∧ R ⟨p, q⟩
 
-instance (R : Person → Person → Prop) [DecidableRel R]
+instance (R : Clause.Scenario Person → Prop) [DecidablePred R]
     (person : PersonalPronoun → Option Person) (dat acc : PersonalPronoun) :
     Decidable (Licit R person dat acc) := by
   unfold Licit; infer_instance
 
 /-- The morphosyntactic prediction has `R` read agreement person. -/
-abbrev Morphosyntactic (R : Person → Person → Prop) := Licit R (·.person)
+abbrev Morphosyntactic (R : Clause.Scenario Person → Prop) := Licit R (·.person)
 
 /-- The syntacticosemantic prediction has `R` read referential person. -/
-abbrev Syntacticosemantic (R : Person → Person → Prop) :=
+abbrev Syntacticosemantic (R : Clause.Scenario Person → Prop) :=
   Licit R PersonalPronoun.referentialPerson
 
-variable {R : Person → Person → Prop} {dat acc : PersonalPronoun}
+variable {R : Clause.Scenario Person → Prop} {dat acc : PersonalPronoun}
 
 /-- The two predictions coincide on ordinary pronouns, those denoting exactly the categories
 their agreement features realize. -/
@@ -137,8 +138,8 @@ theorem deal_licenses_lei : ∀ g ∈ [Deal2024.weak, Deal2024.strong],
 /-- Feature gluttony, read over agreement person, licenses accusative LEI, since a third person
 dative and a third person accusative do not glutton the Weak probe. -/
 theorem gluttony_licenses_lei :
-    Morphosyntactic (fun p q ↦ ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false p q)
-      lui lei_formal := by
+    Morphosyntactic (¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false ·) lui
+      lei_formal := by
   decide
 
 /-- Under the Fancy Constraint with a third person causee as applied argument, a third person

@@ -9,7 +9,7 @@ public import Linglib.Fragments.Romance.Spanish.Clitics
 /-!
 # Pancheva and Zubizarreta (2018): The Person Case Constraint
 
-This file formalizes the predictions of the P-Constraint of [pancheva-zubizarreta-2018], the
+This file formalizes the predictions of Pancheva and Zubizarreta's P-Constraint, the
 proposal that Person Case Constraint effects are the syntactic encoding of perspective: an
 interpretable person feature on the applicative head marks the indirect object as the
 point-of-view center of its domain, and a clitic combination is licit exactly when selecting
@@ -22,8 +22,8 @@ varieties, strong, ultra-strong, weak, super-strong, and me-first, together with
 predicted ones, each checked against the paper's examples (`strong_predictions` and its
 siblings, `french_strong_examples` and its siblings), and the attested varieties are ordered
 by containment of their licit sets (`strong_le_ultra`, `ultra_le_weak`, `super_le_strong`).
-The three prominence values correspond to the logophoric roles pivot, self, and source of
-[sells-1987] (`prominenceToSellsRole`).
+The three prominence values correspond to Sells's logophoric roles pivot, self, and source
+(`prominenceToSellsRole`).
 
 ## Implementation notes
 
@@ -31,7 +31,7 @@ The grammars and the licitness predicate live in `Syntax/Agreement/PersonCaseCon
 The Italian and Spanish clitic combinations are read off the Fragments, the French, Catalan,
 Kambera, and Bulgarian ones off the parameter settings, since no clitic Fragment exists for
 those languages. The paper's separation of the Clitic Logophoric Restriction from the PCC,
-against the unification proposed by [charnavel-mateu-2015], the two phenomena sharing only
+against the unification Charnavel and Mateu propose, the two phenomena sharing only
 the point-of-view marking on the applicative head, is not represented: the restriction is a
 semantic constraint outside this model.
 
@@ -68,19 +68,19 @@ structure ApplDomain where
 is the point-of-view center, satisfies the prominence threshold, and P-Uniqueness holds or
 P-Primacy rescues it. -/
 def PConstraintSatisfied (g : Grammar) (a : ApplDomain) : Prop :=
-  DomainExempt g a.io a.do_ ∨
-    (a.povCenter = a.io ∧ IOSatisfiesProminence g a.io a.do_ ∧
+  DomainExempt g ⟨a.io, a.do_⟩ ∨
+    (a.povCenter = a.io ∧ IOSatisfiesProminence g ⟨a.io, a.do_⟩ ∧
       (g.uniqueness → UniquenessSatisfied g a.do_ ∨ PrimacyRescues g a.io))
 
 instance (g : Grammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A clitic combination is licit exactly when the domain with the indirect object as
-point-of-view center satisfies the P-Constraint: the parametric clauses are the conditions on
+point-of-view center satisfies the P-Constraint, the parametric clauses being the conditions on
 that selection, the only felicitous derivation being the one in which Appl agrees with the
 argument it introduces (§4.5). -/
-theorem isLicit_iff_pConstraint (g : Grammar) (io do_ : Person) :
-    IsLicit g io do_ ↔ PConstraintSatisfied g ⟨io, do_, io⟩ := by
+theorem isLicit_iff_pConstraint (g : Grammar) (s : Clause.Scenario Person) :
+    IsLicit g s ↔ PConstraintSatisfied g ⟨s.high, s.low, s.high⟩ := by
   constructor
   · rintro (h | ⟨hp, hr⟩)
     · exact Or.inl h
@@ -91,13 +91,13 @@ theorem isLicit_iff_pConstraint (g : Grammar) (io do_ : Person) :
 
 /-! ### The Person Hierarchy -/
 
-/-- The positive person features of a person, the prominence values it meets by its own
-features: first person bears proximate, participant, and author, second person the first two,
+/-- The positive person features of a person are the prominence values it meets by its own
+features, first person bearing proximate, participant, and author, second person the first two,
 and third person none (11). -/
 def positiveFeatures (p : Person) : Finset ProminenceThreshold :=
   Finset.univ.filter (·.InherentlyMetBy p)
 
-/-- The Person Hierarchy is derived: the prominence order coincides with the order by count of
+/-- The Person Hierarchy is derived, the prominence order coinciding with the order by count of
 positive features (§2.1). -/
 theorem personHierarchy_from_features (p q : Person) :
     p.prominence ≤ q.prominence ↔ (positiveFeatures p).card ≤ (positiveFeatures q).card := by
@@ -107,15 +107,15 @@ theorem personHierarchy_from_features (p q : Person) :
 
 /-- Under the strong PCC (14a) the direct object must be third person. -/
 theorem strong_predictions :
-    licitFinset strongGrammar = {(.first, .third), (.second, .third), (.third, .third)} := by
+    licitFinset strongGrammar = {⟨.first, .third⟩, ⟨.second, .third⟩, ⟨.third, .third⟩} := by
   decide
 
 /-- Under the ultra-strong PCC (14d) P-Primacy lets a first-person indirect object rescue a local
 direct object, so ⟨1, 2⟩ is licit and ⟨2, 1⟩ is not. -/
 theorem ultra_predictions :
     licitFinset ultraStrongGrammar =
-      {(.first, .first), (.first, .second), (.first, .third), (.second, .third),
-        (.third, .third)} := by
+      {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .third⟩,
+        ⟨.third, .third⟩} := by
   decide
 
 /-- Under the weak PCC (14b), without P-Uniqueness, any local indirect object licenses any
@@ -123,14 +123,14 @@ direct object;
 only a third-person indirect object with a local direct object is banned. -/
 theorem weak_predictions :
     licitFinset weakGrammar =
-      {(.first, .first), (.first, .second), (.first, .third), (.second, .first),
-        (.second, .second), (.second, .third), (.third, .third)} := by
+      {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .first⟩,
+        ⟨.second, .second⟩, ⟨.second, .third⟩, ⟨.third, .third⟩} := by
   decide
 
 /-- Under the super-strong PCC (14e) the indirect object must be local and the direct object
 third person. -/
 theorem super_predictions :
-    licitFinset superStrongGrammar = {(.first, .third), (.second, .third)} := by decide
+    licitFinset superStrongGrammar = {⟨.first, .third⟩, ⟨.second, .third⟩} := by decide
 
 /-- Under the me-first PCC (14c) a first-person direct object needs a first-person indirect
 object,
@@ -138,27 +138,27 @@ and the restricted domain exempts every combination without a first-person argum
 ⟨1, 1⟩ falls to P-Uniqueness. -/
 theorem mefirst_predictions :
     licitFinset meFirstGrammar =
-      {(.first, .second), (.first, .third), (.second, .second), (.second, .third),
-        (.third, .second), (.third, .third)} := by
+      {⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .second⟩, ⟨.second, .third⟩,
+        ⟨.third, .second⟩, ⟨.third, .third⟩} := by
   decide
 
 /-- The first predicted variety (32a) has [+participant] prominence with P-Primacy. -/
 theorem pg1_predictions :
     licitFinset pg1Grammar =
-      {(.first, .first), (.first, .second), (.first, .third), (.second, .third)} := by
+      {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .third⟩} := by
   decide
 
 /-- The second predicted variety (32b) has [+participant] prominence without P-Uniqueness. -/
 theorem pg2_predictions :
     licitFinset pg2Grammar =
-      {(.first, .first), (.first, .second), (.first, .third), (.second, .first),
-        (.second, .second), (.second, .third)} := by
+      {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .first⟩,
+        ⟨.second, .second⟩, ⟨.second, .third⟩} := by
   decide
 
 /-- The third predicted variety (33) has [+author] prominence over an unrestricted domain, so
 only a first-person indirect object licenses, and P-Uniqueness then excludes ⟨1, 1⟩. -/
 theorem pg3_predictions :
-    licitFinset pg3Grammar = {(.first, .second), (.first, .third)} := by decide
+    licitFinset pg3Grammar = {⟨.first, .second⟩, ⟨.first, .third⟩} := by decide
 
 /-- Restricting the domain to applicatives with a participant argument while setting the
 threshold to [+participant] yields a grammar whose licit set is the strong PCC's (§4.5); the
@@ -185,7 +185,7 @@ theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 
 /-! ### Logophoric roles (§6.2) -/
 
-/-- The prominence values are the logophoric roles of [sells-1987]: proximate arguments are
+/-- The prominence values are the logophoric roles of [sells-1987], proximate arguments being
 pivots, participants selves, and authors sources. -/
 def prominenceToSellsRole : ProminenceThreshold → Reference.LogophoricRole
   | .proximate => .pivot
@@ -209,74 +209,75 @@ theorem family_logophoric_assignments :
 pair. -/
 theorem italian_weak_glidat_tiacc :
     ∃ io ∈ Italian.Pronouns.gli.person, ∃ do_ ∈ Italian.Pronouns.ti_acc.person,
-      ¬ IsLicit weakGrammar io do_ := by
+      ¬ IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- Italian *ti la*, second-person dative over third-person accusative, is licit. -/
 theorem italian_weak_tidat_lacl :
     ∃ io ∈ Italian.Pronouns.ti_dat.person, ∃ do_ ∈ Italian.Pronouns.la.person,
-      IsLicit weakGrammar io do_ := by
+      IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- Spanish *te me* (23), second-person dative over first-person accusative, is licit in the
 weak variety. -/
 theorem spanish_weak_tedat_meacc :
     ∃ io ∈ Spanish.Clitics.te_dat.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
-      IsLicit weakGrammar io do_ := by
+      IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- Spanish *me te*, first-person dative over second-person accusative, is licit as well. -/
 theorem spanish_weak_medat_teacc :
     ∃ io ∈ Spanish.Clitics.me_dat.person, ∃ do_ ∈ Spanish.Clitics.te_acc.person,
-      IsLicit weakGrammar io do_ := by
+      IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- Spanish *me le* (24), third-person dative over first-person accusative, is banned. -/
 theorem spanish_weak_ledat_meacc_banned :
     ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me_acc.person,
-      ¬ IsLicit weakGrammar io do_ := by
+      ¬ IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
 /-- In French (16), a strong-PCC language, a third-person dative with a first-person accusative
 is out, while a second-person dative with a third-person accusative and two third persons are
 in. -/
 theorem french_strong_examples :
-    ¬ IsLicit strongGrammar .third .first ∧ IsLicit strongGrammar .second .third ∧
-      IsLicit strongGrammar .third .third := by
+    ¬ IsLicit strongGrammar ⟨.third, .first⟩ ∧ IsLicit strongGrammar ⟨.second, .third⟩ ∧
+      IsLicit strongGrammar ⟨.third, .third⟩ := by
   decide
 
 /-- Catalan (20), an ultra-strong-PCC language, shows the ⟨1, 2⟩ against ⟨2, 1⟩ asymmetry that
 separates the ultra-strong from the strong variety. -/
 theorem catalan_ultra_strong_examples :
-    IsLicit ultraStrongGrammar .first .second ∧ ¬ IsLicit ultraStrongGrammar .second .first := by
+    IsLicit ultraStrongGrammar ⟨.first, .second⟩ ∧
+      ¬ IsLicit ultraStrongGrammar ⟨.second, .first⟩ := by
   decide
 
 /-- In Kambera (27), a super-strong-PCC language, the indirect object must be local and the
 direct object third person, so ⟨3, 3⟩ is banned as well. -/
 theorem kambera_super_strong_examples :
-    IsLicit superStrongGrammar .first .third ∧ IsLicit superStrongGrammar .second .third ∧
-      ¬ IsLicit superStrongGrammar .third .third ∧
-      ¬ IsLicit superStrongGrammar .first .second := by
+    IsLicit superStrongGrammar ⟨.first, .third⟩ ∧ IsLicit superStrongGrammar ⟨.second, .third⟩ ∧
+      ¬ IsLicit superStrongGrammar ⟨.third, .third⟩ ∧
+      ¬ IsLicit superStrongGrammar ⟨.first, .second⟩ := by
   decide
 
 /-- In Bulgarian (29), a me-first-PCC language, ⟨3, 2⟩ is licit, where every [+proximate]
 variety bans it, and ⟨2, 1⟩ is not. -/
 theorem bulgarian_me_first_examples :
-    IsLicit meFirstGrammar .third .second ∧ ¬ IsLicit meFirstGrammar .second .first := by
+    IsLicit meFirstGrammar ⟨.third, .second⟩ ∧ ¬ IsLicit meFirstGrammar ⟨.second, .first⟩ := by
   decide
 
 /-! ### The ⟨1, 1⟩ corner -/
 
-/-- Me-first bans two first-person arguments by P-Uniqueness on [+author]: neither is uniquely
-the perspectival source (§4.5). -/
-theorem mefirst_one_one_excluded : ¬ IsLicit meFirstGrammar .first .first := by decide
+/-- Me-first bans two first-person arguments by P-Uniqueness on [+author], since neither is
+uniquely the perspectival source (§4.5). -/
+theorem mefirst_one_one_excluded : ¬ IsLicit meFirstGrammar ⟨.first, .first⟩ := by decide
 
 /-- The substrate's P-Primacy checks only the indirect object's [+author], so the ultra-strong
 grammar licenses ⟨1, 1⟩ where the descriptive statement (14d) bans it. -/
-theorem ultra_one_one_licensed : IsLicit ultraStrongGrammar .first .first := by decide
+theorem ultra_one_one_licensed : IsLicit ultraStrongGrammar ⟨.first, .first⟩ := by decide
 
-/-- Me-first shows no ⟨3, 3⟩ effect: without a first-person argument the domain is exempt, so
+/-- Me-first shows no ⟨3, 3⟩ effect. Without a first-person argument the domain is exempt, so
 the spurious-*se* restriction of the [+proximate] varieties is unavailable (§4.4). -/
-theorem mefirst_three_three_exempt : IsLicit meFirstGrammar .third .third := by decide
+theorem mefirst_three_three_exempt : IsLicit meFirstGrammar ⟨.third, .third⟩ := by decide
 
 end PanchevaZubizarreta2018

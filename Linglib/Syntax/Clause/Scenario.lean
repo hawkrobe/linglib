@@ -21,8 +21,8 @@ over his prominence scales.
 
 ## Main declarations
 
-* `Clause.Scenario`: the two prominence values, `high` and `low`, with `Scenario.map`, ordered
-  with `⊤ = ⟨⊤, ⊥⟩`.
+* `Clause.Scenario`: the two prominence values, `high` and `low`, with `Scenario.map` and
+  `Scenario.equivProd`, ordered with `⊤ = ⟨⊤, ⊥⟩`.
 * `Clause.Scenario.Kind`: upstream, balanced, downstream, as a bounded linear order in that
   order.
 * `Clause.Scenario.kind`: the kind of a scenario over a linearly ordered scale, monotone
@@ -69,6 +69,12 @@ def map (f : α → β) (s : Scenario α) : Scenario β := ⟨f s.high, f s.low�
 @[simp] theorem map_high (f : α → β) (s : Scenario α) : (s.map f).high = f s.high := rfl
 
 @[simp] theorem map_low (f : α → β) (s : Scenario α) : (s.map f).low = f s.low := rfl
+
+/-- A scenario is the pair of its higher- and lower-ranked values. -/
+@[simps]
+def equivProd : Scenario α ≃ α × α where
+  toFun s := (s.high, s.low)
+  invFun p := ⟨p.1, p.2⟩
 
 /-! ### The order on scenarios -/
 

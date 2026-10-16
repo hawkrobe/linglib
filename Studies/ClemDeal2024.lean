@@ -12,8 +12,8 @@ public import Linglib.Syntax.Case.Dependent
 /-!
 # Dependent case by Agree: ergative in Shawi
 
-[clem-deal-2024] derive the Shawi ergative suffix *-ri* from Agree. The probe on v is
-[deal-2024]'s strictly descending grammar, [INT:φ, SAT:SPKR] with [PART] interacting dynamically:
+Clem and Deal derive the Shawi ergative suffix *-ri* from Agree. The probe on v is Deal's
+strictly descending grammar, [INT:φ, SAT:SPKR] with [PART] interacting dynamically:
 it Agrees with a visible object and then, when the person hierarchy permits, with the subject, and
 goal flagging carries the object's φ-features onto the subject, where *-ri* realizes the φ root
 of the flag and object agreement on the subject realizes the rest. Ergative is thus the case of a
@@ -36,8 +36,8 @@ its probe, and so global case splits range over the hierarchy effects of agreeme
 
 ## Main results
 
-* `dependentCase_iff_licit`: with two goals, dependent case on the second is [deal-2024]'s
-  licit Agree with both, so the PCC typology transfers to case splits.
+* `dependentCase_iff_licit`: with two goals, dependent case on the second is Deal's licit
+  Agree with both, so the PCC typology transfers to case splits.
 * `halt_of_spkr_object`, `narrow_of_part_object`, `flag_of_third_object`, `flag_of_low_object`:
   the derivations (15), (17) and (19), (22), and (24) behind Table 4.
 * `table4`, `marking_optional_iff`, `ergative_of_fronted_or_dropped`: the distribution of
@@ -82,9 +82,9 @@ open Deal2024 Minimalist.PersonSegment
 
 /-! ### Dependent case as the flag of a second goal -/
 
-/-- The goal flag a probe of grammar `g` deposits on the last of `goals` when it walks them in
-    order: `none` if it never Agrees with that goal, otherwise the goals it Agreed with before,
-    whose φ-features it carries and transfers there with its own ((31)). -/
+/-- A probe of grammar `g` walking `goals` in order deposits a flag on the last of them, `none` if
+it never Agrees with that goal and otherwise the goals it Agreed with before, whose φ-features it
+carries and transfers there with its own ((31)). -/
 def flag (g : Deal2024.Grammar) (goals : List Person) : Option (List Person) :=
   let agreed := (runProbe g goals).agreed
   let last := goals.length - 1
@@ -105,7 +105,7 @@ instance (g : Deal2024.Grammar) (goals : List Person) : Decidable (DependentCase
     probe meeting the first goal in the direct-object slot and the second in the indirect-object
     slot. -/
 theorem dependentCase_iff_licit (g : Deal2024.Grammar) (g₁ g₂ : Person) :
-    DependentCase g [g₁, g₂] ↔ Licit g g₂ g₁ := by
+    DependentCase g [g₁, g₂] ↔ Licit g ⟨g₂, g₁⟩ := by
   revert g g₁ g₂
   decide +kernel
 
@@ -207,8 +207,8 @@ theorem table4 :
     marking .third .third = .optional := by
   decide
 
-/-- Optionality is the structural ambiguity of a third-person object ((23) against (24)): a cell
-    is optional exactly when the object may stay low. -/
+/-- Optionality is the structural ambiguity of a third-person object ((23) against (24)), a cell
+being optional exactly when the object may stay low. -/
 theorem marking_optional_iff (subj obj : Person) :
     marking subj obj = .optional ↔ ¬ obj.IsSAP := by
   cases subj <;> cases obj <;> decide +kernel
@@ -229,9 +229,9 @@ def oagrOnS (subj obj : Person) (n : Number) (pos : ObjectPosition) : Option Str
     | [o] => Kawapanan.Shawi.objectMarker o n
     | _ => none
 
-/-- Object agreement on the subject only if the subject is ergative (§2, fn. 7), and, off the
-    diagonal, overt only for a first-person subject and a second-person object (§3.3): a
-    third-person object has no exponent, and no other pair lets the subject Agree. -/
+/-- Object agreement appears on the subject only if the subject is ergative (§2, fn. 7), and, off
+the diagonal, is overt only for a first-person subject and a second-person object (§3.3), since a
+third-person object has no exponent and no other pair lets the subject Agree. -/
 theorem oagrOnS_isSome {subj obj : Person} {n : Number} {pos : ObjectPosition}
     (hne : subj.prominence ≠ obj.prominence)
     (h : (oagrOnS subj obj n pos).isSome) :
@@ -260,10 +260,10 @@ theorem rule1_overgenerates :
     ¬ Ergative .third .second .high := by
   decide
 
-/-- No grammar of [deal-2024]'s probe space yields a 1>3>2 hierarchy (§4.1): none makes 3→2 a
-    second-goal configuration while 2→3 is not, since a third-person first goal neither
-    satisfies nor narrows the probe. Rule (37) of [barany-sheehan-2024]'s kind, whose hierarchy
-    is stipulated, has no such limit. -/
+/-- No grammar of [deal-2024]'s probe space yields a 1>3>2 hierarchy (§4.1). None makes 3→2 a
+second-goal configuration while 2→3 is not, since a third-person first goal neither satisfies
+nor narrows the probe. Rule (37) of [barany-sheehan-2024]'s kind, whose hierarchy is
+stipulated, has no such limit. -/
 theorem no_1_3_2_hierarchy (g : Deal2024.Grammar) (h : DependentCase g [.second, .third]) :
     DependentCase g [.third, .second] := by
   revert g
@@ -316,13 +316,13 @@ theorem dependentCase_sd_iff (g₁ g₂ : Person) :
       .speaker ∉ spec g₁ ∧ (.participant ∈ spec g₁ → .participant ∈ spec g₂) := by
   cases g₁ <;> cases g₂ <;> decide
 
-/-- Off the diagonal the strictly descending split is the hierarchy 1>2>3: dependent case iff the
-    second goal outranks the first, the subject over the object with the probe on v (Shawi) and
-    the object over the subject with it on T (Kashmiri, fn. 42). -/
+/-- Off the diagonal the strictly descending split is the hierarchy 1>2>3, dependent case holding
+exactly when the second goal outranks the first, the subject over the object with the probe on v
+(Shawi) and the object over the subject with it on T (Kashmiri, fn. 42). -/
 theorem dependentCase_sd_off_diagonal_iff (g₁ g₂ : Person)
     (h : g₁.prominence ≠ g₂.prominence) :
     DependentCase strictlyDescending [g₁, g₂] ↔ g₂.prominence > g₁.prominence :=
-  (dependentCase_iff_licit _ _ _).trans (sd_off_diagonal_iff_outranks g₂ g₁ h.symm)
+  (dependentCase_iff_licit _ _ _).trans (sd_off_diagonal_iff_outranks ⟨g₂, g₁⟩ h.symm)
 
 /-- In the Kolyma Yukaghir accusative ((52)), *-ul* realizes [φ, PART] in the object's flag and
     *-gele* its φ root, so the form records whether the subject T Agreed with first was a local

@@ -252,12 +252,11 @@ theorem gluttonous_third_of_gluttonous {P : Probe.Articulation} {hi lo : Goal}
 /-- The PCC configuration is a clitic-doubling probe over IO > DO, the IO optionally K-encapsulated.
 By (30) each agreed-with DP must cliticize, which a gluttonous probe cannot satisfy, so gluttony is
 the violation. -/
-def PCCViolation (P : Probe.Articulation) (ioOpaque : Bool) (io do_ : Person) : Prop :=
-  Gluttonous Goal.personSegments P [{ person := io, encapsulated := ioOpaque }, dp do_]
+def PCCViolation (P : Probe.Articulation) (ioOpaque : Bool) (s : Clause.Scenario Person) : Prop :=
+  Gluttonous Goal.personSegments P [{ person := s.high, encapsulated := ioOpaque }, dp s.low]
 
-instance (P : Probe.Articulation) (b : Bool) (io do_ : Person) :
-    Decidable (PCCViolation P b io do_) :=
-  inferInstanceAs (Decidable (Gluttonous _ _ _))
+instance (P : Probe.Articulation) (b : Bool) : DecidablePred (PCCViolation P b) :=
+  fun _ ↦ inferInstanceAs (Decidable (Gluttonous _ _ _))
 
 /-- The probe [uPERS [uPART]] of (39a) yields the Weak PCC, and is the person probe of German and
 Icelandic T ((55), (79)). -/
@@ -274,41 +273,37 @@ def meFirstProbe : Probe.Articulation := [.pi, .speaker]
 datives, and Slovenian's reversible Strong PCC (fn. 26). -/
 def branchingProbe : Probe.Articulation := [.pi, .participant, .speaker, .addressee]
 
-/-- The person grid the PCC varieties are stated over. -/
-def persons : List Person := [.first, .second, .third]
-
 /-- The Weak PCC (22) bans *3 > 1/2. -/
-theorem weak_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
-    PCCViolation weakProbe false io do_ ↔ io = .third ∧ do_ ≠ .third := by
+theorem weak_pcc : ∀ s ∈ PCC.cliticPairs,
+    PCCViolation weakProbe false s ↔ s.high = .third ∧ s.low ≠ .third := by
   decide +kernel
 
 /-- Datives that expose their person node alone yield the Strong PCC, *1/2/3 > 1/2 (§3.4.1). -/
-theorem strong_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
-    PCCViolation weakProbe true io do_ ↔ do_ ≠ .third := by
+theorem strong_pcc : ∀ s ∈ PCC.cliticPairs, PCCViolation weakProbe true s ↔ s.low ≠ .third := by
   decide +kernel
 
 /-- The Ultrastrong PCC (39b) has the Weak bans and *2 > 1. -/
-theorem ultrastrong_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
-    PCCViolation ultrastrongProbe false io do_ ↔
-      io = .third ∧ do_ ≠ .third ∨ io = .second ∧ do_ = .first := by
+theorem ultrastrong_pcc : ∀ s ∈ PCC.cliticPairs,
+    PCCViolation ultrastrongProbe false s ↔
+      s.high = .third ∧ s.low ≠ .third ∨ s.high = .second ∧ s.low = .first := by
   decide +kernel
 
 /-- The Me-First probe (39c) bans a 1st person direct object under a 2nd or 3rd person
 indirect object; the 1 > 1 cell of table 1 is beyond it. -/
-theorem meFirst_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
-    PCCViolation meFirstProbe false io do_ ↔ do_ = .first ∧ io ≠ .first := by
+theorem meFirst_pcc : ∀ s ∈ PCC.cliticPairs,
+    PCCViolation meFirstProbe false s ↔ s.low = .first ∧ s.high ≠ .first := by
   decide +kernel
 
 /-- The branching probe over transparent datives bans every distinct-person cluster with a
 1st or 2nd person direct object. -/
-theorem branching_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
-    PCCViolation branchingProbe false io do_ ↔ do_ ≠ .third ∧ io ≠ do_ := by
+theorem branching_pcc : ∀ s ∈ PCC.cliticPairs,
+    PCCViolation branchingProbe false s ↔ s.low ≠ .third ∧ s.high ≠ s.low := by
   decide +kernel
 
 /-- No probe bans a direct or balanced configuration (§3.4.2), since a 3rd person direct object
 exposes nothing the indirect object lacks. -/
 theorem direct_never_banned (P : Probe.Articulation) (b : Bool) (io : Person) :
-    ¬ PCCViolation P b io .third :=
+    ¬ PCCViolation P b ⟨io, .third⟩ :=
   not_gluttonous_of_subset fun s hs ↦ by
     rw [show (dp .third).personSegments = [.pi] from rfl, List.mem_singleton] at hs
     exact hs ▸ pi_mem_personSegments _
@@ -316,8 +311,8 @@ theorem direct_never_banned (P : Probe.Articulation) (b : Bool) (io : Person) :
 /-- A probe rooted in [uPERS] that bans a cluster bans its direct object under a 3rd person
 indirect object (§3.4.2), so a ban on [PART] > [PART] entails the ban on 3 > [PART]. -/
 theorem pccViolation_third_of_pccViolation {P : Probe.Articulation} (hpi : PersonSegment.pi ∈ P)
-    {b : Bool} {io do_ : Person} (h : PCCViolation P b io do_) :
-    PCCViolation P false .third do_ :=
+    {b : Bool} {s : Clause.Scenario Person} (h : PCCViolation P b s) :
+    PCCViolation P false ⟨.third, s.low⟩ :=
   gluttonous_third_of_gluttonous hpi h
 
 section Typology
@@ -327,29 +322,27 @@ open PCC
 /-- The Weak and Strong probes against the descriptive typology of table 1 as
 [pancheva-zubizarreta-2018] parametrize it, cell for cell. -/
 theorem weak_strong_typology :
-    (∀ io ∈ persons, ∀ do_ ∈ persons,
-      (PCCViolation weakProbe false io do_ ↔ ¬ IsLicit weakGrammar io do_)) ∧
-    ∀ io ∈ persons, ∀ do_ ∈ persons,
-      (PCCViolation weakProbe true io do_ ↔ ¬ IsLicit strongGrammar io do_) := by
+    (∀ s ∈ cliticPairs, PCCViolation weakProbe false s ↔ ¬ IsLicit weakGrammar s) ∧
+      ∀ s ∈ cliticPairs, PCCViolation weakProbe true s ↔ ¬ IsLicit strongGrammar s := by
   decide +kernel
 
 /-- Against that parametrization the Ultrastrong probe bans every cell but 2 > 2, on which table 1
 is silent, P-Uniqueness bans it, and the probe, matched throughout by the indirect object, permits
 it. -/
 theorem ultrastrong_typology :
-    (∀ io ∈ persons, ∀ do_ ∈ persons, (io, do_) ≠ (.second, .second) →
-      (PCCViolation ultrastrongProbe false io do_ ↔ ¬ IsLicit ultraStrongGrammar io do_)) ∧
-    ¬ PCCViolation ultrastrongProbe false .second .second ∧
-      ¬ IsLicit ultraStrongGrammar .second .second := by
+    (∀ s ∈ cliticPairs, s ≠ ⟨.second, .second⟩ →
+      (PCCViolation ultrastrongProbe false s ↔ ¬ IsLicit ultraStrongGrammar s)) ∧
+    ¬ PCCViolation ultrastrongProbe false ⟨.second, .second⟩ ∧
+      ¬ IsLicit ultraStrongGrammar ⟨.second, .second⟩ := by
   decide +kernel
 
 /-- The Me-First probe matches the typology in every cell but 1 > 1, which table 1 bans and the
 probe, whose [uSPKR] the indirect object matches, permits. -/
 theorem meFirst_typology :
-    (∀ io ∈ persons, ∀ do_ ∈ persons, (io, do_) ≠ (.first, .first) →
-      (PCCViolation meFirstProbe false io do_ ↔ ¬ IsLicit meFirstGrammar io do_)) ∧
-    ¬ PCCViolation meFirstProbe false .first .first ∧
-      ¬ IsLicit meFirstGrammar .first .first := by
+    (∀ s ∈ cliticPairs, s ≠ ⟨.first, .first⟩ →
+      (PCCViolation meFirstProbe false s ↔ ¬ IsLicit meFirstGrammar s)) ∧
+    ¬ PCCViolation meFirstProbe false ⟨.first, .first⟩ ∧
+      ¬ IsLicit meFirstGrammar ⟨.first, .first⟩ := by
   decide +kernel
 
 end Typology
@@ -380,7 +373,7 @@ gluttonous in a finite clause and has no probe to glutton in a nonfinite one, wh
 condition leaves the 1st person object unlicensed in both and needs the restriction of (9) to exempt
 the probeless clause. -/
 theorem nonfinite_obviation :
-    PCCViolation weakProbe true .third .first ∧
+    PCCViolation weakProbe true ⟨.third, .first⟩ ∧
     ¬ Gluttonous Goal.personSegments [] [dat .third, dp .first] ∧
     ¬ BejarRezac2003.PLC (BejarRezac2003.v.derive ([dat .third, dp .first].map Goal.toNominal)) ∧
     ¬ BejarRezac2003.PLC [(dp .first).toNominal] ∧
@@ -553,7 +546,7 @@ theorem icelandic_syncretism :
         [dat .third, dpPl .first] ∧
     (Aftermath.realize .icelandicMediopassivePast).Converges weakProbe
         [dat .third, dpPl .second] ∧
-    ∀ p ∈ persons,
+    ∀ p ∈ PCC.persons,
       (Aftermath.realize .icelandicMediopassivePast).Converges weakProbe [dat .third, dp p] := by
   decide +kernel
 
