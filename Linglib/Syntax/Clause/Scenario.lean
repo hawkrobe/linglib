@@ -126,7 +126,9 @@ instance [PartialOrder α] : PartialOrder (Scenario α) where
 
 /-! ### Kinds -/
 
-/-- The kinds of scenario, in order of usualness. -/
+/-- The kinds of scenario, in order of usualness, Haspelmath's three kinds of scenarios. A kind
+classifies what a scenario means, not how it is coded, so it is not called a direction, the
+category that direct and inverse markers realize. -/
 inductive Kind where
   | upstream
   | balanced
