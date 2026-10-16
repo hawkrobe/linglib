@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Polarity.Licenser
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.Signatures
@@ -20,18 +21,22 @@ places over the item and by the function of Haspelmath's implicational map it re
 realizes one. Each context below is named for its construction, and what its licenser carries is
 a theorem about the operators it denotes. Clausal negation is anti-morphic. *Nobody*, the
 restrictor of a universal, *without*, *deny*, *before*, *too … to* and the clausal comparative are
-anti-additive and no more, and *few*, *at most* and *doubt* downward entailing and no more. Focus
-*only*, adversatives, superlatives, conditional antecedents and temporal *since* are downward
-entailing only modulo their presuppositions, the modals, imperatives, generics and free relatives
-are modal licensers, and questions license by relevance. The inventory is open: a fragment or a
-study can define a context of its own.
+anti-additive and no more, and *doubt* downward entailing and no more. *Few* and *at most* are
+scalar: downward entailing, and not even that once exhaustified against the stronger *no* and *at
+most n − 1*, the determiner exhaustification `Quantifier.GQ.exhaustified`. Every downward
+entailing context is so non-trivially. Focus *only*, adversatives, superlatives, conditional
+antecedents and temporal *since* are downward entailing only modulo their presuppositions, the
+modals, imperatives, generics and free relatives are modal licensers, and questions license by
+relevance. The inventory is open: a fragment or a study can define a context of its own.
 
 ## Main declarations
 
 * `PolarityItem.LicensingContext`: a construction, given by its licenser and its function on
   Haspelmath's map.
+* `Quantifier.GQ.exhaustified`: a determiner exhaustified against its scale-mates.
 * `PolarityItem.LicensingContext.negation`, `PolarityItem.LicensingContext.nobody`, …: the
-  contexts, each with its certificate (`holds_negation`, `holds_nobody_iff`, …).
+  contexts, each with its certificates (`holds_negation`, `holds_nobody_iff`,
+  `isNontrivial_nobody`, `not_holds_exhaustified_few`, …).
 
 ## Implementation notes
 
@@ -51,6 +56,7 @@ study can define a context of its own.
 * [vanderwouden-1997]
 * [von-fintel-1999]
 * [gajewski-2011]
+* [bylinina-nouwen-2018]
 * [anscombe-1964]
 * [hoeksema-1983]
 * [meier-2003]
@@ -61,6 +67,43 @@ study can define a context of its own.
 -/
 
 @[expose] public section
+
+/-! ### Determiners exhaustified against their scale-mates -/
+
+namespace Quantifier.GQ
+
+variable {α : Type*} {Q Q' : GQ α} {C : Set (GQ α)} {A P : α → Prop}
+
+/-- The determiner `Q` exhaustified against its scale-mates `C`: at each restrictor it holds of the
+scopes where `Q` holds and every scale-mate holding there is entailed, entailment holding the
+restrictor fixed and quantifying over scopes ([gajewski-2011]'s `O` with `ALT-1`). -/
+def exhaustified (Q : GQ α) (C : Set (GQ α)) : GQ α :=
+  fun A ↦ Exhaustification.exh ((· A) '' C) (Q A)
+
+theorem exhaustified_iff : exhaustified Q C A P ↔ Q A P ∧ ∀ Q' ∈ C, Q' A P → Q A ≤ Q' A :=
+  ⟨fun ⟨h, h'⟩ ↦ ⟨h, fun Q' hQ' hP ↦ h' _ ⟨Q', hQ', rfl⟩ hP⟩,
+    fun ⟨h, h'⟩ ↦ ⟨h, by rintro _ ⟨Q', hQ', rfl⟩ hP; exact h' Q' hQ' hP⟩⟩
+
+/-- A scale-mate holding but not entailed is excluded. -/
+theorem not_exhaustified_of_not_le (hQ' : Q' ∈ C) (hP : Q' A P) (h : ¬ Q A ≤ Q' A) :
+    ¬ exhaustified Q C A P :=
+  fun he ↦ h ((exhaustified_iff.1 he).2 Q' hQ' hP)
+
+/-- At the bottom of its scale a determiner is its own exhaustification. -/
+theorem exhaustified_eq_of_forall_le (h : ∀ Q' ∈ C, ∀ P, Q' A P → Q A ≤ Q' A) :
+    exhaustified Q C A = Q A :=
+  Exhaustification.exh_eq_self_iff.2 (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP)
+
+/-- *No* is the bottom of its scale, so exhaustified *no* is *no*. -/
+theorem exhaustified_no : exhaustified (no : GQ α) {everyᶜ} = no := by
+  funext A
+  refine exhaustified_eq_of_forall_le fun Q' hQ' P hP ↦ ?_
+  rw [Set.mem_singleton_iff] at hQ'
+  subst hQ'
+  obtain ⟨x, hx⟩ := not_forall.mp hP
+  exact fun P' hno hev ↦ hx fun hAx ↦ absurd (hev x hAx) (hno x hAx)
+
+end Quantifier.GQ
 
 namespace PolarityItem
 
@@ -220,14 +263,16 @@ def negation : LicensingContext :=
 def nobody : LicensingContext :=
   ⟨.classical ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.no p.A⟩, none⟩
 
-/-- *Few* NP, the proportional reading of the English fragment. -/
+/-- *Few* NP, the proportional reading of the English fragment, below the stronger *no* on its
+scale. -/
 def few : LicensingContext :=
-  ⟨.classical ⟨FinitePredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.few p.A⟩, none⟩
+  ⟨.scalar ⟨⟨FinitePredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.few p.A⟩,
+    fun p ↦ GQ.exhaustified GQ.few {GQ.no} p.A⟩, none⟩
 
-/-- *At most n* NP. -/
+/-- *At most n* NP, below the stronger *at most n − 1* on its scale. -/
 def atMost : LicensingContext :=
-  ⟨.classical ⟨BoundedPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.atMost p.n p.A⟩,
-    none⟩
+  ⟨.scalar ⟨⟨BoundedPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.atMost p.n p.A⟩,
+    fun p ↦ GQ.exhaustified (GQ.atMost p.n) {GQ.atMost (p.n - 1)} p.A⟩, none⟩
 
 /-- The restrictor of a universal, as in *everyone who*, over a scope false of something. -/
 def universalRestrictor : LicensingContext :=
@@ -429,6 +474,94 @@ theorem holds_denyVerb_iff {s : DEStrength} :
   revert this
   simp only [SetRel.core, Set.mem_ofPred_eq, Set.inf_eq_inter, sup_Prop_eq, eq_iff_iff]
   decide
+
+/-! ### Non-triviality
+
+Each downward entailing licenser has an operator that is not upward entailing, so it is not
+downward entailing by being constant. -/
+
+theorem isNontrivial_negation : negation.licenser.IsNontrivial :=
+  ⟨Unit, fun h ↦ h (bot_le (a := ⊤)) () id trivial⟩
+
+theorem isNontrivial_nobody : nobody.licenser.IsNontrivial :=
+  ⟨⟨⟨Unit, ⊤⟩, ⟨(), trivial⟩⟩, fun h ↦ h (bot_le (a := ⊤)) (fun _ _ hx ↦ hx) () trivial trivial⟩
+
+theorem isNontrivial_few : few.licenser.IsNontrivial :=
+  ⟨⟨⟨Unit, fun _ ↦ True⟩⟩, fun h ↦ absurd
+    (h (a := fun _ ↦ False) (b := fun _ ↦ True) (fun _ h ↦ h.elim) (by decide)) (by decide)⟩
+
+theorem isNontrivial_atMost : atMost.licenser.IsNontrivial :=
+  ⟨⟨⟨⟨Unit, fun _ ↦ True⟩⟩, 0⟩, fun h ↦ absurd
+    (h (a := fun _ ↦ False) (b := fun _ ↦ True) (fun _ h ↦ h.elim) (by decide)) (by decide)⟩
+
+theorem isNontrivial_universalRestrictor : universalRestrictor.licenser.IsNontrivial :=
+  ⟨⟨⟨Unit, ⊥⟩, ⟨(), id⟩⟩, fun h ↦ h (bot_le (a := ⊤)) (fun _ hx ↦ hx) () trivial⟩
+
+theorem isNontrivial_withoutClause : withoutClause.licenser.IsNontrivial :=
+  ⟨⟨Unit, ⊤⟩, fun h ↦ (h (bot_le (a := ⊤)) () ⟨trivial, id⟩).2 trivial⟩
+
+theorem isNontrivial_beforeClause : beforeClause.licenser.IsNontrivial :=
+  ⟨⟨ℕ, {NonemptyInterval.pure 0}⟩, fun h ↦
+    let ⟨t, _, ht⟩ := h (bot_le (a := ⊤))
+      ⟨0, ⟨_, rfl, by simp⟩, fun _ ⟨_, hi, _⟩ ↦ hi.elim⟩
+    lt_irrefl t (ht t ⟨NonemptyInterval.pure t, trivial, by simp⟩)⟩
+
+theorem isNontrivial_exceedsFamily : (Licenser.classical exceedsFamily).IsNontrivial :=
+  ⟨⟨ℕ, ℕ, id, 1⟩, fun h ↦
+    lt_irrefl _ (h (bot_le (a := ⊤)) (fun _ hd ↦ hd.elim) (Set.mem_univ 1))⟩
+
+theorem isNontrivial_doubtVerb : doubtVerb.licenser.IsNontrivial :=
+  ⟨⟨Bool, .univ, true⟩, fun h ↦ h (bot_le (a := ⊤))
+    (fun hc ↦ Set.notMem_empty _ (hc (Set.mem_univ (true, true)))) fun _ _ ↦ trivial⟩
+
+theorem isNontrivial_denyVerb : denyVerb.licenser.IsNontrivial :=
+  ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, fun h ↦
+    h (bot_le (a := ⊤)) (fun _ _ ↦ Set.notMem_empty _) (Set.mem_univ (true, true))
+      (Set.mem_univ true)⟩
+
+theorem isNontrivial_onlyFocus : onlyFocus.licenser.IsNontrivial :=
+  ⟨⟨Bool, Unit, true⟩, not_isStrawsonUE_only⟩
+
+theorem isNontrivial_adversative : adversative.licenser.IsNontrivial :=
+  ⟨⟨Fin 3, fun _ ↦ {0}, fun _ ↦ .univ, fun _ ↦ {(· = 1)}⟩,
+    Desire.BestWorlds.not_isStrawsonUE_regret⟩
+
+theorem isNontrivial_superlative : superlative.licenser.IsNontrivial :=
+  ⟨⟨Bool, Unit, ℕ, fun _ ↦ 0, true⟩, Degree.not_isStrawsonUE_superlative⟩
+
+theorem isNontrivial_conditionalAntecedent : conditionalAntecedent.licenser.IsNontrivial :=
+  ⟨⟨Unit, Bool, fun _ ↦ .univ, {true}⟩, Conditional.not_isStrawsonUE_horizonCounterfactual⟩
+
+theorem isNontrivial_sinceTemporal : sinceTemporal.licenser.IsNontrivial :=
+  ⟨⟨ℤ, (· - 5)⟩, not_isStrawsonUE_since⟩
+
+/-! ### Scalar licensers
+
+*Few* and *at most n* exhaustified against their stronger scale-mates assert *some*, so they are
+not downward entailing ([gajewski-2011]'s (45), (48)). -/
+
+theorem not_holds_exhaustified_few : ¬ few.licenser.exhaustified.Holds .anti := fun h ↦ by
+  have hA : ¬ GQ.few (fun _ : Fin 3 ↦ True) ≤ GQ.no fun _ ↦ True := fun hle ↦
+    absurd (hle (· = 0) (by decide)) (by decide)
+  have hanti : Antitone (GQ.exhaustified GQ.few {GQ.no} fun _ : Fin 3 ↦ True) :=
+    Signature.holdsFor_anti_iff.mp (h ⟨⟨Fin 3, fun _ ↦ True⟩⟩)
+  refine GQ.not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hx ↦ hx) hA
+    (hanti (show (fun _ ↦ False) ≤ (· = (0 : Fin 3)) from fun _ h ↦ h.elim)
+      (GQ.exhaustified_iff.2 ⟨by decide, ?_⟩))
+  rintro _ rfl hno
+  exact absurd hno (by decide)
+
+theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .anti := fun h ↦ by
+  have hA : ¬ GQ.atMost 1 (fun _ : Bool ↦ True) ≤ GQ.atMost 0 fun _ ↦ True := fun hle ↦
+    absurd (hle (· = true) (by decide)) (by decide)
+  have hanti : Antitone (GQ.exhaustified (GQ.atMost 1) {GQ.atMost 0} fun _ : Bool ↦ True) :=
+    Signature.holdsFor_anti_iff.mp (h ⟨⟨⟨Bool, fun _ ↦ True⟩⟩, 1⟩)
+  refine GQ.not_exhaustified_of_not_le (Set.mem_singleton _)
+    (show GQ.atMost 0 (fun _ : Bool ↦ True) fun _ ↦ False by decide) hA
+    (hanti (show (fun _ ↦ False) ≤ (· = true) from fun _ h ↦ h.elim)
+      (GQ.exhaustified_iff.2 ⟨by decide, ?_⟩))
+  rintro _ rfl hle
+  exact absurd hle (by decide)
 
 /-! ### Strawson licensers -/
 

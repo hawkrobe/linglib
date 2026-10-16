@@ -3,6 +3,8 @@ module
 public import Linglib.Logic.Natural.Strawson
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Data.Examples.Gajewski2011
 
 /-!
@@ -59,41 +61,11 @@ variable {α : Type*}
 
 /-! ### Enriched meanings -/
 
-/-- The implicature-enriched meaning of a quantified DP is `O` applied to the determiner against
-its scale-mates, the plain meaning with every scale-mate true of the scope but not entailed
-excluded, where entailment holds the restrictor fixed and quantifies over scopes. -/
-def exh (Q : GQ α) (C : Set (GQ α)) : GQ α :=
-  fun A ↦ Exhaustification.exh ((· A) '' C) (Q A)
-
-theorem mem_exh {Q : GQ α} {C : Set (GQ α)} {A P : α → Prop} :
-    exh Q C A P ↔ Q A P ∧ ∀ Q' ∈ C, Q' A P → Q A ≤ Q' A :=
-  ⟨fun ⟨h, h'⟩ ↦ ⟨h, fun Q' hQ' hP ↦ h' _ ⟨Q', hQ', rfl⟩ hP⟩,
-    fun ⟨h, h'⟩ ↦ ⟨h, by rintro _ ⟨Q', hQ', rfl⟩ hP; exact h' Q' hQ' hP⟩⟩
-
-/-- A scale-mate that is true but not entailed is excluded. -/
-theorem exh_not_of_not_le {Q Q' : GQ α} {C : Set (GQ α)} {A P : α → Prop} (hQ' : Q' ∈ C)
-    (hP : Q' A P) (h : ¬ Q A ≤ Q' A) : ¬ exh Q C A P :=
-  fun he ↦ h ((mem_exh.1 he).2 Q' hQ' hP)
-
-/-- At the bottom of its scale a determiner is its own enriched meaning. -/
-theorem exh_eq_of_forall_le {Q : GQ α} {C : Set (GQ α)} {A : α → Prop}
-    (h : ∀ Q' ∈ C, ∀ P, Q' A P → Q A ≤ Q' A) : exh Q C A = Q A :=
-  Exhaustification.exh_eq_self_iff.2 (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP)
-
-/-- Exhaustified *no* is *no*. -/
-theorem exh_no : exh (no : GQ α) {everyᶜ} = no := by
-  funext A
-  refine exh_eq_of_forall_le fun Q' hQ' P hP ↦ ?_
-  rw [Set.mem_singleton_iff] at hQ'
-  subst hQ'
-  obtain ⟨x, hx⟩ := not_forall.mp hP
-  exact fun P' hno hev ↦ hx fun hAx ↦ absurd (hev x hAx) (hno x hAx)
-
 /-- Exhaustified *not every* is *some but not every* once the restrictor has two elements. -/
-theorem exh_notEvery {A : α → Prop} {x y : α} (hx : A x) (hy : A y) (hxy : x ≠ y) :
-    exh (everyᶜ) {no} A = fun P ↦ GQ.some A P ∧ everyᶜ A P := by
+theorem exhaustified_notEvery {A : α → Prop} {x y : α} (hx : A x) (hy : A y) (hxy : x ≠ y) :
+    exhaustified (everyᶜ) {no} A = fun P ↦ GQ.some A P ∧ everyᶜ A P := by
   funext P
-  refine propext (mem_exh.trans
+  refine propext (exhaustified_iff.trans
     ⟨fun ⟨hne, h⟩ ↦ ⟨?_, hne⟩, fun ⟨⟨z, hz, hPz⟩, hne⟩ ↦ ⟨hne, fun Q' hQ' hno ↦ ?_⟩⟩)
   · by_contra hsome
     exact h no (Set.mem_singleton _) (fun z hz hPz ↦ hsome ⟨z, hz, hPz⟩) (· = x)
@@ -102,47 +74,48 @@ theorem exh_notEvery {A : α → Prop} {x y : α} (hx : A x) (hy : A y) (hxy : x
 
 /-- An enriched meaning satisfiable at a restrictor but excluded at the empty scope is not
 downward entailing in its scope. -/
-theorem not_scopeDownwardMono_exh {Q : GQ α} {C : Set (GQ α)} {A P : α → Prop}
-    (hP : exh Q C A P) (h : ¬ exh Q C A (fun _ ↦ False)) : ¬ ScopeAntitone (exh Q C) :=
+theorem not_scopeAntitone_exhaustified {Q : GQ α} {C : Set (GQ α)} {A P : α → Prop}
+    (hP : exhaustified Q C A P) (h : ¬ exhaustified Q C A (fun _ ↦ False)) :
+    ¬ ScopeAntitone (exhaustified Q C) :=
   fun hde ↦ h (hde A (show ((fun _ : α ↦ False) : α → Prop) ≤ P from fun _ hf ↦ hf.elim) hP)
 
 /-! ### The licensing principles -/
 
 /-- Exhaustified *no* is downward entailing, so *no* licenses strong items. -/
-theorem no_strong : ScopeAntitone (exh (no : GQ α) {everyᶜ}) := by
-  rw [exh_no]; exact scopeAntitone_no
+theorem no_strong : ScopeAntitone (exhaustified (no : GQ α) {everyᶜ}) := by
+  rw [exhaustified_no]; exact scopeAntitone_no
 
 /-- Exhaustified *not every* is not downward entailing, since at the empty scope the stronger
 scale-mate *no* is true and excluded. -/
 theorem notEvery_not_strong [Nontrivial α] :
-    ¬ ScopeAntitone (exh (everyᶜ : GQ α) {no}) := by
+    ¬ ScopeAntitone (exhaustified (everyᶜ : GQ α) {no}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
-  refine not_scopeDownwardMono_exh (A := fun _ ↦ True) (P := (· = x))
-    (mem_exh.2 ⟨fun h ↦ hxy (h y trivial).symm, fun Q' hQ' hno ↦
+  refine not_scopeAntitone_exhaustified (A := fun _ ↦ True) (P := (· = x))
+    (exhaustified_iff.2 ⟨fun h ↦ hxy (h y trivial).symm, fun Q' hQ' hno ↦
       ((Set.mem_singleton_iff.mp hQ' ▸ hno) x trivial rfl).elim⟩)
-    (exh_not_of_not_le (Set.mem_singleton _) (fun _ _ hf ↦ hf)
+    (not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hf ↦ hf)
       fun hle ↦ hle (· = x) (fun h ↦ hxy (h y trivial).symm) x trivial rfl)
 
 /-- Exhaustified *some* is not downward entailing, since *some* itself fails at the empty
 scope. -/
 theorem some_not_strong [Nontrivial α] :
-    ¬ ScopeAntitone (exh (GQ.some : GQ α) {every}) := by
+    ¬ ScopeAntitone (exhaustified (GQ.some : GQ α) {every}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
-  exact not_scopeDownwardMono_exh (A := fun _ ↦ True) (P := (· = x))
-    (mem_exh.2 ⟨⟨x, trivial, rfl⟩, fun Q' hQ' hev ↦
+  exact not_scopeAntitone_exhaustified (A := fun _ ↦ True) (P := (· = x))
+    (exhaustified_iff.2 ⟨⟨x, trivial, rfl⟩, fun Q' hQ' hev ↦
       (hxy ((Set.mem_singleton_iff.mp hQ' ▸ hev) y trivial).symm).elim⟩)
-    fun h ↦ (mem_exh.1 h).1.elim fun _ h ↦ h.2
+    fun h ↦ (exhaustified_iff.1 h).1.elim fun _ h ↦ h.2
 
 /-- *At most five* sits above *at most four* on its scale; excluding the scale-mate leaves
 *exactly five*, which is not downward entailing. -/
 theorem atMostFive_not_strong :
-    ¬ ScopeAntitone (exh (atMost 5 : GQ (Fin 6)) {atMost 4}) := by
+    ¬ ScopeAntitone (exhaustified (atMost 5 : GQ (Fin 6)) {atMost 4}) := by
   have h4 : ¬ atMost 4 (fun _ : Fin 6 ↦ True) (· ≠ 0) := by
     decide
-  refine not_scopeDownwardMono_exh (A := fun _ ↦ True) (P := (· ≠ 0))
-    (mem_exh.2 ⟨by decide,
+  refine not_scopeAntitone_exhaustified (A := fun _ ↦ True) (P := (· ≠ 0))
+    (exhaustified_iff.2 ⟨by decide,
       fun Q' hQ' h ↦ (h4 (Set.mem_singleton_iff.mp hQ' ▸ h)).elim⟩)
-    (exh_not_of_not_le (Set.mem_singleton _) (by decide)
+    (not_exhaustified_of_not_le (Set.mem_singleton _) (by decide)
       fun hle ↦ h4 (hle (· ≠ 0) (by decide)))
 
 /-- The paper's licensers. -/
@@ -161,12 +134,12 @@ downward entailing, which for a presupposition trigger without scale-mates is it
 meaning. -/
 def Licensed : Licenser → Strength → Prop
   | .no, .weak => ∀ {α : Type}, ScopeAntitone (no : GQ α)
-  | .no, .strong => ∀ {α : Type}, ScopeAntitone (exh (no : GQ α) {everyᶜ})
+  | .no, .strong => ∀ {α : Type}, ScopeAntitone (exhaustified (no : GQ α) {everyᶜ})
   | .atMostFive, .weak => ∀ {α : Type} [Fintype α], ScopeAntitone (atMost (α := α) 5)
   | .atMostFive, .strong =>
-      ∀ {α : Type} [Fintype α], ScopeAntitone (exh (atMost (α := α) 5) {atMost 4})
+      ∀ {α : Type} [Fintype α], ScopeAntitone (exhaustified (atMost (α := α) 5) {atMost 4})
   | .some, .weak => ∀ {α : Type}, ScopeAntitone (GQ.some : GQ α)
-  | .some, .strong => ∀ {α : Type}, ScopeAntitone (exh (GQ.some : GQ α) {every})
+  | .some, .strong => ∀ {α : Type}, ScopeAntitone (exhaustified (GQ.some : GQ α) {every})
   | .only, .weak => ∀ {ι W : Type} (x : ι), IsStrawsonDE (only (W := W) x)
   | .only, .strong => ∀ {ι W : Type} (x : ι), Antitone fun P : ι → Set W ↦ (only x P).truthSet
   | .conditional, .weak => ∀ {W : Type} (horizon : W → Set W) (q : Set W),
@@ -222,6 +195,36 @@ theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := b
 theorem licensed_iff (L : Licenser) (s : Strength) :
     Licensed L s ↔ (s = .weak ∧ L ≠ .some) ∨ (s = .strong ∧ L = .no) := by
   cases s <;> simp [licensed_weak_iff, licensed_strong_iff]
+
+/-! ### The library's licensing
+
+The library keeps Zwarts's strengths and asks for them of the meaning with the licenser's direct
+implicature factored in, where the principles ask only for downward entailment of that meaning; on
+the paper's licensers the two agree, as the paper's conjecture (48) has it for scale endpoints. -/
+
+/-- The library's context for each licenser, where it has one: *some* NP licenses nothing and has
+none. -/
+def Licenser.context : Licenser → Option PolarityItem.LicensingContext
+  | .no => Option.some .nobody
+  | .atMostFive => Option.some .atMost
+  | .some => Option.none
+  | .only => Option.some .onlyFocus
+  | .conditional => Option.some .conditionalAntecedent
+  | .sorryThat => Option.some .adversative
+
+/-- An English item of each strength, *ever* and *in years*. -/
+def Strength.item : Strength → PolarityItem
+  | .weak => English.PolarityItems.ever
+  | .strong => English.PolarityItems.inYears
+
+/-- The two principles agree with the library's licensing on every licenser it has a context
+for. -/
+theorem licensed_iff_licenses (L : Licenser) (s : Strength) {c : PolarityItem.LicensingContext}
+    (hc : L.context = some c) : Licensed L s ↔ c.Licenses s.item := by
+  rw [licensed_iff]
+  cases L <;> cases s <;> simp only [Licenser.context, Option.some.injEq, reduceCtorEq] at hc <;>
+    subst hc <;> simp [Strength.item, English.PolarityItems.ever, English.PolarityItems.inYears] <;>
+    decide
 
 /-! ### Intolerance -/
 

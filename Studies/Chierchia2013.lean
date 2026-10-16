@@ -170,26 +170,31 @@ def Position.context : Position → Option LicensingContext
 positions do not. -/
 theorem carries_weak_conditionalAntecedent :
     LicensingContext.conditionalAntecedent.licenser.Carries .weak :=
-  LicensingContext.isStrawsonDE_conditionalAntecedent
+  ⟨LicensingContext.isStrawsonDE_conditionalAntecedent,
+    LicensingContext.isNontrivial_conditionalAntecedent⟩
 
 theorem carries_weak_universalRestrictor :
     LicensingContext.universalRestrictor.licenser.Carries .weak :=
-  Licenser.carries_of_holds ((LicensingContext.holds_universalRestrictor_iff (s := .weak)).2
-    (by decide))
+  Licenser.carries_classical_iff.2 ⟨(LicensingContext.holds_universalRestrictor_iff (s := .weak)).2
+    (by decide), LicensingContext.isNontrivial_universalRestrictor⟩
 
 theorem carries_weak_negation : LicensingContext.negation.licenser.Carries .weak :=
-  Licenser.carries_of_holds (LicensingContext.holds_negation .weak)
+  Licenser.carries_classical_iff.2
+    ⟨LicensingContext.holds_negation .weak, LicensingContext.isNontrivial_negation⟩
 
 theorem carries_weak_nobody : LicensingContext.nobody.licenser.Carries .weak :=
-  Licenser.carries_of_holds ((LicensingContext.holds_nobody_iff (s := .weak)).2 (by decide))
+  Licenser.carries_classical_iff.2 ⟨(LicensingContext.holds_nobody_iff (s := .weak)).2 (by decide),
+    LicensingContext.isNontrivial_nobody⟩
 
 theorem carries_weak_doubtVerb : LicensingContext.doubtVerb.licenser.Carries .weak :=
-  Licenser.carries_of_holds (LicensingContext.holds_doubtVerb_iff.2 le_rfl)
+  Licenser.carries_classical_iff.2
+    ⟨LicensingContext.holds_doubtVerb_iff.2 le_rfl, LicensingContext.isNontrivial_doubtVerb⟩
 
 theorem not_carries_weak_modalPossibility :
-    ¬ LicensingContext.modalPossibility.licenser.Carries .weak := id
+    ¬ LicensingContext.modalPossibility.licenser.Carries .weak := fun h ↦ h.1
 
-theorem not_carries_weak_imperative : ¬ LicensingContext.imperative.licenser.Carries .weak := id
+theorem not_carries_weak_imperative : ¬ LicensingContext.imperative.licenser.Carries .weak :=
+  fun h ↦ h.1
 
 /-- A position is downward entailing when it is a licensing context whose licenser carries weak
 strength. -/
@@ -241,8 +246,8 @@ theorem licenses_any_not_ever_iff (c : LicensingContext) :
       ¬ c.licenser.Carries .weak ∧ ¬ c.licenser.LicensesByRelevance := by
     generalize c.licenser = L
     cases L with
-    | modal => exact fun _ ↦ ⟨id, id⟩
-    | classical | strawson | question => exact fun h ↦ (h : False).elim
+    | modal => exact fun _ ↦ ⟨fun h ↦ h.1, id⟩
+    | classical | scalar | strawson | question => exact fun h ↦ (h : False).elim
   have ha : c.Licenses English.PolarityItems.any ↔ c.licenser.Carries .weak ∨
       c.licenser.LicensesFreeChoice ∨ c.licenser.LicensesByRelevance := by
     simp [LicensingContext.Licenses, English.PolarityItems.any, PolarityItem.IsFCI]
