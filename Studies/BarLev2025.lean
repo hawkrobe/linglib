@@ -56,7 +56,7 @@ presupposition, which the readings leave open.
 
 namespace BarLev2025
 
-open Homogeneity Plurality.Algebra Mereology
+open Homogeneity Mereology
 
 /-! ### Covers and the trivalent star (§2, §4, §5) -/
 

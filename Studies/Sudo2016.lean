@@ -61,7 +61,7 @@ union, on which the atom count of a plurality is its cardinality (`atomCount_fin
 
 namespace Sudo2016
 
-open Plurality.Algebra Mereology Presupposition
+open Mereology Presupposition
 
 section General
 

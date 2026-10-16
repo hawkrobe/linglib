@@ -24,7 +24,7 @@ wide scope when scrambled.
 
 ## Implementation notes
 
-* Individuals are Link's nonempty sets of atoms, `Plurality.Algebra.Individual`, so no empty
+* Individuals are Link's nonempty sets of atoms, `Mereology.Individual`, so no empty
   plurality satisfies a distributive predicate vacuously. Both derivations quantify over all
   pluralities of books, the instances of the kind; the plural noun's own extension, without the
   atoms, would change no truth value on the model.
@@ -41,7 +41,7 @@ wide scope when scrambled.
 
 namespace LeBruynDeSwart2022
 
-open Reference Plurality.Algebra Quantifier
+open Reference Mereology Quantifier
 
 /-- A book of the attested example (35) is either finished or unfinished. -/
 inductive Book

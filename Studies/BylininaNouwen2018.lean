@@ -79,7 +79,7 @@ let the de-Fregean analysis do without `⊥` (Section 6.1) are not formalized.
 @[expose] public section
 namespace BylininaNouwen2018
 
-open Degree Exhaustification Quantifier Quantifier.GQ Set Mereology Plurality.Algebra
+open Degree Exhaustification Quantifier Quantifier.GQ Set Mereology
 
 variable {α : Type*} [DecidableEq α]
 

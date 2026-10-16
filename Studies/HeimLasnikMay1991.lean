@@ -73,7 +73,7 @@ def reciprocator (range : Finset A) (ζ : A → A → Prop) (x : A) : Prop :=
   ∀ z, other x range z → ζ x z
 
 /-- The distributor (19)/(28), *each* or the covert `D`, universally quantifies over the
-    atomic parts of its host NP. It is Link's D operator (`Plurality.Algebra.D`) on finite
+    atomic parts of its host NP. It is Link's D operator (`Mereology.D`) on finite
     sets of atoms. -/
 def distributor (np : Finset A) (φ : A → Prop) : Prop :=
   ∀ x ∈ np, φ x

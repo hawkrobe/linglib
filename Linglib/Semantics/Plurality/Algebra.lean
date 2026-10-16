@@ -13,28 +13,28 @@ individuals, `*` reduces to distribution over members.
 
 ## Definitions
 
-* `Plurality.Algebra.properPlural P`: the non-atomic elements of `*P`.
-* `Plurality.Algebra.IsDistr P`: `P` holds of atoms only.
-* `Plurality.Algebra.Inv h P`: `P` does not distinguish `h`-equivalent individuals.
-* `Plurality.Algebra.D P x`: Link's 1987 distributive operator.
-* `Plurality.Algebra.Materialization E M`: a `SupHom E M`, with `Plurality.Algebra.mPart` and
-  `Plurality.Algebra.mEquiv` the preorder and equivalence it induces on `E`.
-* `Plurality.Algebra.AtomJoinPrime E`: an atom below a sum lies below a summand.
-* `Plurality.Algebra.Individual α`: Link's model, the nonempty sets of atoms under union.
+* `Mereology.properPlural P`: the non-atomic elements of `*P`.
+* `Mereology.IsDistr P`: `P` holds of atoms only.
+* `Mereology.Inv h P`: `P` does not distinguish `h`-equivalent individuals.
+* `Mereology.D P x`: Link's 1987 distributive operator.
+* `Mereology.Materialization E M`: a `SupHom E M`, with `Mereology.mPart` and
+  `Mereology.mEquiv` the preorder and equivalence it induces on `E`.
+* `Mereology.AtomJoinPrime E`: an atom below a sum lies below a summand.
+* `Mereology.Individual α`: Link's model, the nonempty sets of atoms under union.
 
 ## Main results
 
-* `Plurality.Algebra.algClosure_iff_of_atom`: on an atom, `*P` and `P` agree.
-* `Plurality.Algebra.IsDistr.of_algClosure_of_atom_le`: Link's distributive inference, for
+* `Mereology.algClosure_iff_of_atom`: on an atom, `*P` and `P` agree.
+* `Mereology.IsDistr.of_algClosure_of_atom_le`: Link's distributive inference, for
   join-prime atoms.
-* `Plurality.Algebra.IsDistr.properPlural_sup`, `Plurality.Algebra.cum_properPlural`: the sum
+* `Mereology.IsDistr.properPlural_sup`, `Mereology.cum_properPlural`: the sum
   of two distinct atoms of a distributive predicate is a proper plural, and proper plurals are
   closed under sum.
-* `Plurality.Algebra.algClosure_image_singleton`: on finite sets of individuals, taken as
+* `Mereology.algClosure_image_singleton`: on finite sets of individuals, taken as
   singletons, `*` holds of exactly the nonempty subsets, Sternefeld's identification of `*P` with
   `D P` (15), and the full closure `Mereology.FullAlgClosure`, Bylinina and Nouwen's `×`, of
   all subsets (`fullAlgClosure_image_singleton`).
-* `Plurality.Algebra.card_image_fullAlgClosure`, `Plurality.Algebra.card_image_algClosure`: the
+* `Mereology.card_image_fullAlgClosure`, `Mereology.card_image_algClosure`: the
   pluralities of `×S` have `0, …, |S|` atoms and those of `*S` have `1, …, |S|`, so only with
   the empty sum does a count's set of degrees reach `0`.
 
@@ -64,9 +64,7 @@ own model of nonempty sets of atoms has no bottom (`Individual`). Where the carr
 
 @[expose] public section
 
-namespace Plurality.Algebra
-
-open _root_.Mereology
+namespace Mereology
 
 variable {E : Type*} [SemilatticeSup E] {P Q : E → Prop} {x y : E}
 
@@ -263,4 +261,4 @@ def Individual.atom (a : α) : Individual α := ⟨{a}, Set.singleton_nonempty a
 
 end Link
 
-end Plurality.Algebra
+end Mereology
