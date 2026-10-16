@@ -41,6 +41,9 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
 * `Quantifier.NumberTree.ofSizes`: the tree of a relation between `|A ∩ B|` and `|A|`.
 * `Quantifier.NumberTree.ofGQ`, `Quantifier.NumberTree.toGQ`: the tree of a generalized
   quantifier over a finite universe, and the quantifier of a tree, counting with `Set.ncard`.
+* `Quantifier.NumberTree.ConstantOnRow`, `Quantifier.NumberTree.ConstantBelow`: a quantifier that
+  does not depend on its scope for a restrictor of a given size, or on either argument on a
+  universe of a given size.
 
 ## Main results
 
@@ -56,6 +59,9 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
   quantifier of a tree is conservative and permutation invariant.
 * `Quantifier.NumberTree.ScopeMonotone.toGQ`, `Quantifier.NumberTree.ScopeAntitone.toGQ`: the
   quantifier of a scope-monotone tree is scope monotone, and likewise antitone.
+* `Quantifier.NumberTree.dependsOn_toGQ_compl_singleton_iff`: the quantifier of a tree depends on
+  whether an individual is in its scope iff the individual is in its restrictor and the tree is not
+  constant on the restrictor's row.
 * `Quantifier.NumberTree.card_powerset_points`: there are `2 ^ ((n + 1) * (n + 2) / 2)` sets of
   points in rows `0` to `n`, the number of conservative, permutation-invariant quantifiers on a
   universe of `n` individuals.
@@ -663,6 +669,17 @@ private theorem ncard_or_eq {T : Set α} {e : α} (he : e ∉ T) :
     {x | x ∈ T ∨ x = e}.ncard = T.ncard + 1 := by
   rw [show {x | x ∈ T ∨ x = e} = insert e T from Set.ext fun _ ↦ or_comm,
     Set.ncard_insert_of_notMem he]
+
+theorem toGQ_some_iff {A B : α → Prop} : NumberTree.some.toGQ A B ↔ ∃ x, A x ∧ B x := by
+  rw [toGQ_apply, NumberTree.some, ne_eq, Set.ncard_eq_zero, ← ne_eq, ← Set.nonempty_iff_ne_empty]
+  rfl
+
+theorem toGQ_no_iff {A B : α → Prop} : NumberTree.no.toGQ A B ↔ ¬ ∃ x, A x ∧ B x := by
+  rw [← toGQ_some_iff, ← compl_no, toGQ_compl]; exact not_not.symm
+
+theorem toGQ_all_iff {A B : α → Prop} : NumberTree.all.toGQ A B ↔ ∀ x, A x → B x := by
+  rw [toGQ_apply, NumberTree.all, Set.ncard_eq_zero, Set.eq_empty_iff_forall_notMem]
+  simp
 
 /-- The quantifier of a tree depends on whether an individual is in its scope only if the
 individual is in its restrictor and the tree is not constant on the restrictor's row. -/

@@ -42,7 +42,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .lake
-          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Eval/**/*.lean', 'Linglib.lean') }}
+          key: lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-${{ hashFiles('Linglib/**/*.lean', 'Studies/**/*.lean', 'Eval/**/*.lean', 'Lab/**/*.lean', 'Linglib.lean') }}
           restore-keys: |
             lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-docs-
             lake-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}-

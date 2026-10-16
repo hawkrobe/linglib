@@ -7,13 +7,16 @@ public import Mathlib.Tactic.IntervalCases
 /-!
 # Scoring the accounts on Chemla & Schlenker (2012)
 
-The inferential experiments of [chemla-schlenker-2012] rate, for *if*-, *or*- and *unless*-sentences
-with *too*, whether the conditional or the unconditional presupposition follows. Subjects infer the
-presupposition a sentence is predicted to carry (the paper's §2.3.1), so an account predicts the
-unconditional inference from a target sentence when every context that accepts the sentence
-entails the unconditional presupposition, and the conditional one otherwise (`predicted`). The
-observation of a cell is the inference endorsed more in it (`observed`), and the verdict compares
-the two (`verdict`).
+Chemla and Schlenker's inferential experiments rate, for *if*-, *or*- and *unless*-sentences with
+*too*, whether the conditional or the unconditional presupposition follows. Each cell is scored in
+four steps. The fact is the inference endorsed more in the cell (`observed`). Its parse is the
+target sentence, a formula of the propositional fragment that every theory reads (`target`). The
+theory says which contexts accept that formula (`Theory.accepts`). The linking hypothesis, that
+subjects infer the presupposition a sentence is predicted to carry (the paper's §2.3.1), turns the
+acceptance conditions into a predicted inference: the unconditional one if the theory predicts it,
+otherwise the conditional one if the theory predicts that, and nothing if it predicts neither
+(`predicted`). The verdict compares prediction and fact (`verdict`), for a registered account or
+for a theory under development alike.
 
 Every account accepts a target sentence iff the context entails `if p, q`, except that the
 incremental accounts, which coincide on the fragment (`Eval.Projection.edges`), require the
@@ -140,25 +143,36 @@ theorem accepts_target_iff (a : Account) (k : Construction) (o : Order) :
 /-! ### Predictions, observations and verdicts -/
 
 open Classical in
-/-- The inference an account predicts from the target sentence of a cell: the unconditional
-presupposition when every context that accepts the sentence entails it, the conditional one
-otherwise. -/
-noncomputable def predicted (a : Account) (k : Construction) (o : Order) : Inference :=
-  if ∀ (W : Type) (I : Fin 3 → Set W) (C : Set W), a.Accepts I C (target 0 1 2 k o) → C ⊆ I 1
-  then .unconditional else .conditional
+/-- The linking hypothesis of the experiments as a rule. A theory predicts that subjects endorse
+the unconditional inference `q` from the target sentence of a cell if it predicts that inference,
+and otherwise the conditional inference `if p, q` if it predicts that one. A theory that predicts
+neither predicts nothing about the cell. -/
+noncomputable def predicted (T : Theory) (k : Construction) (o : Order) : Option Inference :=
+  if T.Predicts (target (0 : Fin 3) 1 2 k o) fun I ↦ I 1 then some .unconditional
+  else if T.Predicts (target (0 : Fin 3) 1 2 k o) fun I ↦ {w | w ∈ I 0 → w ∈ I 1} then
+    some .conditional
+  else none
 
 theorem predicted_eq (a : Account) (k : Construction) (o : Order) :
-    predicted a k o = if a ∈ incremental ∧ o = .inverse then .unconditional else .conditional := by
+    predicted a.theory k o =
+      some (if a ∈ incremental ∧ o = .inverse then .unconditional else .conditional) := by
+  have hcond : a.theory.Predicts (target (0 : Fin 3) 1 2 k o) fun I ↦ {w | w ∈ I 0 → w ∈ I 1} :=
+    fun W I C hC w hw ↦ by
+      have := (accepts_target_iff I a k o).1 hC hw
+      split_ifs at this
+      · exact fun _ ↦ this
+      · exact this
   unfold predicted
   by_cases h : a ∈ incremental ∧ o = .inverse
-  · simp only [h, and_self, ite_true]
-    refine ite_eq_left fun W I C hC ↦ ?_
-    simpa [h] using (accepts_target_iff I a k o).1 hC
-  · simp only [h, ite_false]
-    refine ite_eq_right fun hall ↦ ?_
-    have hacc : a.Accepts (fun _ : Fin 3 ↦ (∅ : Set Unit)) Set.univ (target 0 1 2 k o) :=
-      (accepts_target_iff _ a k o).2 (by simp [h])
-    exact (hall Unit _ _ hacc (Set.mem_univ ())).elim
+  · have hu : a.theory.Predicts (target (0 : Fin 3) 1 2 k o) fun I ↦ I 1 :=
+      fun W I C hC ↦ by simpa [h] using (accepts_target_iff I a k o).1 hC
+    rw [ite_eq_left_of_eq_true _ _ (eq_true hu), ite_eq_left_of_eq_true _ _ (eq_true h)]
+  · have hu : ¬ a.theory.Predicts (target (0 : Fin 3) 1 2 k o) fun I ↦ I 1 := fun hall ↦ by
+      have hacc : a.Accepts (fun _ : Fin 3 ↦ (∅ : Set Unit)) Set.univ (target 0 1 2 k o) :=
+        (accepts_target_iff _ a k o).2 (by simp [h])
+      exact (hall Unit _ _ hacc (Set.mem_univ ())).elim
+    rw [ite_eq_right_of_eq_false _ _ (eq_false hu), ite_eq_left_of_eq_true _ _ (eq_true hcond),
+      ite_eq_right_of_eq_false _ _ (eq_false h)]
 
 /-- The inference endorsed more in a cell, among rows recording the mean rating of an inference in
 a cell, if the cell was tested and the two means differ. -/
@@ -182,23 +196,23 @@ def observed4 : Construction → Order → Option Inference :=
   observedIn experiment4Inferences (fun r ↦ (r.construction, r.order)) (·.inference)
     (·.mean.toRat)
 
-/-- The verdict on an account in a cell of an experiment. -/
-noncomputable def verdict (observed : Construction → Order → Option Inference) (a : Account)
+/-- The verdict on a theory in a cell of an experiment. -/
+noncomputable def verdict (observed : Construction → Order → Option Inference) (T : Theory)
     (k : Construction) (o : Order) : Eval.Verdict :=
-  .of (some (predicted a k o)) (observed k o)
+  .of (predicted T k o) (observed k o)
 
-/-- Tables 4 and 7: in both experiments the conditional inference is endorsed more in every
+/-- By Tables 4 and 7, in both experiments the conditional inference is endorsed more in every
 tested cell, and the *unless*-sentence in the canonical order was not tested. -/
 theorem observed_eq (k : Construction) (o : Order) :
     observed1 k o = observed4 k o ∧
       observed1 k o = if k = .unlessSentence ∧ o = .canonical then none else some .conditional := by
   cases k <;> cases o <;> decide +kernel
 
-/-- The scoreboard on both inferential experiments: every incremental account is wrong on each
+/-- On both inferential experiments, every incremental account is wrong on each
 inverse-order sentence and right on each canonical one, and every other account is right on all. -/
 theorem verdict_eq (a : Account) (k : Construction) (o : Order) :
-    verdict observed1 a k o = verdict observed4 a k o ∧
-      verdict observed1 a k o =
+    verdict observed1 a.theory k o = verdict observed4 a.theory k o ∧
+      verdict observed1 a.theory k o =
         if k = .unlessSentence ∧ o = .canonical then .silent
         else if a ∈ incremental ∧ o = .inverse then .wrong else .correct := by
   obtain ⟨h14, h1⟩ := observed_eq k o
