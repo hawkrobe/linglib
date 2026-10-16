@@ -21,6 +21,7 @@ backgrounds unify into one and both forces become simple necessity over their un
 
 ## Main definitions
 
+* `Background.ofRel R`: the background whose accessible worlds are the `R`-successors.
 * `simpleNecessity f`, `simplePossibility f`: the box and diamond of `f.accessible`.
 * `necessity f g`, `possibility f g`: the box and diamond of `bestAccessible f g`.
 * `humanNecessity f g`, `humanPossibility f g`, `LimitAssumption f g w`.
@@ -72,6 +73,20 @@ def bestAccessible (f g : Background W) : SetRel W W :=
 
 @[simp] theorem Background.mem_accessible {f : Background W} {w w' : W} :
     w ~[f.accessible] w' ↔ w' ∈ f.accessibleWorlds w := .rfl
+
+/-- The background of a relation, whose one premise at `w` is to be an `R`-successor of `w`. -/
+def Background.ofRel (R : SetRel W W) : Background W := fun w ↦ {(w ~[R] ·)}
+
+@[simp] theorem Background.accessibleWorlds_ofRel (R : SetRel W W) (w : W) :
+    (Background.ofRel R).accessibleWorlds w = {v | w ~[R] v} := by
+  ext
+  simp [Background.ofRel]
+
+/-- The background of a relation makes accessible exactly the relation's successors. -/
+@[simp] theorem Background.accessible_ofRel (R : SetRel W W) :
+    (Background.ofRel R).accessible = R := by
+  ext ⟨w, v⟩
+  exact (Set.ext_iff.1 (Background.accessibleWorlds_ofRel R w) v)
 
 @[simp] theorem mem_bestAccessible {f g : Background W} {w w' : W} :
     w ~[bestAccessible f g] w' ↔ w' ∈ bestWorlds f g w := .rfl

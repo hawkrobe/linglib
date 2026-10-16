@@ -36,6 +36,8 @@ of pairs of a world and a selection function.
 * `will_excluded_middle`, `willIf_excluded_middle`: excluded middle is valid₂.
 * `valid1_materialImp_will`, `not_valid2_materialImp_will`: *will A* entails `A` at every
   context but not at every index.
+* `will_eq_core`, `necessity_compl_eq_iff`: *will* is necessity along a selection, and a
+  universal analysis commutes with negation only if it is one.
 * `will_history_eq`: the candidate worlds of a context give *will* one modal parameter.
 * `will_inter_self`, `measure_will`: Transparency, so *will A* has the credence of `A`.
 * `measure_necessity_eq_zero`: universal *will* gives an open future credence 0.
@@ -76,11 +78,16 @@ variable {W : Type*} (s : SelectionFunction W) {f A B C : Set W} {w : W}
 The clause for *will* is (16) of §5.2, and its collapse at the context is (18). -/
 
 /-- *Will* over the modal parameter `f` sends `A` to the worlds whose selection from `f` is an
-`A`-world, the preimage of `A` under selection as a complete lattice homomorphism. -/
+`A`-world, the selectional modal along the constant relation to `f`. -/
 def will (f : Set W) : CompleteLatticeHom (Set W) (Set W) :=
-  .setPreimage (s.sel · f)
+  s.modal (.ofSuccessors fun _ ↦ f)
 
 @[simp] theorem mem_will : w ∈ will s f A ↔ s.sel w f ∈ A := Iff.rfl
+
+/-- *Will* is necessity along the graph of selection from `f`, a modal that quantifies over a
+single world (§5.2). -/
+theorem will_eq_core : will s f A = (Function.graph fun w ↦ s.sel w f).core A :=
+  SelectionFunction.modal_eq_core A
 
 /-- *Will* commutes with negation, which is Negation Swap (§7). -/
 theorem will_compl : will s f Aᶜ = (will s f A)ᶜ := map_compl' _ A
@@ -92,12 +99,12 @@ theorem mem_will_of_mem (hw : w ∈ f) : w ∈ will s f A ↔ w ∈ A := by
 /-- On the modal parameter *will A* and `A` hold at the same worlds, which is Transparency
 (§8.1). -/
 theorem will_inter_self : will s f A ∩ f = A ∩ f :=
-  Set.ext fun _ ↦ and_congr_left (mem_will_of_mem s)
+  SelectionFunction.modal_inter_refl A
 
 /-- On a possible modal parameter, *will A* is the selection conditional of [stalnaker-1968] with
 the modal parameter as antecedent. -/
 theorem will_eq_selectionConditional (hf : f.Nonempty) : will s f A = selectionConditional s f A :=
-  Set.ext fun _ ↦ (mem_selectionConditional_of_nonempty s hf).symm
+  (selectionConditional_eq_modal hf A).symm
 
 /-! ### Validity -/
 
@@ -184,6 +191,16 @@ theorem measure_will [MeasurableSpace W] (μ : Measure W) (h : μ fᶜ = 0) :
 The modal analyses the paper argues against make *will* necessity over the best open worlds,
 the `necessity f g` of [kratzer-1981] with the open worlds as modal base, such as the most likely
 open worlds of [kaufmann-2005-truth]. They differ in the ordering source `g` (§2.4, (14)). -/
+
+/-- A universal analysis commutes with negation for every prejacent exactly when it is truth at a
+selected world, so the scopelessness of §2.2 leaves no quantificational analysis but selection
+(§2.4). -/
+theorem necessity_compl_eq_iff {f g : Background W} :
+    (∀ p : W → Prop, necessity f g pᶜ = (necessity f g p)ᶜ) ↔
+      ∃ σ : W → W, ∀ p : W → Prop, necessity f g p = p ∘ σ := by
+  refine ⟨fun h ↦ ?_, fun ⟨σ, hσ⟩ p ↦ by rw [hσ, hσ]; rfl⟩
+  obtain ⟨σ, hσ⟩ := ModalLogic.box_compl_eq_iff.1 h
+  exact ⟨σ, fun p ↦ by rw [← ModalLogic.box_graph σ p, hσ]; rfl⟩
 
 /-- On a parameter whose best worlds hold an `A`-world and a non-`A`-world, universal *will*
 verifies neither *will A* nor *will not A*, so its scope with negation matters (§2.4). -/
@@ -279,12 +296,11 @@ theorem credence_will_warriorsCap (s : SelectionFunction W) (w : W) :
     ← measureReal_def, cynthiaCredence_real, warriorsCap, Set.ncard_singleton]
   norm_num
 
-/-- The historical modal base, whose one premise at a world is to be a historical alternative to
-it today. -/
-def histBase : Background W := fun w ↦ {(· ∈ history (w, 0))}
+/-- The historical modal base, the background of the relation to today's historical
+alternatives. -/
+def histBase : Background W := .ofRel (.ofSuccessors fun w ↦ history (w, 0))
 
 @[simp] theorem accessibleWorlds_histBase (w : W) : histBase.accessibleWorlds w = Set.univ := by
-  ext
   simp [histBase]
 
 /-- On the universal reading over the historical modal base, *Cynthia will wear a Warriors cap*
@@ -308,8 +324,8 @@ theorem not_conditionalNecessity_wearsCap_or_compl (w : W) :
     ¬ (Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCap) w ∨
       Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCapᶜ) w) :=
   not_necessity_or_necessity_compl (v := .cw) (v' := .cg)
-    (by simp [Background.restrict, histBase, wearsCap])
-    (by simp [Background.restrict, histBase, wearsCap]) (by simp [warriorsCap])
+    (by simp [-Background.mem_accessibleWorlds, wearsCap])
+    (by simp [-Background.mem_accessibleWorlds, wearsCap]) (by simp [warriorsCap])
     (by simp [warriorsCap])
 
 /-! ### The cap-conditional
