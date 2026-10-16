@@ -171,24 +171,24 @@ positions do not. -/
 theorem carries_weak_conditionalAntecedent :
     LicensingContext.conditionalAntecedent.licenser.Carries .weak :=
   ⟨LicensingContext.isStrawsonDE_conditionalAntecedent,
-    LicensingContext.isNontrivial_conditionalAntecedent⟩
+    LicensingContext.not_isStrawsonUE_conditionalAntecedent⟩
 
 theorem carries_weak_universalRestrictor :
     LicensingContext.universalRestrictor.licenser.Carries .weak :=
   Licenser.carries_classical_iff.2 ⟨(LicensingContext.holds_universalRestrictor_iff (s := .weak)).2
-    (by decide), LicensingContext.isNontrivial_universalRestrictor⟩
+    (by decide), LicensingContext.not_isStrawsonUE_universalRestrictor⟩
 
 theorem carries_weak_negation : LicensingContext.negation.licenser.Carries .weak :=
   Licenser.carries_classical_iff.2
-    ⟨LicensingContext.holds_negation .weak, LicensingContext.isNontrivial_negation⟩
+    ⟨LicensingContext.holds_negation .weak, LicensingContext.not_isStrawsonUE_negation⟩
 
 theorem carries_weak_nobody : LicensingContext.nobody.licenser.Carries .weak :=
   Licenser.carries_classical_iff.2 ⟨(LicensingContext.holds_nobody_iff (s := .weak)).2 (by decide),
-    LicensingContext.isNontrivial_nobody⟩
+    LicensingContext.not_isStrawsonUE_nobody⟩
 
 theorem carries_weak_doubtVerb : LicensingContext.doubtVerb.licenser.Carries .weak :=
   Licenser.carries_classical_iff.2
-    ⟨LicensingContext.holds_doubtVerb_iff.2 le_rfl, LicensingContext.isNontrivial_doubtVerb⟩
+    ⟨LicensingContext.holds_doubtVerb_iff.2 le_rfl, LicensingContext.not_isStrawsonUE_doubtVerb⟩
 
 theorem not_carries_weak_modalPossibility :
     ¬ LicensingContext.modalPossibility.licenser.Carries .weak := fun h ↦ h.1

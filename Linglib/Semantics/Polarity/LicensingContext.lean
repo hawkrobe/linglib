@@ -36,7 +36,7 @@ relevance. The inventory is open: a fragment or a study can define a context of 
 * `Quantifier.GQ.exhaustified`: a determiner exhaustified against its scale-mates.
 * `PolarityItem.LicensingContext.negation`, `PolarityItem.LicensingContext.nobody`, …: the
   contexts, each with its certificates (`holds_negation`, `holds_nobody_iff`,
-  `isNontrivial_nobody`, `not_holds_exhaustified_few`, …).
+  `not_isStrawsonUE_nobody`, `not_holds_exhaustified_few`, …).
 
 ## Implementation notes
 
@@ -480,60 +480,62 @@ theorem holds_denyVerb_iff {s : DEStrength} :
 Each downward entailing licenser has an operator that is not upward entailing, so it is not
 downward entailing by being constant. -/
 
-theorem isNontrivial_negation : negation.licenser.IsNontrivial :=
-  ⟨Unit, fun h ↦ h (bot_le (a := ⊤)) () id trivial⟩
+theorem not_isStrawsonUE_negation : ¬ negation.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨Unit, fun h ↦ h (bot_le (a := ⊤)) () id trivial⟩
 
-theorem isNontrivial_nobody : nobody.licenser.IsNontrivial :=
-  ⟨⟨⟨Unit, ⊤⟩, ⟨(), trivial⟩⟩, fun h ↦ h (bot_le (a := ⊤)) (fun _ _ hx ↦ hx) () trivial trivial⟩
+theorem not_isStrawsonUE_nobody : ¬ nobody.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨⟨Unit, ⊤⟩, ⟨(), trivial⟩⟩,
+    fun h ↦ h (bot_le (a := ⊤)) (fun _ _ hx ↦ hx) () trivial trivial⟩
 
-theorem isNontrivial_few : few.licenser.IsNontrivial :=
-  ⟨⟨⟨Unit, fun _ ↦ True⟩⟩, fun h ↦ absurd
+theorem not_isStrawsonUE_few : ¬ few.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨⟨Unit, fun _ ↦ True⟩⟩, fun h ↦ absurd
     (h (a := fun _ ↦ False) (b := fun _ ↦ True) (fun _ h ↦ h.elim) (by decide)) (by decide)⟩
 
-theorem isNontrivial_atMost : atMost.licenser.IsNontrivial :=
-  ⟨⟨⟨⟨Unit, fun _ ↦ True⟩⟩, 0⟩, fun h ↦ absurd
+theorem not_isStrawsonUE_atMost : ¬ atMost.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨⟨⟨Unit, fun _ ↦ True⟩⟩, 0⟩, fun h ↦ absurd
     (h (a := fun _ ↦ False) (b := fun _ ↦ True) (fun _ h ↦ h.elim) (by decide)) (by decide)⟩
 
-theorem isNontrivial_universalRestrictor : universalRestrictor.licenser.IsNontrivial :=
-  ⟨⟨⟨Unit, ⊥⟩, ⟨(), id⟩⟩, fun h ↦ h (bot_le (a := ⊤)) (fun _ hx ↦ hx) () trivial⟩
+theorem not_isStrawsonUE_universalRestrictor : ¬ universalRestrictor.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨⟨Unit, ⊥⟩, ⟨(), id⟩⟩, fun h ↦ h (bot_le (a := ⊤)) (fun _ hx ↦ hx) () trivial⟩
 
-theorem isNontrivial_withoutClause : withoutClause.licenser.IsNontrivial :=
-  ⟨⟨Unit, ⊤⟩, fun h ↦ (h (bot_le (a := ⊤)) () ⟨trivial, id⟩).2 trivial⟩
+theorem not_isStrawsonUE_withoutClause : ¬ withoutClause.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨Unit, ⊤⟩, fun h ↦ (h (bot_le (a := ⊤)) () ⟨trivial, id⟩).2 trivial⟩
 
-theorem isNontrivial_beforeClause : beforeClause.licenser.IsNontrivial :=
-  ⟨⟨ℕ, {NonemptyInterval.pure 0}⟩, fun h ↦
+theorem not_isStrawsonUE_beforeClause : ¬ beforeClause.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨ℕ, {NonemptyInterval.pure 0}⟩, fun h ↦
     let ⟨t, _, ht⟩ := h (bot_le (a := ⊤))
       ⟨0, ⟨_, rfl, by simp⟩, fun _ ⟨_, hi, _⟩ ↦ hi.elim⟩
     lt_irrefl t (ht t ⟨NonemptyInterval.pure t, trivial, by simp⟩)⟩
 
-theorem isNontrivial_exceedsFamily : (Licenser.classical exceedsFamily).IsNontrivial :=
-  ⟨⟨ℕ, ℕ, id, 1⟩, fun h ↦
+theorem not_isStrawsonUE_exceedsFamily : ¬ (Licenser.classical exceedsFamily).IsStrawsonUE :=
+  not_forall.2 ⟨⟨ℕ, ℕ, id, 1⟩, fun h ↦
     lt_irrefl _ (h (bot_le (a := ⊤)) (fun _ hd ↦ hd.elim) (Set.mem_univ 1))⟩
 
-theorem isNontrivial_doubtVerb : doubtVerb.licenser.IsNontrivial :=
-  ⟨⟨Bool, .univ, true⟩, fun h ↦ h (bot_le (a := ⊤))
+theorem not_isStrawsonUE_doubtVerb : ¬ doubtVerb.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨Bool, .univ, true⟩, fun h ↦ h (bot_le (a := ⊤))
     (fun hc ↦ Set.notMem_empty _ (hc (Set.mem_univ (true, true)))) fun _ _ ↦ trivial⟩
 
-theorem isNontrivial_denyVerb : denyVerb.licenser.IsNontrivial :=
-  ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, fun h ↦
+theorem not_isStrawsonUE_denyVerb : ¬ denyVerb.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨⟨Bool, .univ, true⟩, ⟨true, trivial⟩⟩, fun h ↦
     h (bot_le (a := ⊤)) (fun _ _ ↦ Set.notMem_empty _) (Set.mem_univ (true, true))
       (Set.mem_univ true)⟩
 
-theorem isNontrivial_onlyFocus : onlyFocus.licenser.IsNontrivial :=
-  ⟨⟨Bool, Unit, true⟩, not_isStrawsonUE_only⟩
+theorem not_isStrawsonUE_onlyFocus : ¬ onlyFocus.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨Bool, Unit, true⟩, not_isStrawsonUE_only⟩
 
-theorem isNontrivial_adversative : adversative.licenser.IsNontrivial :=
-  ⟨⟨Fin 3, fun _ ↦ {0}, fun _ ↦ .univ, fun _ ↦ {(· = 1)}⟩,
+theorem not_isStrawsonUE_adversative : ¬ adversative.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨Fin 3, fun _ ↦ {0}, fun _ ↦ .univ, fun _ ↦ {(· = 1)}⟩,
     Desire.BestWorlds.not_isStrawsonUE_regret⟩
 
-theorem isNontrivial_superlative : superlative.licenser.IsNontrivial :=
-  ⟨⟨Bool, Unit, ℕ, fun _ ↦ 0, true⟩, Degree.not_isStrawsonUE_superlative⟩
+theorem not_isStrawsonUE_superlative : ¬ superlative.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨Bool, Unit, ℕ, fun _ ↦ 0, true⟩, Degree.not_isStrawsonUE_superlative⟩
 
-theorem isNontrivial_conditionalAntecedent : conditionalAntecedent.licenser.IsNontrivial :=
-  ⟨⟨Unit, Bool, fun _ ↦ .univ, {true}⟩, Conditional.not_isStrawsonUE_horizonCounterfactual⟩
+theorem not_isStrawsonUE_conditionalAntecedent : ¬ conditionalAntecedent.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨Unit, Bool, fun _ ↦ .univ, {true}⟩,
+    Conditional.not_isStrawsonUE_horizonCounterfactual⟩
 
-theorem isNontrivial_sinceTemporal : sinceTemporal.licenser.IsNontrivial :=
-  ⟨⟨ℤ, (· - 5)⟩, not_isStrawsonUE_since⟩
+theorem not_isStrawsonUE_sinceTemporal : ¬ sinceTemporal.licenser.IsStrawsonUE :=
+  not_forall.2 ⟨⟨ℤ, (· - 5)⟩, not_isStrawsonUE_since⟩
 
 /-! ### Scalar licensers
 

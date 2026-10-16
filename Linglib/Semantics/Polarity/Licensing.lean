@@ -91,7 +91,7 @@ private theorem licenses_of_carries_iff {s₀ : DEStrength}
   simp only [Licenses, h, hfc, hrel, false_and, or_false]
 
 private theorem licenses_classical {F : OperatorFamily} {s₀ : DEStrength}
-    (hc : c.licenser = .classical F) (hn : c.licenser.IsNontrivial)
+    (hc : c.licenser = .classical F) (hn : ¬ c.licenser.IsStrawsonUE)
     (h : ∀ s, c.licenser.Holds s.toSignature ↔ s ≤ s₀) :
     c.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ s₀ := by
   refine licenses_of_carries_iff (by rw [hc]; exact id) (by rw [hc]; exact id) fun s ↦ ?_
@@ -104,7 +104,7 @@ private theorem le_weak_iff {s : DEStrength} : s ≤ .weak ↔ s = .weak := by
 with its direct implicature factored in, licenses exactly the weak items. -/
 private theorem licenses_weak (hfc : ¬ c.licenser.LicensesFreeChoice)
     (hrel : ¬ c.licenser.LicensesByRelevance) (hde : c.licenser.IsStrawsonDE)
-    (hn : c.licenser.IsNontrivial) (hx : ¬ c.licenser.exhaustified.Holds .anti) :
+    (hn : ¬ c.licenser.IsStrawsonUE) (hx : ¬ c.licenser.exhaustified.Holds .anti) :
     c.Licenses e ↔ e.licensor = some .weak := by
   rw [licenses_of_carries_iff hfc hrel fun _ ↦
     (carries_iff_eq_weak hde hn hx).trans le_weak_iff.symm]
@@ -121,7 +121,7 @@ private theorem not_antiLicenses (h : ¬ c.licenser.Holds .anti) : ¬ c.AntiLice
 private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases s <;> decide
 
 @[simp] theorem licenses_negation : negation.Licenses e ↔ e.IsNPI := by
-  rw [licenses_classical (s₀ := .antiMorphic) rfl isNontrivial_negation fun s ↦
+  rw [licenses_classical (s₀ := .antiMorphic) rfl not_isStrawsonUE_negation fun s ↦
     iff_of_true (holds_negation s) (le_antiMorphic s)]
   exact ⟨fun ⟨r, hr, _⟩ ↦ Option.isSome_iff_exists.2 ⟨r, hr⟩,
     fun h ↦ let ⟨r, hr⟩ := Option.isSome_iff_exists.1 h; ⟨r, hr, le_antiMorphic r⟩⟩
@@ -133,7 +133,7 @@ private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases
     fun h ↦ let ⟨r, hr⟩ := Option.isSome_iff_exists.1 h; ⟨r, hr, le_antiMorphic r⟩⟩
 
 @[simp] theorem licenses_nobody : nobody.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
-  licenses_classical rfl isNontrivial_nobody fun _ ↦ holds_nobody_iff
+  licenses_classical rfl not_isStrawsonUE_nobody fun _ ↦ holds_nobody_iff
 
 @[simp] theorem antiLicenses_nobody :
     nobody.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
@@ -141,7 +141,7 @@ private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases
 
 @[simp] theorem licenses_few : few.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
   licenses_of_carries_iff id id fun _ ↦
-    (carries_iff_eq_weak (isStrawsonDE_of_holds_anti (holds_few_iff.2 le_rfl)) isNontrivial_few
+    (carries_iff_eq_weak (isStrawsonDE_of_holds_anti (holds_few_iff.2 le_rfl)) not_isStrawsonUE_few
       not_holds_exhaustified_few).trans le_weak_iff.symm
 
 @[simp] theorem antiLicenses_few : few.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=
@@ -150,14 +150,14 @@ private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases
 @[simp] theorem licenses_atMost : atMost.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
   licenses_of_carries_iff id id fun _ ↦
     (carries_iff_eq_weak (isStrawsonDE_of_holds_anti (holds_atMost_iff.2 le_rfl))
-      isNontrivial_atMost not_holds_exhaustified_atMost).trans le_weak_iff.symm
+      not_isStrawsonUE_atMost not_holds_exhaustified_atMost).trans le_weak_iff.symm
 
 @[simp] theorem antiLicenses_atMost : atMost.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=
   antiLicenses_classical fun _ ↦ holds_atMost_iff
 
 @[simp] theorem licenses_universalRestrictor :
     universalRestrictor.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
-  licenses_classical rfl isNontrivial_universalRestrictor fun _ ↦ holds_universalRestrictor_iff
+  licenses_classical rfl not_isStrawsonUE_universalRestrictor fun _ ↦ holds_universalRestrictor_iff
 
 @[simp] theorem antiLicenses_universalRestrictor :
     universalRestrictor.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
@@ -165,7 +165,7 @@ private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases
 
 @[simp] theorem licenses_withoutClause :
     withoutClause.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
-  licenses_classical rfl isNontrivial_withoutClause fun _ ↦ holds_withoutClause_iff
+  licenses_classical rfl not_isStrawsonUE_withoutClause fun _ ↦ holds_withoutClause_iff
 
 @[simp] theorem antiLicenses_withoutClause :
     withoutClause.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
@@ -173,7 +173,7 @@ private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases
 
 @[simp] theorem licenses_beforeClause :
     beforeClause.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
-  licenses_classical rfl isNontrivial_beforeClause fun _ ↦ holds_beforeClause_iff
+  licenses_classical rfl not_isStrawsonUE_beforeClause fun _ ↦ holds_beforeClause_iff
 
 @[simp] theorem antiLicenses_beforeClause :
     beforeClause.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
@@ -181,61 +181,62 @@ private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases
 
 @[simp] theorem licenses_clausalComparative :
     clausalComparative.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
-  licenses_classical rfl isNontrivial_exceedsFamily fun _ ↦ holds_clausalComparative_iff
+  licenses_classical rfl not_isStrawsonUE_exceedsFamily fun _ ↦ holds_clausalComparative_iff
 
 @[simp] theorem antiLicenses_clausalComparative :
     clausalComparative.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
   antiLicenses_classical fun _ ↦ holds_clausalComparative_iff
 
 @[simp] theorem licenses_tooTo : tooTo.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
-  licenses_classical rfl isNontrivial_exceedsFamily fun _ ↦ holds_tooTo_iff
+  licenses_classical rfl not_isStrawsonUE_exceedsFamily fun _ ↦ holds_tooTo_iff
 
 @[simp] theorem antiLicenses_tooTo :
     tooTo.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
   antiLicenses_classical fun _ ↦ holds_tooTo_iff
 
 @[simp] theorem licenses_doubtVerb : doubtVerb.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
-  licenses_classical rfl isNontrivial_doubtVerb fun _ ↦ holds_doubtVerb_iff
+  licenses_classical rfl not_isStrawsonUE_doubtVerb fun _ ↦ holds_doubtVerb_iff
 
 @[simp] theorem antiLicenses_doubtVerb :
     doubtVerb.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=
   antiLicenses_classical fun _ ↦ holds_doubtVerb_iff
 
 @[simp] theorem licenses_denyVerb : denyVerb.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
-  licenses_classical rfl isNontrivial_denyVerb fun _ ↦ holds_denyVerb_iff
+  licenses_classical rfl not_isStrawsonUE_denyVerb fun _ ↦ holds_denyVerb_iff
 
 @[simp] theorem antiLicenses_denyVerb :
     denyVerb.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
   antiLicenses_classical fun _ ↦ holds_denyVerb_iff
 
 @[simp] theorem licenses_onlyFocus : onlyFocus.Licenses e ↔ e.licensor = some .weak :=
-  licenses_weak id id isStrawsonDE_onlyFocus isNontrivial_onlyFocus not_holds_onlyFocus
+  licenses_weak id id isStrawsonDE_onlyFocus not_isStrawsonUE_onlyFocus not_holds_onlyFocus
 
 @[simp] theorem not_antiLicenses_onlyFocus : ¬ onlyFocus.AntiLicenses e :=
   not_antiLicenses not_holds_onlyFocus
 
 @[simp] theorem licenses_adversative : adversative.Licenses e ↔ e.licensor = some .weak :=
-  licenses_weak id id isStrawsonDE_adversative isNontrivial_adversative not_holds_adversative
+  licenses_weak id id isStrawsonDE_adversative not_isStrawsonUE_adversative not_holds_adversative
 
 @[simp] theorem not_antiLicenses_adversative : ¬ adversative.AntiLicenses e :=
   not_antiLicenses not_holds_adversative
 
 @[simp] theorem licenses_superlative : superlative.Licenses e ↔ e.licensor = some .weak :=
-  licenses_weak id id isStrawsonDE_superlative isNontrivial_superlative not_holds_superlative
+  licenses_weak id id isStrawsonDE_superlative not_isStrawsonUE_superlative not_holds_superlative
 
 @[simp] theorem not_antiLicenses_superlative : ¬ superlative.AntiLicenses e :=
   not_antiLicenses not_holds_superlative
 
 @[simp] theorem licenses_conditionalAntecedent :
     conditionalAntecedent.Licenses e ↔ e.licensor = some .weak :=
-  licenses_weak id id isStrawsonDE_conditionalAntecedent isNontrivial_conditionalAntecedent
+  licenses_weak id id isStrawsonDE_conditionalAntecedent not_isStrawsonUE_conditionalAntecedent
     not_holds_conditionalAntecedent
 
 @[simp] theorem not_antiLicenses_conditionalAntecedent : ¬ conditionalAntecedent.AntiLicenses e :=
   not_antiLicenses not_holds_conditionalAntecedent
 
 @[simp] theorem licenses_sinceTemporal : sinceTemporal.Licenses e ↔ e.licensor = some .weak :=
-  licenses_weak id id isStrawsonDE_sinceTemporal isNontrivial_sinceTemporal not_holds_sinceTemporal
+  licenses_weak id id isStrawsonDE_sinceTemporal not_isStrawsonUE_sinceTemporal
+    not_holds_sinceTemporal
 
 @[simp] theorem not_antiLicenses_sinceTemporal : ¬ sinceTemporal.AntiLicenses e :=
   not_antiLicenses not_holds_sinceTemporal
@@ -388,7 +389,7 @@ theorem antiLicenses_negation (h : e.IsPPI) : negation.AntiLicenses e :=
 it licenses the negative polarity items of that class (the mirror image of [vanderwouden-1997]'s
 (181)). -/
 theorem antiLicenses_iff_licenses {e' : PolarityItem} {F : OperatorFamily}
-    (hc : c.licenser = .classical F) (hn : c.licenser.IsNontrivial)
+    (hc : c.licenser = .classical F) (hn : ¬ c.licenser.IsStrawsonUE)
     (h : e.antiLicensor = e'.licensor) : c.AntiLicenses e ↔ c.Licenses e' := by
   unfold AntiLicenses Licenses
   rw [hc] at hn ⊢

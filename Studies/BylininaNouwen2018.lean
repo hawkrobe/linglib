@@ -184,13 +184,13 @@ theorem exhaustified_zero : zero.licenser.exhaustified = nobody.licenser := by
   exact propext exhAgainst_zero_iff_no
 
 /-- Below it *zero* is a tautology, downward and upward entailing at once ((54b)). -/
-theorem not_isNontrivial_zero : ¬ zero.licenser.IsNontrivial :=
-  fun ⟨p, h⟩ ↦ h fun _ B _ _ ↦ zero_mem_countDegrees p.A B
+theorem isStrawsonUE_zero : zero.licenser.IsStrawsonUE :=
+  fun p _ B _ _ ↦ zero_mem_countDegrees p.A B
 
 /-- So *zero* licenses no negative polarity item, weak or strong. -/
 @[simp] theorem not_licenses_zero (e : PolarityItem) : ¬ zero.Licenses e := by
   rintro (⟨_, _, h⟩ | ⟨h, _⟩ | ⟨h, _⟩)
-  exacts [not_isNontrivial_zero h.weak.2, h.elim, h.elim]
+  exacts [h.weak.2 isStrawsonUE_zero, h.elim, h.elim]
 
 instance : DecidablePred zero.Licenses := fun e ↦ isFalse (not_licenses_zero e)
 

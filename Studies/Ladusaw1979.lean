@@ -84,7 +84,7 @@ theorem question_not_de : ¬ IsDownwardEntailing .question := id
 generalization, which the library takes as its definition of licensing by strengthening once the
 environment is not downward entailing by being constant. -/
 theorem ladusaw_generalization (c : LicensingContext) (hc : IsDownwardEntailing c)
-    (hn : c.licenser.IsNontrivial) (e : PolarityItem) (he : e.licensor = some .weak) :
+    (hn : ¬ c.licenser.IsStrawsonUE) (e : PolarityItem) (he : e.licensor = some .weak) :
     c.Licenses e :=
   .inl ⟨.weak, he, isStrawsonDE_of_holds_anti hc, hn⟩
 

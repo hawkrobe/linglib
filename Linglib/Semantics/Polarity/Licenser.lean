@@ -36,16 +36,17 @@ widening the domain of a wh-question never lowers its value, after van Rooy.
 
 * `PolarityItem.Licenser`: the five kinds of licenser.
 * `PolarityItem.Licenser.exhaustified`: the licenser with its direct implicature factored in.
-* `PolarityItem.Licenser.Holds`, `PolarityItem.Licenser.IsNontrivial`,
-  `PolarityItem.Licenser.Carries`: a signature held outright, non-trivial downward entailment, and
-  a strength of negation carried.
+* `PolarityItem.Licenser.Holds`, `PolarityItem.Licenser.IsStrawsonDE`,
+  `PolarityItem.Licenser.IsStrawsonUE`, `PolarityItem.Licenser.Carries`: a signature held outright,
+  downward and upward entailment modulo presupposition, and a strength of negation carried.
 * `PolarityItem.Licenser.LicensesFreeChoice`, `PolarityItem.Licenser.LicensesByRelevance`: the
   free-choice and question routes.
 
 ## Implementation notes
 
 * The unit conditions of `Signature.HoldsFor` do not exclude constant maps, which are downward
-  entailing and, if constantly false, anti-additive; non-triviality excludes them.
+  entailing and, if constantly false, anti-additive; requiring weak strength not to be upward
+  entailing as well excludes them.
 * The question route states the weak form the theory of question value proves, that widening
   never lowers the question's value; van Rooy's strict condition for rhetorical questions is not
   formalized.
@@ -120,8 +121,8 @@ structure ModalFamily where
 by its direct implicature, the exhaustification against those mates ([gajewski-2011]'s `O` with
 `ALT-1`). -/
 structure ScalarFamily extends OperatorFamily where
-  /-- The operator enriched by its direct implicature, at each parameter. -/
-  enriched : ∀ p, Dom p → Cod p
+  /-- The operator exhaustified against its stronger scale-mates, at each parameter. -/
+  exhaustified : ∀ p, Dom p → Cod p
 
 /-- A licenser is the operator a construction places over the position of a polarity item: a
 classical operator, a scalar operator with its enrichment, an operator into partial
@@ -147,7 +148,7 @@ namespace Licenser
 /-- The licenser with its direct implicature factored in, the meaning above the exhaustivity
 operator: the enriched operators of a scalar licenser, and any other licenser itself. -/
 def exhaustified : Licenser → Licenser
-  | .scalar F => .classical { F.toOperatorFamily with op := F.enriched }
+  | .scalar F => .classical { F.toOperatorFamily with op := F.exhaustified }
   | L => L
 
 /-- A licenser holds a signature outright when every operator in its family does; an operator into
@@ -164,22 +165,21 @@ def IsStrawsonDE : Licenser → Prop
   | .strawson F => ∀ p, NaturalLogic.IsStrawsonDE (F.op p)
   | .modal _ | .question => False
 
-/-- A licenser is non-trivial when some operator in its family is not upward entailing, Strawson
-upward entailing for an operator into partial propositions, so that its downward entailment is not
-that of a constant. -/
-def IsNontrivial : Licenser → Prop
-  | .classical F | .scalar ⟨F, _⟩ => ∃ p, ¬ Monotone (F.op p)
-  | .strawson F => ∃ p, ¬ NaturalLogic.IsStrawsonUE (F.op p)
+/-- A licenser is Strawson upward entailing when every operator in its family is upward entailing
+modulo its presupposition; a constant operator is both this and downward entailing. -/
+def IsStrawsonUE : Licenser → Prop
+  | .classical F | .scalar ⟨F, _⟩ => ∀ p, Monotone (F.op p)
+  | .strawson F => ∀ p, NaturalLogic.IsStrawsonUE (F.op p)
   | .modal _ | .question => False
 
-/-- A licenser carries weak strength when it is non-trivially downward entailing modulo
+/-- A licenser carries weak strength when it is downward and not upward entailing modulo
 presupposition, the condition every negative polarity item puts on the meaning below the
 exhaustivity operator ([von-fintel-1999], [gajewski-2011]'s Condition 1,
 [bylinina-nouwen-2018]'s (53)), and a stronger strength when it also holds that strength outright
 with its direct implicature factored in. -/
 def Carries (L : Licenser) : DEStrength → Prop
-  | .weak => L.IsStrawsonDE ∧ L.IsNontrivial
-  | s => (L.IsStrawsonDE ∧ L.IsNontrivial) ∧ L.exhaustified.Holds s.toSignature
+  | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
+  | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toSignature
 
 /-- The route by which a licenser licenses. -/
 def mechanism : Licenser → LicensingMechanism
@@ -251,7 +251,7 @@ theorem carries_iff_of_ne_weak (hs : s ≠ .weak) :
 /-- A classical licenser carries a strength exactly when it holds it outright and is
 non-trivial. -/
 theorem carries_classical_iff {F : OperatorFamily} :
-    (classical F).Carries s ↔ (classical F).Holds s.toSignature ∧ (classical F).IsNontrivial := by
+    (classical F).Carries s ↔ (classical F).Holds s.toSignature ∧ ¬ (classical F).IsStrawsonUE := by
   cases s with
   | weak => exact and_congr_left' (forall_congr' fun _ ↦ Signature.holdsFor_anti_iff.symm)
   | antiAdditive | antiMorphic =>
@@ -269,7 +269,7 @@ theorem not_holds_toSignature (h : ¬ L.Holds .anti) : ¬ L.Holds s.toSignature 
 
 /-- A non-trivial licenser that is downward entailing modulo presupposition, and not outright once
 its direct implicature is factored in, carries exactly weak strength ([gajewski-2011]). -/
-theorem carries_iff_eq_weak (hde : L.IsStrawsonDE) (hn : L.IsNontrivial)
+theorem carries_iff_eq_weak (hde : L.IsStrawsonDE) (hn : ¬ L.IsStrawsonUE)
     (h : ¬ L.exhaustified.Holds .anti) : L.Carries s ↔ s = .weak := by
   cases s with
   | weak => exact iff_of_true ⟨hde, hn⟩ rfl
