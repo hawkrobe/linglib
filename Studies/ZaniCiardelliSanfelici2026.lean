@@ -6,12 +6,12 @@ public import Studies.BarLevFox2020
 /-!
 # Zani, Ciardelli and Sanfelici (2026): Simplification of Disjunctive Antecedents
 
-This file formalizes the semantic predictions that [zani-ciardelli-sanfelici-2026] tests in
-an acquisition study of conditionals with disjunctive antecedents, *if A or B, C*. The three
+This file formalizes the semantic predictions that Zani, Ciardelli and Sanfelici test in an
+acquisition study of conditionals with disjunctive antecedents, *if A or B, C*. The three
 readings of Table 2 are truth conditions over a similarity model: the simplification reading
 SDA is the conjunction of the two simplifications, the substrate's `distributiveImp`; the
 disjunctive conditional reading `DCR` is their disjunction; and the asymmetric reading AR is
-the simplification of the more realistic disjunct. Under [lewis-1973]'s minimal-change
+the simplification of the more realistic disjunct. Under Lewis's minimal-change
 semantics, the substrate's `disjunctiveImp`, the DAC quantifies over the closest worlds of the
 disjunction, and §2's case analysis follows: when neither disjunct is more realistic than the
 other the DAC is equivalent to SDA (`would_iff_distributive_of_equallyRealistic`), and when
@@ -25,11 +25,11 @@ similarity orderings of Figure 3 make the squirrel a more realistic winner than 
 or tie them. Table 3's response patterns follow by computation (`table3_sda`, `table3_dcr`,
 `table3_ar`), and acceptance of the closeness evaluation item *if the hare doesn't win, the
 squirrel will win* reveals that the participant regards the squirrel as the more realistic
-winner (`moreRealistic_of_closeness`). On the homogeneity accounts of [santorio-2018] and
-[cariani-goldstein-2020], SDA is the universal and DCR the existential resolution of the
+winner (`moreRealistic_of_closeness`). On the homogeneity accounts of Santorio and of
+Cariani and Goldstein, SDA is the universal and DCR the existential resolution of the
 homogeneous quantification over the disjuncts (`dcr_iff_homogeneity_ne_false`), which is the
 source of the paper's prediction that children shift from DCR to SDA as they do for plural
-definites; on [bar-lev-fox-2020]'s account, the literal meaning is Lewis's (`literal_eq_would`)
+definites; on Bar-Lev and Fox's account, the literal meaning is Lewis's (`literal_eq_would`)
 and exhaustification strengthens it to SDA (`distributive_of_exh`).
 
 ## Implementation notes
@@ -123,8 +123,7 @@ theorem minimals_union_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
 
 end Closest
 
-variable {W : Type*} [Fintype W] (ord : W → Preorder W) [∀ w, DecidableRel (ord w).le]
-  [DecidableEq W] (A B : Finset W) (C : Set W) (w : W)
+variable {W : Type*} (ord : W → Preorder W) (A B : Finset W) (C : Set W) (w : W)
 
 /-! ### The three readings (Table 2) -/
 
@@ -133,7 +132,14 @@ def DCR : Prop := w ∈ closestImp ord ↑A C ∨ w ∈ closestImp ord ↑B C
 
 variable {ord A B w}
 
-omit [∀ w, DecidableRel (ord w).le] in
+section Pair
+
+variable [DecidableEq W]
+
+section Finite
+
+variable [Fintype W]
+
 /-- When neither disjunct is more realistic, Lewis's DAC is equivalent to SDA. -/
 theorem would_iff_distributive_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
     (hAB : ¬ MoreRealistic ord ↑A ↑B w) (hBA : ¬ MoreRealistic ord ↑B ↑A w) :
@@ -141,21 +147,20 @@ theorem would_iff_distributive_of_equallyRealistic (htot : ∀ w, Std.Total (ord
   rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_equallyRealistic htot hAB hBA,
     Set.union_subset_iff, mem_distributiveImp_pair, mem_closestImp, mem_closestImp]
 
-omit [∀ w, DecidableRel (ord w).le] in
 /-- When `A` is more realistic than `B`, Lewis's DAC is equivalent to the simplification with
-the more realistic disjunct: the asymmetric reading. -/
+the more realistic disjunct, which is the asymmetric reading. -/
 theorem would_iff_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
     (h : MoreRealistic ord ↑A ↑B w) :
     w ∈ disjunctiveImp ord {A, B} C ↔ w ∈ closestImp ord ↑A C := by
   rw [disjunctiveImp_pair, mem_closestImp, minimals_union_of_moreRealistic htot h, mem_closestImp]
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
+end Finite
+
 /-- SDA entails Lewis's DAC, and so the asymmetric reading. -/
 theorem would_of_distributive (h : w ∈ distributiveImp ord {A, B} C) :
     w ∈ disjunctiveImp ord {A, B} C :=
   mem_disjunctiveImp_pair_of_mem_distributiveImp h
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- Lewis's DAC, and so the asymmetric reading, entails DCR under a total ordering. -/
 theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : w ∈ disjunctiveImp ord {A, B} C) :
     DCR ord A B C w := by
@@ -167,18 +172,17 @@ theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : w ∈ disjunctive
 /-- On the homogeneity accounts, DCR is the existential resolution of the homogeneous
 quantification over the disjuncts, on which the DAC is not false. SDA is its universal
 resolution, `homogeneousImp_eq_true_iff`. -/
-theorem dcr_iff_homogeneity_ne_false [DecidablePred (· ∈ C)] :
-    DCR ord A B C w ↔ homogeneousImp ord {A, B} C w ≠ .false := by
+theorem dcr_iff_homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le]
+    [DecidablePred (· ∈ C)] :
+    DCR ord A B C w ↔ homogeneousImp ord {A, B} C w ≠ -1 := by
   simp only [DCR, Ne, homogeneousImp_eq_false_iff, Finset.insert_nonempty, true_and,
     Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, not_and_or, not_not]
 
 open BarLevFox2020 in
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- The literal meaning of the DAC on the exhaustification account is Lewis's. -/
 theorem literal_eq_would : closestImp ord (↑A ∪ ↑B) C = disjunctiveImp ord {A, B} C :=
   (disjunctiveImp_pair A B).symm
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 open BarLevFox2020 in
 /-- Exhaustification with innocent inclusion strengthens the literal DAC to SDA, under the
 model conditions of [bar-lev-fox-2020]'s derivation. -/
@@ -194,11 +198,14 @@ theorem distributive_of_exh
   rw [sda htot h₁ h₂ h] at hw
   exact mem_distributiveImp_pair.2 ⟨hw.1.1, hw.1.2⟩
 
+end Pair
+
 /-! ### The closeness evaluation item (§4) -/
 
-omit [∀ w, DecidableRel (ord w).le] [DecidableEq W] in
+variable [Fintype W]
+
 /-- Accepting *if not H, S* reveals that `S` is more realistic than any `T` disjoint from `S`
-within the `H`-free worlds: every closest `H`-free world is an `S`-world, and a closest
+within the `H`-free worlds, since every closest `H`-free world is an `S`-world, and a closest
 `T`-world as close as a closest `S`-world would be one of them. -/
 theorem moreRealistic_of_closeness (htot : ∀ w, Std.Total (ord w).le) {H S T : Finset W}
     (hclose : w ∈ closestImp ord (↑H)ᶜ ↑S) (hS : S.Nonempty)
@@ -238,7 +245,7 @@ def Competitor.speed : Competitor → ℕ
   | .squirrel => 1
   | .tortoise => 2
 
-/-- Figure 3(a), the non-equally realistic condition: a faster competitor is a more realistic
+/-- In Figure 3(a), the non-equally realistic condition, a faster competitor is a more realistic
 winner. -/
 abbrev nonEqual (_ : Competitor) : Preorder Competitor := Preorder.lift Competitor.speed
 
@@ -267,7 +274,7 @@ def Item.sda (it : Item) : Prop :=
 def Item.dcr (it : Item) : Prop :=
   DCR nonEqual {it.first} {it.second} {v | v.prize = it.prize} .hare
 
-/-- Lewis's verdict on an item in the non-equally realistic condition: the asymmetric
+/-- Lewis's verdict on an item in the non-equally realistic condition is the asymmetric
 reading. -/
 def Item.ar (it : Item) : Prop :=
   .hare ∈ disjunctiveImp nonEqual {{it.first}, {it.second}} {v | v.prize = it.prize}

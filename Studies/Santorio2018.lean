@@ -24,9 +24,9 @@ those of `Semantics/Conditionals/Counterfactual/Alternatives.lean` over the trut
 On *Otto or Anna went to the party* (44) the truthmakers are *Otto went* and *Anna went*
 (`party_truthmakers`). On (35) *every student read War and Peace or Anna Karenina* the
 global algorithm finds the mixed truthmaker *some read Anna Karenina and some read War and
-Peace* that [alonso-ovalle-2009]'s disjunct alternatives cannot (`karenina_truthmakers`,
+Peace* that Alonso-Ovalle's disjunct alternatives cannot (`karenina_truthmakers`,
 `karenina_mixed_not_alonsoOvalle`), predicting the infelicity of (39). On
-[mckay-vaninwagen-1977]'s Spain case (8) the collective parsing is true and the distributive
+McKay and van Inwagen's Spain case (8) the collective parsing is true and the distributive
 one is not, so Antecedent Strengthening fails and Simplification is not validated
 (`spain_collective`, `spain_not_distributive`, `spain_homogeneity`); and on (57)–(58),
 logically equivalent antecedents whose *if*-clauses denote different sets receive different
@@ -105,7 +105,7 @@ def distributiveConditional : Prop := w ∈ distributiveImp ord (truthmakers alt
 
 /-- The homogeneity presupposition of `DIST_π` is that every truthmaker's counterfactual holds,
 or none does. -/
-def homogeneityPresup : Trivalent := homogeneousImp ord (truthmakers alts S).toFinset C w
+def homogeneityPresup : SignType := homogeneousImp ord (truthmakers alts S).toFinset C w
 
 /-- `[if φ] would ψ` without `DIST_π` holds when the modal extracts the disjunctive closure of
 the truthmakers. -/
@@ -168,7 +168,7 @@ theorem karenina_truthmakers :
     (truthmakers readingAlts everyAorW).toFinset = {everyA, everyW, someA ∩ someW} := by
   decide
 
-/-- The mixed truthmaker is realized where no universal alternative is:
+/-- The mixed truthmaker is realized where no universal alternative is, so
 [alonso-ovalle-2009]'s disjunct alternatives `{∀A, ∀W}` miss the way for (35) to be true that
 makes (39) infelicitous. -/
 theorem karenina_mixed_not_alonsoOvalle :
@@ -204,7 +204,7 @@ theorem spain_not_distributive :
 
 /-- The homogeneity presupposition of the distributive parsing fails on (8). -/
 theorem spain_homogeneity :
-    homogeneityPresup spainSim spainAlts (axis ∪ allies) foughtAxis .actual = .indet := by
+    homogeneityPresup spainSim spainAlts (axis ∪ allies) foughtAxis .actual = 0 := by
   decide
 
 end Spain

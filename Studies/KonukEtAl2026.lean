@@ -46,7 +46,7 @@ Spector, on which each winning condition's plural predication is false.
 
 ## TODO
 
-* The Counterfactual Effect Size Model of [quillien-lucas-2024], which p. 451 says ranks the
+* The Counterfactual Effect Size Model of Quillien and Lucas, which p. 451 says ranks the
   intermediate and high pair highest at every stability.
 * The `w`-weighted mixture of the two losses, a coin drawn in each counterfactual world
   (p. 465).
@@ -98,7 +98,7 @@ theorem propensity_singleton_ne_zero {s p : I} (hs : s < 1) (hp₀ : 0 < p) (hp�
     cases x <;> cases y <;> simp <;> nlinarith
   exact (ENNReal.toReal_pos_iff.1 h).1.ne'
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι : Type*} [Fintype ι]
 
 /-- The counterfactual distribution samples the urns independently, each by its propensity. -/
 noncomputable def sampling (s : I) (p : ι → I) (w₀ : ι → Bool) : Measure (ι → Bool) :=
@@ -109,17 +109,15 @@ instance (s : I) (p : ι → I) (w₀ : ι → Bool) : IsProbabilityMeasure (sam
 
 /-- The actual causal strength of the plural `S` for the outcome `E` in the round `w₀` is its score
 with the counterfactuals sampled at stability `s` from the priors `p`. -/
-noncomputable def causalStrength (s : I) (p : ι → I) (w₀ : ι → Bool) (E : Set (ι → Bool))
-    (S : Finset ι) : ℝ≥0∞ :=
+noncomputable def causalStrength [DecidableEq ι] (s : I) (p : ι → I) (w₀ : ι → Bool)
+    (E : Set (ι → Bool)) (S : Finset ι) : ℝ≥0∞ :=
   score (sampling s p w₀) w₀ E S
 
 variable {s : I} {p : ι → I} {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)]
   {w₀ v : ι → Bool} {S T : Finset ι} {E : Set (ι → Bool)}
 
-theorem causalStrength_ne_top : causalStrength s p w₀ E S ≠ ∞ := score_ne_top
+theorem causalStrength_ne_top [DecidableEq ι] : causalStrength s p w₀ E S ≠ ∞ := score_ne_top
 
-
-omit [DecidableEq ι] in
 /-- With stability below one and priors strictly between zero and one, every nonempty event has
 positive probability. -/
 theorem sampling_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1)
@@ -129,6 +127,8 @@ theorem sampling_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p
   rw [sampling, Measure.pi_singleton]
   exact CanonicallyOrderedAdd.prod_pos.2 fun i _ ↦
     pos_iff_ne_zero.2 (propensity_singleton_ne_zero hs (hp₀ i) (hp₁ i) _ _)
+
+variable [DecidableEq ι]
 
 /-- With stability below one and priors strictly between zero and one, a nonempty plural cause
 may fail. -/
@@ -168,7 +168,11 @@ end Sampling
 
 section Threshold
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι] {X Y : ι}
+variable {ι : Type*} [DecidableEq ι] {X Y : ι}
+
+section
+
+variable [Fintype ι]
 
 /-- The outcome of a threshold game occurs when two causes or more are present,
 `A + B + C ≥ 2` (p. 450). -/
@@ -192,7 +196,8 @@ theorem piecewise_mem_twoOrMore_iff (h3 : Fintype.card ι = 3) (hXY : X ≠ Y) (
     Finset.filter_insert, Finset.filter_singleton]
   cases w X <;> cases w Y <;> simp [hXY]
 
-omit [Fintype ι] in
+end
+
 /-- Two urns agree when both show a colored ball or both a white one. -/
 theorem setOf_eq_eq_cause_union : {w : ι → Bool | w X = w Y} =
     cause (fun _ ↦ true) {X, Y} ∪ cause (fun _ ↦ false) {X, Y} := by
@@ -201,7 +206,7 @@ theorem setOf_eq_eq_cause_union : {w : ι → Bool | w X = w Y} =
     forall_eq_or_imp, forall_eq]
   cases w X <;> cases w Y <;> simp
 
-variable {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)]
+variable [Fintype ι] {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)]
 
 /-- In a two-of-three threshold game won with all three causes, a pair scores the probability that
 its two causes agree, since it is fully sufficient and is necessary where both its causes are
@@ -350,16 +355,16 @@ variable {rule} {w w₀ : ι → Bool}
 /-- A win is the truth of some condition's plural predication, "the urns of the condition gave
 colored balls". -/
 theorem mem_win_iff_barePlural :
-    w ∈ win rule ↔ ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = .true := by
-  simp [win, Homogeneity.barePlural, Trivalent.supervaluation_eq_true_iff]
+    w ∈ win rule ↔ ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = 1 := by
+  simp [win, Homogeneity.barePlural, SignType.supervaluation_eq_one_iff]
 
 /-- In a losing round, the homogeneous loss is the falsity of each condition's plural predication
 over its urns that are white in the round, the homogeneous negation of the rule (pp. 459, 468). -/
 theorem mem_homogeneousLoss_iff_barePlural (h : w₀ ∉ win rule) :
     w ∈ homogeneousLoss rule w₀ ↔ ∀ D ∈ rule,
-      Homogeneity.barePlural (fun i w ↦ w i = true) (D.filter (w₀ · = false)) w = .false := by
+      Homogeneity.barePlural (fun i w ↦ w i = true) (D.filter (w₀ · = false)) w = -1 := by
   simp only [homogeneousLoss, mem_ofPred_eq, Homogeneity.barePlural,
-    Trivalent.supervaluation_eq_false_iff, Finset.mem_filter, and_imp, Bool.not_eq_true]
+    SignType.supervaluation_eq_neg_one_iff, Finset.mem_filter, and_imp, Bool.not_eq_true]
   refine forall₂_congr fun D hD ↦ (and_iff_right ?_).symm
   by_contra hne
   refine h ⟨D, hD, fun i hi ↦ ?_⟩
@@ -370,10 +375,10 @@ theorem mem_homogeneousLoss_iff_barePlural (h : w₀ ∉ win rule) :
 some condition's plural predication falls in the homogeneity gap. -/
 theorem not_mem_homogeneousLoss_iff_indet (hw : w ∉ win rule) :
     w ∉ homogeneousLoss rule (fun _ ↦ false) ↔
-      ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = .indet := by
+      ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = 0 := by
   simp only [win, mem_ofPred_eq, not_exists, not_and, not_forall] at hw
   simp only [homogeneousLoss, mem_ofPred_eq, Homogeneity.barePlural,
-    Trivalent.supervaluation_eq_indet_iff, not_forall, Bool.not_eq_false, forall_const]
+    SignType.supervaluation_eq_zero_iff, not_forall, Bool.not_eq_false, forall_const]
   exact ⟨fun ⟨D, hD, i, hi, h⟩ ↦ ⟨D, hD, ⟨i, hi, h⟩,
       let ⟨j, hj, h'⟩ := hw D hD; ⟨j, hj, h'⟩⟩,
     fun ⟨D, hD, ⟨i, hi, h⟩, _⟩ ↦ ⟨D, hD, i, hi, h⟩⟩
@@ -403,17 +408,14 @@ end Rule
 
 section TwoConditions
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι] {ν : ι → Measure Bool}
-  [∀ i, IsProbabilityMeasure (ν i)] {rule : Finset (Finset ι)} {X Y : ι} {R : Finset ι}
+variable {ι : Type*} [DecidableEq ι] {rule : Finset (Finset ι)} {X Y : ι} {R : Finset ι}
   {w₀ : ι → Bool}
 
-omit [Fintype ι] in
 theorem mem_win_pair_iff (hrule : rule = {{X, Y}, R}) {w : ι → Bool} :
     w ∈ win rule ↔ (w X = true ∧ w Y = true) ∨ w ∈ cause (fun _ ↦ true) R := by
   subst hrule
   simp [win, mem_cause]
 
-omit [Fintype ι] in
 /-- Under the rule `X` and `Y`, or all of `R`, giving `X` a colored ball wins exactly when `Y` has
 one or all of `R` do. -/
 theorem preimage_update_true_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R) :
@@ -423,13 +425,14 @@ theorem preimage_update_true_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (h
   simp [mem_win_pair_iff hrule, update_mem_cause_iff hXR, mem_cause,
     Function.update_of_ne hXY.symm]
 
-omit [Fintype ι] in
 /-- Under the rule `X` and `Y`, or all of `R`, giving `X` a white ball wins exactly when all of
 `R` give colored balls. -/
 theorem preimage_update_false_win (hrule : rule = {{X, Y}, R}) (hXR : X ∉ R) :
     (Function.update · X false) ⁻¹' win rule = cause (fun _ ↦ true) R := by
   ext w
   simp [mem_win_pair_iff hrule, update_mem_cause_iff hXR]
+
+variable [Fintype ι] {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)]
 
 /-- Under the rule `X` and `Y`, or all of `R`, the sufficiency of a colored ball from `X` for the
 win is the probability that `Y` gives a colored ball. -/

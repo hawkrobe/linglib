@@ -7,7 +7,7 @@ public import Mathlib.Order.Antisymmetrization
 # Canonical operations on partial propositions
 
 The canonical connectives, entailment relations, and combinators on `PartialProp`. Every
-connective evaluates pointwise to an operation on `Trivalent`, stated as an unconditional
+connective evaluates pointwise to an operation on `SignType`, stated as an unconditional
 `eval_*` bridge: the classical connectives are Weak Kleene (an undefined operand absorbs),
 Karttunen's filtering connectives are Peters' Middle Kleene (the left operand filters), and
 Bochvar's truth operator is the meta-assertion operator. The rival families — Strong Kleene,
@@ -36,7 +36,7 @@ operation at all — live in `Presupposition.Trivalent`; quantified projection l
 * [von-fintel-1999]
 * [karttunen-1973]
 * [peters-1979]
-* [bochvar-1937]
+* [bochvar-1938]
 -/
 
 @[expose] public section
@@ -58,7 +58,7 @@ def neg (p : PartialProp W) : PartialProp W where
   assertion := fun w ↦ ¬p.assertion w
 
 /-- Bochvar's truth operator `t` is always defined and maps presupposition failure to
-    `False` — the plug-as-affirmation of [bochvar-1937], with the truth table of
+    `False` — the plug-as-affirmation of [bochvar-1938], with the truth table of
     [karttunen-1973] §10 fn 18. Classical negation composed with it is external negation
     (`negExt`). -/
 def truthOp (p : PartialProp W) : PartialProp W where
@@ -232,79 +232,80 @@ meta-assertion. The symmetric two-dimensional disjunction admits no such bridge
 
 /-- Internal negation evaluates to Strong Kleene negation pointwise. -/
 theorem eval_neg (p : PartialProp W) (w : W) :
-    (neg p).eval w = Trivalent.neg (p.eval w) := by
+    (neg p).eval w = -p.eval w := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
-    simp [eval, neg, Trivalent.neg, hp, ha]
+    simp [eval, neg, hp, ha]
 
 /-- Bochvar's truth operator evaluates to meta-assertion pointwise — the plug is the 𝒜
     operator. -/
 theorem eval_truthOp (p : PartialProp W) (w : W) :
-    (truthOp p).eval w = Trivalent.metaAssert (p.eval w) := by
+    (truthOp p).eval w = SignType.metaAssert (p.eval w) := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
     simp [eval, truthOp, hp, ha]
 
 /-- External negation evaluates to negated meta-assertion pointwise. -/
 theorem eval_negExt (p : PartialProp W) (w : W) :
-    (negExt p).eval w = Trivalent.neg (Trivalent.metaAssert (p.eval w)) := by
+    (negExt p).eval w = -SignType.metaAssert (p.eval w) := by
   rw [negExt, eval_neg, eval_truthOp]
 
 /-- Classical conjunction evaluates to Weak Kleene conjunction pointwise. -/
 theorem eval_and (p q : PartialProp W) (w : W) :
-    (and p q).eval w = Trivalent.meetWeak (p.eval w) (q.eval w) := by
+    (and p q).eval w = SignType.meetWeak (p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, and, Trivalent.meetWeak, hp, hq, ha, hb]
+    simp [eval, and, hp, hq, ha, hb] <;> decide
 
 /-- Classical disjunction evaluates to Weak Kleene disjunction pointwise. -/
 theorem eval_or (p q : PartialProp W) (w : W) :
-    (or p q).eval w = Trivalent.joinWeak (p.eval w) (q.eval w) := by
+    (or p q).eval w = SignType.joinWeak (p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, or, Trivalent.joinWeak, hp, hq, ha, hb]
+    simp [eval, or, hp, hq, ha, hb] <;> decide
 
 /-- Classical implication evaluates to the Weak Kleene material conditional pointwise. -/
 theorem eval_imp (p q : PartialProp W) (w : W) :
-    (imp p q).eval w = Trivalent.joinWeak (Trivalent.neg (p.eval w)) (q.eval w) := by
+    (imp p q).eval w = SignType.joinWeak (-p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, imp, Trivalent.joinWeak, Trivalent.neg, hp, hq, ha, hb]
+    simp [eval, imp, hp, hq, ha, hb] <;> decide
 
 /-- Karttunen's filtering conjunction is Peters' Middle Kleene conjunction, the asymmetric
-    `Trivalent.meetMiddle`, unconditionally. -/
+    `SignType.meetMiddle`, unconditionally. -/
 theorem eval_andFilter (p q : PartialProp W) (w : W) :
-    (andFilter p q).eval w = Trivalent.meetMiddle (p.eval w) (q.eval w) := by
+    (andFilter p q).eval w = SignType.meetMiddle (p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, andFilter, Trivalent.meetMiddle, hp, hq, ha, hb] <;> decide
+    simp [eval, andFilter, hp, hq, ha, hb]
 
 /-- Karttunen's filtering disjunction is Peters' Middle Kleene disjunction, the asymmetric
-    `Trivalent.joinMiddle`, unconditionally. -/
+    `SignType.joinMiddle`, unconditionally. -/
 theorem eval_orFilter (p q : PartialProp W) (w : W) :
-    (orFilter p q).eval w = Trivalent.joinMiddle (p.eval w) (q.eval w) := by
+    (orFilter p q).eval w = SignType.joinMiddle (p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, orFilter, Trivalent.joinMiddle, hp, hq, ha, hb] <;> decide
+    simp [eval, orFilter, hp, hq, ha, hb]
 
 /-- Karttunen's filtering implication is the Middle Kleene material conditional,
     unconditionally, the antecedent filtering from the left as in `andFilter` and `orFilter`. -/
 theorem eval_impFilter (p q : PartialProp W) (w : W) :
-    (impFilter p q).eval w = Trivalent.joinMiddle (Trivalent.neg (p.eval w)) (q.eval w) := by
+    (impFilter p q).eval w = SignType.joinMiddle (-p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, impFilter, Trivalent.joinMiddle, Trivalent.neg, hp, hq, ha, hb] <;> decide
+    simp [eval, impFilter, hp, hq, ha, hb]
 
-/-- Exclusive disjunction evaluates to Strong Kleene exclusive disjunction pointwise. -/
+/-- Exclusive disjunction evaluates to Strong Kleene exclusive disjunction, the negated
+product, pointwise. -/
 theorem eval_xor (p q : PartialProp W) (w : W) :
-    (xor p q).eval w = Trivalent.xor (p.eval w) (q.eval w) := by
+    (xor p q).eval w = -(p.eval w * q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, xor, Trivalent.xor, hp, hq, ha, hb]
+    simp [eval, xor, hp, hq, ha, hb]
 
 /-- Exclusive disjunction never filters — when either presupposition fails, the result is
     undefined ([wang-davidson-2026]). -/
 theorem eval_xor_no_filter (p q : PartialProp W) (w : W) (hq : ¬q.presup w) :
-    (xor p q).eval w = .indet := by
-  rw [eval_xor, (eval_eq_indet_iff q w).2 hq, Trivalent.xor_indet_right]
+    (xor p q).eval w = 0 := by
+  rw [eval_xor, (eval_eq_indet_iff q w).2 hq, mul_zero, SignType.neg_zero]
 
 /-! ### Embedding combinators ([heim-1992], [delpinal-bassi-sauerland-2024]) -/
 

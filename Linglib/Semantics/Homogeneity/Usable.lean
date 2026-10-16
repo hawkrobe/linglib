@@ -6,16 +6,14 @@ public import Linglib.Semantics.Questions.Partition.Basic
 /-!
 # Pragmatic usability of trivalent propositions
 
-[kriz-2016]'s pragmatics over trivalent propositions `W → Trivalent`, relative to an issue,
-a partition question
-`Setoid W`: a proposition is `sufficientlyTrue` at a world when its issue cell contains a
-literally-true world, `addressesIssue` when no cell straddles the true/false boundary, and
-`usable` when it is not false, sufficiently true, and addresses the issue. Non-maximal readings
-are exactly usability at gap-worlds (`gap_enables_nonmax`); gap removal blocks them
-(`metaAssert_prevents_nonmax`); tolerated exceptions cannot be mentioned
-(`exception_unaddressable`). `communicatedContent` is what the hearer learns; strong relevance
-([kriz-spector-2021]) is the bivalent counterpart of Addressing, the issue deciding the
-proposition (`Setoid.Decides`).
+Križ evaluates a trivalent proposition `W → SignType` relative to an issue, a partition
+`Setoid W` of the worlds. A proposition is `sufficientlyTrue` at a world when the world's cell
+contains a world where it is true, `addressesIssue` when no cell contains both a true and a false
+world, and `usable` at a world when it is not false there, is sufficiently true there, and
+addresses the issue. Non-maximal readings are usability at gap-worlds (`gap_enables_nonmax`), gap
+removal blocks them (`metaAssert_prevents_nonmax`), and tolerated exceptions cannot be mentioned
+(`exception_unaddressable`). Strong relevance, after Križ and Spector, is the bivalent counterpart
+of addressing, holding when the issue decides the proposition (`Setoid.Decides`).
 
 ## Main definitions
 
@@ -36,46 +34,46 @@ namespace Homogeneity
 
 variable {W : Type*}
 
-/-- `p` is "true enough" at `w` relative to issue `q`: some `q`-equivalent world makes `p`
-literally true. This weakens the maxim of Quality: a speaker need only assert something
-equivalent, for current purposes, to something true. -/
-def sufficientlyTrue (q : Setoid W) (p : (W → Trivalent)) (w : W) : Prop :=
-  ∃ w', q w w' ∧ p w' = .true
+/-- `p` is true enough at `w` relative to the issue `q` when some `q`-equivalent world makes
+`p` literally true. This weakens the maxim of Quality, so that a speaker need only assert
+something equivalent, for current purposes, to something true. -/
+def sufficientlyTrue (q : Setoid W) (p : W → SignType) (w : W) : Prop :=
+  ∃ w', q w w' ∧ p w' = 1
 
 instance sufficientlyTrue.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q]
-    (p : (W → Trivalent)) (w : W) : Decidable (sufficientlyTrue q p w) :=
-  inferInstanceAs (Decidable (∃ w', q w w' ∧ p w' = .true))
+    (p : W → SignType) (w : W) : Decidable (sufficientlyTrue q p w) :=
+  inferInstanceAs (Decidable (∃ w', q w w' ∧ p w' = 1))
 
 /-- Literal truth implies sufficient truth, for any issue. -/
-theorem literal_imp_sufficient (q : Setoid W) (p : (W → Trivalent)) (w : W)
-    (h : p w = .true) : sufficientlyTrue q p w :=
+theorem literal_imp_sufficient (q : Setoid W) (p : W → SignType) (w : W)
+    (h : p w = 1) : sufficientlyTrue q p w :=
   ⟨w, q.refl' w, h⟩
 
 /-- `p` addresses issue `q` when no cell of `q` overlaps both the positive and the negative
-extension. Gap-worlds are invisible: only cells straddling the true/false boundary
+extension. Gap-worlds do not count, since only cells straddling the true/false boundary
 disqualify. -/
-def addressesIssue (q : Setoid W) (p : (W → Trivalent)) : Prop :=
-  ¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = .true ∧ p w₂ = .false
+def addressesIssue (q : Setoid W) (p : W → SignType) : Prop :=
+  ¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = 1 ∧ p w₂ = -1
 
 instance addressesIssue.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q]
-    (p : (W → Trivalent)) : Decidable (addressesIssue q p) :=
-  inferInstanceAs (Decidable (¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = .true ∧ p w₂ = .false))
+    (p : W → SignType) : Decidable (addressesIssue q p) :=
+  inferInstanceAs (Decidable (¬∃ w₁ w₂, q w₁ w₂ ∧ p w₁ = 1 ∧ p w₂ = -1))
 
 /-- `p` may be used at `w` when it is not false at `w`, sufficiently true at `w`, and addresses
 the issue. -/
-def usable (q : Setoid W) (p : (W → Trivalent)) (w : W) : Prop :=
-  p w ≠ .false ∧ sufficientlyTrue q p w ∧ addressesIssue q p
+def usable (q : Setoid W) (p : W → SignType) (w : W) : Prop :=
+  p w ≠ -1 ∧ sufficientlyTrue q p w ∧ addressesIssue q p
 
-instance usable.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q] (p : (W → Trivalent))
+instance usable.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q] (p : W → SignType)
     (w : W) : Decidable (usable q p w) :=
   inferInstanceAs
-    (Decidable (p w ≠ .false ∧ sufficientlyTrue q p w ∧ addressesIssue q p))
+    (Decidable (p w ≠ -1 ∧ sufficientlyTrue q p w ∧ addressesIssue q p))
 
-/-- For a bivalent proposition, usability is literal truth plus addressing: sufficient truth
-adds nothing without gap-worlds. -/
-theorem usable_iff_of_isBivalent {p : W → Trivalent} (hbiv : Trivalent.IsBivalent p)
+/-- For a bivalent proposition, usability is literal truth plus addressing, since sufficient
+truth adds nothing without gap-worlds. -/
+theorem usable_iff_of_isBivalent {p : W → SignType} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (w : W) :
-    usable q p w ↔ p w = .true ∧ addressesIssue q p := by
+    usable q p w ↔ p w = 1 ∧ addressesIssue q p := by
   constructor
   · intro ⟨hNotFalse, _, hAddr⟩
     exact ⟨(hbiv w).resolve_right (absurd · hNotFalse), hAddr⟩
@@ -86,52 +84,52 @@ theorem usable_iff_of_isBivalent {p : W → Trivalent} (hbiv : Trivalent.IsBival
 
 /-- The gap enables non-maximal use — a gapped world whose cell contains a true-world is
 usable, given addressing. -/
-theorem gap_enables_nonmax (q : Setoid W) (p : (W → Trivalent)) (w w' : W)
-    (hGap : p w = .indet) (hEquiv : q w w') (hTrue : p w' = .true)
+theorem gap_enables_nonmax (q : Setoid W) (p : W → SignType) (w w' : W)
+    (hGap : p w = 0) (hEquiv : q w w') (hTrue : p w' = 1)
     (hAddr : addressesIssue q p) :
     usable q p w :=
   ⟨by simp [hGap], ⟨w', hEquiv, hTrue⟩, hAddr⟩
 
-/-- Gap removal forces literal truth for usability: the general form of the headline result
-that homogeneity removers prevent non-maximal use. -/
-theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → Trivalent) (w : W)
-    (h : usable q (Trivalent.metaAssert ∘ p) w) : Trivalent.metaAssert (p w) = .true :=
+/-- Gap removal forces literal truth for usability, the general form of the result that
+homogeneity removers prevent non-maximal use. -/
+theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → SignType) (w : W)
+    (h : usable q (SignType.metaAssert ∘ p) w) : SignType.metaAssert (p w) = 1 :=
   ((usable_iff_of_isBivalent (Trivalent.isBivalent_comp_metaAssert p) q w).mp h).1
 
-/-- Unmentionability of exceptions ([kriz-2016] §4.1): when `p` is used at `w` under issue
+/-- Exceptions are unmentionable ([kriz-2016] §4.1). When `p` is used at `w` under the issue
 `q`, an exception-mentioning sentence `e`, true at `w` but false wherever `p` is literally
-true, cannot address the same issue. `w`'s cell contains a literally-true world, and `e`
+true, cannot address the same issue, since `w`'s cell contains a literally-true world and `e`
 straddles the true/false boundary between `w` and that world. -/
-theorem exception_unaddressable (q : Setoid W) (p e : (W → Trivalent)) (w : W)
-    (hUse : usable q p w) (hEw : e w = .true)
-    (hEfalse : ∀ w', p w' = .true → e w' = .false) :
+theorem exception_unaddressable (q : Setoid W) (p e : W → SignType) (w : W)
+    (hUse : usable q p w) (hEw : e w = 1)
+    (hEfalse : ∀ w', p w' = 1 → e w' = -1) :
     ¬ addressesIssue q e := by
   obtain ⟨-, ⟨w', hEq, hTrue⟩, -⟩ := hUse
-  exact λ hAddr => hAddr ⟨w, w', hEq, hEw, hEfalse w' hTrue⟩
+  exact fun hAddr ↦ hAddr ⟨w, w', hEq, hEw, hEfalse w' hTrue⟩
 
 /-! ### Communicated content -/
 
 /-- The worlds the hearer considers possible after hearing `p` under issue `q` are those
 indistinguishable, for current purposes, from a world where `p` is literally true. -/
-def communicatedContent (q : Setoid W) (p : (W → Trivalent)) : Set W :=
+def communicatedContent (q : Setoid W) (p : W → SignType) : Set W :=
   {w | sufficientlyTrue q p w}
 
-@[simp] theorem mem_communicatedContent {q : Setoid W} {p : (W → Trivalent)} {w : W} :
+@[simp] theorem mem_communicatedContent {q : Setoid W} {p : W → SignType} {w : W} :
     w ∈ communicatedContent q p ↔ sufficientlyTrue q p w :=
   Iff.rfl
 
 instance communicatedContent.instDecidableMem [Fintype W] (q : Setoid W) [DecidableRel q]
-    (p : (W → Trivalent)) (w : W) : Decidable (w ∈ communicatedContent q p) :=
+    (p : W → SignType) (w : W) : Decidable (w ∈ communicatedContent q p) :=
   inferInstanceAs (Decidable (sufficientlyTrue q p w))
 
 /-- Literal truth is always communicated. -/
-theorem posExt_subset_communicated (q : Setoid W) (p : (W → Trivalent)) :
+theorem posExt_subset_communicated (q : Setoid W) (p : W → SignType) :
     Trivalent.posExt p ⊆ communicatedContent q p :=
-  λ _ hw => literal_imp_sufficient q p _ hw
+  fun _ hw ↦ literal_imp_sufficient q p _ hw
 
 /-- For a bivalent proposition that addresses the issue, communicated content is exactly the
-positive extension: no pragmatic weakening. -/
-theorem communicatedContent_eq_posExt {p : W → Trivalent} (hbiv : Trivalent.IsBivalent p)
+positive extension, with no pragmatic weakening. -/
+theorem communicatedContent_eq_posExt {p : W → SignType} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (hAddr : addressesIssue q p) :
     communicatedContent q p = Trivalent.posExt p := by
   ext w
@@ -146,9 +144,9 @@ theorem communicatedContent_eq_posExt {p : W → Trivalent} (hbiv : Trivalent.Is
 /-- Coarser issues communicate more — if `q'` refines `q`, everything communicated under `q'`
 is communicated under `q`. This is [kriz-2016]'s key prediction that coarse issues enable
 non-maximal use. -/
-theorem communicatedContent_antitone {q q' : Setoid W} (p : (W → Trivalent)) (hRef : q' ≤ q) :
+theorem communicatedContent_antitone {q q' : Setoid W} (p : W → SignType) (hRef : q' ≤ q) :
     communicatedContent q' p ⊆ communicatedContent q p :=
-  λ _ ⟨w', hEq, hTrue⟩ => ⟨w', Setoid.le_def.1 hRef hEq, hTrue⟩
+  fun _ ⟨w', hEq, hTrue⟩ ↦ ⟨w', Setoid.le_def.1 hRef hEq, hTrue⟩
 
 /-! ### Strong relevance
 
@@ -175,11 +173,11 @@ theorem exact_all_relevant (p : W → Prop) : isStronglyRelevantProp ⊥ p := Se
 /-- With the finest issue, the strongly-relevant filter is the identity. -/
 theorem exact_stronglyRelevantSet_eq (candidates : Set (W → Prop)) :
     stronglyRelevantSet ⊥ candidates = candidates :=
-  Set.sep_eq_self_iff_mem_true.2 λ p _ => exact_all_relevant p
+  Set.sep_eq_self_iff_mem_true.2 fun p _ ↦ exact_all_relevant p
 
 /-- The `Bool` truth predicate of a proposition. Bridges the trivalent Addressing constraint
 to bivalent strong-relevance filtering ([kriz-spector-2021]). -/
-def bivalentPred (p : (W → Trivalent)) : W → Bool :=
-  λ w => p w == .true
+def bivalentPred (p : W → SignType) : W → Bool :=
+  fun w ↦ p w == 1
 
 end Homogeneity

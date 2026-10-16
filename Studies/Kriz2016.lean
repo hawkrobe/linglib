@@ -125,20 +125,20 @@ abbrev fineQ : Setoid ProfWorld := ⊥
 /-! #### Trivalent values at each world -/
 
 theorem bare_allSmiled :
-    barePlural smiled profs .allSmiled = .true := by decide
+    barePlural smiled profs .allSmiled = 1 := by decide
 
 theorem bare_smithNeutral :
-    barePlural smiled profs .smithNeutral = .indet := by decide
+    barePlural smiled profs .smithNeutral = 0 := by decide
 
 theorem bare_onlyLeeSmiled :
-    barePlural smiled profs .onlyLeeSmiled = .indet := by decide
+    barePlural smiled profs .onlyLeeSmiled = 0 := by decide
 
 theorem bare_noneSmiled :
-    barePlural smiled profs .noneSmiled = .false := by decide
+    barePlural smiled profs .noneSmiled = -1 := by decide
 
 /-! #### End-to-end predictions -/
 
-/-- The bare plural is usable at `smithNeutral` under the coarse QUD: the
+/-- The bare plural is usable at `smithNeutral` under the coarse QUD, the
     non-maximal reading. -/
 theorem smithNeutral_usable_coarse :
     usable coarseQ (barePlural smiled profs) .smithNeutral := by decide
@@ -179,8 +179,8 @@ non-maximal use requires a cell containing both a true-world and the
 gap-world, and the exception-mentioning continuation straddles it. -/
 
 /-- "Smith didn't smile", the exception-mentioning continuation. -/
-def smithDidntSmile : (ProfWorld → Trivalent) :=
-  fun w ↦ if smiled .smith w then .false else .true
+def smithDidntSmile : (ProfWorld → SignType) :=
+  fun w ↦ if smiled .smith w then -1 else 1
 
 /-- Under the coarse issue licensing the non-maximal use at `smithNeutral`,
     "…but Smith didn't" cannot address the issue (§4.1). -/
@@ -199,16 +199,16 @@ the other — a contrast unavailable to accounts without an issue parameter
 (restricted reference, alternative geometry). -/
 
 theorem bare_smithAngry :
-    barePlural smiled profs .smithAngry = .indet := by decide
+    barePlural smiled profs .smithAngry = 0 := by decide
 
-/-- The bare plural is not usable at `smithAngry` under the coarse QUD:
-    `smithAngry` shares its cell with `onlyLeeSmiled`, and neither is in the
+/-- The bare plural is not usable at `smithAngry` under the coarse QUD, since
+    `smithAngry` shares its cell with `onlyLeeSmiled` and neither is in the
     positive extension. -/
 theorem bare_smithAngry_not_usable_coarse :
     ¬ usable coarseQ (barePlural smiled profs) .smithAngry := by decide
 
-/-- The §4.2 contrast: same sentence, same QUD, opposite usability at the
-    two gap-worlds. -/
+/-- The same sentence under the same QUD is usable at one gap-world and not at
+    the other, the contrast of §4.2. -/
 theorem bare_usable_neutral_not_angry :
     usable coarseQ (barePlural smiled profs) .smithNeutral ∧
     ¬ usable coarseQ (barePlural smiled profs) .smithAngry :=
@@ -266,7 +266,7 @@ def someWentPartition : ConjWorld → ConjPartition
 abbrev coarseConjQ : Setoid ConjWorld := Setoid.ker someWentPartition
 
 theorem conj_dorasMissing_gap :
-    barePlural wentThere threeCoworkers .dorasMissing = .indet := by decide
+    barePlural wentThere threeCoworkers .dorasMissing = 0 := by decide
 
 /-- Modelled as a plural over {Bert, Claire, Dora}, the conjunction is
     predicted usable at the gap-world `dorasMissing` under the coarse issue —
@@ -286,8 +286,8 @@ variable {Atom : Type*} [DecidableEq Atom]
 /-- The generalised truth value of §5.1 is true where `P` holds of `a`, undefined where `a`
 fails `P` but overlaps a plurality of `domain` that satisfies it, and false otherwise. -/
 def generalisedTruthValue (P : Finset Atom → Prop) [DecidablePred P]
-    (domain : Finset (Finset Atom)) (a : Finset Atom) : Trivalent :=
-  if P a then .true else if ∃ b ∈ domain, ¬ Disjoint a b ∧ P b then .indet else .false
+    (domain : Finset (Finset Atom)) (a : Finset Atom) : SignType :=
+  if P a then 1 else if ∃ b ∈ domain, ¬ Disjoint a b ∧ P b then 0 else -1
 
 /-- On a distributive predicate the generalised value is supervaluation over the atoms, given a
 domain that contains every atom. -/
@@ -295,19 +295,19 @@ theorem generalisedTruthValue_distributive (pred : Atom → Prop) [DecidablePred
     {a : Finset Atom} (hne : a.Nonempty) {domain : Finset (Finset Atom)}
     (hdomain : ∀ x ∈ a, {x} ∈ domain) :
     generalisedTruthValue (fun s ↦ ∀ x ∈ s, pred x) domain a =
-      Trivalent.supervaluation a pred := by
-  rcases h : Trivalent.supervaluation a pred with _ | _ | _
-  · exact ite_eq_left ((Trivalent.supervaluation_eq_true_iff ..).1 h)
-  · have hnone := ((Trivalent.supervaluation_eq_false_iff ..).1 h).2
+      SignType.supervaluation a pred := by
+  obtain h | h | h := (SignType.supervaluation a pred).trichotomy <;> rw [h]
+  · have hnone := ((SignType.supervaluation_eq_neg_one_iff ..).1 h).2
     obtain ⟨x, hx⟩ := hne
     rw [generalisedTruthValue, ite_eq_right fun hall ↦ hnone x hx (hall x hx), ite_eq_right]
     rintro ⟨b, -, hov, hPb⟩
     obtain ⟨y, hya, hyb⟩ := Finset.not_disjoint_iff.1 hov
     exact hnone y hya (hPb y hyb)
-  · obtain ⟨⟨x, hxa, hpx⟩, y, hya, hpy⟩ := (Trivalent.supervaluation_eq_indet_iff ..).1 h
+  · obtain ⟨⟨x, hxa, hpx⟩, y, hya, hpy⟩ := (SignType.supervaluation_eq_zero_iff ..).1 h
     rw [generalisedTruthValue, ite_eq_right fun hall ↦ hpy (hall y hya), ite_eq_left]
     exact ⟨{x}, hdomain x hxa, Finset.not_disjoint_iff.2 ⟨x, hxa, Finset.mem_singleton_self x⟩,
       fun z hz ↦ Finset.mem_singleton.1 hz ▸ hpx⟩
+  · exact ite_eq_left ((SignType.supervaluation_eq_one_iff ..).1 h)
 
 end Generalised
 

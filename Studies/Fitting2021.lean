@@ -7,10 +7,10 @@ public import Linglib.Logic.Consequence
 /-!
 # Fitting (2021): The strict/tolerant idea and bilattices
 
-This file formalizes [fitting-2021]'s generalization of the strict/tolerant logic `ST` of
-[cobreros-etal-2012] from three values to any logical bilattice: an interlaced bilattice with
-negation and conflation together with a prime bifilter of designated values
-([arieli-avron-1996]). Over its exact values `−a = a` and anticonsistent values `−a ≤ₖ a` live
+This file formalizes Fitting's generalization of the strict/tolerant logic `ST` of Cobreros,
+Égré, Ripley and van Rooij from three values to any logical bilattice: an interlaced bilattice
+with negation and conflation together with a prime bifilter of designated values, after Arieli
+and Avron. Over its exact values `−a = a` and anticonsistent values `−a ≤ₖ a` live
 two logics (Definition 8.7.1): `ST⟨B, F⟩` reads premises strictly and conclusions tolerantly
 over anticonsistent valuations, `C⟨B, F⟩` reads both strictly over exact valuations. They
 validate the same sequents (Proposition 8.7.2, `stValid_iff_cValid`), yet cut is locally valid
@@ -21,7 +21,7 @@ The examples come from products `L ⊙ L` of De Morgan algebras: the exact value
 (Lemma 8.9.2, `PrimeFilter.prod`), and `C⟨L ⊙ L, D × L⟩` is the logic `⟨L, D⟩` itself
 (Proposition 8.9.3, `cValid_prod_iff`). Hence every logical De Morgan algebra has a
 strict/tolerant counterpart with the same consequence relation (Proposition 8.10.1,
-`stValid_prod_iff`): classical logic from `Bool`, `K3` and `LP` from `Trivalent`, and `FDE`
+`stValid_prod_iff`): classical logic from `Bool`, `K3` and `LP` from `SignType`, and `FDE`
 from `FOUR` (Examples 8.10.2–8.10.5).
 
 ## Implementation notes
@@ -57,8 +57,8 @@ variable {B α : Type*}
 
 /-! ### Formulas and valuations (§8.6) -/
 
-/-- Formulas over propositional letters ([fitting-2021] Def 8.6.1): conjunction, disjunction,
-negation, no implication. -/
+/-- Formulas over propositional letters built by conjunction, disjunction and negation, with no
+implication ([fitting-2021] Def 8.6.1). -/
 inductive Fml (α : Type*) where
   | atom (p : α)
   | and (φ ψ : Fml α)
@@ -67,7 +67,7 @@ inductive Fml (α : Type*) where
 
 section Eval
 
-variable [Lattice B] [BoundedOrder B] [InvolutiveCompl B] [Lattice (Know B)] [Negation B]
+variable [Lattice B] [InvolutiveCompl B] [Lattice (Know B)]
 
 /-- The extension of a valuation to formulas ([fitting-2021] Def 8.6.2). -/
 def Fml.eval (v : α → B) : Fml α → B
@@ -76,9 +76,10 @@ def Fml.eval (v : α → B) : Fml α → B
   | or φ ψ => φ.eval v ⊔ ψ.eval v
   | not φ => (φ.eval v)ᶜ
 
+section Conflation
+
 variable [Conflation B] [NegConfComm B]
 
-omit [Negation B] in
 /-- Exact valuations evaluate to exact values ([fitting-2021] Prop 8.6.3). -/
 theorem eval_isExact {v : α → B} (hv : ∀ p, IsExact (v p)) :
     ∀ φ : Fml α, IsExact (φ.eval v)
@@ -87,7 +88,7 @@ theorem eval_isExact {v : α → B} (hv : ∀ p, IsExact (v p)) :
   | .or φ ψ => (eval_isExact hv φ).sup (eval_isExact hv ψ)
   | .not φ => (eval_isExact hv φ).compl
 
-variable [IsInterlaced B]
+variable [Negation B] [IsInterlaced B]
 
 /-- Anticonsistent valuations evaluate to anticonsistent values ([fitting-2021] Prop 8.6.3). -/
 theorem eval_isAnticonsistent {v : α → B} (hv : ∀ p, IsAnticonsistent (v p)) :
@@ -97,7 +98,10 @@ theorem eval_isAnticonsistent {v : α → B} (hv : ∀ p, IsAnticonsistent (v p)
   | .or φ ψ => (eval_isAnticonsistent hv φ).sup (eval_isAnticonsistent hv ψ)
   | .not φ => (eval_isAnticonsistent hv φ).compl
 
-omit [Conflation B] [NegConfComm B] in
+end Conflation
+
+variable [Negation B] [IsInterlaced B]
+
 /-- Evaluation is knowledge-monotone in the valuation ([fitting-2021] Prop 8.6.4). -/
 theorem eval_kLE_eval {v w : α → B} (h : ∀ p, v p ≤ₖ w p) :
     ∀ φ : Fml α, φ.eval v ≤ₖ φ.eval w
@@ -124,8 +128,8 @@ section Bifilter
 
 variable [Lattice B] [Lattice (Know B)]
 
-/-- A prime bifilter: a proper nonempty subset that is a prime filter for both the truth and the
-knowledge lattice operations ([fitting-2021] Def 8.6.5), generalizing the designated values
+/-- A prime bifilter is a proper nonempty subset that is a prime filter for both the truth and the
+knowledge lattice operations ([fitting-2021] Def 8.6.5). It generalizes the designated values
 `{t, ⊤}` of `FOUR` ([arieli-avron-1996], [arieli-avron-1998]). -/
 structure PrimeBifilter (B : Type*) [Lattice B] [Lattice (Know B)] where
   /-- The designated values. -/
@@ -157,17 +161,17 @@ end Bifilter
 
 section Logics
 
-variable [Lattice B] [BoundedOrder B] [InvolutiveCompl B] [Lattice (Know B)] [Negation B]
-  [Conflation B]
+variable [Lattice B] [InvolutiveCompl B] [Lattice (Know B)] [Conflation B]
 
-/-- Strictly designated: designated and exact ([fitting-2021] Def 8.7.1). -/
+/-- A value is strictly designated when it is designated and exact ([fitting-2021] Def 8.7.1). -/
 def StrictlyDesignated (F : PrimeBifilter B) (a : B) : Prop := a ∈ F ∧ IsExact a
 
-/-- Tolerantly designated: designated and anticonsistent ([fitting-2021] Def 8.7.1). -/
+/-- A value is tolerantly designated when it is designated and anticonsistent
+([fitting-2021] Def 8.7.1). -/
 def TolerantlyDesignated (F : PrimeBifilter B) (a : B) : Prop := a ∈ F ∧ IsAnticonsistent a
 
-/-- A valuation satisfies a sequent strict-to-tolerantly: if every premise is strictly
-designated, some conclusion is tolerantly designated. -/
+/-- A valuation satisfies a sequent strict-to-tolerantly when some conclusion is tolerantly
+designated whenever every premise is strictly designated. -/
 def STSatisfies (F : PrimeBifilter B) (v : α → B) (Γ Δ : List (Fml α)) : Prop :=
   Consequence.Satisfies (fun v φ ↦ StrictlyDesignated F (φ.eval v))
     (fun v φ ↦ TolerantlyDesignated F (φ.eval v)) v Γ Δ
@@ -177,15 +181,15 @@ def CSatisfies (F : PrimeBifilter B) (v : α → B) (Γ Δ : List (Fml α)) : Pr
   Consequence.Satisfies (fun v φ ↦ StrictlyDesignated F (φ.eval v))
     (fun v φ ↦ StrictlyDesignated F (φ.eval v)) v Γ Δ
 
-/-- `ST⟨B, F⟩` validity ([fitting-2021] Def 8.7.1): the mixed consequence of strict premises and
-tolerant conclusions over the valuations into the anticonsistent values. -/
+/-- `ST⟨B, F⟩` validity is the mixed consequence of strict premises and tolerant conclusions over
+the valuations into the anticonsistent values ([fitting-2021] Def 8.7.1). -/
 def STValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) : Prop :=
   Consequence.MixedConsequence
     (fun (v : {v : α → B // ∀ p, IsAnticonsistent (v p)}) φ ↦ StrictlyDesignated F (φ.eval v))
     (fun v φ ↦ TolerantlyDesignated F (φ.eval v)) Γ Δ
 
-/-- `C⟨B, F⟩` validity ([fitting-2021] Def 8.7.1): the consequence of strict premises and strict
-conclusions over the valuations into the exact values. -/
+/-- `C⟨B, F⟩` validity is the consequence of strict premises and strict conclusions over the
+valuations into the exact values ([fitting-2021] Def 8.7.1). -/
 def CValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) : Prop :=
   Consequence.MixedConsequence
     (fun (v : {v : α → B // ∀ p, IsExact (v p)}) φ ↦ StrictlyDesignated F (φ.eval v))
@@ -199,11 +203,13 @@ instance {F : PrimeBifilter B} [DecidablePred (· ∈ F)]
     [DecidablePred (IsAnticonsistent (B := B))] (a : B) : Decidable (TolerantlyDesignated F a) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-variable [IsInterlaced B] [NegConfComm B]
+section Interlaced
 
-/-- [fitting-2021] Prop 8.7.2: the strict/tolerant and classical logics of a logical bilattice
-validate exactly the same sequents. Both directions are model correspondences
-(`Consequence.MixedConsequence.comap`): every exact valuation is anticonsistent, and below every
+variable [Negation B] [IsInterlaced B] [NegConfComm B]
+
+/-- The strict/tolerant and classical logics of a logical bilattice validate exactly the same
+sequents ([fitting-2021] Prop 8.7.2). Both directions are model correspondences
+(`Consequence.MixedConsequence.comap`). Every exact valuation is anticonsistent, and below every
 anticonsistent valuation lies an exact one on which strict premises agree, whose strict
 conclusions lift along knowledge-monotonicity and bifilter closure. This replaces the chapter's
 contraposition. -/
@@ -217,18 +223,18 @@ theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
     ⟨F.mem_of_kLE hψ.1 (eval_kLE_eval (hle v) ψ), eval_isAnticonsistent v.2 ψ⟩
   rwa [(eval_isExact (he v) φ).eq_of_kLE hφ.2 (eval_kLE_eval (hle v) φ)]
 
-omit [Negation B] [IsInterlaced B] [NegConfComm B] in
-/-- Cut is locally valid in `C⟨B, F⟩` ([fitting-2021] Prop 8.7.3): a valuation satisfying both
-premises of a cut instance satisfies its conclusion. -/
+end Interlaced
+
+/-- Cut is locally valid in `C⟨B, F⟩`, so a valuation satisfying both premises of a cut instance
+satisfies its conclusion ([fitting-2021] Prop 8.7.3). -/
 theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : List (Fml α)} {A : Fml α} {v : α → B}
     (h₁ : CSatisfies F v (A :: Γ) Δ) (h₂ : CSatisfies F v Γ (A :: Δ)) : CSatisfies F v Γ Δ :=
   Consequence.Satisfies.cut id h₁ h₂
 
 variable [BoundedOrder (Know B)]
 
-omit [Negation B] [IsInterlaced B] [NegConfComm B] in
-/-- [fitting-2021] Prop 8.7.3, the `ST` half: the cut scheme fails locally in `ST⟨B, F⟩` when the
-knowledge order is nontrivial. The countermodel sends a letter to the knowledge top — designated
+/-- The cut scheme fails locally in `ST⟨B, F⟩` when the knowledge order is nontrivial, the `ST`
+half of [fitting-2021] Prop 8.7.3. The countermodel sends a letter to the knowledge top — designated
 and anticonsistent but not exact — so both cut premises hold while the empty conclusion fails. -/
 theorem cut_not_local_stValid (F : PrimeBifilter B) (p : α) (hbt : (⊥ : Know B) ≠ ⊤) :
     ¬ ∀ v : α → B, (∀ q, IsAnticonsistent (v q)) →
@@ -260,10 +266,14 @@ end Logics
 
 section DeMorgan
 
-variable {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
+variable {L : Type*} [Lattice L]
 
-/-- [fitting-2021] Prop 8.8.3: the exact members of `L ⊙ L` are the pairs `⟨a, aᶜ⟩`, and under
-the truth order they are `L`. -/
+section ExactIso
+
+variable [BoundedOrder L] [InvolutiveCompl L]
+
+/-- The exact members of `L ⊙ L` are the pairs `⟨a, aᶜ⟩`, and under the truth order they are `L`
+([fitting-2021] Prop 8.8.3). -/
 def exactIso : {x : L ⊙ L // IsExact x} ≃o L where
   toFun x := x.1.pro
   invFun a := ⟨mk a aᶜ, (Product.isExact_iff _).2 rfl⟩
@@ -274,8 +284,10 @@ def exactIso : {x : L ⊙ L // IsExact x} ≃o L where
     rw [← Subtype.coe_le_coe, le_def, (Product.isExact_iff _).1 x.2,
       (Product.isExact_iff _).1 y.2, InvolutiveCompl.compl_le_compl_iff_le, and_self]
 
-/-- A prime filter of `L` ([fitting-2021] Def 8.9.1): the designated values of a logical De Morgan
-algebra `⟨L, D⟩`, nonempty and proper as §8.2 requires. -/
+end ExactIso
+
+/-- A prime filter of `L` holds the designated values of a logical De Morgan algebra `⟨L, D⟩`,
+nonempty and proper as §8.2 requires ([fitting-2021] Def 8.9.1). -/
 structure PrimeFilter (L : Type*) [Lattice L] where
   /-- The designated values. -/
   carrier : Set L
@@ -286,7 +298,11 @@ structure PrimeFilter (L : Type*) [Lattice L] where
 
 instance : Membership L (PrimeFilter L) := ⟨fun D a ↦ a ∈ D.carrier⟩
 
-/-- [fitting-2021] Lemma 8.9.2: `D × L` is a prime bifilter of `L ⊙ L`. -/
+section Prod
+
+variable [BoundedOrder L]
+
+/-- `D × L` is a prime bifilter of `L ⊙ L` ([fitting-2021] Lemma 8.9.2). -/
 def PrimeFilter.prod (D : PrimeFilter L) : PrimeBifilter (L ⊙ L) where
   carrier := {x | x.pro ∈ D}
   nonempty := let ⟨a, ha⟩ := D.nonempty; ⟨Product.mk a ⊥, ha⟩
@@ -303,6 +319,8 @@ theorem PrimeFilter.mem_prod_iff (D : PrimeFilter L) (x : L ⊙ L) : x ∈ D.pro
 instance (D : PrimeFilter L) [DecidablePred (· ∈ D)] : DecidablePred (· ∈ D.prod) :=
   fun x ↦ inferInstanceAs (Decidable (x.pro ∈ D))
 
+variable [InvolutiveCompl L]
+
 /-- In `D × L` the strictly designated values are the exact pairs `⟨a, aᶜ⟩` with `a ∈ D`. -/
 theorem strictlyDesignated_prod_iff (D : PrimeFilter L) (x : L ⊙ L) :
     StrictlyDesignated D.prod x ↔ x.pro ∈ D ∧ x.con = x.proᶜ :=
@@ -313,14 +331,19 @@ theorem tolerantlyDesignated_prod_iff (D : PrimeFilter L) (x : L ⊙ L) :
     TolerantlyDesignated D.prod x ↔ x.pro ∈ D ∧ x.proᶜ ≤ x.con :=
   and_congr Iff.rfl (Product.isAnticonsistent_iff x)
 
-/-- The logic `⟨L, D⟩`: formulas evaluated in `L` by meet, join and the De Morgan complement. -/
+end Prod
+
+variable [InvolutiveCompl L]
+
+/-- The logic `⟨L, D⟩` evaluates formulas in `L` by meet, join and the De Morgan complement. -/
 def Fml.evalL (v : α → L) : Fml α → L
   | atom p => v p
   | and φ ψ => φ.evalL v ⊓ ψ.evalL v
   | or φ ψ => φ.evalL v ⊔ ψ.evalL v
   | not φ => (φ.evalL v)ᶜ
 
-/-- Validity in the logic `⟨L, D⟩` (§8.2): designated premises entail a designated conclusion. -/
+/-- A sequent is valid in the logic `⟨L, D⟩` when designated premises entail a designated
+conclusion (§8.2). -/
 def LValid (D : PrimeFilter L) (Γ Δ : List (Fml α)) : Prop :=
   Consequence.MixedConsequence (fun v φ ↦ φ.evalL v ∈ D) (fun v φ ↦ φ.evalL v ∈ D) Γ Δ
 
@@ -347,8 +370,10 @@ theorem eval_exactVal (v : α → L) : ∀ φ : Fml α, φ.eval (exactVal v) = m
   | .not φ => by
     rw [Fml.eval, Fml.evalL, eval_exactVal v φ, mk_compl, InvolutiveCompl.compl_compl]
 
-/-- [fitting-2021] Prop 8.9.3: `C⟨L ⊙ L, D × L⟩` is the logic `⟨L, D⟩` — the two validate the same
-sequents, the exact values of the product corresponding to `L` and `(D × L) ∩ E` to `D`. -/
+variable [BoundedOrder L]
+
+/-- `C⟨L ⊙ L, D × L⟩` is the logic `⟨L, D⟩` ([fitting-2021] Prop 8.9.3). The two validate the
+same sequents, the exact values of the product corresponding to `L` and `(D × L) ∩ E` to `D`. -/
 theorem cValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
     CValid D.prod Γ Δ ↔ LValid D Γ Δ := by
   have hval (v : α → L) (φ : Fml α) : φ.eval (exactVal v) ∈ D.prod ↔ φ.evalL v ∈ D := by
@@ -364,14 +389,14 @@ theorem cValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
 
 /-! ### Generating strict/tolerant examples (§8.10) -/
 
-/-- [fitting-2021] Prop 8.10.1: the strict/tolerant counterpart `ST⟨L ⊙ L, D × L⟩` of a logical
-De Morgan algebra `⟨L, D⟩` has the same consequence relation. -/
+/-- The strict/tolerant counterpart `ST⟨L ⊙ L, D × L⟩` of a logical De Morgan algebra `⟨L, D⟩`
+has the same consequence relation ([fitting-2021] Prop 8.10.1). -/
 theorem stValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
     STValid D.prod Γ Δ ↔ LValid D Γ Δ :=
   (stValid_iff_cValid _ _ _).trans (cValid_prod_iff D Γ Δ)
 
-/-- [fitting-2021] Prop 8.10.1: and it differs at the metaconsequence level — cut fails locally in
-the counterpart. -/
+/-- The strict/tolerant counterpart differs at the metaconsequence level, since cut fails locally
+in it ([fitting-2021] Prop 8.10.1). -/
 theorem cut_not_local_prod [Nontrivial L] (D : PrimeFilter L) (p : α) :
     ¬ ∀ v : α → L ⊙ L, (∀ q, IsAnticonsistent (v q)) →
       STSatisfies D.prod v [.atom p] [] → STSatisfies D.prod v [] [.atom p] →
@@ -385,7 +410,7 @@ end DeMorgan
 
 section Examples
 
-/-- Classical logic as a logical De Morgan algebra: `Bool` with `{true}` designated. -/
+/-- Classical logic is the logical De Morgan algebra `Bool` with `{true}` designated. -/
 def classicalFilter : PrimeFilter Bool where
   carrier := {b | b = true}
   nonempty := ⟨true, rfl⟩
@@ -411,8 +436,8 @@ theorem four_isAnticonsistent_iff :
     ∀ x : FOUR, IsAnticonsistent x ↔ x = FOUR.F ∨ x = FOUR.T ∨ x = FOUR.I := by
   decide
 
-/-- The original collapse ([cobreros-etal-2012], via [fitting-2021] Example 8.7.4): `ST` and
-classical logic validate the same sequents. -/
+/-- `ST` and classical logic validate the same sequents, the original collapse of
+[cobreros-etal-2012] (via [fitting-2021] Example 8.7.4). -/
 theorem four_stValid_iff_cValid {α : Type*} (Γ Δ : List (Fml α)) :
     STValid fourBifilter Γ Δ ↔ CValid fourBifilter Γ Δ :=
   stValid_iff_cValid fourBifilter Γ Δ
@@ -424,76 +449,76 @@ theorem four_cut_not_local {α : Type*} (p : α) :
       STSatisfies fourBifilter v ([] : List (Fml α)) [] :=
   cut_not_local_prod classicalFilter p
 
-/-- `K3`, Kleene's strong three-valued logic: `Trivalent` with `{true}` designated
+/-- `K3`, Kleene's strong three-valued logic, is `SignType` with `{1}` designated
 ([fitting-2021] Example 8.10.3). -/
-def k3Filter : PrimeFilter Trivalent where
-  carrier := {a | a = .true}
-  nonempty := ⟨.true, rfl⟩
-  ne_univ h := absurd (h ▸ Set.mem_univ Trivalent.false) (by decide)
+def k3Filter : PrimeFilter SignType where
+  carrier := {a | a = 1}
+  nonempty := ⟨1, rfl⟩
+  ne_univ h := absurd (h ▸ Set.mem_univ (-1)) (by decide)
   inf_mem_iff {a b} := by revert a b; decide
   sup_mem_iff {a b} := by revert a b; decide
 
-instance : DecidablePred (· ∈ k3Filter) := fun a ↦ inferInstanceAs (Decidable (a = .true))
+instance : DecidablePred (· ∈ k3Filter) := fun a ↦ inferInstanceAs (Decidable (a = 1))
 
-/-- `LP`, Priest's logic of paradox ([priest-1979]): the same values with `{½, 1}` designated
-([fitting-2021] Example 8.10.4). -/
-def lpFilter : PrimeFilter Trivalent where
-  carrier := {a | a ≠ .false}
-  nonempty := ⟨.true, by decide⟩
-  ne_univ h := absurd (h ▸ Set.mem_univ Trivalent.false) (by decide)
+/-- `LP`, the logic of paradox of [priest-1979], is `SignType` with `{0, 1}` (Fitting's `{½, 1}`)
+designated ([fitting-2021] Example 8.10.4). -/
+def lpFilter : PrimeFilter SignType where
+  carrier := {a | a ≠ -1}
+  nonempty := ⟨1, by decide⟩
+  ne_univ h := absurd (h ▸ Set.mem_univ (-1)) (by decide)
   inf_mem_iff {a b} := by revert a b; decide
   sup_mem_iff {a b} := by revert a b; decide
 
-instance : DecidablePred (· ∈ lpFilter) := fun a ↦ inferInstanceAs (Decidable (a ≠ .false))
+instance : DecidablePred (· ∈ lpFilter) := fun a ↦ inferInstanceAs (Decidable (a ≠ -1))
 
-/-- The bilattice `NINE = Trivalent ⊙ Trivalent` of Figure 4 ([fitting-2021] Example 8.10.3). -/
-abbrev NINE := Trivalent ⊙ Trivalent
+/-- The bilattice `NINE = SignType ⊙ SignType` of Figure 4 ([fitting-2021] Example 8.10.3). -/
+abbrev NINE := SignType ⊙ SignType
 
 /-- `NINE`'s exact values are `{f, d⊤, t}` ([fitting-2021] §8.5). -/
 theorem nine_isExact_iff : ∀ x : NINE,
-    IsExact x ↔ x = mk .false .true ∨ x = mk .indet .indet ∨ x = mk .true .false := by
+    IsExact x ↔ x = mk (-1) 1 ∨ x = mk 0 0 ∨ x = mk 1 (-1) := by
   decide
 
 /-- `NINE`'s consistent values are the exact ones with `{df, ⊥, dt}` ([fitting-2021] §8.5). -/
 theorem nine_isConsistent_iff : ∀ x : NINE, IsConsistent x ↔ IsExact x ∨
-    x = mk .false .indet ∨ x = mk .false .false ∨ x = mk .indet .false := by
+    x = mk (-1) 0 ∨ x = mk (-1) (-1) ∨ x = mk 0 (-1) := by
   decide
 
 /-- `NINE`'s anticonsistent values are the exact ones with `{of, ⊤, ot}`
 ([fitting-2021] §8.5). -/
 theorem nine_isAnticonsistent_iff : ∀ x : NINE, IsAnticonsistent x ↔ IsExact x ∨
-    x = mk .indet .true ∨ x = mk .true .true ∨ x = mk .true .indet := by
+    x = mk 0 1 ∨ x = mk 1 1 ∨ x = mk 1 0 := by
   decide
 
-/-- The two prime bifilters of `NINE` ([fitting-2021] Examples 8.7.5 and 8.10.4): `{t, ot, ⊤}`
-from `K3` and the six-element `{dt, t, d⊤, ot, of, ⊤}` from `LP`. -/
+/-- The two prime bifilters of `NINE` are `{t, ot, ⊤}` from `K3` and the six-element
+`{dt, t, d⊤, ot, of, ⊤}` from `LP` ([fitting-2021] Examples 8.7.5 and 8.10.4). -/
 theorem nine_bifilters : (∀ x : NINE, x ∈ k3Filter.prod ↔
-      x = mk .true .false ∨ x = mk .true .indet ∨ x = mk .true .true) ∧
-    ∀ x : NINE, x ∈ lpFilter.prod ↔ x = mk .indet .false ∨ x = mk .true .false ∨
-      x = mk .indet .indet ∨ x = mk .true .indet ∨ x = mk .indet .true ∨ x = mk .true .true := by
+      x = mk 1 (-1) ∨ x = mk 1 0 ∨ x = mk 1 1) ∧
+    ∀ x : NINE, x ∈ lpFilter.prod ↔ x = mk 0 (-1) ∨ x = mk 1 (-1) ∨
+      x = mk 0 0 ∨ x = mk 1 0 ∨ x = mk 0 1 ∨ x = mk 1 1 := by
   decide
 
 /-- With `K3` the strictly designated values reduce to `{t}`, so `C⟨NINE, {1} × K3⟩` is `K3`
 ([fitting-2021] Example 8.7.5). -/
-theorem k3_strict_iff : ∀ x : NINE, StrictlyDesignated k3Filter.prod x ↔ x = mk .true .false := by
+theorem k3_strict_iff : ∀ x : NINE, StrictlyDesignated k3Filter.prod x ↔ x = mk 1 (-1) := by
   decide
 
 /-- With `LP` the strictly designated values are `{d⊤, t}` and the tolerantly designated ones
 `{t, d⊤, ot, of, ⊤}` ([fitting-2021] Example 8.10.4). -/
 theorem lp_designated : (∀ x : NINE, StrictlyDesignated lpFilter.prod x ↔
-      x = mk .indet .indet ∨ x = mk .true .false) ∧
-    ∀ x : NINE, TolerantlyDesignated lpFilter.prod x ↔ x = mk .true .false ∨
-      x = mk .indet .indet ∨ x = mk .true .indet ∨ x = mk .indet .true ∨ x = mk .true .true := by
+      x = mk 0 0 ∨ x = mk 1 (-1)) ∧
+    ∀ x : NINE, TolerantlyDesignated lpFilter.prod x ↔ x = mk 1 (-1) ∨
+      x = mk 0 0 ∨ x = mk 1 0 ∨ x = mk 0 1 ∨ x = mk 1 1 := by
   decide
 
-/-- `P, ¬P ⇒ Q` fails in strict/tolerant `LP` as in `LP`: `v(P) = d⊤`, `v(Q) = f`
-([fitting-2021] Example 8.10.4). -/
+/-- `P, ¬P ⇒ Q` fails in strict/tolerant `LP` as in `LP`, with countermodel `v(P) = d⊤` and
+`v(Q) = f` ([fitting-2021] Example 8.10.4). -/
 theorem lp_explosion_fails :
     ¬ STValid lpFilter.prod [.atom true, .not (.atom true)] [.atom false] := fun h ↦
-  absurd (h ⟨fun b ↦ if b then mk .indet .indet else mk .false .true, by decide⟩ (by decide))
+  absurd (h ⟨fun b ↦ if b then mk 0 0 else mk (-1) 1, by decide⟩ (by decide))
     (by decide)
 
-/-- `FDE` as a logical De Morgan algebra: `FOUR` under the truth order with `{t, ⊤}` designated
+/-- `FDE` is the logical De Morgan algebra `FOUR` under the truth order with `{t, ⊤}` designated
 ([fitting-2021] Example 8.10.5). -/
 def fdeFilter : PrimeFilter FOUR where
   carrier := {x | x = FOUR.T ∨ x = FOUR.I}
@@ -508,15 +533,14 @@ instance : DecidablePred (· ∈ fdeFilter) :=
 /-- The bilattice `SIXTEEN = FOUR ⊙ FOUR` of Figure 6 ([fitting-2021] Example 8.10.5). -/
 abbrev SIXTEEN := FOUR ⊙ FOUR
 
-
 /-- `FDE`'s strict/tolerant counterpart validates exactly the sequents of `FDE`
 ([fitting-2021] Example 8.10.5). -/
 theorem fde_stValid_iff {α : Type*} (Γ Δ : List (Fml α)) :
     STValid fdeFilter.prod Γ Δ ↔ LValid fdeFilter Γ Δ :=
   stValid_prod_iff fdeFilter Γ Δ
 
-/-- Not every value is exact, consistent or anticonsistent: `⟨⊥, ⊤⟩` and `⟨⊤, ⊥⟩` of `SIXTEEN` are
-none ([fitting-2021] §8.5, Example 8.10.5). -/
+/-- Not every value is exact, consistent or anticonsistent, since `⟨⊥, ⊤⟩` and `⟨⊤, ⊥⟩` of
+`SIXTEEN` are neither consistent nor anticonsistent ([fitting-2021] §8.5, Example 8.10.5). -/
 theorem sixteen_neither :
     ¬ IsConsistent (mk FOUR.U FOUR.I : SIXTEEN) ∧
       ¬ IsAnticonsistent (mk FOUR.U FOUR.I : SIXTEEN) ∧

@@ -93,39 +93,39 @@ variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ p)]
 
 /-- The selectional counterfactual, true when every closest `p`-world is a `q`-world, false when
 every one is a `qᶜ`-world, and indeterminate otherwise. -/
-def selectionalCounterfactual : Trivalent :=
-  Trivalent.supervaluation ((ord w).minimals p).toFinset (· ∈ q)
+def selectionalCounterfactual : SignType :=
+  SignType.supervaluation ((ord w).minimals p).toFinset (· ∈ q)
 
 variable {ord p q w}
 
 theorem selectionalCounterfactual_eq_true_iff :
-    selectionalCounterfactual ord p q w = .true ↔ w ∈ closestImp ord p q := by
-  simp [selectionalCounterfactual, Trivalent.supervaluation_eq_true_iff, Set.subset_def]
+    selectionalCounterfactual ord p q w = 1 ↔ w ∈ closestImp ord p q := by
+  simp [selectionalCounterfactual, SignType.supervaluation_eq_one_iff, Set.subset_def]
 
 theorem selectionalCounterfactual_eq_false_iff :
-    selectionalCounterfactual ord p q w = .false ↔
+    selectionalCounterfactual ord p q w = -1 ↔
       w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
-  simp only [selectionalCounterfactual, Trivalent.supervaluation_eq_false_iff,
+  simp only [selectionalCounterfactual, SignType.supervaluation_eq_neg_one_iff,
     Set.toFinset_nonempty, Set.mem_toFinset, mem_closestImp, Set.subset_def, Set.mem_compl_iff]
   exact ⟨fun ⟨⟨v, hv⟩, h⟩ ↦ ⟨fun h' ↦ h v hv (h' v hv), h⟩, fun ⟨hn, h⟩ ↦
     ⟨Set.nonempty_iff_ne_empty.2 fun he ↦ hn fun v hv ↦ absurd hv (he ▸ Set.notMem_empty v), h⟩⟩
 
 theorem selectionalCounterfactual_eq_indet_iff :
-    selectionalCounterfactual ord p q w = .indet ↔
+    selectionalCounterfactual ord p q w = 0 ↔
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
-  simp [selectionalCounterfactual, Trivalent.supervaluation_eq_indet_iff, Set.not_subset, and_comm]
+  simp [selectionalCounterfactual, SignType.supervaluation_eq_zero_iff, Set.not_subset, and_comm]
 
 /-- With closest antecedent-worlds, negating the consequent negates the verdict. -/
 theorem selectionalCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
-    selectionalCounterfactual ord p qᶜ w = (selectionalCounterfactual ord p q w).neg := by
+    selectionalCounterfactual ord p qᶜ w = -selectionalCounterfactual ord p q w := by
   simpa [selectionalCounterfactual] using
-    Trivalent.supervaluation_not (· ∈ q) (by simpa using h)
+    SignType.supervaluation_not (· ∈ q) (by simpa using h)
 
 variable (ord p q w)
 
 /-- The selectional disjunction of *if p, q* and *if p, not q* is never false. -/
 theorem cem_selectional :
-    selectionalCounterfactual ord p q w ⊔ selectionalCounterfactual ord p qᶜ w ≠ .false := by
+    selectionalCounterfactual ord p q w ⊔ selectionalCounterfactual ord p qᶜ w ≠ -1 := by
   rcases ((ord w).minimals p).eq_empty_or_nonempty with h | h
   · simp [selectionalCounterfactual, h]
   · rw [selectionalCounterfactual_compl h]
@@ -152,7 +152,7 @@ semantics validating it. [stalnaker-1981] rejects the definition instead, readin
 possibility operator over the whole conditional. -/
 
 /-- The selectional *might* holds when the selectional counterfactual is not false. -/
-def selectionalMight : Prop := selectionalCounterfactual ord p q w ≠ .false
+def selectionalMight : Prop := selectionalCounterfactual ord p q w ≠ -1
 
 instance : Decidable (selectionalMight ord p q w) := inferInstanceAs (Decidable (_ ≠ _))
 
@@ -161,7 +161,7 @@ holds while *would* is indeterminate. -/
 theorem selectional_might_weaker :
     ∃ (ord : Fin 3 → Preorder (Fin 3)) (_ : ∀ w, DecidableRel (ord w).le) (p q : Set (Fin 3))
       (_ : DecidablePred (· ∈ p)) (_ : DecidablePred (· ∈ q)) (w : Fin 3),
-      selectionalMight ord p q w ∧ selectionalCounterfactual ord p q w = .indet :=
+      selectionalMight ord p q w ∧ selectionalCounterfactual ord p q w = 0 :=
   ⟨fun _ ↦ ⊥, inferInstance, {1, 2}, {1}, inferInstance,
     inferInstance, 0, by decide, by decide⟩
 
@@ -174,8 +174,8 @@ most one closest world ([stalnaker-1981]). -/
 /-- With at most one closest world, the selectional counterfactual distributes over a disjunctive
 consequent. -/
 theorem distribution_selectional (h_unique : ((ord w).minimals p).Subsingleton)
-    (h : selectionalCounterfactual ord p (q ∪ r) w = .true) :
-    selectionalCounterfactual ord p q w = .true ∨ selectionalCounterfactual ord p r w = .true := by
+    (h : selectionalCounterfactual ord p (q ∪ r) w = 1) :
+    selectionalCounterfactual ord p q w = 1 ∨ selectionalCounterfactual ord p r w = 1 := by
   simp only [selectionalCounterfactual_eq_true_iff, mem_closestImp] at h ⊢
   rcases h_unique.eq_empty_or_singleton with h0 | ⟨v, hv⟩
   · simp [h0]
@@ -205,11 +205,11 @@ variable {W : Type*} (ord : W → Preorder W) (p q : Set W) (w : W)
 /-- The supervaluation of the selection conditional over the completions of a family of
 preorders, true when every compatible selection function makes *if p, q* true, false when every
 one makes it false, and indeterminate otherwise. -/
-noncomputable def superCounterfactual : Trivalent :=
+noncomputable def superCounterfactual : SignType :=
   open Classical in
-  if ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q then .true
-  else if ∀ s : SelectionFunction W, s.Compatible ord → w ∉ selectionConditional s p q then .false
-  else .indet
+  if ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q then 1
+  else if ∀ s : SelectionFunction W, s.Compatible ord → w ∉ selectionConditional s p q then -1
+  else 0
 
 variable {ord p q w} [Fintype W] [∀ w, DecidableRel (ord w).le]
   [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
@@ -217,14 +217,14 @@ variable {ord p q w} [Fintype W] [∀ w, DecidableRel (ord w).le]
 /-- The selectional counterfactual is true iff the selection conditional is true on every
 completion. -/
 theorem selectionalCounterfactual_eq_true_iff_forall_compatible (hc : IsCentered ord) :
-    selectionalCounterfactual ord p q w = .true ↔
+    selectionalCounterfactual ord p q w = 1 ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q :=
   selectionalCounterfactual_eq_true_iff.trans (mem_closestImp_iff_forall_compatible hc)
 
 /-- The selectional counterfactual is false iff the selection conditional is false on every
 completion. -/
 theorem selectionalCounterfactual_eq_false_iff_forall_compatible (hc : IsCentered ord) :
-    selectionalCounterfactual ord p q w = .false ↔
+    selectionalCounterfactual ord p q w = -1 ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∉ selectionConditional s p q := by
   rw [selectionalCounterfactual_eq_false_iff, mem_closestImp_iff_forall_compatible hc,
     mem_closestImp_iff_forall_compatible hc]
@@ -255,9 +255,9 @@ theorem superCounterfactual_eq_selectionalCounterfactual (hc : IsCentered ord) :
 compatible selection function decides the selectional counterfactual. -/
 theorem selectionalCounterfactual_eq_ofBool {s : SelectionFunction W} (hs : s.Compatible ord)
     (hu : ((ord w).minimals p).Subsingleton) (hp : p.Nonempty) :
-    selectionalCounterfactual ord p q w = Trivalent.ofBool (decide (s.sel w p ∈ q)) := by
+    selectionalCounterfactual ord p q w = SignType.ofBool (decide (s.sel w p ∈ q)) := by
   have h : (ord w).minimals p = {s.sel w p} := hu.eq_singleton_of_mem (hs.sel_mem_minimals hp)
-  by_cases hq : s.sel w p ∈ q <;> simp [selectionalCounterfactual, h, hq, Trivalent.ofBool]
+  by_cases hq : s.sel w p ∈ q <;> simp [selectionalCounterfactual, h, hq, SignType.ofBool]
 
 end Supervaluation
 

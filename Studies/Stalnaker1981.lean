@@ -5,36 +5,33 @@ public import Linglib.Semantics.Conditionals.Counterfactual
 /-!
 # Stalnaker (1981): A Defense of Conditional Excluded Middle
 
-This file formalizes [stalnaker-1981]'s defense of the selection-function analysis of
-conditionals against [lewis-1973]'s comparative-similarity analysis. The two differ by the limit
-assumption, that every possible antecedent has closest worlds, and the uniqueness assumption,
-that it has at most one; in the logic of conditionals the first is the consequence condition
-and the second is conditional excluded middle, which is equivalent to the distribution of a
-conditional over a disjunctive consequent (`cem_iff_distribution`). Uniqueness is neutralized
-by supervaluation: the selection functions in use correspond to orderings with ties, and a
-conditional is true when every completion makes it true (`superCounterfactual`), so
-conditional excluded middle stays valid while [quine-1950]'s two counterfactuals about Bizet
-and Verdi come out neither true nor false rather than, as for Lewis, both false
-(`bizet_italian_indet`, `bizet_verdi_cem`, `bizet_cem_fails_universal`); distribution likewise
-separates the analyses
-(`distribution_needs_uniqueness`, `distribution_fails_bizetverdi`). Because Lewis's antecedents
-are necessity operators, his analysis predicts a scope ambiguity between a quantifier inside
-and outside a counterfactual, as with the woman President Carter would have appointed to the
-Supreme Court; selection predicts none, the two scopes coinciding (`selection_scope`), and
-indeterminacy rather than ambiguity explains why no particular woman would have been appointed
-(`court_no_particular_woman`).
+This file formalizes Stalnaker's defense of the selection-function analysis of conditionals against
+Lewis's comparative-similarity analysis. The two differ by the limit assumption, that every possible
+antecedent has closest worlds, and the uniqueness assumption, that it has at most one; in the logic
+of conditionals the first is the consequence condition and the second is conditional excluded
+middle, which is equivalent to the distribution of a conditional over a disjunctive consequent
+(`cem_iff_distribution`). Uniqueness is neutralized by supervaluation: the selection functions in
+use correspond to orderings with ties, and a conditional is true when every completion makes it true
+(`superCounterfactual`), so conditional excluded middle stays valid while Quine's two
+counterfactuals about Bizet and Verdi come out neither true nor false rather than, as for Lewis,
+both false (`bizet_italian_indet`, `bizet_verdi_cem`, `bizet_cem_fails_universal`); distribution
+likewise separates the analyses (`distribution_needs_uniqueness`, `distribution_fails_bizetverdi`).
+Because Lewis's antecedents are necessity operators, his analysis predicts a scope ambiguity between
+a quantifier inside and outside a counterfactual, as with the woman President Carter would have
+appointed to the Supreme Court; selection predicts none, the two scopes coinciding
+(`selection_scope`), and indeterminacy rather than ambiguity explains why no particular woman would
+have been appointed (`court_no_particular_woman`).
 
 The limit assumption cannot be neutralized in the same way, and dropping it has bizarre
-consequences: for [lewis-1973]'s line a little less than an inch long, Lewis's analysis makes
-*if the line had been more than one inch long, it would not have been x inches long* true for
-every length x, so that there is no length the line might have had, and the consequence
-condition fails. Nothing turns on lengths: the same holds of any antecedent without closest
-worlds (`lewisWould_ne`, `not_lewisMight_eq`, `not_consequence_lewisWould`). Finally,
-Lewis's *might* as the dual of *would* collapses into *would* under conditional excluded
-middle; reading *might* instead as a possibility operator over the whole conditional keeps
-Lewis's formulation, *if A, might B* true exactly when *if A, would not-B* is not true, for a
-possible antecedent (`selectionalMight_iff`), and separates *might* from *would* through
-indeterminacy (`might_would_asymmetry`).
+consequences: for Lewis's line a little less than an inch long, his analysis makes *if the line had
+been more than one inch long, it would not have been x inches long* true for every length x, so that
+there is no length the line might have had, and the consequence condition fails. Nothing turns on
+lengths: the same holds of any antecedent without closest worlds (`lewisWould_ne`,
+`not_lewisMight_eq`, `not_consequence_lewisWould`). Finally, Lewis's *might* as the dual of *would*
+collapses into *would* under conditional excluded middle; reading *might* instead as a possibility
+operator over the whole conditional keeps Lewis's formulation, *if A, might B* true exactly when *if
+A, would not-B* is not true, for a possible antecedent (`selectionalMight_iff`), and separates
+*might* from *would* through indeterminacy (`might_would_asymmetry`).
 
 ## Implementation notes
 
@@ -55,7 +52,6 @@ affirming a *might*, and the Kennedy example are not formalized.
 -/
 
 @[expose] public section
-
 
 namespace Stalnaker1981
 
@@ -113,7 +109,7 @@ theorem selection_cem (A B : Set W) (w : W) :
   selectionConditional_cem s
 
 /-- Under selection, a quantifier inside the consequent and one outside the conditional
-coincide for a possible antecedent: there is no scope ambiguity. -/
+coincide for a possible antecedent, so there is no scope ambiguity. -/
 theorem selection_scope {ι : Type*} {A : Set W} (hA : A.Nonempty) (F : ι → Set W) (w : W) :
     w ∈ selectionConditional s A (⋃ x, F x) ↔ ∃ x, w ∈ selectionConditional s A (F x) := by
   simp only [mem_selectionConditional_of_nonempty s hA, Set.mem_iUnion]
@@ -154,20 +150,20 @@ abbrev verdiFrench : Set BVWorld := {.bothFrench}
 /-- *If Bizet and Verdi had been compatriots, Bizet would have been Italian* is neither true
 nor false on the supervaluation over completions, since the closest compatriot worlds disagree. -/
 theorem bizet_italian_indet :
-    superCounterfactual bvSim compatriots bizetItalian .actual = .indet := by
+    superCounterfactual bvSim compatriots bizetItalian .actual = 0 := by
   rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
 /-- *If Bizet and Verdi had been compatriots, Verdi would have been French* is neither true
 nor false. -/
 theorem verdi_french_indet :
-    superCounterfactual bvSim compatriots verdiFrench .actual = .indet := by
+    superCounterfactual bvSim compatriots verdiFrench .actual = 0 := by
   rw [superCounterfactual_eq_selectionalCounterfactual isCentered_bvSim]; decide
 
 /-- Conditional excluded middle holds for the example under supervaluation, since the disjunction
 of the conditional and its opposite is not false. -/
 theorem bizet_verdi_cem :
     selectionalCounterfactual bvSim compatriots bizetItalian .actual ⊔
-      selectionalCounterfactual bvSim compatriots bizetItalianᶜ .actual ≠ .false :=
+      selectionalCounterfactual bvSim compatriots bizetItalianᶜ .actual ≠ -1 :=
   cem_selectional bvSim compatriots bizetItalian .actual
 
 /-- On the universal analysis both counterfactuals are false, and excluded middle fails, because
@@ -188,13 +184,12 @@ theorem distribution_fails_bizetverdi :
   ⟨by decide, by decide, by decide⟩
 
 /-- Under supervaluation the disjunctive conditional is true while each disjunct's conditional
-is indeterminate: distribution holds on every completion but not on the supervaluation, whose
+is indeterminate. Distribution holds on every completion but not on the supervaluation, whose
 closest worlds are not unique. -/
 theorem distribution_needs_uniqueness :
-    selectionalCounterfactual bvSim compatriots (bizetItalian ∪ verdiFrench) .actual
-      = .true ∧
-    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .indet ∧
-    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .indet :=
+    selectionalCounterfactual bvSim compatriots (bizetItalian ∪ verdiFrench) .actual = 1 ∧
+    selectionalCounterfactual bvSim compatriots bizetItalian .actual = 0 ∧
+    selectionalCounterfactual bvSim compatriots verdiFrench .actual = 0 :=
   ⟨by decide, by decide, by decide⟩
 
 end BizetVerdi
@@ -241,19 +236,19 @@ instance : DecidablePred (· ∈ ⋃ x, appointed x) := fun w ↦
   decidable_of_iff (∃ x, w ∈ appointed x) Set.mem_iUnion.symm
 
 /-- On the universal analysis the narrow scope, *he would have appointed some woman*, is true
-while the wide scope, *some woman is such that he would have appointed her*, is false: a
-scope ambiguity Lewis's analysis predicts and speakers do not perceive. -/
+while the wide scope, *some woman is such that he would have appointed her*, is false, a
+scope ambiguity that Lewis's analysis predicts and speakers do not perceive. -/
 theorem court_scope_universal :
     .actual ∈ closestImp courtSim vacancy (⋃ x, appointed x) ∧
     ¬ ∃ x, .actual ∈ closestImp courtSim vacancy (appointed x) :=
   ⟨by decide, by decide⟩
 
 /-- Under supervaluation the narrow scope is true while each woman's conditional is
-indeterminate: there is no particular woman he would have appointed, by underdetermination
+indeterminate, so there is no particular woman he would have appointed, by underdetermination
 rather than ambiguity. -/
 theorem court_no_particular_woman :
-    superCounterfactual courtSim vacancy (⋃ x, appointed x) .actual = .true ∧
-    ∀ x, superCounterfactual courtSim vacancy (appointed x) .actual = .indet := by
+    superCounterfactual courtSim vacancy (⋃ x, appointed x) .actual = 1 ∧
+    ∀ x, superCounterfactual courtSim vacancy (appointed x) .actual = 0 := by
   simp only [superCounterfactual_eq_selectionalCounterfactual isCentered_courtSim]
   exact ⟨by decide, by decide⟩
 
@@ -266,7 +261,7 @@ section Limit
 variable {W : Type*} {ord : W → Preorder W} {A : Set W} {w : W}
 
 /-- Where an antecedent has no closest worlds, as for [lewis-1973]'s line more than an inch
-long, *if A, it would not be x* is true on Lewis's analysis for every world `x`: below any
+long, *if A, it would not be x* is true on Lewis's analysis for every world `x`, since below any
 antecedent-world there is a closer one. -/
 theorem lewisWould_ne (h : (ord w).minimals A = ∅) (x : W) : w ∈ variablyStrictImp ord A {x}ᶜ :=
   mem_variablyStrictImp_compl_singleton h x
@@ -299,18 +294,18 @@ variable {W : Type*} [Fintype W] (ord : W → Preorder W) [∀ w, DecidableRel (
 /-- *Might* as a possibility operator over the conditional keeps Lewis's formulation, on which
 *if A, might B* is true exactly when *if A, would not-B* is not true. -/
 theorem selectionalMight_iff (h : ((ord w).minimals A).Nonempty) :
-    selectionalMight ord A B w ↔ selectionalCounterfactual ord A Bᶜ w ≠ .true := by
+    selectionalMight ord A B w ↔ selectionalCounterfactual ord A Bᶜ w ≠ 1 := by
   rw [selectionalMight, selectionalCounterfactual_compl h]
   cases selectionalCounterfactual ord A B w <;> decide
 
 /-- In the Bizet–Verdi example both *might* conditionals are true while both *would*
-conditionals are indeterminate: *might* and *would* part, as they cannot on Lewis's dual
+conditionals are indeterminate. So *might* and *would* part, as they cannot on Lewis's dual
 under excluded middle. -/
 theorem might_would_asymmetry :
     selectionalMight bvSim compatriots bizetItalian .actual ∧
     selectionalMight bvSim compatriots verdiFrench .actual ∧
-    selectionalCounterfactual bvSim compatriots bizetItalian .actual = .indet ∧
-    selectionalCounterfactual bvSim compatriots verdiFrench .actual = .indet :=
+    selectionalCounterfactual bvSim compatriots bizetItalian .actual = 0 ∧
+    selectionalCounterfactual bvSim compatriots verdiFrench .actual = 0 :=
   ⟨by decide, by decide, by decide, by decide⟩
 
 end Might

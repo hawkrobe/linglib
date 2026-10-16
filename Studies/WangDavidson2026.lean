@@ -8,32 +8,32 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Wang & Davidson (2026): Presupposition Filtering in Disjunction
 
-This file formalizes [wang-davidson-2026]'s survey of what fully semantic implementations of
-exclusive disjunction predict for presupposition projection. Under Strong Kleene an inclusive
-disjunction is true when one disjunct is, whatever the other, so a true disjunct filters the
-other's presupposition, whereas an exclusive disjunction is undefined whenever a disjunct is
-(`Filters`, `not_filters_xor`). Bivalent exhaustification ([fox-2007]) strengthens a disjunction
-to its exclusive reading (`exh_or`), so once the strengthened truth conditions feed the projection
-computation three projection theories agree that an exclusive disjunction projects uniformly:
-Strong Kleene ([mayr-romoli-2016a]); [george-2008]'s algorithm, rendered as `george` over any
-classical connective, which agrees with Strong Kleene on inclusive and exclusive disjunction
-(`george_or`, `george_xor`) while filtering conjunction only from left to right; and dynamic
-semantics, where each of the eight context change potentials that [rothschild-2011]'s
-restrictions allow for exclusive disjunction is admitted only by a context satisfying both
-presuppositions (`xorCCPs_admits`). The trivalent exhaustifiers of [spector-sudo-2017] split:
-weak-negation EXH¹ is undefined exactly where its prejacent is, so it leaves projection alone,
-while strong-negation EXH² is undefined wherever an innocently excludable alternative is, and
-for a disjunction the conjunction alternative's presupposition together with the disjunction's
-is both disjuncts' (`sup_inf_ne_indet_iff`). The theories predicting that more exclusive readings
-mean less filtering are the paper's Type A; the paper's Mandarin experiment on *huozhe* finds no
-such effect.
+Wang and Davidson survey what fully semantic implementations of exclusive disjunction predict for
+presupposition projection. Under Strong Kleene an inclusive disjunction is true when one disjunct
+is, whatever the other, so a true disjunct filters the other's presupposition, whereas an
+exclusive disjunction is undefined whenever a disjunct is (`Filters`, `not_filters_xor`).
+Fox's bivalent exhaustification strengthens a disjunction to its exclusive reading (`exh_or`), so
+once the strengthened truth conditions feed the projection computation three projection theories
+agree that an exclusive disjunction projects uniformly: Strong Kleene, as Mayr and Romoli apply
+it; George's algorithm, rendered as `george` over any classical connective, which agrees with
+Strong Kleene on inclusive and exclusive disjunction (`george_or`, `george_xor`) while filtering
+conjunction only from left to right; and dynamic semantics, where each of the eight context
+change potentials that Rothschild's restrictions allow for exclusive disjunction is admitted only
+by a context satisfying both presuppositions (`xorCCPs_admits`). Spector and Sudo's trivalent
+exhaustifiers split: weak-negation EXH¹ is undefined exactly where its prejacent is, so it leaves
+projection alone, while strong-negation EXH² is undefined wherever an innocently excludable
+alternative is, and for a disjunction the conjunction alternative's presupposition together with
+the disjunction's is both disjuncts' (`sup_inf_ne_zero_iff`). The theories predicting that more
+exclusive readings mean less filtering are the paper's Type A; the paper's Mandarin experiment on
+*huozhe* finds no such effect.
 
 ## Implementation notes
 
-The exhaustification identity is checked on the four valuations of two atoms, the free model of
-a propositional identity. George's algorithm is stated as the paper renders it, on the set of
-classical values a trivalent argument leaves open. The experiment's ratings are not formalized;
-its stimuli are in `Data.Examples.WangDavidson2026`.
+Strong Kleene exclusive disjunction is `-(a * b)`, since multiplication on `SignType` is the
+Strong Kleene biconditional. The exhaustification identity is checked on the four valuations of
+two atoms, the free model of a propositional identity. George's algorithm is stated as the paper
+renders it, on the set of classical values a trivalent argument leaves open. The experiment's
+ratings are not formalized; its stimuli are in `Data.Examples.WangDavidson2026`.
 
 ## References
 
@@ -57,24 +57,24 @@ open CCP.Partial
 
 /-- A trivalent connective filters from left to right when a defined left argument can make the
 whole defined with an undefined right argument. -/
-def FiltersLR (f : Trivalent → Trivalent → Trivalent) : Prop := ∃ a, f a .indet ≠ .indet
+def FiltersLR (f : SignType → SignType → SignType) : Prop := ∃ a, f a 0 ≠ 0
 
 /-- Filtering from right to left. -/
-def FiltersRL (f : Trivalent → Trivalent → Trivalent) : Prop := ∃ b, f .indet b ≠ .indet
+def FiltersRL (f : SignType → SignType → SignType) : Prop := ∃ b, f 0 b ≠ 0
 
 /-- A connective filters when it does so in either direction. -/
-def Filters (f : Trivalent → Trivalent → Trivalent) : Prop := FiltersLR f ∨ FiltersRL f
+def Filters (f : SignType → SignType → SignType) : Prop := FiltersLR f ∨ FiltersRL f
 
 /-- Strong Kleene inclusive disjunction filters in both directions (Table 1). -/
-theorem filtersLR_sup : FiltersLR (· ⊔ ·) := ⟨.true, by decide⟩
+theorem filtersLR_sup : FiltersLR (· ⊔ ·) := ⟨1, by decide⟩
 
-theorem filtersRL_sup : FiltersRL (· ⊔ ·) := ⟨.true, by decide⟩
+theorem filtersRL_sup : FiltersRL (· ⊔ ·) := ⟨1, by decide⟩
 
 /-- Strong Kleene exclusive disjunction never filters (Table 2). -/
-theorem not_filters_xor : ¬ Filters Trivalent.xor := by
+theorem not_filters_xor : ¬ Filters fun a b ↦ -(a * b) := by
   rintro (⟨a, h⟩ | ⟨b, h⟩)
-  · exact h (Trivalent.xor_indet_right a)
-  · exact h (Trivalent.xor_indet_left b)
+  · exact h (SignType.neg_eq_zero_iff.2 (mul_zero a))
+  · exact h (SignType.neg_eq_zero_iff.2 (zero_mul b))
 
 /-! ### Bivalent exhaustification yields exclusive disjunction -/
 
@@ -83,51 +83,51 @@ abbrev Val := Bool × Bool
 
 /-- The alternatives of `p ∨ q` are `p`, `q` and `p ∧ q` (3a). -/
 def orAlts : Finset (Finset Val) :=
-  altsFromPreds [λ v => v.1 || v.2, Prod.fst, Prod.snd, λ v => v.1 && v.2]
+  altsFromPreds [fun v ↦ v.1 || v.2, Prod.fst, Prod.snd, fun v ↦ v.1 && v.2]
 
 /-- Only the conjunction is innocently excludable (3b). -/
 theorem excluded_or :
-    innocent.excluded orAlts (predToFinset λ v : Val => v.1 || v.2)
-      = {predToFinset λ v : Val => v.1 && v.2} := by
+    innocent.excluded orAlts (predToFinset fun v : Val ↦ v.1 || v.2)
+      = {predToFinset fun v : Val ↦ v.1 && v.2} := by
   decide
 
 /-- Bivalent exhaustification of `p ∨ q` is `p xor q` (3c). -/
 theorem exh_or :
-    innocent.exh orAlts (predToFinset λ v : Val => v.1 || v.2)
-      = predToFinset λ v : Val => v.1 ^^ v.2 := by
+    innocent.exh orAlts (predToFinset fun v : Val ↦ v.1 || v.2)
+      = predToFinset fun v : Val ↦ v.1 ^^ v.2 := by
   decide
 
 /-! ### George's algorithm -/
 
 /-- The classical values a trivalent value leaves open. -/
-def values : Trivalent → Finset Bool
-  | .true => {true}
-  | .false => {false}
-  | .indet => Finset.univ
+def values : SignType → Finset Bool
+  | .pos => {true}
+  | .neg => {false}
+  | .zero => Finset.univ
 
 /-- [george-2008]'s algorithm computes the trivalent table of a classical connective, as
-[kalomoiros-schwarz-2024] render it: if the left argument settles the value, that is the value;
+[kalomoiros-schwarz-2024] render it. If the left argument settles the value, that is the value;
 otherwise, if some value of the right argument could make the sentence true, the two arguments
 settle the value or the sentence is undefined; otherwise it is undefined. -/
-def george (f : Bool → Bool → Bool) (a b : Trivalent) : Trivalent :=
-  if ∀ x ∈ values a, ∀ y, f x y then .true
-  else if ∀ x ∈ values a, ∀ y, f x y = false then .false
+def george (f : Bool → Bool → Bool) (a b : SignType) : SignType :=
+  if ∀ x ∈ values a, ∀ y, f x y then 1
+  else if ∀ x ∈ values a, ∀ y, f x y = false then -1
   else if ∃ y, ∀ x ∈ values a, f x y then
-    if ∀ x ∈ values a, ∀ y ∈ values b, f x y then .true
-    else if ∀ x ∈ values a, ∀ y ∈ values b, f x y = false then .false
-    else .indet
-  else .indet
+    if ∀ x ∈ values a, ∀ y ∈ values b, f x y then 1
+    else if ∀ x ∈ values a, ∀ y ∈ values b, f x y = false then -1
+    else 0
+  else 0
 
 /-- On inclusive disjunction George's algorithm is Strong Kleene. -/
 theorem george_or : george (· || ·) = (· ⊔ ·) := by
   funext a b; revert a b; decide
 
 /-- On exclusive disjunction George's algorithm is Strong Kleene too. -/
-theorem george_xor : george (· ^^ ·) = Trivalent.xor := by
+theorem george_xor : george (· ^^ ·) = fun a b ↦ -(a * b) := by
   funext a b; revert a b; decide
 
 /-- George's algorithm filters conjunction from left to right only. -/
-theorem filtersLR_george_and : FiltersLR (george (· && ·)) := ⟨.false, by decide⟩
+theorem filtersLR_george_and : FiltersLR (george (· && ·)) := ⟨-1, by decide⟩
 
 theorem not_filtersRL_george_and : ¬ FiltersRL (george (· && ·)) := by
   rintro ⟨b, h⟩; revert b; decide
@@ -151,11 +151,11 @@ def chain (b₁ : Bool) (p : PartialProp W) (b₂ : Bool) (q : PartialProp W) : 
 
 /-- The union of two updates, defined when both are. -/
 def union (φ ψ : CCP.Partial W) : CCP.Partial W :=
-  λ s => ⟨(φ s).Dom ∧ (ψ s).Dom, λ h => (φ s).get h.1 ∪ (ψ s).get h.2⟩
+  fun s ↦ ⟨(φ s).Dom ∧ (ψ s).Dom, fun h ↦ (φ s).get h.1 ∪ (ψ s).get h.2⟩
 
 /-- The context minus two updates, defined when both are. -/
 def diff (φ ψ : CCP.Partial W) : CCP.Partial W :=
-  λ s => ⟨(φ s).Dom ∧ (ψ s).Dom, λ h => (s \ (φ s).get h.1) \ (ψ s).get h.2⟩
+  fun s ↦ ⟨(φ s).Dom ∧ (ψ s).Dom, fun h ↦ (s \ (φ s).get h.1) \ (ψ s).get h.2⟩
 
 /-- The eight context change potentials for `α xor β` (Table 3). -/
 def xorCCPs : List (CCP.Partial W) :=
@@ -171,13 +171,13 @@ def xorCCPs : List (CCP.Partial W) :=
 /-- A presupposition satisfied on `C[α]` and on `C[¬α]` is satisfied on `C`. -/
 theorem admits_of_split (h₁ : β.Admits {w ∈ s | α.assertion w})
     (h₂ : β.Admits (s \ {w ∈ s | α.assertion w})) :
-    β.Admits s := λ w hw => by
+    β.Admits s := fun w hw ↦ by
   by_cases ha : α.assertion w
   · exact h₁ ⟨hw, ha⟩
-  · exact h₂ ⟨hw, λ h => ha h.2⟩
+  · exact h₂ ⟨hw, fun h ↦ ha h.2⟩
 
 /-- Every context change potential for exclusive disjunction is admitted only by a context
-satisfying both presuppositions: no filtering. -/
+satisfying both presuppositions, so exclusive disjunction does not filter. -/
 theorem xorCCPs_admits :
     ∀ u ∈ xorCCPs α β, u.Admits s →
       α.Admits s ∧ β.Admits s := by
@@ -192,17 +192,17 @@ theorem xorCCPs_admits :
   · exact ⟨h₁, admits_of_split α β h₂ h₄⟩
   · exact ⟨admits_of_split β α h₂ h₄, h₁⟩
 
-/-- Inclusive dynamic disjunction, by contrast, filters: a context can admit `α ∨ β` without
-satisfying `β`'s presupposition. -/
+/-- Inclusive dynamic disjunction, by contrast, filters, since a context can admit `α ∨ β`
+without satisfying `β`'s presupposition. -/
 theorem exists_disj_admits_not_admits :
     ∃ (α β : PartialProp Bool), (disj (ofPartialProp α) (ofPartialProp β)).Admits Set.univ ∧
       ¬ β.Admits Set.univ := by
-  refine ⟨{ presup := λ _ => True, assertion := (· = true) },
-    { presup := (· = false), assertion := λ _ => True }, ⟨λ _ _ => trivial, ?_⟩, ?_⟩
+  refine ⟨{ presup := fun _ ↦ True, assertion := (· = true) },
+    { presup := (· = false), assertion := fun _ ↦ True }, ⟨fun _ _ ↦ trivial, ?_⟩, ?_⟩
   · rintro (_ | _) hw
     · rfl
     · exact absurd ⟨trivial, rfl⟩ hw.2
-  · exact λ h => Bool.noConfusion (h (Set.mem_univ true))
+  · exact fun h ↦ Bool.noConfusion (h (Set.mem_univ true))
 
 end Dynamic
 
@@ -211,29 +211,29 @@ end Dynamic
 /-- The presupposition of `α ∨ β` together with that of `α ∧ β` is that of both disjuncts
 under Strong Kleene (8), so EXH², which imports the conjunction alternative's presupposition,
 makes an exhaustified disjunction project uniformly. -/
-theorem sup_inf_ne_indet_iff (a b : Trivalent) :
-    (a ⊔ b ≠ .indet ∧ a ⊓ b ≠ .indet) ↔ a ≠ .indet ∧ b ≠ .indet := by
+theorem sup_inf_ne_zero_iff (a b : SignType) :
+    (a ⊔ b ≠ 0 ∧ a ⊓ b ≠ 0) ↔ a ≠ 0 ∧ b ≠ 0 := by
   revert a b; decide
 
 /-- A bathroom disjunction on the valuations of two atoms — `bathLeft` is always defined and
 `bathRight` presupposes its negation. -/
-def bathLeft : (Val → Trivalent) := λ v => .ofBool v.1
+def bathLeft : Val → SignType := fun v ↦ .ofBool v.1
 
-def bathRight : (Val → Trivalent) := λ v => if v.1 then .indet else .ofBool v.2
+def bathRight : Val → SignType := fun v ↦ if v.1 then 0 else .ofBool v.2
 
 /-- The alternatives of the bathroom disjunction. -/
-def bathAlts : List ((Val → Trivalent)) :=
-  [bathLeft, bathRight, λ v => bathLeft v ⊓ bathRight v]
+def bathAlts : List (Val → SignType) :=
+  [bathLeft, bathRight, fun v ↦ bathLeft v ⊓ bathRight v]
 
 /-- The inclusive bathroom disjunction. -/
-def bathOr : (Val → Trivalent) := λ v => bathLeft v ⊔ bathRight v
+def bathOr : Val → SignType := fun v ↦ bathLeft v ⊔ bathRight v
 
 /-- EXH¹ keeps the filtering — where the left disjunct is true and the right undefined, the
 exhaustified disjunction is true. -/
-theorem exh1_bathOr : exh1 bathAlts bathOr (true, false) = Trivalent.true := by decide
+theorem exh1_bathOr : exh1 bathAlts bathOr (true, false) = 1 := by decide
 
 /-- EXH² undoes it — the undefined conjunction alternative makes the exhaustified disjunction
 undefined there. -/
-theorem exh2_bathOr : exh2 bathAlts bathOr (true, false) = Trivalent.indet := by decide
+theorem exh2_bathOr : exh2 bathAlts bathOr (true, false) = 0 := by decide
 
 end WangDavidson2026

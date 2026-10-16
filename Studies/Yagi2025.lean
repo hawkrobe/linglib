@@ -72,12 +72,12 @@ def Conflict (φ ψ : PartialProp W) : Prop := ∀ w, ¬ (φ.presup w ∧ ψ.pre
 
 /-- A partial proposition whose presupposition entails its assertion is never false. -/
 theorem eval_ne_false_of_imp {d : PartialProp W} {w : W} (h : d.presup w → d.assertion w) :
-    d.eval w ≠ .false := by
+    d.eval w ≠ -1 := by
   simpa using h
 
 /-- Its negation is never true. -/
 theorem eval_neg_ne_true_of_imp {d : PartialProp W} {w : W}
-    (h : d.presup w → d.assertion w) : (PartialProp.neg d).eval w ≠ .true := by
+    (h : d.presup w → d.assertion w) : (PartialProp.neg d).eval w ≠ 1 := by
   simpa [PartialProp.neg] using h
 
 /-! ### Strong Kleene and two-dimensional disjunction -/
@@ -94,17 +94,17 @@ theorem orStrong_presup_imp (h : Conflict φ ψ) (w : W) :
 
 /-- The Strong Kleene disjunction is never false. -/
 theorem orStrong_ne_false (h : Conflict φ ψ) (w : W) :
-    (PartialProp.orStrong φ ψ).eval w ≠ .false :=
+    (PartialProp.orStrong φ ψ).eval w ≠ -1 :=
   eval_ne_false_of_imp (orStrong_presup_imp h w)
 
 /-- Its negation is never true. -/
 theorem neg_orStrong_ne_true (h : Conflict φ ψ) (w : W) :
-    (PartialProp.neg (PartialProp.orStrong φ ψ)).eval w ≠ .true :=
+    (PartialProp.neg (PartialProp.orStrong φ ψ)).eval w ≠ 1 :=
   eval_neg_ne_true_of_imp (orStrong_presup_imp h w)
 
 /-- The symmetric two-dimensional disjunction is never false either. -/
 theorem orKPSymmetric_ne_false (h : Conflict φ ψ) (w : W) :
-    (PartialProp.orKPSymmetric φ ψ).eval w ≠ .false :=
+    (PartialProp.orKPSymmetric φ ψ).eval w ≠ -1 :=
   eval_ne_false_of_imp (PartialProp.orKPSymmetric_presup_entails_when_conflicting φ ψ w (h w))
 
 /-- The two-dimensional disjunction whose presupposition is the disjunction of the
@@ -115,7 +115,7 @@ def orPresupOr (φ ψ : PartialProp W) : PartialProp W where
 
 /-- It is false exactly where a presupposition holds and both assertions fail. -/
 theorem orPresupOr_eval_false_iff (w : W) :
-    (orPresupOr φ ψ).eval w = .false ↔
+    (orPresupOr φ ψ).eval w = -1 ↔
       (φ.presup w ∨ ψ.presup w) ∧ ¬ φ.assertion w ∧ ¬ ψ.assertion w := by
   simp [orPresupOr]
 
@@ -126,7 +126,7 @@ theorem orPresupOr_presup_of_left (h : ∀ w, φ.presup w) (w : W) : (orPresupOr
 /-! ### Update semantics with a designated undefined state -/
 
 /-- Under conflict the update by the disjunction is defined only when the first disjunct
-already holds throughout the input, and then it returns the input: defined only if
+already holds throughout the input, and then it returns the input, so it is defined only if
 uninformative. -/
 theorem mem_disj_iff (h : Conflict φ ψ) (s t : Set W) :
     t ∈ disj (ofPartialProp φ) (ofPartialProp ψ) s ↔
@@ -163,10 +163,10 @@ theorem local_contexts_force_truth (h : Conflict φ ψ) (s : Set W)
 
 /-! ### The meta-assertion operator -/
 
-/-- The meta-assertion operator, the trivalent 𝒜 lifted to partial propositions: always
-defined, true where the proposition is defined and true. -/
+/-- The meta-assertion operator is the trivalent 𝒜 lifted to partial propositions, always
+defined and true where the proposition is defined and true. -/
 noncomputable def assertMeta (φ : PartialProp W) : PartialProp W :=
-  .ofTrivalent (Trivalent.metaAssert ∘ φ.eval)
+  .ofTrivalent (SignType.metaAssert ∘ φ.eval)
 
 @[simp] theorem assertMeta_presup (w : W) : (assertMeta φ).presup w := by
   cases h : φ.eval w <;> simp [assertMeta, h]
@@ -183,7 +183,7 @@ theorem or_assertMeta_presup (w : W) :
 /-- It is false whenever neither disjunct is defined and true, so also where neither
 presupposition holds. -/
 theorem or_assertMeta_false_iff (w : W) :
-    (PartialProp.or (assertMeta φ) (assertMeta ψ)).eval w = .false ↔
+    (PartialProp.or (assertMeta φ) (assertMeta ψ)).eval w = -1 ↔
       ¬ (φ.presup w ∧ φ.assertion w) ∧ ¬ (ψ.presup w ∧ ψ.assertion w) := by
   simp [PartialProp.or, not_or]
 
@@ -226,8 +226,8 @@ theorem flex_univ_eq_disj (ψ : CCP.Partial W) :
     ext w; simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_ofPred_eq]; tauto]
 
 /-- Accommodating the negation of the first disjunct for the second, (15), the update
-presupposes the first presupposition and, where the first disjunct fails, the second: the
-conditional presupposition Katzir and Singh observe, fn. 6. -/
+presupposes the first presupposition and, where the first disjunct fails, the second. This is
+the conditional presupposition Katzir and Singh observe, fn. 6. -/
 theorem admits_flex_univ_iff (s : Set W) :
     (flex Set.univ {w | ¬ φ.assertion w} (ofPartialProp φ) (ofPartialProp ψ)).Admits s ↔
       ∀ w ∈ s, φ.presup w ∧ (¬ φ.assertion w → ψ.presup w) := by
@@ -255,7 +255,7 @@ theorem not_admits_flex_univ_univ (h : Conflict φ ψ) {s : Set W} (hs : s.Nonem
   exact h w ⟨hp w hw, hq w hw⟩
 
 /-- When the first assertion contradicts the second presupposition, (15), the update with
-tautologies accommodated is not genuine: where defined it presupposes the second
+tautologies accommodated is not genuine, since where defined it presupposes the second
 presupposition throughout, which leaves the first disjunct no world. -/
 theorem not_genuine_flex_univ_univ (h : ∀ w, ¬ (φ.assertion w ∧ ψ.presup w)) (s : Set W) :
     ¬ Genuine (flex Set.univ Set.univ (ofPartialProp φ) (ofPartialProp ψ))
@@ -291,7 +291,7 @@ theorem mem_flex_rival_iff (h : Conflict φ ψ) (s t : Set W) :
     exact ⟨_, ⟨fun w hw ↦ (hs w hw.1).resolve_right hw.2, rfl⟩, _,
       ⟨fun w hw ↦ (hs w hw.1).resolve_left hw.2, rfl⟩, hset hs⟩
 
-/-- The negation of that update removes exactly the worlds where both disjuncts are false: the
+/-- The negation of that update removes exactly the worlds where both disjuncts are false, so the
 disjunction can be false. -/
 theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ.presup w ∨ ψ.presup w) :
     neg (flex {w | ¬ ψ.presup w} {w | ¬ φ.presup w} (ofPartialProp φ) (ofPartialProp ψ)) s =
@@ -303,7 +303,7 @@ theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ.pr
   tauto
 
 /-- The standard update filters a presupposition entailed by the negation of the first disjunct,
-(18), where accommodating tautologies still demands it: at a world where the first disjunct holds
+(18), where accommodating tautologies still demands it, at a world where the first disjunct holds
 and the second presupposition fails. -/
 theorem exists_admits_disj_not_admits_flex_univ_univ (hφ : ∀ w, φ.presup w)
     (hf : ∀ w, ¬ φ.assertion w → ψ.presup w) {w : W} (hq : ¬ ψ.presup w) :
@@ -314,8 +314,8 @@ theorem exists_admits_disj_not_admits_flex_univ_univ (hφ : ∀ w, φ.presup w)
 
 /-! ### The ideal inputs -/
 
-/-- The Buganda input of (1c) has four worlds: the king opening parliament, the king not opening
-it, the president conducting the ceremony, the president not conducting it. -/
+/-- The Buganda input of (1c) has four worlds, in which the king opens parliament, the king does
+not open it, the president conducts the ceremony, and the president does not conduct it. -/
 abbrev Buganda := Fin 4
 
 /-- *The King of Buganda is opening parliament*. -/
@@ -354,8 +354,8 @@ theorem buganda :
       true_and, kingOpens, presidentConducts]
     fin_cases w <;> decide
 
-/-- The Bill input of (15a) has three worlds: Bill has no child, Bill has children who are all
-bald, Bill has children who are not all bald. -/
+/-- The Bill input of (15a) has three worlds, in which Bill has no child, has children who are
+all bald, or has children who are not all bald. -/
 abbrev Bill := Fin 3
 
 /-- *Bill has no child*. -/

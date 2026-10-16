@@ -45,7 +45,7 @@ of GEN.
   readings are the paper's own annotations, so `rows_agree` checks the paper's classification
   against its judgments rather than deriving those two readings.
 * The vague-restriction apparatus is `Set`-based; on a finite enumeration of the
-  precisifications, supervaluation is `Trivalent.supervaluation` over it.
+  precisifications, supervaluation is `SignType.supervaluation` over it.
 
 ## References
 
@@ -239,7 +239,7 @@ domain — while generic *an owl* is **domain vague**: the normalcy restriction
 is inherently underspecified, and different precisifications yield different
 domains. This is what lets generics tolerate exceptions ("a poodle gives live
 birth" survives male poodles). The `Set`-based notions are stated locally
-because the supervaluation substrate (`Trivalent.supervaluation`) is
+because the supervaluation substrate (`SignType.supervaluation`) is
 `Finset`-based for computability; the finite case is below. -/
 
 /-- A vague restriction ⟨v₀, V⟩ (K&L §4.1) is a precise part, the properties known to hold,
@@ -429,7 +429,7 @@ theorem domain_vagueness_explains_gen_exceptions {Property Entity : Type*}
 When the precisification set is finite, K&L's truth notions are
 [fine-1975]'s: `genericSuperTrue` is super-truth on the induced
 specification space, and the exception-tolerance zone — sub-true but not
-super-true — is exactly Fine's borderline (`indet`) status. "A poodle gives
+super-true — is exactly Fine's borderline status, supervaluation value `0`. "A poodle gives
 live birth" is Fine-indefinite and K&L-assertable. -/
 
 /-- On a finite precisification space, K&L's supervaluationist truth is
@@ -439,11 +439,11 @@ theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
     (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
     genericSuperTrue X apply R scope ↔
-      Trivalent.supervaluation V (genericTrue apply R scope) = Trivalent.true := by
-  rw [Trivalent.supervaluation_eq_true_iff]
+      SignType.supervaluation V (genericTrue apply R scope) = 1 := by
+  rw [SignType.supervaluation_eq_one_iff]
   simp only [genericSuperTrue, ← hV, Finset.mem_coe]
 
-/-- K&L's exception-tolerance zone is Fine's borderline zone: a generic that is
+/-- K&L's exception-tolerance zone is Fine's borderline zone. A generic that is
 subvaluationistically but not supervaluationistically true is exactly one whose supervaluation
 status is indefinite, assertable for K&L and borderline for [fine-1975]. -/
 theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
@@ -451,8 +451,8 @@ theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
     (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
     (V : Finset (Set Property)) (hV : ↑V = X.precisifications) :
     genericSubTrue X apply R scope ∧ ¬genericSuperTrue X apply R scope ↔
-      Trivalent.supervaluation V (genericTrue apply R scope) = Trivalent.indet := by
-  rw [Trivalent.supervaluation_eq_indet_iff]
+      SignType.supervaluation V (genericTrue apply R scope) = 0 := by
+  rw [SignType.supervaluation_eq_zero_iff]
   simp only [genericSubTrue, genericSuperTrue, ← hV, Finset.mem_coe, not_forall, exists_prop]
 
 /-! ### The *almost* test

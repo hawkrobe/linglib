@@ -189,8 +189,8 @@ theorem value_ofRows : value u (ofRows rows) = ↑(sumRows rows [] (row []) u) :
 
 end Rows
 
-/-- The collective condition `n-atoms(∪u)` of (9) under distribution: in every state, the
-values of `u` summed over the state's class number `n` ((27), (28b)). -/
+/-- The collective condition `n-atoms(∪u)` of (9) under distribution holds when, in every
+state, the values of `u` summed over the state's class number `n` ((27), (28b)). -/
 def atomsCond (n : ℕ) (u : ℕ) : PPDRSCond Ind := fun S Δ ↦
   ∀ s ∈ S, (value u (eqClass S Δ s)).ncard = n
 
@@ -216,7 +216,7 @@ theorem relCond_ofRows {P : Ind → Ind → Prop} {rows : List (PartialAssign �
   and_congr ⟨fun ⟨_, hs⟩ ↦ List.ne_nil_of_mem hs, List.exists_mem_of_ne_nil _⟩ Iff.rfl
 
 /-- Group identity read inside the distribution operator of (14), summing both sides over
-the class: the reading under which (23b) is not representable (§2.3). -/
+the class. This is the reading under which (23b) is not representable (§2.3). -/
 def distributedGroupIdentityCond (uAnaph uAnt : ℕ) : PPDRSCond Ind := fun S Δ ↦
   ∀ s ∈ S, value uAnaph (eqClass S Δ s) = value uAnt (eqClass S Δ s)
 
@@ -280,8 +280,8 @@ section Cumulativity
 
 variable {E : Type*} {P : E → E → Prop} {u v : ℕ} {S : PluralAssign ℕ E} {D : SetRel E E}
 
-/-- The state with a row for each pair of `D`, valuing `u` and `v` as its two components: the
-state whose dependency between `u` and `v` is `D`. -/
+/-- The state with a row for each pair of `D`, valuing `u` and `v` as its two components, so
+that its dependency between `u` and `v` is `D`. -/
 def ofDep (u v : ℕ) (D : SetRel E E) : PluralAssign ℕ E :=
   (fun p ↦ row [(u, p.1), (v, p.2)]) '' D
 
@@ -363,7 +363,7 @@ def ReciprocalDRS (P : E → E → Prop) (X : Set E) (u u' : ℕ) (S : PluralAss
   value u' S = X ∧ relCond P u' u S ∅ ∧ reciprocityCond u u' S ∅
 
 /-- The reciprocal DRS is the pointwise condition of `P` with non-identity conjoined, with `X`
-in both argument positions: group identity puts `X` in the second, and the distinctness
+in both argument positions. Group identity puts `X` in the second, and the distinctness
 presupposition contributes the non-identity. -/
 theorem reciprocalDRS_iff {X : Set E} {u' : ℕ} :
     ReciprocalDRS P X u u' S ↔
@@ -385,7 +385,7 @@ theorem reciprocalDRS_iff {X : Set E} {u' : ℕ} :
 
 /-- As §2.4 puts it, "This proposal, like Dotlačil's, makes Weak Reciprocity the basic reading."
 Some state verifies the DRS of *the Xs `P` each other* exactly when `X` is weakly reciprocal
-under `P` ([langendoen-1978]): the reciprocal is cumulative predication of `P` with non-identity
+under `P` ([langendoen-1978]). The reciprocal is cumulative predication of `P` with non-identity
 conjoined, which is Langendoen's comparison of *the women pointed at each other* with *the women
 released the prisoners* (§1). -/
 theorem weakReciprocity_iff_exists_reciprocalDRS {u' : ℕ} (h : u ≠ u') {X : Finset E} :
@@ -527,7 +527,7 @@ def girlsWide : List (PartialAssign ℕ Ind) :=
    row [(u₁, .girl2), (w, .world2), (u₂, .girl2)]]
 
 /-- By §3.1, the two readings of (44) come apart under the distribution the attitude verb
-induces: (49) is group identity without binding, (51) binding without group identity. -/
+induces, (49) being group identity without binding and (51) binding without group identity. -/
 theorem win_readings :
     (groupIdentityCond u₂ u₁ (ofRows girlsNarrow) {u₁, w} ∧
         ¬ bindingCond u₂ u₁ (ofRows girlsNarrow) {u₁, w}) ∧
@@ -582,7 +582,7 @@ theorem saw_crossed :
 
 /-- By §3.3, a bound antecedent cannot cooccur with a low reciprocal. If `u₂` is bound by
 `u₁`, the distribution runs over `u₁`, and the reciprocal `u₃` is reciprocal to `u₂` under
-that distribution, no state can assign `u₂` a value: the value must be covered by `u₃`
+that distribution, no state can assign `u₂` a value, since the value must be covered by `u₃`
 within the class, where distinctness excludes it. -/
 theorem no_low_reciprocal_under_binding {E : Type*} {S : PluralAssign ℕ E} {Δ : Set ℕ}
     {v₁ v₂ v₃ : ℕ} (hΔ : v₁ ∈ Δ) (hb : bindingCond v₂ v₁ S Δ)
@@ -594,7 +594,7 @@ theorem no_low_reciprocal_under_binding {E : Type*} {S : PluralAssign ℕ E} {Δ
   have ht₂ : t v₂ = ↑d := by rw [hb t ht, hcls v₁ hΔ, ← hb s hs, hd]
   exact hr.2 t ht d d ht₃ ht₂ rfl
 
-/-- (69) distributed over two accessible worlds: the reciprocal lifted above `◇`. -/
+/-- Example (69) distributed over two accessible worlds, with the reciprocal lifted above `◇`. -/
 def beatModal : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .tracy), (u₂, .chris), (w, .world1)],
    row [(u₁, .chris), (u₂, .tracy), (w, .world1)],
@@ -667,8 +667,8 @@ def forks : List (PartialAssign ℕ Ind) :=
 def threeForks : Finset Ind := {.fork1, .fork2, .fork3}
 
 /-- By §4.5, the forks reading is a special case of weak reciprocity. The minimal state (93) is
-reciprocal, and its dependency is weakly but not strongly reciprocal on the three forks: each
-fork is propped against another, not against every other. -/
+reciprocal, and its dependency is weakly but not strongly reciprocal on the three forks, since
+each fork is propped against another, not against every other. -/
 theorem forks_weak :
     reciprocityCond u₂ u₁ (ofRows forks) ∅ ∧
       WeakReciprocity (fun a b ↦ (a, b) ∈ dep u₁ u₂ (ofRows forks)) threeForks ∧
@@ -761,24 +761,24 @@ instance : DecidablePred (reading Q R A) := fun r ↦ by
 
 /-- A quantified reciprocal sentence is true iff true at both ranges, false iff false at both,
 and neither otherwise, the supervaluation over the two precisifications (109). -/
-def truthValue : Trivalent :=
-  Trivalent.supervaluation {.referenceSet, .maximalSet} (reading Q R A)
+def truthValue : SignType :=
+  SignType.supervaluation {.referenceSet, .maximalSet} (reading Q R A)
 
 theorem truthValue_true_iff :
-    truthValue Q R A = .true ↔ RefSetReading Q R A ∧ MaxSetReading Q R A := by
-  unfold truthValue; rw [Trivalent.supervaluation_eq_true_iff]; simp [reading]
+    truthValue Q R A = 1 ↔ RefSetReading Q R A ∧ MaxSetReading Q R A := by
+  unfold truthValue; rw [SignType.supervaluation_eq_one_iff]; simp [reading]
 
 theorem truthValue_false_iff :
-    truthValue Q R A = .false ↔ ¬ RefSetReading Q R A ∧ ¬ MaxSetReading Q R A := by
-  unfold truthValue; rw [Trivalent.supervaluation_eq_false_iff]; simp [reading]
+    truthValue Q R A = -1 ↔ ¬ RefSetReading Q R A ∧ ¬ MaxSetReading Q R A := by
+  unfold truthValue; rw [SignType.supervaluation_eq_neg_one_iff]; simp [reading]
 
 theorem truthValue_true_iff_of_monotone (hQ : Monotone (Q A)) :
-    truthValue Q R A = .true ↔ RefSetReading Q R A :=
+    truthValue Q R A = 1 ↔ RefSetReading Q R A :=
   (truthValue_true_iff Q R A).trans
     ⟨And.left, fun h ↦ ⟨h, maxSetReading_of_refSetReading Q R A hQ h⟩⟩
 
 theorem truthValue_false_iff_of_monotone (hQ : Monotone (Q A)) :
-    truthValue Q R A = .false ↔ ¬ MaxSetReading Q R A :=
+    truthValue Q R A = -1 ↔ ¬ MaxSetReading Q R A :=
   (truthValue_false_iff Q R A).trans
     ⟨And.right, fun h ↦ ⟨fun hr ↦ h (maxSetReading_of_refSetReading Q R A hQ hr), h⟩⟩
 
@@ -796,7 +796,7 @@ def few (A B : Finset Person) : Prop := 2 * B.card < A.card
 /-- The first three inhabitants know each other and the other two know nobody (102). -/
 def clique (a b : Person) : Prop := a ≠ b ∧ a.val < 3 ∧ b.val < 3
 
-/-- The intermediate scenario of §5.2: two pairs know each other and one person knows
+/-- The intermediate scenario of §5.2, in which two pairs know each other and one person knows
 nobody. -/
 def pairs (a b : Person) : Prop :=
   a ≠ b ∧ (a.val < 2 ∧ b.val < 2 ∨ 2 ≤ a.val ∧ a.val < 4 ∧ 2 ≤ b.val ∧ b.val < 4)
@@ -810,8 +810,8 @@ instance : DecidableRel few := fun _ _ ↦ inferInstanceAs (Decidable (_ < _))
 in the clique scenario of (102), and both are neither in the scenario of two pairs, which
 Kamp and Reyle judged arguably true. -/
 theorem street_scenarios :
-    truthValue most clique Finset.univ = .true ∧ truthValue few clique Finset.univ = .false ∧
-      truthValue most pairs Finset.univ = .indet ∧ truthValue few pairs Finset.univ = .indet := by
+    truthValue most clique Finset.univ = 1 ∧ truthValue few clique Finset.univ = -1 ∧
+      truthValue most pairs Finset.univ = 0 ∧ truthValue few pairs Finset.univ = 0 := by
   decide
 
 /-! ### Maximize Anaphora (§6) -/
@@ -918,8 +918,8 @@ theorem maximize_strong :
   revert hmem
   decide
 
-/-- By §6.2, the classmates gave each other pictures of each other, each maximizing pairwise:
-each gave a picture of herself to each of the others. -/
+/-- By §6.2, the classmates gave each other pictures of each other, each maximizing pairwise, so
+that each gave a picture of herself to each of the others. -/
 def classmates : List (PartialAssign ℕ Ind) :=
   [row [(u₁, .tracy), (u₂, .chris), (u₃, .picture1), (u₄, .tracy)],
    row [(u₁, .tracy), (u₂, .matty), (u₃, .picture1), (u₄, .tracy)],
