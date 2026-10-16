@@ -998,7 +998,6 @@ import Linglib.Syntax.Control.Defs
 import Linglib.Syntax.Control.Diagnostics
 import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Syntax.DependencyGrammar.Catena
-import Linglib.Syntax.DependencyGrammar.Crossings
 import Linglib.Syntax.DependencyGrammar.Dominance
 import Linglib.Syntax.DependencyGrammar.Length
 import Linglib.Syntax.DependencyGrammar.Projectivity
