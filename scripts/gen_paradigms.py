@@ -9,7 +9,7 @@ Usage:
 Reads   Linglib/Data/Paradigms/<AuthorYear>.json
 Writes  Linglib/Data/Paradigms/<AuthorYear>.lean, declaring `namespace <AuthorYear>.Paradigms`.
 
-JSON file format, the Paralex tables under Paralex column names plus one extension table:
+JSON file format, the Paralex tables under Paralex column names plus two extension tables:
 
   {
     "bibkey": "bobaljik-2012",
@@ -20,6 +20,8 @@ JSON file format, the Paralex tables under Paralex column names plus one extensi
     "forms":   [{"form_id": "eng_good_comparative", "lexeme": "eng_good",
                  "cell": "comparative", "analysed_orth_form": "bett-er",
                  "source": ["bobaljik-2012[Table 4.1]"]}],
+    "paradigms": [{"paradigm_id": "ces_okno_sg", "lexeme": "ces_okno",
+                   "forms": ["ces_okno_sg_nom", ...], "source": ["caha-2009[(22)]"]}],
     "root_classes": [{"classes_id": "eng_good", "lexeme": "eng_good",
                       "forms": ["eng_good_positive", ...],
                       "classes": {"positive": "A", "comparative": "B", "superlative": "B"},
@@ -28,7 +30,9 @@ JSON file format, the Paralex tables under Paralex column names plus one extensi
 
 A cell's `ud` is its Universal Dependencies features in the CoNLL-U syntax (`Case=Nom|Number=Sing`),
 checked against the constructors of `Linglib/Data/UD/Features.lean`. A form's Lean `form` is its
-`analysed_orth_form` without hyphens. A form's optional `judgment`, a linglib extension column after
+`analysed_orth_form` without hyphens and without `ø`, the mark of a null exponent. A paradigm is the
+forms a source gives a lexeme as one column of its table, one form to a cell; a root-class judgment
+is a paradigm with the source's classes of its cells. A form's optional `judgment`, a linglib extension column after
 CLDF's `grammaticalityJudgement`, names the source's mark on the form in its cell (`ungrammatical`
 for a form the source rejects); a form without one is `acceptable`. `comment` (any table) and `cognates` are validated and not
 emitted. The generator rejects malformed input, unknown keys, dangling references and unknown
@@ -66,6 +70,7 @@ TABLES = {"cells": {"cell_id", "label", "ud", "comment"},
           "lexemes": {"lexeme_id", "language_ID", "label", "meaning", "comment"},
           "forms": {"form_id", "lexeme", "cell", "analysed_orth_form", "judgment", "source",
                     "comment"},
+          "paradigms": {"paradigm_id", "lexeme", "forms", "source", "comment"},
           "root_classes": {"classes_id", "lexeme", "forms", "classes", "source", "cognates",
                            "comment"}}
 
@@ -206,16 +211,11 @@ def emit_module(paper: str, data: dict) -> str:
         forms[fid] = r
         mark = "" if j == "acceptable" else f"judgment := .{j}, "
         out.append(f"def {fid} : Form :=\n  {{ id := {lean_string(fid)}, lexeme := {lx}, cell := {cell}, "
-                   f"form := {lean_string(a.replace('-', ''))},\n    analysed := {lean_string(a)}, "
+                   f"form := {lean_string(a.replace('-', '').replace('ø', ''))},\n    "
+                   f"analysed := {lean_string(a)}, "
                    f"{mark}source := {emit_sources(r.get('source'), keys, where)} }}")
 
-    classes = []
-    for r in data.get("root_classes") or []:
-        where = f"root classes {r.get('classes_id')!r}"
-        check_keys(r, "root_classes", where)
-        cid = req_id(r, "classes_id", where)
-        if cid in classes:
-            fail(f"{where}: duplicate identifier")
+    def lexeme_forms(r: dict, where: str) -> tuple[str, list]:
         lx = req(r, "lexeme", where)
         if lx not in lexemes:
             fail(f"{where}: lexeme {lx!r} not in lexemes")
@@ -227,6 +227,31 @@ def emit_module(paper: str, data: dict) -> str:
                 fail(f"{where}: form {f!r} not in forms")
             if forms[f]["lexeme"] != lx:
                 fail(f"{where}: form {f!r} is not a form of {lx!r}")
+        return lx, fs
+
+    paradigms = []
+    for r in data.get("paradigms") or []:
+        where = f"paradigm {r.get('paradigm_id')!r}"
+        check_keys(r, "paradigms", where)
+        pid = req_id(r, "paradigm_id", where)
+        if pid in paradigms:
+            fail(f"{where}: duplicate identifier")
+        lx, fs = lexeme_forms(r, where)
+        if len({forms[f]["cell"] for f in fs}) != len(fs):
+            fail(f"{where}: two forms in one cell")
+        paradigms.append(pid)
+        out.append(f"def {pid}.paradigm : Paradigm :=\n  {{ id := {lean_string(pid)}, lexeme := {lx}, "
+                   f"forms := [{', '.join(fs)}],\n    "
+                   f"source := {emit_sources(r.get('source'), keys, where)} }}")
+
+    classes = []
+    for r in data.get("root_classes") or []:
+        where = f"root classes {r.get('classes_id')!r}"
+        check_keys(r, "root_classes", where)
+        cid = req_id(r, "classes_id", where)
+        if cid in classes:
+            fail(f"{where}: duplicate identifier")
+        lx, fs = lexeme_forms(r, where)
         cls = r.get("classes")
         if not isinstance(cls, dict) or not cls:
             fail(f"{where}: classes must be a non-empty object from cells to letters")
@@ -246,9 +271,13 @@ def emit_module(paper: str, data: dict) -> str:
                    f"source := {emit_sources(r.get('source'), keys, where)} }}")
 
     lists = [f"/-- Every lexeme of the data. -/\ndef lexemes : List Lexeme := [{', '.join(lexemes)}]",
-             f"/-- Every form of the data. -/\ndef forms : List Form := [{', '.join(forms)}]",
-             f"/-- Every root-class judgment of the data. -/\n"
-             f"def rootClasses : List RootClasses := [{', '.join(c + '.roots' for c in classes)}]"]
+             f"/-- Every form of the data. -/\ndef forms : List Form := [{', '.join(forms)}]"]
+    if paradigms:
+        lists.append(f"/-- Every paradigm of the data. -/\n"
+                     f"def paradigms : List Paradigm := [{', '.join(p + '.paradigm' for p in paradigms)}]")
+    if classes:
+        lists.append(f"/-- Every root-class judgment of the data. -/\n"
+                     f"def rootClasses : List RootClasses := [{', '.join(c + '.roots' for c in classes)}]")
     body = "\n\n".join(out + lists)
     return f"""import Linglib.Data.Paradigms.Schema
 
