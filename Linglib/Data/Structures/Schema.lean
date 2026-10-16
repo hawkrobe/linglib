@@ -22,12 +22,14 @@ parameters, their codes and the rows of a sample are generated per paper.
 ## Implementation notes
 
 * Per-paper data lives in `Linglib/Data/Structures/{AuthorYear}.json`, an object holding the
-  CLDF tables `LanguageTable`, `ParameterTable`, `CodeTable` and `ValueTable` under CLDF column
-  names, and is compiled by `scripts/gen_structures.py` into `{AuthorYear}.lean`, declaring
-  `namespace {AuthorYear}.Structures`.
+  CLDF tables `ContributionTable`, `LanguageTable`, `ParameterTable`, `CodeTable` and
+  `ValueTable` under CLDF column names, and is compiled by `scripts/gen_structures.py` into
+  `{AuthorYear}.lean`, declaring `namespace {AuthorYear}.Structures`.
 * Each parameter becomes an inductive type with a constructor for each code. The values, long
   in the JSON as CLDF has them, are emitted as one row per language with a field for each
   parameter, so a theorem about the sample reads each language once.
+* Each table of a paper is a contribution with its own list of rows. Languages, parameters and
+  codes are shared, so a language two tables list is one `Language` with a row in each.
 * A language may take several codes for a parameter, or none: a row's field is a list.
 * A language without a Glottocode is one the source names without saying which Glottolog
   language it means; the JSON records why.
@@ -43,7 +45,8 @@ namespace Data.Structures
 structure Language where
   /-- The `ID` column holds a stable identifier keyed to the paper. -/
   id : String
-  /-- The `Name` column holds the language's name as the source prints it. -/
+  /-- The `Name` column holds the language's name as the source prints it; where its tables print
+  several, the JSON records the others. -/
   name : String
   /-- The `Glottocode` column holds the Glottocode, when the source's name determines one. -/
   glottocode : Option Glottocode
