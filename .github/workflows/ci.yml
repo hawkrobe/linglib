@@ -39,6 +39,9 @@ jobs:
       - name: Check generated form data
         run: python3 scripts/gen_forms.py --check
 
+      - name: Check generated paradigm data
+        run: python3 scripts/gen_paradigms.py --check
+
       - name: Check generated word order data
         run: python3 scripts/gen_word_order.py --check
 

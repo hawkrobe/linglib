@@ -5,13 +5,15 @@ public import Mathlib.Logic.Relation
 public import Linglib.Fragments.English.Adjectives
 public import Linglib.Fragments.Latin.Adjectives
 public import Linglib.Fragments.Slavic.Russian.Adjectives
+public import Linglib.Data.Paradigms.Bobaljik2012
 
 /-!
 # Universals in comparative morphology
 
 Bobaljik surveys comparative and superlative suppletion in some 300
-languages and finds three root patterns — AAA, ABB, ABC — with *ABA and
-*AAB unattested: the Comparative-Superlative Generalization (1)–(2), beside
+languages and finds three root patterns — AAA, ABB, ABC — with *AAB
+unattested and *ABA attested only in a Basque doublet that the book leaves
+open (section 4.1.2): the Comparative-Superlative Generalization (1)–(2), beside
 the Synthetic Superlative Generalization (3), the Root Suppletion
 Generalization (4), and Lesslessness (5). All but the last follow from the
 Containment Hypothesis (6) — the superlative contains the comparative —
@@ -37,9 +39,16 @@ positive, is ABA without any homophony.
 * `positiveEmbedding`: the word extents of a superlative embedding the positive.
 * `latinBonusNS`: the Latin entries in nanosyntax form.
 * `Synthetic`, `Periphrastic`: a grade form of one word, and one of several.
+* `rootPattern`: the root classes of a triple of Table 4.1 over the grades.
 
 ## Main results
 
+* `isContiguous_iff_ne_basque`, `ne_aab`, `abc_iff`: of the 73 cognate
+  triples of Table 4.1, read from `Data/Paradigms/Bobaljik2012`, every one
+  is contiguous but the Basque doublet (143b), none is AAB, and the ABC ones
+  are the triples (31) and p. 112 name.
+* `csg1_of_ne_basque`, `basque_not_realized`: CSG1 holds of every other
+  triple, and no antihomophonous vocabulary realizes the Basque one.
 * `english_patterns`, `latin_patterns`, `latin_all_three`: the Fragments
   show the attested patterns of (191) and no others.
 * `english_ssg`, `english_rsg`: (3) and (4) on the English Fragment.
@@ -302,6 +311,59 @@ forces a suppletive superlative. This is CSG1 (1). -/
 theorem csg1 {F : Type*} {p : Paradigm 3 F} (hc : IsContiguous p) (h : p 1 ≠ p 0) :
     p 2 ≠ p 0 :=
   fun h2 ↦ h (hc (i := 0) (j := 1) (k := 2) (by decide) (by decide) h2.symm).symm
+
+/-! ### The suppletive triples (Table 4.1)
+
+The 73 cognate triples of Table 4.1, each with the root classes the book assigns its grades: ABC
+for the triples (31) names and the Greek pair counted on p. 112, ABA for the Basque doublet (143),
+and ABB for the rest, by the summary on p. 109. A triple counts once however many languages share
+it (section 1.3). -/
+
+open Data.Paradigms in
+/-- The root pattern of a triple over the positive, the comparative and the superlative. -/
+def rootPattern (r : RootClasses) : Paradigm 3 ℕ := fun g ↦
+  (r.classOf (![Paradigms.positive, Paradigms.comparative, Paradigms.superlative] g)).getD 0
+
+/-- Of the more than 300 languages considered, 73 cognate triples (p. 105). -/
+theorem rootClasses_length : Paradigms.rootClasses.length = 73 := by
+  decide
+
+/-- Every triple has a suppletive comparative. -/
+theorem suppletive_comparative :
+    ∀ r ∈ Paradigms.rootClasses, rootPattern r 1 ≠ rootPattern r 0 := by
+  decide +kernel
+
+/-- Every triple but the Basque doublet (143b) is contiguous. -/
+theorem isContiguous_iff_ne_basque :
+    ∀ r ∈ Paradigms.rootClasses,
+      IsContiguous (rootPattern r) ↔ r ≠ Paradigms.eus_good_on.roots := by
+  decide +kernel
+
+/-- No triple is AAB. -/
+theorem ne_aab : ∀ r ∈ Paradigms.rootClasses,
+    Setoid.ker (rootPattern r) ≠ Setoid.ker Paradigm.aab := by
+  decide +kernel
+
+/-- The ABC triples are the four of (31) and the Greek pair counted on p. 112. -/
+theorem abc_iff : ∀ r ∈ Paradigms.rootClasses,
+    Setoid.ker (rootPattern r) = Setoid.ker Paradigm.abc ↔
+      r ∈ [Paradigms.lat_good.roots, Paradigms.cym_good.roots, Paradigms.sga_good.roots,
+        Paradigms.pal_good.roots, Paradigms.grc_good_amein.roots] := by
+  decide +kernel
+
+/-- CSG1 holds of every triple but the Basque doublet. -/
+theorem csg1_of_ne_basque {r : Data.Paradigms.RootClasses} (hr : r ∈ Paradigms.rootClasses)
+    (h : r ≠ Paradigms.eus_good_on.roots) : rootPattern r 2 ≠ rootPattern r 0 :=
+  csg1 ((isContiguous_iff_ne_basque r hr).2 h) (suppletive_comparative r hr)
+
+/-- No antihomophonous vocabulary realizes the Basque triple *on – hobe – on-en* (143b), which
+needs the accidental homophony that Antihomophony (44) excludes: the problem section 4.1.2 leaves
+open. -/
+theorem basque_not_realized {v : RuleSet (SpanRule 3 ℕ)} (hv : v.Antihomophonous) :
+    realize v ≠ some ∘ rootPattern Paradigms.eus_good_on.roots := fun h ↦ by
+  have hc := isContiguous_realize hv
+  rw [h, isContiguous_comp_iff (Option.some_injective ℕ)] at hc
+  exact absurd hc (by decide)
 
 /-- *Best* does not return to the root of *good*, as CSG1 requires. -/
 theorem good_csg1 : good.comparison.suppletion 2 ≠ good.comparison.suppletion 0 :=

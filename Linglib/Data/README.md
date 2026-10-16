@@ -7,6 +7,7 @@ Three sibling directories at this level:
 | `Examples/` | Per-paper typed examples (`Datum` schema) | JSON, one file per paper | `Examples/{AuthorYear}.lean` |
 | `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
 | `Forms/` | Per-paper CLDF word forms (`FormTable`, `ParameterTable`, custom `FormRelationTable`) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
+| `Paradigms/` | Per-paper Paralex paradigms (`lexemes`, `cells`, `forms`, custom `root_classes`) | JSON, one file per paper | `Paradigms/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
 | `WALS/` | World Atlas of Language Structures | CSV (raw under `WALS/raw/`) | `Features/F*.lean`, the features some module imports |
 
@@ -57,6 +58,21 @@ its gloss.
 - **Schema**: `Linglib/Data/Forms/Schema.lean`
 - **Generator**: `scripts/gen_forms.py` (`--check` verifies sync, `--fmt` canonical JSON)
 - **Input/Output**: `Linglib/Data/Forms/{AuthorYear}.json` → `{AuthorYear}.lean`
+
+### Paradigms — Paralex inflected forms
+
+Per-paper paradigm data in the shape of the Paralex standard for lexicons of
+inflected forms: a `lexemes` table, a `cells` table whose cells are Universal
+Dependencies feature bundles (`Degree=Cmp`), and a `forms` table giving each
+lexeme's form in a cell with the source's segmentation. A linglib extension
+table `root_classes` records a source's judgment of which cells of a lexeme's
+forms share a root, citing where the source states it, since root identity
+(*better*, *best*) is not identity of strings. Comments and cognate lists are
+validated but not emitted.
+
+- **Schema**: `Linglib/Data/Paradigms/Schema.lean`
+- **Generator**: `scripts/gen_paradigms.py` (`--check` verifies sync)
+- **Input/Output**: `Linglib/Data/Paradigms/{AuthorYear}.json` → `{AuthorYear}.lean`
 
 ### Treebank coverage of non-projectivity constraints
 
