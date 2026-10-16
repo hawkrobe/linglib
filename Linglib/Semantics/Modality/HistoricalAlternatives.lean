@@ -10,25 +10,30 @@ public import Linglib.Logic.Temporal.Basic
 # Historical alternatives
 
 The historical alternatives of a world at a time are the worlds that perfectly match it in
-matters of particular fact up to that time ([lewis-1979-time-arrow],
-[cariani-santorio-2018]). A `HistoricalAlternatives` relation sends a world–time index to that
-set of worlds, and the metaphysical modal base of [condoravdi-2002] is the relation curried,
-`metaphysicalBase`. The temporal slices of the relation are products of the alternatives with
-a ray of times: the historical base of prospective times, `historicalBase`, the actual-history
-base of times up to the evaluation time, `actualHistoryBase`, which [klecha-2016] takes as the
-doxastic base and from which the Upper Limit Constraint of [abusch-1997] follows,
-`time_le_of_mem_actualHistoryBase`, and the future-history base of later times,
-`futureHistoryBase`, his circumstantial base; the actual and future bases partition the
-alternatives, `disjoint_actualHistoryBase_futureHistoryBase` and
-`actualHistoryBase_union_futureHistoryBase`. A relation has the `HistoricalProperties` of
-[condoravdi-2002] when agreement up to each time is an equivalence and the alternatives shrink
-as time advances, which agreement on a stock of dated facts does,
-`historicalProperties_ofDatedFacts`. A property settled over a common ground, `settled`,
-excludes the diversity a metaphysical possibility modal needs, `settled_not_diverse`. A
-relation with the properties is a `Temporal.TWFrame`, `toTWFrame`, on which the object
-logic's historical necessity is truth throughout the metaphysical base, `toTWFrame_sat_N_atom`,
-and settledness is historical determinacy, `settled_iff_determined` ([thomason-1984],
-[von-kutschera-1997]).
+matters of particular fact up to that time, Lewis's notion, which Cariani and Santorio take as
+the modal base of *will*. Restricted to times from, up to, or strictly after the index's own,
+the alternatives give Condoravdi's historical base and Klecha's doxastic and circumstantial
+bases. A relation has the historical properties when agreement up to each time is an
+equivalence and the alternatives shrink as time advances, and it is then a T × W frame whose
+historical necessity is truth throughout the alternatives.
+
+## Main definitions
+
+* `HistoricalAlternatives`, `metaphysicalBase`: the relation and its curried modal base.
+* `historicalBase`, `actualHistoryBase`, `futureHistoryBase`: its temporal slices.
+* `HistoricalProperties`, `ofDatedFacts`: the standard properties, and agreement on dated facts.
+* `settled`, `diverse`: settledness over a common ground, and Condoravdi's diversity condition.
+* `toTWFrame`: a relation with the historical properties as a `Temporal.TWFrame`.
+
+## Main results
+
+* `time_le_of_mem_actualHistoryBase`: Abusch's Upper Limit Constraint for the doxastic base.
+* `actualHistoryBase_union_futureHistoryBase`: the actual and future bases partition the
+  alternatives.
+* `HistoricalProperties.history_eq_of_mem`: the alternatives of an alternative are the same.
+* `historicalProperties_ofDatedFacts`: agreement on dated facts has the historical properties.
+* `settled_not_diverse`, `settled_iff_determined`: a settled property is not diverse, and is
+  historically determined in the frame.
 
 ## References
 
@@ -47,16 +52,16 @@ and settledness is historical determinacy, `settled_iff_determined` ([thomason-1
 
 open Reference Set
 
-/-- The historical alternatives of a world–time index: the worlds that agree with its world up
-to its time, the basis of the open-future modal base. -/
+/-- The historical alternatives of a world–time index are the worlds that agree with its world
+up to its time. -/
 def HistoricalAlternatives (W T : Type*) := Index W T → Set W
 
 namespace HistoricalAlternatives
 
 variable {W T : Type*}
 
-/-- The metaphysical modal base of [condoravdi-2002]: at a world and time, the worlds sharing
-the world's history up to that time, the relation itself curried. -/
+/-- The metaphysical modal base of [condoravdi-2002] is the relation curried, giving at a world
+and time the worlds that share the world's history up to that time. -/
 abbrev metaphysicalBase (history : HistoricalAlternatives W T) : W → T → Set W :=
   Function.curry history
 
@@ -66,16 +71,16 @@ section Slices
 
 variable [Preorder T] (history : HistoricalAlternatives W T) (s : Index W T)
 
-/-- The historical modal base: the alternatives of an index at times at or after its own, the
-past fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
+/-- The historical modal base pairs the alternatives of an index with the times at or after its
+own, the past fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
 def historicalBase : Set (Index W T) := history s ×ˢ Ici s.time
 
-/-- The actual-history base, [klecha-2016]'s doxastic base: the alternatives at times at or
-before the index's own. -/
+/-- The actual-history base, [klecha-2016]'s doxastic base, pairs the alternatives with the
+times at or before the index's own. -/
 def actualHistoryBase : Set (Index W T) := history s ×ˢ Iic s.time
 
-/-- The future-history base, [klecha-2016]'s circumstantial base: the alternatives at times
-strictly after the index's own. -/
+/-- The future-history base, [klecha-2016]'s circumstantial base, pairs the alternatives with
+the times strictly after the index's own. -/
 def futureHistoryBase : Set (Index W T) := history s ×ˢ Ioi s.time
 
 variable {history s} {s' : Index W T}
@@ -92,8 +97,8 @@ theorem mem_futureHistoryBase :
     s' ∈ futureHistoryBase history s ↔ s'.world ∈ history s ∧ s.time < s'.time :=
   Iff.rfl
 
-/-- A situation in the actual-history base is no later than the index: the Upper Limit
-Constraint of [abusch-1997], as [klecha-2016] derives it from the doxastic base. -/
+/-- A situation in the actual-history base is no later than the index, the Upper Limit
+Constraint of [abusch-1997] as [klecha-2016] derives it from the doxastic base. -/
 theorem time_le_of_mem_actualHistoryBase (h : s' ∈ actualHistoryBase history s) :
     s'.time ≤ s.time :=
   h.2
@@ -121,17 +126,23 @@ theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T]
 
 /-! ### Historical equivalence -/
 
-/-- The standard properties of a historical-alternatives relation ([condoravdi-2002]):
-agreement up to each time is an equivalence, and the alternatives shrink as time advances. -/
+/-- A historical-alternatives relation has the standard properties of [condoravdi-2002] when
+agreement up to each time is an equivalence and the alternatives shrink as time advances. -/
 structure HistoricalProperties [Preorder T] (history : HistoricalAlternatives W T) : Prop where
   /-- Agreement up to a time is an equivalence relation. -/
   equivalence (t : T) : Equivalence fun w w' ↦ w' ∈ history (w, t)
   /-- The alternatives shrink as time advances. -/
   antitone (w : W) : Antitone (metaphysicalBase history w)
 
-/-- The historical alternatives determined by a stock of dated facts: worlds agree up to a time
-when they agree on every fact dated at or before it, the world–time model of
-[thomason-1984]. -/
+/-- Agreement up to a time partitions the worlds, so an alternative of a world has the same
+alternatives as the world. -/
+theorem HistoricalProperties.history_eq_of_mem [Preorder T] {history : HistoricalAlternatives W T}
+    (hp : HistoricalProperties history) {w w' : W} {t : T} (h : w' ∈ history (w, t)) :
+    history (w', t) = history (w, t) :=
+  Set.ext fun _ ↦ ⟨(hp.equivalence t).trans h, (hp.equivalence t).trans ((hp.equivalence t).symm h)⟩
+
+/-- Over a stock of dated facts, worlds are historical alternatives up to a time when they agree
+on every fact dated at or before it, the world–time model of [thomason-1984]. -/
 def ofDatedFacts [LE T] {F : Type*} (time : F → T) (holds : W → F → Prop) :
     HistoricalAlternatives W T :=
   fun s ↦ {w' | ∀ f, time f ≤ s.time → (holds s.world f ↔ holds w' f)}
@@ -146,17 +157,17 @@ theorem historicalProperties_ofDatedFacts [Preorder T] {F : Type*} (time : F →
 /-! ### Settledness and diversity -/
 
 /-- A property is settled at a time over a common ground when the historical alternatives of
-each of its worlds agree on it ([condoravdi-2002]): past and present issues are settled,
+each of its worlds agree on it ([condoravdi-2002]). Past and present issues are settled, and
 future ones need not be. -/
 def settled (history : HistoricalAlternatives W T) (cg : Set W) (t : T) (P : W → Prop) : Prop :=
   ∀ w ∈ cg, ∀ w' ∈ history (w, t), (P w ↔ P w')
 
-/-- The diversity condition on a modal base for a possibility modal ([condoravdi-2002]): some
-common-ground world sees worlds disagreeing on the property. -/
+/-- A modal base meets the diversity condition of [condoravdi-2002] for a property when some
+common-ground world sees worlds disagreeing on it. -/
 def diverse (MB : W → T → Set W) (cg : Set W) (t : T) (P : W → Prop) : Prop :=
   ∃ w ∈ cg, ∃ w' ∈ MB w t, ∃ w'' ∈ MB w t, P w' ∧ ¬ P w''
 
-/-- A settled property is not diverse over a modal base within the metaphysical one:
+/-- A settled property is not diverse over a modal base within the metaphysical one, so
 metaphysical readings of possibility modals are blocked for settled properties. -/
 theorem settled_not_diverse {history : HistoricalAlternatives W T} {MB : W → T → Set W}
     {cg : Set W} {t : T} {P : W → Prop} (hMB : ∀ w ∈ cg, MB w t ⊆ history (w, t))
@@ -204,9 +215,8 @@ include hp in
 theorem mem_metaphysicalBase_self (t : T) (w : W) :
     w ∈ metaphysicalBase history w t := (hp.equivalence t).refl w
 
-/-- A formula is historically determined at `(t, w)`, the object logic decides it as `N a ∨ N ¬a`,
-iff it is constant across the metaphysical base: the single-world, formula-general core of
-settledness. -/
+/-- A formula is historically determined at `(t, w)`, decided as `N a ∨ N ¬a`, iff it is
+constant across the metaphysical base, the single-world core of settledness. -/
 theorem toTWFrame_N_or_N_neg_iff (V : Atom → T → W → Prop) (a : OForm Atom) (t : T) (w : W) :
     ((toTWFrame history hp).sat V a.N t w ∨ (toTWFrame history hp).sat V a.neg.N t w) ↔
       ∀ w' ∈ metaphysicalBase history w t,
@@ -221,10 +231,9 @@ theorem toTWFrame_N_or_N_neg_iff (V : Atom → T → W → Prop) (a : OForm Atom
     · exact Or.inl fun w' hw' ↦ (hd w' hw').mpr hw
     · exact Or.inr fun w' hw' ha ↦ hw ((hd w' hw').mp ha)
 
-/-- Condoravdi's settledness over a common ground is object-logic historical determinacy at
-every common-ground world, `N P ∨ N ¬P` for the lifted valuation: settled-whether, bilateral
-and history-blind, not the unilateral inevitability. `P` is the world proposition after forward
-instantiation, Condoravdi's `AT([t₀,_), ·, P)`, whose wrapper the caller discharges. -/
+/-- Settledness over a common ground is historical determinacy, `N P ∨ N ¬P`, at every
+common-ground world. Here `P` is the world proposition after forward instantiation, whose
+wrapper `AT([t₀,_), ·, P)` the caller discharges. -/
 theorem settled_iff_determined (cg : Set W) (P : W → Prop) (t : T) :
     settled history cg t P ↔
       ∀ w ∈ cg,

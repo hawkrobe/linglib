@@ -28,6 +28,7 @@ the conditional of the closest worlds.
 
 ## Main results
 
+* `SelectionFunction.exists_sel_eq`: outside a proposition any of its worlds can be selected.
 * `SelectionFunction.Compatible.isCSO`: selection by a completion satisfies condition (4).
 * `mem_closestImp_iff_forall_compatible`: the conditional of the closest worlds is the
   supervaluation over completions.
@@ -54,6 +55,19 @@ structure SelectionFunction (W : Type*) where
   /-- A world at which the proposition holds selects itself. -/
   centering : ∀ (w : W) (A : Set W), w ∈ A → sel w A = w
 
+/-- Inclusion and centering are the only constraints on a selection function, so at a world
+outside a proposition any world of the proposition is selected by some selection function. -/
+theorem SelectionFunction.exists_sel_eq {W : Type*} {w v : W} {A : Set W} (hv : v ∈ A)
+    (hw : w ∉ A) : ∃ s : SelectionFunction W, s.sel w A = v := by
+  classical
+  refine ⟨⟨fun w' A' ↦ if w' ∈ A' then w' else if w' = w ∧ A' = A then v
+      else if h : A'.Nonempty then h.some else w', fun w' A' hA' ↦ ?_, fun _ _ h ↦ ite_eq_left h⟩,
+    by simp [hw]⟩
+  split_ifs with h₁ h₂
+  · exact h₁
+  · exact h₂.2 ▸ hv
+  · exact Set.Nonempty.some_mem _
+
 section SelectionConditional
 
 variable {W : Type*} (s : SelectionFunction W) {p q r : Set W} {w : W}
@@ -71,10 +85,6 @@ theorem SelectionFunction.domain_eq_singleton (hp : p.Nonempty) :
 
 theorem SelectionFunction.subsingleton_domain : (s.domain w p).Subsingleton :=
   Set.subsingleton_singleton.anti Set.inter_subset_left
-
-/-- Centering says that on `p` the selection for `p` is the identity, as an equality of
-functions. -/
-theorem SelectionFunction.eqOn_sel : Set.EqOn (s.sel · p) id p := fun w hw ↦ s.centering w p hw
 
 theorem SelectionFunction.domain_of_mem (hw : w ∈ p) : s.domain w p = {w} := by
   rw [SelectionFunction.domain, s.centering w p hw,
