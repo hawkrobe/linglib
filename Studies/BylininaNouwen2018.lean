@@ -43,12 +43,12 @@ the Heim-Kennedy generalization ((80)).
 * `kennedyZero_eq_nobody`: Kennedy's *zero* is the context of *no*.
 * `antitone_maxIn_countDegrees`, `not_antitone_maxIn_countDegrees_sdiff`: *fewer than ten* is
   downward monotone with `×` and not with `*`.
-* `lowScope_ncard_iff`, `scopeDegrees_ncard`: the measured scopes of `Degree.Quantifier` at a
-  count are those of its pluralities under `×`.
+* `countDegrees_plural_eq_Iic_comp`: a count's measured degree property is that of its
+  pluralities under `×`.
 
 ## Implementation notes
 
-* Pluralities are the finite sets of atoms, and `plural Z` is `Plurality.Algebra.fullPlural` of
+* Pluralities are the finite sets of atoms, and `plural Z` is `Mereology.FullAlgClosure` of
   the singletons of `Z`, the full lattice `×Z`; without the empty sum it is Link's `*Z`,
   `Mereology.AlgClosure` of them (`plural_sdiff_empty`). A distributive predicate `B` holds of a
   plurality that is in `plural B`.
@@ -87,10 +87,10 @@ variable {α : Type*} [DecidableEq α]
 
 /-- The pluralities of members of `Z`, the full closure `×Z` of its singletons ((30)): the sums
 `⊔X` of the subsets `X ⊆ Z`, the empty sum `⊥` among them. -/
-def plural (Z : Set α) : Set (Finset α) := {x | fullPlural (· ∈ ({·} : α → Finset α) '' Z) x}
+def plural (Z : Set α) : Set (Finset α) := {x | FullAlgClosure (· ∈ ({·} : α → Finset α) '' Z) x}
 
 @[simp] theorem mem_plural {Z : Set α} {x : Finset α} : x ∈ plural Z ↔ ↑x ⊆ Z :=
-  fullPlural_image_singleton Z x
+  fullAlgClosure_image_singleton Z x
 
 /-- Without the empty sum `×Z` is Link's `*Z` ((29)). -/
 theorem plural_sdiff_empty (Z : Set α) :
@@ -128,7 +128,7 @@ number `n` ((73)), the measured degree property of `Degree.LowScope`. -/
 theorem countDegrees_plural_eq_Iic {A B : Set α} (h : (A ∩ B).Finite) :
     countDegrees A (plural B) = Iic (A ∩ B).ncard := by
   rw [countDegrees, plural_inter]
-  exact card_image_fullPlural h
+  exact card_image_fullAlgClosure h
 
 /-! ### *Zero*
 
@@ -288,51 +288,40 @@ theorem not_antitone_maxIn_countDegrees_sdiff :
 /-! ### Scope
 
 Exhaustifying the lower bound at a site and raising Kennedy's quantifier to that site give the same
-reading ((75), (76)), so the analyses differ only in the sites they reach. -/
+reading ((75), (76)), whatever degree property the scope abstracts, so the analyses differ only in
+the sites they reach. -/
 
 section Scope
 
-variable {ι : Type*} {Q : NP ι} {μ : ι → ℕ} {n : ℕ}
+variable {ι : Type*} {Q : NP ι} {P : ι → Set ℕ} {n : ℕ}
 
 /-- Exhaustification above `Q` is the numeral raised over `Q`. -/
 theorem exhAgainst_iff_highScope :
-    exhAgainst (· < ·) (fun m ↦ Q fun x ↦ m ≤ μ x) n ↔ HighScope (MaxIn {n}) Q μ :=
+    exhAgainst (· < ·) (fun m ↦ Q fun x ↦ m ∈ P x) n ↔ HighScope (MaxIn {n}) Q P :=
   maxIn_singleton_iff_exhAgainst.symm
 
 /-- Exhaustification below `Q` is the numeral in situ under `Q`. -/
 theorem exhAgainst_iff_lowScope :
-    (Q fun x ↦ exhAgainst (· < ·) (· ≤ μ x) n) ↔ LowScope (MaxIn {n}) Q μ := by
-  simp only [LowScope, maxIn_singleton_iff_exhAgainst]; rfl
+    (Q fun x ↦ exhAgainst (· < ·) (· ∈ P x) n) ↔ LowScope (MaxIn {n}) Q P := by
+  simp only [LowScope, maxIn_singleton_iff_exhAgainst]
 
 end Scope
 
-/-- A count's measured scope is that of its full pluralities: with finitely many members of each
-`A ∩ B i`, the degrees `Degree.LowScope` gives `i` are those of the pluralities of `A` that are
-`B i`. -/
-theorem lowScope_ncard_iff {ι : Type*} {Q : NP ι} {A : Set α} {B : ι → Set α}
-    (h : ∀ i, (A ∩ B i).Finite) (𝒟 : Set ℕ → Prop) :
-    LowScope 𝒟 Q (fun i ↦ (A ∩ B i).ncard) ↔ Q fun i ↦ 𝒟 (countDegrees A (plural (B i))) := by
-  have key : ∀ i, countDegrees A (plural (B i)) = Iic (A ∩ B i).ncard :=
-    fun i ↦ countDegrees_plural_eq_Iic (h i)
-  simp only [LowScope, key]
-
-/-- And its degrees above `Q` are those at which `Q` holds of the entities with pluralities of
-that many atoms. -/
-theorem scopeDegrees_ncard {ι : Type*} {Q : NP ι} {A : Set α} {B : ι → Set α}
+/-- A count's measured degree property is that of its full pluralities: with finitely many
+members of each `A ∩ B i`, the pluralities of `A` that are `B i` have the degrees `Iic` of their
+number, so `Degree.LowScope` and `Degree.HighScope` at `Iic ∘` the count are the readings of the
+plural model. -/
+theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Set α}
     (h : ∀ i, (A ∩ B i).Finite) :
-    scopeDegrees Q (fun i ↦ (A ∩ B i).ncard) =
-      {d | Q fun i ↦ d ∈ countDegrees A (plural (B i))} := by
-  have key : ∀ i, countDegrees A (plural (B i)) = Iic (A ∩ B i).ncard :=
-    fun i ↦ countDegrees_plural_eq_Iic (h i)
-  ext
-  simp only [mem_scopeDegrees, key, mem_Iic, mem_ofPred_eq]
+    (fun i ↦ countDegrees A (plural (B i))) = Iic ∘ fun i ↦ (A ∩ B i).ncard :=
+  funext fun i ↦ countDegrees_plural_eq_Iic (h i)
 
 /-- Over *every student* the split-scope reading (77b), that not every student read a book, is
 true when one student read none and another four, while the reading (77a), that every student
 read none, is false: the continuation (78) separates them. -/
 theorem highScope_every_not_lowScope :
-    HighScope (MaxIn {0}) (every fun _ ↦ True) (fun i : Fin 2 ↦ 4 * (i : ℕ)) ∧
-      ¬ LowScope (MaxIn {0}) (every fun _ ↦ True) (fun i : Fin 2 ↦ 4 * (i : ℕ)) :=
+    HighScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) ∧
+      ¬ LowScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) :=
   ⟨highScope_maxIn_singleton_every.2 ⟨fun _ _ ↦ Nat.zero_le _, fun _ hb ↦ hb ⟨0, trivial, rfl⟩⟩,
     fun h ↦ absurd (lowScope_maxIn.1 h 1 trivial) (by simp)⟩
 

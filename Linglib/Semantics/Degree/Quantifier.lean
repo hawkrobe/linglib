@@ -12,17 +12,18 @@ public import Linglib.Logic.Natural.Additivity
 
 This file defines the denotations of degree phrases as quantifiers over degrees and their scope
 relative to a quantifier over entities or worlds. A degree phrase says that the maximum of its
-degree predicate lies in an interval, `MaxIn U P`; under a quantifier `Q` it scopes low, applied
-to each entity's own degrees, or high, applied to `scopeDegrees Q μ`, the degrees at which `Q`
-holds. Under `some` the degree set is the lower closure of the measures, the than-clause degree
-set, and the max-quantified comparative `MaxComparative c` compares a matrix witness with its
-greatest measure by the comparison `c`.
+degree predicate lies in an interval, `MaxIn U X`; under a quantifier `Q` it scopes low, applied
+to each entity's own degree property, or high, applied to `scopeDegrees Q P`, the degrees at which
+`Q` holds. A measure `μ` gives each entity the degrees it reaches, `Iic ∘ μ`, and under `some` the
+degree set is then the lower closure of the measures, the than-clause degree set. The
+max-quantified comparative `MaxComparative c` compares a matrix witness with its greatest measure
+by the comparison `c`.
 
 ## Main definitions
 
-* `MaxIn U P`: the greatest element of `P` lies in `U`.
-* `scopeDegrees Q μ`: the degrees `d` such that `Q` holds of the entities measuring at least `d`.
-* `LowScope 𝒟 Q μ`, `HighScope 𝒟 Q μ`: the degree quantifier `𝒟` under and over `Q`.
+* `MaxIn U X`: the greatest element of `X` lies in `U`.
+* `scopeDegrees Q P`: the degrees `d` such that `Q` holds of the entities `x` with `d ∈ P x`.
+* `LowScope 𝒟 Q P`, `HighScope 𝒟 Q P`: the degree quantifier `𝒟` under and over `Q`.
 * `MaxComparative c P Q μ`: the max-quantified comparative, the equative at `c = .ge`.
 * `AbsoluteSuperlative μ C x`: `x` measures above every other member of `C`.
 
@@ -40,10 +41,11 @@ greatest measure by the comparison `c`.
 
 ## Implementation notes
 
-An entity's degrees are the principal lower set `Iic (μ x)`, which contains the bottom degree.
-For a count, the cardinalities of the pluralities a numeral ranges over, this is pluralization
-with the empty sum (`Plurality.Algebra.card_image_fullPlural`); Link's pluralization, without
-it, gives `Icc 1 n` instead (`Plurality.Algebra.card_image_algClosure`).
+A measured degree property `Iic (μ x)` is a principal lower set and contains the bottom degree;
+the structural lemmas ask only that each degree property be a lower set. For a count, the
+cardinalities of the pluralities a numeral ranges over, `Iic` is pluralization with the empty sum
+(`Plurality.Algebra.card_image_fullAlgClosure`); Link's pluralization, without it, gives `Icc 1 n`
+(`Plurality.Algebra.card_image_algClosure`), and a collective predicate need give no lower set.
 
 ## References
 
@@ -63,68 +65,91 @@ open NaturalLogic Quantifier Quantifier.GQ Set
 
 variable {α D : Type*}
 
-/-! ### Degree quantifiers and their scope -/
+/-! ### Degree quantifiers and their scope
+
+An entity's degree property is the set of degrees at which the scope holds of it, the degree
+predicate `λd. φ(d)(x)`; for a measure `μ` it is `Iic ∘ μ`, the degrees the entity reaches. -/
+
+section Scope
+variable {Q : NP α} {P : α → Set D} {d : D}
+
+/-- The degrees at which `Q` holds of the entities whose degree property contains them, the
+degree predicate abstracted over the scope of `Q`. -/
+def scopeDegrees (Q : NP α) (P : α → Set D) : Set D := {d | Q fun x ↦ d ∈ P x}
+
+theorem mem_scopeDegrees : d ∈ scopeDegrees Q P ↔ Q fun x ↦ d ∈ P x := Iff.rfl
+
+/-- A degree quantifier `𝒟` scoping under `Q`, applied to each entity's own degree property. -/
+def LowScope (𝒟 : Set D → Prop) (Q : NP α) (P : α → Set D) : Prop :=
+  Q fun x ↦ 𝒟 (P x)
+
+/-- A degree quantifier `𝒟` scoping over `Q`. -/
+def HighScope (𝒟 : Set D → Prop) (Q : NP α) (P : α → Set D) : Prop :=
+  𝒟 (scopeDegrees Q P)
+
+/-- `some R` yields the degrees some `R`-witness has. -/
+theorem scopeDegrees_some (R : α → Prop) (P : α → Set D) :
+    scopeDegrees (GQ.some R) P = ⋃ (x) (_ : R x), P x := by
+  ext
+  simp [mem_scopeDegrees, GQ.some]
+
+/-- `every R` yields the degrees every `R`-witness has. -/
+theorem scopeDegrees_every (R : α → Prop) (P : α → Set D) :
+    scopeDegrees (every R) P = ⋂ (x) (_ : R x), P x := by
+  ext
+  simp [mem_scopeDegrees, every]
+
+/-- `no R` yields the degrees no `R`-witness has. -/
+theorem scopeDegrees_no (R : α → Prop) (P : α → Set D) :
+    scopeDegrees (no R) P = (scopeDegrees (GQ.some R) P)ᶜ := by
+  ext
+  exact (not_exists.trans (forall_congr' fun _ ↦ not_and)).symm
+
+end Scope
 
 section Preorder
-variable [Preorder D] {Q : NP α} {μ : α → D} {d : D}
+variable [Preorder D] {Q : NP α} {P : α → Set D} {μ : α → D} {d : D}
 
 /-- The greatest element of `P` lies in `U`. These are the degree quantifiers of [heim-2001],
 *-er than `t`* at `U = Ioi t`, *less than `t`* at `Iio t`, *exactly `δ` -er than `t`* at
 `{t + δ}`, and the equative at `Ici t`. -/
-def MaxIn (U P : Set D) : Prop := ∃ m ∈ U, IsGreatest P m
+def MaxIn (U X : Set D) : Prop := ∃ m ∈ U, IsGreatest X m
 
-theorem maxIn_singleton {P : Set D} {a : D} : MaxIn {a} P ↔ IsGreatest P a := exists_eq_left
+theorem maxIn_singleton {X : Set D} {a : D} : MaxIn {a} X ↔ IsGreatest X a := exists_eq_left
 
-/-- The degrees at which `Q` holds of the entities reaching them, the degree predicate abstracted
-over the scope of `Q`. Membership at `d` is `Q (μ ⁻¹' Set.Ici d)`. -/
-def scopeDegrees (Q : NP α) (μ : α → D) : Set D := {d | Q fun x ↦ d ≤ μ x}
-
-theorem mem_scopeDegrees : d ∈ scopeDegrees Q μ ↔ Q fun x ↦ d ≤ μ x := Iff.rfl
-
-/-- A degree quantifier `𝒟` scoping under `Q`, applied to each entity's own degrees. -/
-def LowScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
-  Q fun x ↦ 𝒟 (Iic (μ x))
-
-/-- A degree quantifier `𝒟` scoping over `Q`. -/
-def HighScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
-  𝒟 (scopeDegrees Q μ)
-
-/-- `some R` yields the lower closure of the measures of `R`, the than-clause degree set. -/
-theorem scopeDegrees_some (R : α → Prop) (μ : α → D) :
-    scopeDegrees (GQ.some R) μ = lowerClosure (μ '' {x | R x}) := by
+/-- On measured degrees `some R` yields the lower closure of the measures of `R`, the than-clause
+degree set. -/
+theorem scopeDegrees_some_Iic (R : α → Prop) (μ : α → D) :
+    scopeDegrees (GQ.some R) (Iic ∘ μ) = lowerClosure (μ '' {x | R x}) := by
   ext d
   simp [mem_scopeDegrees, GQ.some, mem_lowerClosure]
 
-/-- `every R` yields the lower bounds of the measures of `R`. -/
-theorem scopeDegrees_every (R : α → Prop) (μ : α → D) :
-    scopeDegrees (every R) μ = lowerBounds (μ '' {x | R x}) := by
+/-- On measured degrees `every R` yields the lower bounds of the measures of `R`. -/
+theorem scopeDegrees_every_Iic (R : α → Prop) (μ : α → D) :
+    scopeDegrees (every R) (Iic ∘ μ) = lowerBounds (μ '' {x | R x}) := by
   ext d
   exact (mem_lowerBounds.trans forall_mem_image).symm
 
-/-- `no R` yields the degrees no `R`-witness reaches. -/
-theorem scopeDegrees_no (R : α → Prop) (μ : α → D) :
-    scopeDegrees (no R) μ = (scopeDegrees (GQ.some R) μ)ᶜ := by
-  ext d
-  exact (not_exists.trans (forall_congr' fun _ ↦ not_and)).symm
+theorem isLowerSet_scopeDegrees (hQ : Monotone Q) (hP : ∀ x, IsLowerSet (P x)) :
+    IsLowerSet (scopeDegrees Q P) :=
+  fun _ _ h hd ↦ hQ (fun x hx ↦ hP x h hx) hd
 
-theorem isLowerSet_scopeDegrees (hQ : Monotone Q) (μ : α → D) : IsLowerSet (scopeDegrees Q μ) :=
-  fun _ _ h hd ↦ hQ (fun _ hx ↦ h.trans hx) hd
-
-theorem isUpperSet_scopeDegrees (hQ : Antitone Q) (μ : α → D) : IsUpperSet (scopeDegrees Q μ) :=
-  fun _ _ h hd ↦ hQ (fun _ hx ↦ h.trans hx) hd
+theorem isUpperSet_scopeDegrees (hQ : Antitone Q) (hP : ∀ x, IsLowerSet (P x)) :
+    IsUpperSet (scopeDegrees Q P) :=
+  fun _ _ h hd ↦ hQ (fun x hx ↦ hP x h hx) hd
 
 /-- Under an antitone quantifier, negation, *at most n* or *refuse*, the degree set has no
 maximum on a scale without a top, so the high-scope reading is a presupposition failure. -/
-theorem not_isGreatest_scopeDegrees [NoMaxOrder D] (hQ : Antitone Q) (μ : α → D) :
-    ¬ ∃ m, IsGreatest (scopeDegrees Q μ) m :=
-  fun ⟨_, hm⟩ ↦ (isUpperSet_scopeDegrees hQ μ).not_bddAbove ⟨_, hm.1⟩ hm.bddAbove
+theorem not_isGreatest_scopeDegrees [NoMaxOrder D] (hQ : Antitone Q)
+    (hP : ∀ x, IsLowerSet (P x)) : ¬ ∃ m, IsGreatest (scopeDegrees Q P) m :=
+  fun ⟨_, hm⟩ ↦ (isUpperSet_scopeDegrees hQ hP).not_bddAbove ⟨_, hm.1⟩ hm.bddAbove
 
 /-- The degree set of a monotone quantifier with a maximum is the principal lower set of the
 maximum, the degrees to which the shortest girl is tall. -/
-theorem scopeDegrees_eq_Iic (hQ : Monotone Q) {m : D} (hm : IsGreatest (scopeDegrees Q μ) m) :
-    scopeDegrees Q μ = Iic m :=
+theorem scopeDegrees_eq_Iic (hQ : Monotone Q) (hP : ∀ x, IsLowerSet (P x)) {m : D}
+    (hm : IsGreatest (scopeDegrees Q P) m) : scopeDegrees Q P = Iic m :=
   (mem_upperBounds_iff_subset_Iic.1 hm.2).antisymm
-    ((isLowerSet_scopeDegrees hQ μ).Iic_subset hm.1)
+    ((isLowerSet_scopeDegrees hQ hP).Iic_subset hm.1)
 
 end Preorder
 
@@ -143,20 +168,20 @@ theorem maxIn_compl : MaxIn Uᶜ P ↔ (∃ m, IsGreatest P m) ∧ ¬ MaxIn U P 
 
 /-- The low scope of an interval degree quantifier is `Q` of the entities measuring into the
 interval, the preimage of that interval. -/
-theorem lowScope_maxIn : LowScope (MaxIn U) Q μ ↔ Q fun x ↦ μ x ∈ U := by
-  simp only [LowScope, maxIn_Iic]
+theorem lowScope_maxIn : LowScope (MaxIn U) Q (Iic ∘ μ) ↔ Q fun x ↦ μ x ∈ U := by
+  simp only [LowScope, Function.comp_apply, maxIn_Iic]
 
 /-- The high scope at an upper set entails the low one over a monotone quantifier, since if the
 shortest girl is taller than `t` every girl is. -/
 theorem lowScope_of_highScope (hQ : Monotone Q) (hU : IsUpperSet U)
-    (h : HighScope (MaxIn U) Q μ) : LowScope (MaxIn U) Q μ :=
+    (h : HighScope (MaxIn U) Q (Iic ∘ μ)) : LowScope (MaxIn U) Q (Iic ∘ μ) :=
   let ⟨_, hmU, hm⟩ := h; lowScope_maxIn.2 (hQ (fun _ hx ↦ hU hx hmU) hm.1)
 
 /-- The low scope entails the high one under `every` at every interval when the restrictor has
 a least-measuring member, since if every girl's height lies in the interval so does the
 shortest girl's. -/
 theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y, R y → μ x ≤ μ y)
-    (h : LowScope (MaxIn U) (every R) μ) : HighScope (MaxIn U) (every R) μ := by
+    (h : LowScope (MaxIn U) (every R) (Iic ∘ μ)) : HighScope (MaxIn U) (every R) (Iic ∘ μ) := by
   rw [lowScope_maxIn] at h
   obtain ⟨x₀, hx₀, hmin⟩ := hR
   exact ⟨μ x₀, h x₀ hx₀, hmin, fun _ hd ↦ hd x₀ hx₀⟩
@@ -164,18 +189,18 @@ theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y
 /-- Over `every R` the greatest degree every `R`-witness reaches is the infimum of their measures.
 -/
 theorem highScope_maxIn_singleton_every {R : α → Prop} {m : D} :
-    HighScope (MaxIn {m}) (every R) μ ↔ IsGLB (μ '' {x | R x}) m := by
-  rw [HighScope, maxIn_singleton, scopeDegrees_every]; rfl
+    HighScope (MaxIn {m}) (every R) (Iic ∘ μ) ↔ IsGLB (μ '' {x | R x}) m := by
+  rw [HighScope, maxIn_singleton, scopeDegrees_every_Iic]; rfl
 
 /-- Over `some R` the greatest degree some `R`-witness reaches is the greatest of their measures. -/
 theorem highScope_maxIn_singleton_some {R : α → Prop} {m : D} :
-    HighScope (MaxIn {m}) (GQ.some R) μ ↔ IsGreatest (μ '' {x | R x}) m := by
-  rw [HighScope, maxIn_singleton, scopeDegrees_some, isGreatest_lowerClosure_iff]
+    HighScope (MaxIn {m}) (GQ.some R) (Iic ∘ μ) ↔ IsGreatest (μ '' {x | R x}) m := by
+  rw [HighScope, maxIn_singleton, scopeDegrees_some_Iic, isGreatest_lowerClosure_iff]
 
 /-- The high scope entails the low one under `some` at every interval, the tallest witness being
 a witness. -/
-theorem lowScope_some_of_highScope {R : α → Prop} (h : HighScope (MaxIn U) (GQ.some R) μ) :
-    LowScope (MaxIn U) (GQ.some R) μ := by
+theorem lowScope_some_of_highScope {R : α → Prop} (h : HighScope (MaxIn U) (GQ.some R) (Iic ∘ μ)) :
+    LowScope (MaxIn U) (GQ.some R) (Iic ∘ μ) := by
   obtain ⟨m, hmU, ⟨x, hx, hmx⟩, hub⟩ := h
   exact lowScope_maxIn.2 ⟨x, hx, show μ x ∈ U from hmx.antisymm (hub ⟨x, hx, le_rfl⟩) ▸ hmU⟩
 
@@ -188,9 +213,10 @@ variable [LinearOrder D] {U : Set D} {Q Q' : NP α} {μ : α → D}
 predicate has a maximum as soon as it is nonempty, attained by an entity, the shortest girl
 under *every girl* and the tallest under *some girl*. -/
 theorem exists_isGreatest_scopeDegrees [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
-    (h : (scopeDegrees Q μ).Nonempty) : ∃ x, IsGreatest (scopeDegrees Q μ) (μ x) := by
+    (h : (scopeDegrees Q (Iic ∘ μ)).Nonempty) :
+    ∃ x, IsGreatest (scopeDegrees Q (Iic ∘ μ)) (μ x) := by
   -- every degree of the set lies below a measured degree of the set
-  have step : ∀ d ∈ scopeDegrees Q μ, ∃ x, d ≤ μ x ∧ μ x ∈ scopeDegrees Q μ := by
+  have step : ∀ d ∈ scopeDegrees Q (Iic ∘ μ), ∃ x, d ≤ μ x ∧ μ x ∈ scopeDegrees Q (Iic ∘ μ) := by
     intro d hd
     have : Nonempty {x // d ≤ μ x} :=
       not_isEmpty_iff.1 fun h ↦ hQ₀ (hQ (fun x hx ↦ h.false ⟨x, hx⟩) hd)
@@ -198,8 +224,8 @@ theorem exists_isGreatest_scopeDegrees [Finite α] (hQ : Monotone Q) (hQ₀ : ¬
     exact ⟨x₀, hx₀, hQ (fun x hx ↦ hmin ⟨x, hx⟩) hd⟩
   obtain ⟨d, hd⟩ := h
   obtain ⟨x₀, -, hx₀⟩ := step d hd
-  have : Nonempty {x // μ x ∈ scopeDegrees Q μ} := ⟨⟨x₀, hx₀⟩⟩
-  obtain ⟨⟨m, hm⟩, hmax⟩ := Finite.exists_max fun x : {x // μ x ∈ scopeDegrees Q μ} ↦ μ x.1
+  have : Nonempty {x // μ x ∈ scopeDegrees Q (Iic ∘ μ)} := ⟨⟨x₀, hx₀⟩⟩
+  obtain ⟨⟨m, hm⟩, hmax⟩ := Finite.exists_max fun x : {x // μ x ∈ scopeDegrees Q (Iic ∘ μ)} ↦ μ x.1
   refine ⟨m, hm, fun d hd ↦ ?_⟩
   obtain ⟨y, hdy, hy⟩ := step d hd
   exact hdy.trans (hmax ⟨y, hy⟩)
@@ -207,26 +233,26 @@ theorem exists_isGreatest_scopeDegrees [Finite α] (hQ : Monotone Q) (hQ₀ : ¬
 /-- The low scope at an upper set entails the high one over a monotone quantifier on a finite
 domain, since if every girl is taller than `t` so is the shortest. -/
 theorem highScope_of_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥) (hU : IsUpperSet U)
-    (h : LowScope (MaxIn U) Q μ) : HighScope (MaxIn U) Q μ := by
+    (h : LowScope (MaxIn U) Q (Iic ∘ μ)) : HighScope (MaxIn U) Q (Iic ∘ μ) := by
   rw [lowScope_maxIn] at h
   have : Nonempty {x // μ x ∈ U} :=
     not_isEmpty_iff.1 fun h' ↦ hQ₀ (hQ (fun x hx ↦ h'.false ⟨x, hx⟩) h)
   obtain ⟨⟨x₀, hx₀⟩, hmin⟩ := Finite.exists_min fun x : {x // μ x ∈ U} ↦ μ x.1
-  have hd₀ : μ x₀ ∈ scopeDegrees Q μ := hQ (fun x hx ↦ hmin ⟨x, hx⟩) h
+  have hd₀ : μ x₀ ∈ scopeDegrees Q (Iic ∘ μ) := hQ (fun x hx ↦ hmin ⟨x, hx⟩) h
   obtain ⟨m, hm⟩ := exists_isGreatest_scopeDegrees hQ hQ₀ ⟨_, hd₀⟩
   exact ⟨μ m, hU (hm.2 hd₀) hx₀, hm⟩
 
 /-- Over a monotone quantifier on a finite domain, a degree quantifier at an upper set,
 comparative or equative, takes scope without truth-conditional effect. -/
 theorem highScope_maxIn_iff_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
-    (hU : IsUpperSet U) : HighScope (MaxIn U) Q μ ↔ LowScope (MaxIn U) Q μ :=
+    (hU : IsUpperSet U) : HighScope (MaxIn U) Q (Iic ∘ μ) ↔ LowScope (MaxIn U) Q (Iic ∘ μ) :=
   ⟨lowScope_of_highScope hQ hU, highScope_of_lowScope hQ hQ₀ hU⟩
 
 /-- *Less than `t`* over a monotone quantifier, high, is *not as … as `t`*, low, the
 scope-splitting reading `NEG + as … as`. -/
 theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
-    (hne : (scopeDegrees Q μ).Nonempty) {t : D} :
-    HighScope (MaxIn (Iio t)) Q μ ↔ ¬ Q fun x ↦ t ≤ μ x := by
+    (hne : (scopeDegrees Q (Iic ∘ μ)).Nonempty) {t : D} :
+    HighScope (MaxIn (Iio t)) Q (Iic ∘ μ) ↔ ¬ Q fun x ↦ t ≤ μ x := by
   have h := highScope_maxIn_iff_lowScope (μ := μ) hQ hQ₀ (isUpperSet_Ici t)
   simp only [lowScope_maxIn, mem_Ici] at h
   rw [← compl_Ici, ← h]
@@ -236,24 +262,26 @@ theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
 /-- Under the meet of a quantifier with an antitone one, *exactly n* as *at least n* and *at
 most n*, the maximum of the degree set, when defined, is that of the other conjunct, so
 high-scope *exactly two girls are taller than t* means *at least two*. -/
-theorem isGreatest_scopeDegrees_of_inf (hQ' : Antitone Q') {m : D}
-    (h : IsGreatest (scopeDegrees (Q ⊓ Q') μ) m) : IsGreatest (scopeDegrees Q μ) m :=
+theorem isGreatest_scopeDegrees_of_inf {P : α → Set D} (hQ' : Antitone Q')
+    (hP : ∀ x, IsLowerSet (P x)) {m : D} (h : IsGreatest (scopeDegrees (Q ⊓ Q') P) m) :
+    IsGreatest (scopeDegrees Q P) m :=
   ⟨h.1.1, fun _ hd ↦ le_of_not_gt fun hmd ↦
-    (h.2 ⟨hd, hQ' (fun _ hx ↦ hmd.le.trans hx) h.1.2⟩).not_gt hmd⟩
+    (h.2 ⟨hd, hQ' (fun x hx ↦ hP x hmd.le hx) h.1.2⟩).not_gt hmd⟩
 
 /-- On a dense scale the maximum of a degree set with a maximum is the greatest lower bound of
 its complement, so the maximum of [heim-2001]'s trivalent entry agrees with the bivalent one. -/
-theorem isGLB_compl_scopeDegrees [DenselyOrdered D] (hQ : Monotone Q) {m : D}
-    (hm : IsGreatest (scopeDegrees Q μ) m) : IsGLB (scopeDegrees Q μ)ᶜ m := by
-  rw [scopeDegrees_eq_Iic hQ hm, compl_Iic]
+theorem isGLB_compl_scopeDegrees [DenselyOrdered D] {P : α → Set D} (hQ : Monotone Q)
+    (hP : ∀ x, IsLowerSet (P x)) {m : D} (hm : IsGreatest (scopeDegrees Q P) m) :
+    IsGLB (scopeDegrees Q P)ᶜ m := by
+  rw [scopeDegrees_eq_Iic hQ hP hm, compl_Iic]
   exact isGLB_Ioi
 
 /-- When the maximum exists, the greatest lower bound of the complement is it. -/
-theorem isGLB_compl_scopeDegrees_iff [DenselyOrdered D] (hQ : Monotone Q) {m : D}
-    (h : ∃ m, IsGreatest (scopeDegrees Q μ) m) :
-    IsGLB (scopeDegrees Q μ)ᶜ m ↔ IsGreatest (scopeDegrees Q μ) m :=
+theorem isGLB_compl_scopeDegrees_iff [DenselyOrdered D] {P : α → Set D} (hQ : Monotone Q)
+    (hP : ∀ x, IsLowerSet (P x)) {m : D} (h : ∃ m, IsGreatest (scopeDegrees Q P) m) :
+    IsGLB (scopeDegrees Q P)ᶜ m ↔ IsGreatest (scopeDegrees Q P) m :=
   let ⟨_, hm'⟩ := h
-  ⟨fun hg ↦ hg.unique (isGLB_compl_scopeDegrees hQ hm') ▸ hm', isGLB_compl_scopeDegrees hQ⟩
+  ⟨fun hg ↦ hg.unique (isGLB_compl_scopeDegrees hQ hP hm') ▸ hm', isGLB_compl_scopeDegrees hQ hP⟩
 
 end LinearOrder
 

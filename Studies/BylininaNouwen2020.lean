@@ -121,14 +121,14 @@ variable {n : ℕ}
 Kennedy's numeral raised over the modal ((46)). -/
 theorem exhAgainst_poss_iff_highScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
     exhAgainst (· < ·) (fun m ↦ Spector2013.poss (count '' {w | R w})
-      (Comparison.ge.interval m)) n ↔ HighScope (MaxIn {n}) (GQ.some R) count := by
+      (Comparison.ge.interval m)) n ↔ HighScope (MaxIn {n}) (GQ.some R) (Iic ∘ count) := by
   simp only [Spector2013.poss, exists_mem_image, Comparison.interval_ge, mem_Ici, mem_ofPred_eq]
-  exact exhAgainst_iff_highScope (Q := GQ.some R)
+  exact exhAgainst_iff_highScope (Q := GQ.some R) (P := Iic ∘ count)
 
 /-- The exactly reading under the possibility modal, (36-a), is Kennedy's numeral in situ. -/
 theorem poss_eq_iff_lowScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
     Spector2013.poss (count '' {w | R w}) (Comparison.eq.interval n) ↔
-      LowScope (MaxIn {n}) (GQ.some R) count := by
+      LowScope (MaxIn {n}) (GQ.some R) (Iic ∘ count) := by
   simp only [Spector2013.poss, exists_mem_image, Comparison.interval_eq, lowScope_maxIn]
   rfl
 
@@ -136,8 +136,8 @@ theorem poss_eq_iff_lowScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
 the low one (`Degree.lowScope_some_of_highScope`), and a student answering `n` questions with
 another answering `n + 1` makes the low reading true and (39) false. -/
 theorem lowScope_some_not_highScope (n : ℕ) :
-    LowScope (MaxIn {n}) (GQ.some fun _ ↦ True) (fun i : Fin 2 ↦ n + i) ∧
-      ¬ HighScope (MaxIn {n}) (GQ.some fun _ ↦ True) (fun i : Fin 2 ↦ n + i) :=
+    LowScope (MaxIn {n}) (GQ.some fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ n + i) ∧
+      ¬ HighScope (MaxIn {n}) (GQ.some fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ n + i) :=
   ⟨lowScope_maxIn.2 ⟨0, trivial, rfl⟩, fun h ↦ absurd
     ((highScope_maxIn_singleton_some.1 h).2 ⟨1, trivial, rfl⟩) (by simp)⟩
 

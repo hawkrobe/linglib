@@ -21,7 +21,7 @@ or none, as a classical mereology does. Atoms and overlap are stated relative to
 ## Main definitions
 
 * `CUM`, `DIV`, `QUA`: cumulative, divisive and quantized reference.
-* `AlgClosure P`: the closure of `P` under binary sum.
+* `AlgClosure P`: the closure of `P` under binary sum, and `FullAlgClosure P` with the empty sum.
 * `Atom`, `Overlap`, `IsPlural`, `atomCount`: atoms, overlap, proper pluralities, and the number
   of atoms below an element.
 * `HasRemainders α`: every proper part is completed to the whole by a non-overlapping part.
@@ -50,8 +50,8 @@ is not a classical mereology.
 
 ## References
 
-* [champollion-krifka-2016], [champollion-2017], [hovda-2009], [krifka-1989], [krifka-1998],
-  [landman-2011], [landman-2020], [link-1983], [sutton-filip-2021]
+* [bylinina-nouwen-2018], [champollion-krifka-2016], [champollion-2017], [hovda-2009],
+  [krifka-1989], [krifka-1998], [landman-2011], [landman-2020], [link-1983], [sutton-filip-2021]
 -/
 
 @[expose] public section
@@ -188,6 +188,34 @@ theorem algClosure_iff_exists_sup' (P : α → Prop) (x : α) :
     AlgClosure P x ↔ ∃ (t : Finset α) (ht : t.Nonempty), (∀ y ∈ t, P y) ∧ t.sup' ht id = x := by
   rw [← Set.mem_ofPred_eq (p := AlgClosure P), setOf_algClosure]
   exact Iff.rfl
+
+section OrderBot
+
+variable [OrderBot α]
+
+/-- The full algebraic closure `×P` adds the empty sum `⊥` to `*P`, closing `P` under the sums of
+all finite families, the empty one included ([bylinina-nouwen-2018]'s (30)). -/
+def FullAlgClosure (P : α → Prop) (x : α) : Prop :=
+  AlgClosure P x ∨ x = ⊥
+
+theorem fullAlgClosure_bot (P : α → Prop) : FullAlgClosure P ⊥ := .inr rfl
+
+theorem AlgClosure.fullAlgClosure {x : α} (h : AlgClosure P x) : FullAlgClosure P x := .inl h
+
+/-- `×P` holds of exactly the sums of finite families of `P`-elements. -/
+theorem fullAlgClosure_iff_exists_sup (P : α → Prop) (x : α) :
+    FullAlgClosure P x ↔ ∃ t : Finset α, (∀ y ∈ t, P y) ∧ t.sup id = x := by
+  rw [FullAlgClosure, algClosure_iff_exists_sup']
+  constructor
+  · rintro (⟨t, ht, hP, rfl⟩ | rfl)
+    · exact ⟨t, hP, (Finset.sup'_eq_sup ht id).symm⟩
+    · exact ⟨∅, by simp, Finset.sup_empty⟩
+  · rintro ⟨t, hP, rfl⟩
+    rcases t.eq_empty_or_nonempty with rfl | ht
+    · exact .inr Finset.sup_empty
+    · exact .inl ⟨t, ht, hP, Finset.sup'_eq_sup ht id⟩
+
+end OrderBot
 
 end SemilatticeSup
 
