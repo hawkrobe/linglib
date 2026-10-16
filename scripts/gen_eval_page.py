@@ -30,10 +30,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 EXPORT = ROOT / "scripts" / "eval_page" / "Export.lean"
 TEMPLATE = ROOT / "scripts" / "eval_page" / "template.html"
+SITE_CSS = ROOT / "scripts" / "site.css"
 DEFAULT_JSON = ROOT / ".lake" / "build" / "eval-page" / "verdicts.json"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "eval-page"
 DATA = ROOT / "Linglib" / "Data" / "Experiments"
 LIBRARIES = ["Eval", "Lab"]
+# The project the page belongs to, cited from `references.bib`.
+PROJECT = "chemla-spector-kalomoiros-schlenker-2026"
 
 
 # ---------------------------------------------------------------- bibliography
@@ -62,9 +65,10 @@ def bib_entries(keys):
         surnames = [a.split(",")[0].strip().strip("{}")
                     for a in field("author").split(" and ") if a.strip()]
         who = surnames[0] + " et al." if len(surnames) > 2 else " & ".join(surnames)
+        authors = ", ".join(surnames[:-1]) + " & " + surnames[-1] if len(surnames) > 1 else who
         title = re.sub(r"\\emph\s*|[{}]", "", field("title"))
-        out[key] = {"key": key, "who": who, "year": field("year"), "title": title,
-                    "doi": field("doi")}
+        out[key] = {"key": key, "who": who, "authors": authors, "year": field("year"),
+                    "title": title, "doi": field("doi"), "url": field("url")}
     return out
 
 
@@ -165,7 +169,7 @@ def tree_label(t):
 
 def build(export, base):
     names = export["names"]
-    keys = {m.group(1) for n in names.values() for m in CITE.finditer(n["doc"])}
+    keys = {m.group(1) for n in names.values() for m in CITE.finditer(n["doc"])} | {PROJECT}
     bib = bib_entries(sorted(keys))
 
     def decl(n):
@@ -240,7 +244,8 @@ def build(export, base):
     for r in export["verdicts"] + export["observed"] + export["stipulations"] + export["sameParse"]:
         theorems.setdefault(r["theorem"], decl(r["theorem"]))
     return {"theories": theories, "experiments": experiments, "cells": cells, "papers": papers,
-            "theorems": sorted(theorems.values(), key=lambda t: t["name"])}
+            "theorems": sorted(theorems.values(), key=lambda t: t["name"]),
+            "project": bib.get(PROJECT)}
 
 
 # ---------------------------------------------------------------- running
@@ -294,7 +299,9 @@ def main():
     page["built"] = datetime.date.today().isoformat()
 
     data = json.dumps(page, ensure_ascii=False).replace("</", "<\\/")
-    out = TEMPLATE.read_text(encoding="utf-8").replace("/*EVAL_DATA*/{}", data)
+    out = (TEMPLATE.read_text(encoding="utf-8")
+           .replace("/*SITE_CSS*/", SITE_CSS.read_text(encoding="utf-8"))
+           .replace("/*EVAL_DATA*/{}", data))
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "index.html").write_text(out, encoding="utf-8")
     print(f"wrote {args.out / 'index.html'}: {len(page['experiments'])} experiments, "
