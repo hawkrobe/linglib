@@ -72,7 +72,7 @@ never less semantic than its assignment. The judgments the book reports are the 
   over the conjuncts, except that a coordination of plurals alone resolves nothing, the book's
   restriction that keeps gender resolution from being triggered. The gender carriers of French,
   Lak, Slovene and Ojibwa are declared in the study, there being no fragments for them; the
-  Icelandic rules run over the fragment's nouns, as the Romanian ones do.
+  Icelandic rules read the fragment nouns' genders, and the Romanian ones the nouns.
 * Not modelled: the psycholinguistic evidence of chapter 4, the morphology of agreement and
   its limits in chapter 5, syncretism and neutral agreement in chapter 7, the diachrony of
   chapters 8 to 10, Russian acronyms and indeclinables, Chichewa's target-gender rule for
@@ -863,11 +863,10 @@ end Slovene
 namespace Icelandic
 
 /-- By §9.4, homogeneous masculines or feminines keep their gender and any mixture takes the
-neuter, the semantically justified gender for beings of both sexes; the rules read the
-fragment's nouns by their gender alone. -/
-def rules : List (ResolutionRule (GenderedNoun _root_.Gender) _root_.Gender) :=
-  [.all (·.gender = .masculine) .masculine, .all (·.gender = .feminine) .feminine,
-    otherwise .neuter]
+neuter, the semantically justified gender for beings of both sexes; the rules are syntactic,
+reading the conjuncts' genders. -/
+def rules : List (ResolutionRule _root_.Gender _root_.Gender) :=
+  [.all (· = .masculine) .masculine, .all (· = .feminine) .feminine, otherwise .neuter]
 
 end Icelandic
 
@@ -1023,7 +1022,7 @@ theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
       [("masc+fem", [_root_.Icelandic.Nouns.drengur, _root_.Icelandic.Nouns.telpa]),
         ("fem+neut", [_root_.Icelandic.Nouns.aer, _root_.Icelandic.Nouns.lamb])],
       ∀ g ∈ row.parse? "resolved" [("neut", _root_.Gender.neuter)],
-        (row.judgment = .acceptable ↔ resolve Icelandic.rules cs = some g) := by
+        (row.judgment = .acceptable ↔ resolve Icelandic.rules (cs.map (·.gender)) = some g) := by
   decide +kernel
 
 theorem polish_rows : ∀ row ∈ Examples.all, row.language = "poli1260" →
