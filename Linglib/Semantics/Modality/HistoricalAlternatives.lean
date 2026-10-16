@@ -4,6 +4,7 @@ public import Mathlib.Data.Set.Prod
 public import Mathlib.Order.Interval.Set.Disjoint
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Temporal.Basic
 
 /-!
@@ -19,15 +20,17 @@ determines its alternatives, the classes of its historical equivalence.
 ## Main definitions
 
 * `HistoricalAlternatives`, `metaphysicalBase`: the relation and its curried modal base.
-* `historicalBase`, `actualHistoryBase`, `futureHistoryBase`: its temporal slices.
+* `orientedBase`: the alternatives at the times a tense cell admits, with `historicalBase`,
+  `actualHistoryBase` and `futureHistoryBase` its nonpast, nonfuture and future instances.
 * `Temporal.TWFrame.alternatives`: the historical alternatives of a T × W frame.
 * `settled`, `diverse`: settledness over a common ground, and Condoravdi's diversity condition.
 
 ## Main results
 
 * `time_le_of_mem_actualHistoryBase`: Abusch's Upper Limit Constraint for the doxastic base.
-* `actualHistoryBase_union_futureHistoryBase`: the actual and future bases partition the
-  alternatives.
+* `compare_mem_of_mem_orientedBase`: an oriented base admits only its cell's orientations.
+* `actualHistoryBase_union_futureHistoryBase`: the actual and future bases together hold the
+  alternatives at all times.
 * `Temporal.TWFrame.alternatives_eq_of_mem`: the alternatives of an alternative are the same.
 * `settled_not_diverse`: a settled property is not diverse.
 * `settled_alternatives_iff`: over a frame, settledness is historical necessity of the property
@@ -48,7 +51,8 @@ determines its alternatives, the classes of its historical equivalence.
 
 @[expose] public section
 
-open Reference Set
+open Reference Set Semantics
+open scoped SetRel
 open scoped ModalLogic
 
 /-- The historical alternatives of a world–time index are the worlds that agree with its world
@@ -64,64 +68,85 @@ and time the worlds that share the world's history up to that time. -/
 abbrev metaphysicalBase (history : HistoricalAlternatives W T) : W → T → Set W :=
   Function.curry history
 
-/-! ### The temporal slices -/
+/-! ### Bases oriented by a tense cell
 
-section Slices
+A modal over historical alternatives evaluates its prejacent at the alternatives of its index
+and at times oriented to the index's time by a tense cell, Condoravdi's temporal orientation
+of a modal relative to its perspective. The historical base is oriented to the nonpast, and
+Klecha's doxastic and circumstantial bases to the nonfuture and the future. -/
 
-variable [Preorder T] (history : HistoricalAlternatives W T) (s : Index W T)
+section Oriented
 
-/-- The historical modal base pairs the alternatives of an index with the times at or after its
-own, the past fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
-def historicalBase : Set (Index W T) := history s ×ˢ Ici s.time
+variable (history : HistoricalAlternatives W T) (s : Index W T) {s' : Index W T}
+  {C : Finset Ordering}
 
-/-- The actual-history base, [klecha-2016]'s doxastic base, pairs the alternatives with the
-times at or before the index's own. -/
-def actualHistoryBase : Set (Index W T) := history s ×ˢ Iic s.time
+/-- The base of the alternatives oriented by a tense cell `C` pairs the alternatives of an index
+with the times standing to the index's time in a position of `C`. -/
+def orientedBase [LT T] (C : Finset Ordering) : Set (Index W T) :=
+  history s ×ˢ {t | s.time ~[Tense.toSetRel C] t}
 
-/-- The future-history base, [klecha-2016]'s circumstantial base, pairs the alternatives with
-the times strictly after the index's own. -/
-def futureHistoryBase : Set (Index W T) := history s ×ˢ Ioi s.time
+/-- The historical modal base, the alternatives at times at or after the index's own, the past
+fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
+abbrev historicalBase [LT T] : Set (Index W T) := orientedBase history s Tense.nonpast
 
-variable {history s} {s' : Index W T}
+/-- The actual-history base, [klecha-2016]'s doxastic base, the alternatives at times at or
+before the index's own. -/
+abbrev actualHistoryBase [LT T] : Set (Index W T) := orientedBase history s ⟦Tense.future⟧ᶜ
 
-theorem mem_historicalBase :
-    s' ∈ historicalBase history s ↔ s'.world ∈ history s ∧ s.time ≤ s'.time :=
+/-- The future-history base, [klecha-2016]'s circumstantial base, the alternatives at times
+strictly after the index's own. -/
+abbrev futureHistoryBase [LT T] : Set (Index W T) := orientedBase history s ⟦Tense.future⟧
+
+variable {history s}
+
+theorem mem_orientedBase [LT T] :
+    s' ∈ orientedBase history s C ↔ s'.world ∈ history s ∧ s.time ~[Tense.toSetRel C] s'.time :=
   Iff.rfl
 
-theorem mem_actualHistoryBase :
-    s' ∈ actualHistoryBase history s ↔ s'.world ∈ history s ∧ s'.time ≤ s.time :=
-  Iff.rfl
+/-- On linear time the time of a situation in an oriented base stands to the index's time in a
+position of the cell. -/
+theorem compare_mem_of_mem_orientedBase [LinearOrder T] (h : s' ∈ orientedBase history s C) :
+    compare s'.time s.time ∈ C :=
+  Tense.mem_toSetRel_iff_compare.1 h.2
 
-theorem mem_futureHistoryBase :
-    s' ∈ futureHistoryBase history s ↔ s'.world ∈ history s ∧ s.time < s'.time :=
-  Iff.rfl
+theorem mem_historicalBase [PartialOrder T] :
+    s' ∈ historicalBase history s ↔ s'.world ∈ history s ∧ s.time ≤ s'.time := by
+  rw [mem_orientedBase, Tense.nonpast_eq_present_sup_future, Tense.toSetRel_sup, Set.mem_union,
+    Tense.mem_toSetRel_present, Tense.mem_toSetRel_future, le_iff_eq_or_lt, eq_comm]
+
+theorem mem_actualHistoryBase [PartialOrder T] :
+    s' ∈ actualHistoryBase history s ↔ s'.world ∈ history s ∧ s'.time ≤ s.time := by
+  rw [mem_orientedBase, ← Tense.past_sup_present, Tense.toSetRel_sup, Set.mem_union,
+    Tense.mem_toSetRel_past, Tense.mem_toSetRel_present, le_iff_lt_or_eq]
+
+theorem mem_futureHistoryBase [Preorder T] :
+    s' ∈ futureHistoryBase history s ↔ s'.world ∈ history s ∧ s.time < s'.time := by
+  rw [mem_orientedBase, Tense.mem_toSetRel_future]
 
 /-- A situation in the actual-history base is no later than the index, the Upper Limit
 Constraint of [abusch-1997] as [klecha-2016] derives it from the doxastic base. -/
-theorem time_le_of_mem_actualHistoryBase (h : s' ∈ actualHistoryBase history s) :
+theorem time_le_of_mem_actualHistoryBase [PartialOrder T] (h : s' ∈ actualHistoryBase history s) :
     s'.time ≤ s.time :=
-  h.2
+  (mem_actualHistoryBase.1 h).2
 
-/-- A situation in the future-history base is later than the index. -/
-theorem time_lt_of_mem_futureHistoryBase (h : s' ∈ futureHistoryBase history s) :
+theorem time_lt_of_mem_futureHistoryBase [Preorder T] (h : s' ∈ futureHistoryBase history s) :
     s.time < s'.time :=
-  h.2
+  (mem_futureHistoryBase.1 h).2
 
-theorem futureHistoryBase_subset_historicalBase :
-    futureHistoryBase history s ⊆ historicalBase history s :=
-  prod_mono le_rfl Ioi_subset_Ici_self
+/-- Bases oriented by the join of two cells are the union of the bases. -/
+theorem orientedBase_sup [LT T] (C D : Finset Ordering) :
+    orientedBase history s (C ⊔ D) = orientedBase history s C ∪ orientedBase history s D := by
+  ext
+  simp only [mem_orientedBase, Tense.toSetRel_sup, Set.mem_union, and_or_left]
 
-theorem disjoint_actualHistoryBase_futureHistoryBase :
-    Disjoint (actualHistoryBase history s) (futureHistoryBase history s) :=
-  disjoint_prod.2 (Or.inr (Iic_disjoint_Ioi le_rfl))
+/-- On linear time the actual and future bases together hold the alternatives at all times. -/
+theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T] :
+    actualHistoryBase history s ∪ futureHistoryBase history s = history s ×ˢ Set.univ := by
+  rw [← orientedBase_sup, compl_sup_eq_top]
+  ext
+  simp [mem_orientedBase]
 
-end Slices
-
-/-- The actual and future bases together are the alternatives at every time. -/
-theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T]
-    (history : HistoricalAlternatives W T) (s : Index W T) :
-    actualHistoryBase history s ∪ futureHistoryBase history s = history s ×ˢ univ := by
-  rw [actualHistoryBase, futureHistoryBase, ← prod_union, Iic_union_Ioi]
+end Oriented
 
 /-! ### The alternatives of a T × W frame
 

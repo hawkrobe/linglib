@@ -204,6 +204,12 @@ theorem inv_toSetRel (C : Finset Ordering) :
 
 end LT
 
+/-- On linear time a cell relates a perspective time to a reference time exactly when the
+position of the reference time is in the cell. -/
+theorem mem_toSetRel_iff_compare [LinearOrder T] {C : Finset Ordering} {p r : T} :
+    p ~[toSetRel C] r ↔ compare r p ∈ C :=
+  ⟨fun ⟨_, ho, hc⟩ ↦ (compare_iff _ _).2 hc ▸ ho, fun h ↦ ⟨_, h, (compare_iff _ _).1 rfl⟩⟩
+
 /-- On dense time the past relation composed with itself is the past relation, since a time
 before an earlier time is earlier and an earlier time has a time between. -/
 theorem toSetRel_past_comp_self [Preorder T] [DenselyOrdered T] :
