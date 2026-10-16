@@ -28,6 +28,20 @@ namespace Chemla2009a
 
 open Data.Experiments
 
+/-- A quantifier whose nuclear scope hosts the trigger in Experiment 1. -/
+inductive Determiner where
+  /-- each: 'each' -/
+  | each
+  /-- no: 'no' -/
+  | no
+  /-- less than 3: 'less than 3' -/
+  | lessThan3
+  /-- more than 3: 'more than 3' -/
+  | moreThan3
+  /-- exactly 3: 'exactly 3' -/
+  | exactly3
+  deriving DecidableEq, Repr, Fintype
+
 /-- A group of the quantifiers whose scope hosts the trigger in Experiment 1. -/
 inductive QuantifierGroup where
   /-- each, no: 'each' and 'no' -/
@@ -40,6 +54,21 @@ inductive QuantifierGroup where
 /-- The students in the domain of the quantifiers of Experiment 1, 'these 10 students'. (§2.1,
 Fig. 2, (25)–(29); checked against the PDF text layer only.) -/
 def domainSize : ℕ := 10
+
+/-- A row of §2.3.4, p. 311: the group of quantifiers over which the results for a quantifier of
+Experiment 1 are pooled. -/
+structure Experiment1Group where
+  /-- The group that pools its results. -/
+  group : QuantifierGroup
+  deriving DecidableEq, Repr
+
+/-- The cells of §2.3.4, p. 311, by determiner; checked against the page images. -/
+def experiment1Groups : Determiner → Experiment1Group
+  | .each => ⟨.eachOrNo⟩
+  | .no => ⟨.eachOrNo⟩
+  | .lessThan3 => ⟨.numeral⟩
+  | .moreThan3 => ⟨.numeral⟩
+  | .exactly3 => ⟨.numeral⟩
 
 /-- A row of §2.3.4, p. 311: the acceptance rate of the universal inference from a trigger in the
 scope of the quantifiers of a group in Experiment 1, pooled over the group; the difference
