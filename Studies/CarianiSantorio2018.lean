@@ -6,83 +6,58 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Linglib.Semantics.Conditionals.Restrictor
+public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Core.Probability.ConditionalProbability
+public import Mathlib.Order.Hom.CompleteLattice
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Cariani and Santorio 2018: *will* done better
 
-This file formalizes the selectional semantics of the future modal *will* by Cariani and Santorio.
-A selection function, in Stalnaker's sense, picks one world out of a set of worlds: a world of the
-set when the set is nonempty, and the world of evaluation itself when that world is in the set.
-The modal parameter of *will* is a set of worlds, the historical alternatives to the world of the
-context. *Will A* is true at a world when the world selected from the modal parameter is an
-*A*-world. An *if*-clause restricts the modal parameter to the antecedent-worlds.
-
-The paper sets three constraints on an account of *will*. It must be modal, manipulating a world
-parameter, as its WOLL morphology shared with *would*, its epistemic readings and modal
-subordination show (§2.1). It must be scopeless, commuting with negation whether unembedded or
-embedded (§2.2). And it must fit the cognitive role of will-claims: the content of a will-claim
-can carry the non-extreme credence a rational agent has in its prejacent (§2.3, §8.1). Selection
-meets all three. *Will* shifts the world at which its prejacent is evaluated; a single selected
-world settles every prejacent and its negation; and under a credence concentrated on the modal
-parameter the content of *will A* has the credence of *A*. Modal subordination, as in *If A, will
-B. Will C*, is read by coindexing the second *will* with the restricted parameter, so both
-prejacents are evaluated at the world selected from the parameter restricted to *A* (§5.3.1,
-(24)).
-
-The paper distinguishes validity₁, truth preservation at every context, from validity₂, truth
-preservation at every index (§6). The two come apart exactly because the world of a context lies
-in its modal parameter, where *will A* collapses to *A*.
-
-In the Sports Fan model Cynthia will wear a Warriors cap, a Giants cap, or no cap, and an agent
-gives each option credence 1/3. The selectional content of *Cynthia will wear a Warriors cap* has
-credence 1/3, while its universal reading, strict necessity over the historical alternatives, is
-false throughout and has credence 0. The content of *if Cynthia wears a cap, she will wear a
-Warriors cap* has credence 1/3 or 2/3 depending on the selection function, never the conditional
-probability 1/2, since no proposition over the model has probability 1/2, an instance of Hájek's
-point that conditional probabilities outnumber unconditional ones.
+Cariani and Santorio analyse *will* as a modal that selects rather than quantifies. Its modal
+parameter is the set of historical alternatives of the context, *will A* is true at a world when
+`A` holds at the world a Stalnaker selection function picks from the parameter, and an
+*if*-clause restricts the parameter. Selection makes *will* a Boolean homomorphism, so it is
+scopeless with respect to negation, and gives *will A* the credence of `A`, where a universal
+analysis gives an open future credence 0. In their Sports Fan model the cap-conditional has
+credence 1/3 or 2/3, never its conditional probability 1/2, until contents are taken to be sets
+of pairs of a world and a selection function.
 
 ## Main definitions
 
-* `will`: selectional *will* over a modal parameter.
-* `willIf`: *if A, will B*, selectional *will* over the parameter restricted to *A*.
-* `Valid1`, `Valid2`: validity over contexts and over all indices.
-* `W`, `histAlt`, `cynthiaSel`, `cynthiaCredence`: the Sports Fan model.
+* `will`, `willIf`: selectional *will*, and *if A, will B* over the restricted parameter.
+* `Valid1`, `Valid2`: truth at every context and at every index.
+* `content2D`: the content of a sentence as a set of pairs of a world and a selection function.
 
 ## Main results
 
-* `will_compl`, `willIf_compl`: negation swap, unembedded and under an *if*-clause.
+* `will_compl`, `willIf_compl`: Negation Swap, unembedded and under an *if*-clause.
 * `will_excluded_middle`, `willIf_excluded_middle`: excluded middle is valid₂.
-* `valid1_materialImp_will`, `not_valid2_materialImp_will`: *will A* entails *A* at every
+* `valid1_materialImp_will`, `not_valid2_materialImp_will`: *will A* entails `A` at every
   context but not at every index.
-* `will_eq_selectionConditional`: on a possible parameter *will* is the selection conditional.
-* `measure_will`: a credence concentrated on the parameter gives *will A* the credence of *A*.
-* `cynthia_credence_one_third`, `universal_will_credence_zero`: the cognitive-role contrast.
-* `universal_willIf_cem_fails`: the universal reading refutes conditional excluded middle.
-* `cap_conditional_credence`, `no_unconditional_one_half`: the cap-conditional has credence 2/3,
-  and no proposition has the conditional probability 1/2.
+* `will_history_eq`: the candidate worlds of a context give *will* one modal parameter.
+* `will_inter_self`, `measure_will`: Transparency, so *will A* has the credence of `A`.
+* `measure_necessity_eq_zero`: universal *will* gives an open future credence 0.
+* `credence_willIf_wearsCap`, `no_unconditional_one_half`: the cap-conditional has credence 2/3
+  or 1/3, and no proposition of the model has credence 1/2.
+* `credence2D_willIf_wearsCap`: over pairs the cap-conditional has its conditional probability.
 
 ## Implementation notes
 
-* Propositions are `Set W` and `will` is a preimage, so its logic is the preimage lemmas.
-* `will` and `selectionConditional` differ only at the empty parameter, where the selection
-  conditional is vacuously true and `will` evaluates the junk selection. The paper's selection
-  functions are total and its conditional principles are restricted to antecedents compatible
-  with the modal base (§7).
-* Section and equation numbers follow the accepted manuscript (Draft of November 2, 2015).
-
-## TODO
-
-* The paper recovers credence 1/2 for the cap-conditional by refining contents to pairs of a world
-  and a selection function (§8.2); this refinement is not formalized.
+* A sentence is a map from a selection function and a modal parameter to a set of worlds, so an
+  *if*-clause, rule (21), shifts the parameter.
+* At an empty parameter `will` evaluates the junk selection; the paper restricts its conditional
+  principles to antecedents compatible with the modal base (§7).
+* Section and example numbers follow the accepted manuscript (Draft of November 2, 2015).
 
 ## References
 
 * [F. Cariani and P. Santorio, *Will done Better: Selection Semantics, Future Credence, and
   Indeterminacy* (2018)][cariani-santorio-2018]
 * [R. C. Stalnaker, *A Theory of Conditionals* (1968)][stalnaker-1968]
+* [A. Kratzer, *The Notional Category of Modality* (1981)][kratzer-1981]
+* [S. Kaufmann, *Conditional Truth and Future Reference* (2005)][kaufmann-2005-truth]
 * [A. Hajek, *Probabilities of Conditionals — Revisited* (1989)][hajek-1989]
 -/
 
@@ -90,30 +65,32 @@ point that conditional probabilities outnumber unconditional ones.
 
 namespace CarianiSantorio2018
 
-open Conditional MeasureTheory ProbabilityTheory
+open Conditional Modality HistoricalAlternatives MeasureTheory ProbabilityTheory
 
 section General
 
-variable {W : Type*} (s : SelectionFunction W) {f A B : Set W} {w : W}
+variable {W : Type*} (s : SelectionFunction W) {f A B C : Set W} {w : W}
 
 /-! ### Selectional *will*
 
 The clause for *will* is (16) of §5.2, and its collapse at the context is (18). -/
 
-/-- *Will A* over the modal parameter `f` holds at the worlds whose selection from `f` is an
-`A`-world. -/
-def will (f A : Set W) : Set W := (s.sel · f) ⁻¹' A
+/-- *Will* over the modal parameter `f` sends `A` to the worlds whose selection from `f` is an
+`A`-world, the preimage of `A` under selection as a complete lattice homomorphism. -/
+def will (f : Set W) : CompleteLatticeHom (Set W) (Set W) :=
+  .setPreimage (s.sel · f)
 
 @[simp] theorem mem_will : w ∈ will s f A ↔ s.sel w f ∈ A := Iff.rfl
 
 /-- *Will* commutes with negation, which is Negation Swap (§7). -/
-theorem will_compl : will s f Aᶜ = (will s f A)ᶜ := Set.preimage_compl
+theorem will_compl : will s f Aᶜ = (will s f A)ᶜ := map_compl' _ A
 
 /-- At a world of the modal parameter, *will A* is true exactly when `A` is. -/
 theorem mem_will_of_mem (hw : w ∈ f) : w ∈ will s f A ↔ w ∈ A := by
   rw [mem_will, s.centering w f hw]
 
-/-- On the modal parameter, *will A* and `A` hold at the same worlds. -/
+/-- On the modal parameter *will A* and `A` hold at the same worlds, which is Transparency
+(§8.1). -/
 theorem will_inter_self : will s f A ∩ f = A ∩ f :=
   Set.ext fun _ ↦ and_congr_left (mem_will_of_mem s)
 
@@ -149,16 +126,21 @@ An *if*-clause restricts the modal parameter of *will* to the antecedent-worlds,
 §5.3.1. -/
 
 /-- *If A, will B* is *will B* over the modal parameter restricted to the `A`-worlds. -/
-def willIf (f A B : Set W) : Set W := will s (f ∩ A) B
+def willIf (f A : Set W) : CompleteLatticeHom (Set W) (Set W) := will s (f ∩ A)
 
 /-- *Will* commutes with negation under an *if*-clause, which is Negation Swap in conditionals
-(§7). Since the *if*-clause only shifts the parameter, the narrow form, *if A, will not B* against
-*if A, not will B*, and the wide form, against *not (if A, will B)*, are this one equation. -/
+(§7). Since the *if*-clause only shifts the parameter, the narrow and the wide form are this one
+equation. -/
 theorem willIf_compl : willIf s f A Bᶜ = (willIf s f A B)ᶜ := will_compl s
 
 /-- Conditional Excluded Middle for will-conditionals is valid₂ (§7). -/
 theorem willIf_excluded_middle : Valid2 fun s f ↦ willIf s f A B ∪ willIf s f A Bᶜ :=
   fun s f ↦ will_excluded_middle s (f ∩ A)
+
+/-- Under modal subordination, *If A, will B. Will C* with the second *will* coindexed with the
+restricted parameter is *if A, will (B and C)*, (24) of §5.3.1. -/
+theorem willIf_inter : willIf s f A B ∩ willIf s f A C = willIf s f A (B ∩ C) :=
+  (map_inf _ B C).symm
 
 /-- When the restricted parameter is possible, *if A, will B* is the selection conditional with
 the restricted parameter as antecedent. -/
@@ -166,157 +148,268 @@ theorem willIf_eq_selectionConditional (h : (f ∩ A).Nonempty) :
     willIf s f A B = selectionConditional s (f ∩ A) B :=
   will_eq_selectionConditional s h
 
+/-! ### Contexts
+
+At a context the modal parameter of *will* is the set of historical alternatives of the
+context's world at its time (§3, §5.1). -/
+
+section Contexts
+
+variable {T : Type*} [Preorder T] {history : HistoricalAlternatives W T} {t : T}
+
+/-- At a context *will A* is true exactly when `A` is, the collapse (18). -/
+theorem mem_will_history_iff (hp : HistoricalProperties history) :
+    w ∈ will s (history (w, t)) A ↔ w ∈ A :=
+  mem_will_of_mem s ((hp.equivalence t).refl w)
+
+/-- Every candidate world of a context has the same historical alternatives, so the modal
+parameter of *will*, and with it the content of *will A*, is fixed even when it is indeterminate
+which context an utterance takes place in (§3). -/
+theorem will_history_eq (hp : HistoricalProperties history) {v : W} (hv : v ∈ history (w, t)) :
+    will s (history (v, t)) = will s (history (w, t)) := by
+  rw [hp.history_eq_of_mem hv]
+
+end Contexts
+
 /-! ### Cognitive role -/
 
 /-- Under a credence concentrated on the modal parameter, the content of *will A* has the
-credence of `A`. -/
+credence of `A` (§8.1). -/
 theorem measure_will [MeasurableSpace W] (μ : Measure W) (h : μ fᶜ = 0) :
-    μ (will s f A) = μ A :=
-  measure_congr <| Filter.eventuallyEqSet_iff.2 <| by
-    filter_upwards [(h : ∀ᵐ w ∂μ, w ∈ f)] with w hw using mem_will_of_mem s hw
+    μ (will s f A) = μ A := by
+  rw [← measure_inter_conull h, will_inter_self, measure_inter_conull h]
+
+/-! ### Universal *will*
+
+The modal analyses the paper argues against make *will* necessity over the best open worlds,
+the `necessity f g` of [kratzer-1981] with the open worlds as modal base, such as the most likely
+open worlds of [kaufmann-2005-truth]. They differ in the ordering source `g` (§2.4, (14)). -/
+
+/-- On a parameter whose best worlds hold an `A`-world and a non-`A`-world, universal *will*
+verifies neither *will A* nor *will not A*, so its scope with negation matters (§2.4). -/
+theorem not_necessity_or_necessity_compl {f g : Background W} {v v' : W}
+    (hv : v ∈ bestWorlds f g w) (hv' : v' ∈ bestWorlds f g w) (hA : v ∈ A) (hA' : v' ∉ A) :
+    ¬ (necessity f g (· ∈ A) w ∨ necessity f g (· ∈ Aᶜ) w) := by
+  rintro (h | h)
+  exacts [hA' (h v' hv'), h v hv hA]
+
+/-- A credence certain that the best worlds hold a non-`A`-world gives universal *will A*
+credence 0, whatever the ordering source (§2.4). -/
+theorem measure_necessity_eq_zero [MeasurableSpace W] (μ : Measure W) {f g : Background W}
+    (h : ∀ᵐ w ∂μ, ¬ bestWorlds f g w ⊆ A) : μ {w | necessity f g (· ∈ A) w} = 0 :=
+  measure_eq_zero_iff_ae_notMem.2 <| h.mono fun _ hw hn ↦ hw hn
+
+/-! ### Two-dimensional content
+
+Uncertainty about the selection function joins uncertainty about the world when contents are
+sets of pairs of a world and a selection function (§8.2). -/
+
+/-- The 2D content of a sentence at a modal parameter is the set of pairs of a world and a
+selection function at which the sentence is true. -/
+def content2D (φ : SelectionFunction W → Set W → Set W) (f : Set W) :
+    Set (W × SelectionFunction W) :=
+  {p | p.1 ∈ φ p.2 f}
+
+@[simp] theorem mem_content2D {φ : SelectionFunction W → Set W → Set W}
+    {p : W × SelectionFunction W} : p ∈ content2D φ f ↔ p.1 ∈ φ p.2 f :=
+  Iff.rfl
 
 end General
 
 /-! ### The Sports Fan model -/
 
-/-- The three worlds of the Sports Fan scenario (§2.3) are those in which Cynthia wears a Warriors
-cap, a Giants cap, or no cap. -/
+/-- The three worlds of the Sports Fan scenario (§2.3), in which Cynthia wears a Warriors cap, a
+Giants cap, or no cap. -/
 inductive W where
   | cw | cg | cn
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Fintype
 
-/-- The historical alternatives contain every cap choice, nothing being settled at the time of
-utterance. -/
-def histAlt : Set W := {.cw, .cg, .cn}
+/-- Cynthia's cap choice is the one matter of particular fact, dated tomorrow at time `1`, so two
+worlds are historical alternatives up to a time when they agree on it or it is not yet dated. -/
+def history : HistoricalAlternatives W ℕ := ofDatedFacts (fun _ ↦ 1) (· = ·)
+
+theorem historicalProperties_history : HistoricalProperties history :=
+  historicalProperties_ofDatedFacts _ _
+
+/-- Today, at time `0`, nothing is settled, and every world is a historical alternative to every
+other. -/
+@[simp] theorem history_today (w : W) : history (w, 0) = Set.univ := by
+  ext
+  simp [history, ofDatedFacts]
 
 /-- The proposition that Cynthia wears a Warriors cap. -/
 def warriorsCap : Set W := {.cw}
 
-instance : DecidablePred (· ∈ warriorsCap) := fun w ↦ decEq w .cw
-
 /-- The proposition that Cynthia wears some cap, Warriors or Giants. -/
 def wearsCap : Set W := {.cw, .cg}
 
-instance : DecidablePred (· ∈ wearsCap) := fun w ↦
-  inferInstanceAs (Decidable (w = .cw ∨ w ∈ ({.cg} : Set W)))
+/-- Whatever the selection function, *Cynthia will wear a Warriors cap* is true at the context
+whose world is the Warriors-cap world and false at the one whose world is the Giants-cap world,
+so while the future is open its truth value is indeterminate (§3, §6). -/
+theorem will_warriorsCap_indeterminate (s : SelectionFunction W) :
+    .cw ∈ will s (history (.cw, 0)) warriorsCap ∧ .cg ∉ will s (history (.cg, 0)) warriorsCap := by
+  rw [mem_will_history_iff s historicalProperties_history,
+    mem_will_history_iff s historicalProperties_history]
+  simp [warriorsCap]
 
-/-- The selection map returns `w` when `w ∈ A`, and otherwise the first world of `A` in the order
-cw, cg, cn. -/
-noncomputable def selFn (w : W) (A : Set W) : W :=
-  open Classical in
-  if w ∈ A then w else
-  if (W.cw : W) ∈ A then .cw else
-  if (W.cg : W) ∈ A then .cg else .cn
-
-theorem selFn_inclusion (w : W) (A : Set W) (hA : A.Nonempty) : selFn w A ∈ A := by
-  obtain ⟨x, hx⟩ := hA
-  unfold selFn
-  split_ifs <;> first | assumption | cases x <;> simp_all
-
-theorem selFn_centering (w : W) (A : Set W) (hw : w ∈ A) : selFn w A = w := ite_eq_left hw
-
-/-- Cynthia's selection function is `selFn`. -/
-noncomputable def cynthiaSel : SelectionFunction W where
-  sel := selFn
-  inclusion := selFn_inclusion
-  centering := selFn_centering
-
-/-- *Cynthia will wear a Warriors cap* is true at the Warriors-cap world. -/
-theorem cynthia_will_warriorsCap : W.cw ∈ will cynthiaSel histAlt warriorsCap :=
-  (mem_will_of_mem cynthiaSel (by simp [histAlt])).2 rfl
-
-/-- *Will A* does not valid₂-entail `A`: at the Warriors-cap world, with the no-cap world as the
-only historical alternative, *Cynthia will wear no cap* is true and its prejacent false. -/
+/-- *Will A* does not valid₂-entail `A`. At the Warriors-cap world, with the no-cap world as the
+only modal parameter, *Cynthia will wear no cap* is true and its prejacent false. -/
 theorem not_valid2_materialImp_will :
     ¬ Valid2 fun s f ↦ materialImp (will s f {W.cn}) {W.cn} := fun h ↦ by
-  have := Set.eq_univ_iff_forall.1 (h cynthiaSel {.cn}) .cw
-    (cynthiaSel.inclusion _ _ (Set.singleton_nonempty _))
-  simp at this
+  obtain ⟨s, hs⟩ := SelectionFunction.exists_sel_eq (w := W.cw) (Set.mem_singleton W.cn) (by simp)
+  have := Set.eq_univ_iff_forall.1 (h s {.cn}) .cw
+  simp [mem_materialImp, hs] at this
 
 instance : MeasurableSpace W := ⊤
 
-instance : MeasurableSingletonClass W := ⟨fun _ ↦ trivial⟩
+instance : DiscreteMeasurableSpace W := ⟨fun _ ↦ trivial⟩
 
 /-- The agent's credence is uniform, each cap choice getting 1/3. -/
 noncomputable def cynthiaCredence : Measure W := uniformOn Set.univ
 
-/-- The agent's credence is concentrated on the historical alternatives. -/
-theorem cynthiaCredence_histAlt_compl : cynthiaCredence histAltᶜ = 0 := by
-  have : histAltᶜ = (∅ : Set W) := by ext w; cases w <;> simp [histAlt]
-  rw [this, measure_empty]
-
-private theorem cynthiaCredence_coe (S : Finset W) : cynthiaCredence.real S = S.card / 3 := by
-  rw [cynthiaCredence, uniformOn_univ_real_coe_finset, show Fintype.card W = 3 from rfl,
+private theorem cynthiaCredence_real (S : Set W) : cynthiaCredence.real S = S.ncard / 3 := by
+  rw [cynthiaCredence, uniformOn_univ_real_apply, show Fintype.card W = 3 from rfl,
     Nat.cast_ofNat]
 
-/-- The credence in *Cynthia will wear a Warriors cap* is the credence 1/3 of its prejacent. -/
-theorem cynthia_credence_one_third :
-    cynthiaCredence.real (will cynthiaSel histAlt warriorsCap) = 1 / 3 := by
-  rw [measureReal_def, measure_will cynthiaSel cynthiaCredence cynthiaCredence_histAlt_compl,
-    ← measureReal_def, show warriorsCap = ↑({.cw} : Finset W) by simp [warriorsCap],
-    cynthiaCredence_coe]
+/-- Whatever the selection function and the world of the context, *Cynthia will wear a Warriors
+cap* has credence 1/3, that of its prejacent (§8.1). -/
+theorem credence_will_warriorsCap (s : SelectionFunction W) (w : W) :
+    cynthiaCredence.real (will s (history (w, 0)) warriorsCap) = 1 / 3 := by
+  rw [measureReal_def, measure_will s cynthiaCredence (f := history (w, 0)) (by simp),
+    ← measureReal_def, cynthiaCredence_real, warriorsCap, Set.ncard_singleton]
   norm_num
 
-/-- On the universal reading, *will A* is true when `A` holds at every historical alternative
-(§2.1, §2.3), the strict necessity over the historical alternatives. It is false throughout an
-open future, so *Cynthia will wear a Warriors cap* has credence 0. -/
-theorem universal_will_credence_zero :
-    cynthiaCredence.real (strictImp (fun _ : W ↦ histAlt) Set.univ warriorsCap) = 0 := by
-  have : strictImp (fun _ : W ↦ histAlt) Set.univ warriorsCap = ∅ :=
-    Set.eq_empty_of_forall_notMem fun _ h ↦ by
-      simpa [warriorsCap] using h ⟨(show W.cg ∈ histAlt by simp [histAlt]), trivial⟩
-  rw [this, measureReal_empty]
+/-- The historical modal base, whose one premise at a world is to be a historical alternative to
+it today. -/
+def histBase : Background W := fun w ↦ {(· ∈ history (w, 0))}
 
-/-- The universal reading of *if Cynthia wears a cap, she will wear a Warriors cap* refutes
-Conditional Excluded Middle, since the restricted parameter holds a Warriors-cap world and a
-Giants-cap world. -/
-theorem universal_willIf_cem_fails :
-    W.cw ∉ strictImp (fun _ ↦ histAlt) wearsCap warriorsCap ∧
-      W.cw ∉ strictImp (fun _ ↦ histAlt) wearsCap warriorsCapᶜ :=
-  not_mem_ofDomain_and_compl (v := .cw) (v' := .cg)
-    ⟨by simp [histAlt], by simp [wearsCap]⟩ ⟨by simp [histAlt], by simp [wearsCap]⟩
+@[simp] theorem accessibleWorlds_histBase (w : W) : histBase.accessibleWorlds w = Set.univ := by
+  ext
+  simp [histBase]
+
+/-- On the universal reading over the historical modal base, *Cynthia will wear a Warriors cap*
+has credence 0 (§2.3). -/
+theorem credence_necessity_warriorsCap :
+    cynthiaCredence {w | necessity histBase ⊥ (· ∈ warriorsCap) w} = 0 :=
+  measure_necessity_eq_zero _ <| .of_forall fun _ h ↦ by
+    simpa [warriorsCap] using h (show W.cg ∈ bestWorlds histBase ⊥ _ by simp)
+
+/-- On the universal reading *will not* and *not will* come apart, since at every world *Cynthia
+will wear a Warriors cap* and *Cynthia will not wear a Warriors cap* are both false (§2.4). -/
+theorem not_necessity_warriorsCap_or_compl (w : W) :
+    ¬ (necessity histBase ⊥ (· ∈ warriorsCap) w ∨ necessity histBase ⊥ (· ∈ warriorsCapᶜ) w) :=
+  not_necessity_or_necessity_compl (v := .cw) (v' := .cg) (by simp) (by simp)
     (by simp [warriorsCap]) (by simp [warriorsCap])
+
+/-- The universal reading of *if Cynthia wears a cap, she will wear a Warriors cap* is the
+restrictor conditional, and it refutes Conditional Excluded Middle, since the restricted base
+holds both cap worlds. -/
+theorem not_conditionalNecessity_wearsCap_or_compl (w : W) :
+    ¬ (Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCap) w ∨
+      Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCapᶜ) w) :=
+  not_necessity_or_necessity_compl (v := .cw) (v' := .cg)
+    (by simp [Background.restrict, histBase, wearsCap])
+    (by simp [Background.restrict, histBase, wearsCap]) (by simp [warriorsCap])
+    (by simp [warriorsCap])
 
 /-! ### The cap-conditional
 
 The cap-conditional is (31) of §8.2. -/
 
-/-- Under Cynthia's selection function, *if Cynthia wears a cap, she will wear a Warriors cap* is
-true at the Warriors-cap world and the no-cap world. -/
-theorem willIf_wearsCap_warriorsCap :
-    willIf cynthiaSel histAlt wearsCap warriorsCap = {.cw, .cn} := by
-  ext w
-  cases w <;> simp [willIf, cynthiaSel, selFn, histAlt, wearsCap, warriorsCap]
+/-- Under any selection function, *if Cynthia wears a cap, she will wear a Warriors cap* is true
+at the Warriors-cap world, false at the Giants-cap world, and true at the no-cap world exactly
+when that world selects the Warriors-cap world (footnote 32). -/
+theorem mem_willIf_wearsCap_warriorsCap (s : SelectionFunction W) (w v : W) :
+    v ∈ willIf s (history (w, 0)) wearsCap warriorsCap ↔
+      v = .cw ∨ v = .cn ∧ s.sel .cn wearsCap = .cw := by
+  rw [willIf, history_today, Set.univ_inter]
+  cases v
+  · simp [s.centering _ _ (show W.cw ∈ wearsCap by simp [wearsCap]), warriorsCap]
+  · simp [s.centering _ _ (show W.cg ∈ wearsCap by simp [wearsCap]), warriorsCap]
+  · simp [warriorsCap]
 
-/-- The content of the cap-conditional has credence 2/3, the value footnote 32 derives when the
-no-cap world selects the Warriors-cap world. -/
-theorem cap_conditional_credence :
-    cynthiaCredence.real (willIf cynthiaSel histAlt wearsCap warriorsCap) = 2 / 3 := by
-  rw [willIf_wearsCap_warriorsCap, show ({.cw, .cn} : Set W) = ↑({.cw, .cn} : Finset W) by simp,
-    cynthiaCredence_coe]
-  norm_num
+/-- The content of the cap-conditional has credence 2/3 when the no-cap world selects the
+Warriors-cap world and 1/3 otherwise (footnote 32). -/
+theorem credence_willIf_wearsCap (s : SelectionFunction W) (w : W) :
+    cynthiaCredence.real (willIf s (history (w, 0)) wearsCap warriorsCap) =
+      if s.sel .cn wearsCap = .cw then 2 / 3 else 1 / 3 := by
+  split_ifs with h
+  · rw [show willIf s (history (w, 0)) wearsCap warriorsCap = {.cw, .cn} by
+      ext; rw [mem_willIf_wearsCap_warriorsCap]; simp [h], cynthiaCredence_real,
+      Set.ncard_pair (by decide)]
+    norm_num
+  · rw [show willIf s (history (w, 0)) wearsCap warriorsCap = {.cw} by
+      ext; rw [mem_willIf_wearsCap_warriorsCap]; simp [h], cynthiaCredence_real,
+      Set.ncard_singleton]
+    norm_num
 
 /-- The probability of a Warriors cap conditional on some cap is 1/2. -/
-theorem cap_warriors_credence_one_half :
-    cynthiaCredence.real wearsCap ≠ 0 ∧ cynthiaCredence[|wearsCap].real warriorsCap = 1 / 2 := by
-  have hwears : cynthiaCredence.real wearsCap = 2 / 3 := by
-    rw [show wearsCap = ↑({.cw, .cg} : Finset W) by simp [wearsCap], cynthiaCredence_coe]
-    norm_num
-  have hinter : cynthiaCredence.real (wearsCap ∩ warriorsCap) = 1 / 3 := by
-    rw [show wearsCap ∩ warriorsCap = ↑({.cw} : Finset W) by
-      ext w; cases w <;> simp [wearsCap, warriorsCap], cynthiaCredence_coe]
-    norm_num
-  refine ⟨by rw [hwears]; norm_num, ?_⟩
-  rw [cond_real_apply cynthiaCredence MeasurableSet.of_discrete, hwears, hinter]
+theorem cond_wearsCap_warriorsCap : cynthiaCredence[|wearsCap].real warriorsCap = 1 / 2 := by
+  rw [cynthiaCredence, uniformOn_univ_cond, uniformOn_real_apply,
+    show wearsCap ∩ warriorsCap = {.cw} by ext v; cases v <;> simp [wearsCap, warriorsCap],
+    Set.ncard_singleton, wearsCap, Set.ncard_pair (by decide)]
   norm_num
 
-/-- No proposition over the Sports Fan model has probability 1/2, since every probability is a
-multiple of 1/3. -/
+/-- No proposition over the Sports Fan model has credence 1/2, since every credence is a multiple
+of 1/3, so no reading of the cap-conditional has its conditional probability. It is an instance
+of the point of [hajek-1989] that conditional probabilities outnumber unconditional ones. -/
 theorem no_unconditional_one_half (S : Set W) : cynthiaCredence.real S ≠ 1 / 2 := by
-  rw [← (Set.toFinite S).coe_toFinset, cynthiaCredence_coe]
+  rw [cynthiaCredence_real]
   intro h
-  field_simp at h
-  have h' : (Set.toFinite S).toFinset.card * 2 = 3 := by exact_mod_cast h
+  have : S.ncard * 2 = 3 := by field_simp at h; exact_mod_cast h
   omega
+
+/-! ### The two-dimensional cap-conditional
+
+Which world the no-cap world selects for the cap antecedent is open, so the agent is uncertain
+between two selection functions, `sw` selecting the Warriors-cap world and `sv` the Giants-cap
+world (§8.2). -/
+
+/-- A selection function selecting the cap world `v` for the no-cap world and the cap
+antecedent. -/
+noncomputable def candidate (v : W) (hv : v ∈ wearsCap) : SelectionFunction W :=
+  (SelectionFunction.exists_sel_eq hv (show W.cn ∉ wearsCap by simp [wearsCap])).choose
+
+theorem candidate_sel {v : W} (hv : v ∈ wearsCap) : (candidate v hv).sel .cn wearsCap = v :=
+  (SelectionFunction.exists_sel_eq hv (show W.cn ∉ wearsCap by simp [wearsCap])).choose_spec
+
+/-- The candidate selecting the Warriors-cap world. -/
+noncomputable def sw : SelectionFunction W := candidate .cw (by simp [wearsCap])
+
+/-- The candidate selecting the Giants-cap world. -/
+noncomputable def sv : SelectionFunction W := candidate .cg (by simp [wearsCap])
+
+theorem sw_ne_sv : sw ≠ sv := fun h ↦
+  absurd (congrArg (·.sel .cn wearsCap) h) (by simp [sw, sv, candidate_sel])
+
+/-- The six pairs of a world and a candidate selection function. -/
+def pairs : Set (W × SelectionFunction W) := Set.univ ×ˢ {sw, sv}
+
+instance : MeasurableSpace (SelectionFunction W) := ⊤
+
+instance : DiscreteMeasurableSpace (SelectionFunction W) := ⟨fun _ ↦ trivial⟩
+
+/-- The uniform credence over the six pairs gives the 2D content of the cap-conditional its
+conditional probability 1/2 (§8.2). -/
+theorem credence2D_willIf_wearsCap (w : W) :
+    (uniformOn pairs).real
+        (content2D (fun s f ↦ willIf s f wearsCap warriorsCap) (history (w, 0))) =
+      cynthiaCredence[|wearsCap].real warriorsCap := by
+  have hsel : sw.sel .cn wearsCap = .cw ∧ sv.sel .cn wearsCap = .cg :=
+    ⟨candidate_sel _, candidate_sel _⟩
+  have hinter : pairs ∩ content2D (fun s f ↦ willIf s f wearsCap warriorsCap) (history (w, 0)) =
+      {(.cw, sw), (.cw, sv), (.cn, sw)} := by
+    ext ⟨v, s⟩
+    simp only [pairs, Set.mem_inter_iff, Set.mem_prod, Set.mem_univ, true_and, mem_content2D,
+      mem_willIf_wearsCap_warriorsCap, Set.mem_insert_iff, Set.mem_singleton_iff, Prod.mk.injEq]
+    constructor
+    · rintro ⟨rfl | rfl, rfl | ⟨rfl, h⟩⟩ <;> simp_all
+    · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) <;> simp [hsel]
+  rw [uniformOn_real_apply_of_finite (s := pairs)
+      (Set.finite_univ.prod ((Set.finite_singleton sv).insert sw)),
+    hinter, Set.ncard_insert_of_notMem (by simp [sw_ne_sv]), Set.ncard_insert_of_notMem (by simp),
+    Set.ncard_singleton, pairs, Set.ncard_prod, Set.ncard_univ, Set.ncard_pair sw_ne_sv,
+    cond_wearsCap_warriorsCap, Nat.card_eq_fintype_card, show Fintype.card W = 3 from rfl]
+  norm_num
 
 end CarianiSantorio2018
