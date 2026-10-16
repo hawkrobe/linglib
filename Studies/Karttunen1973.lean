@@ -9,7 +9,7 @@ public import Mathlib.Order.Filter.Basic
 /-!
 # Karttunen (1973): Presuppositions of Compound Sentences
 
-This file formalizes [karttunen-1973], which asks how the presuppositions of a compound sentence
+This file formalizes Karttunen's paper, which asks how the presuppositions of a compound sentence
 are determined by those of its parts. The cumulative hypothesis of Langendoen and Savin adds them
 up; Karttunen keeps it for the *holes*, factives, aspectuals and implicatives, which let every
 presupposition of their complement through, and sets against them the *plugs*, verbs of saying,
@@ -20,7 +20,7 @@ presuppose what `A` presupposes and each presupposition of `B` that `A` does not
 
 A sentence is a computation of the Writer monad whose value is its assertion and whose log lists
 its presuppositions, each filtered on its own (`Presupposing`), the side-effect carrier of
-[giorgolo-asudeh-2012]. The monad's own composition concatenates the logs, and is the cumulative
+Giorgolo and Asudeh. The monad's own composition concatenates the logs, and is the cumulative
 hypothesis (`conj_false`); a hole maps the value and keeps the log, internal negation among them;
 a plug keeps the value and drops the log; and a filter drops from the second clause's log what the
 first clause filters. The connectives take the filtering relation as a parameter: entailment in
@@ -42,13 +42,13 @@ plugs.
 
 ## Implementation notes
 
-* A sentence's presuppositions are a list, the finite list of basic presuppositions of
-  [karttunen-1974-presupposition]'s (5); only membership matters.
+* A sentence's presuppositions are a list, the finite list of basic presuppositions of (5) in
+  Karttunen's 1974 paper; only membership matters.
 * The entailment a filter uses is from the truth of the first clause, which requires its
   presuppositions as well as its assertion (`Presupposing.truth`), so a presupposition that both
   clauses share is filtered as the second clause's and kept as the first's, as fn. 10 says. A
-  filter thus reads the first clause's log, which no composition in the monad can
-  ([giorgolo-asudeh-2012]).
+  filter thus reads the first clause's log, which no composition in Giorgolo and Asudeh's monad
+  can.
 * The per-presupposition rule is tested on *Jack has children, and Jack's children regret that
   baldness is hereditary*, built from the presuppositions of (1a) and (1b): it filters the first
   presupposition of the second conjunct and keeps the second, where a single conjoined
@@ -71,7 +71,7 @@ plugs.
 * [karttunen-1973]
 * [karttunen-1974-presupposition]
 * [giorgolo-asudeh-2012]
-* [bochvar-1937]
+* [bochvar-1938]
 * [hintikka-1962]
 -/
 
@@ -87,16 +87,17 @@ variable {W : Type u}
 
 /-! ### Sentences -/
 
-/-- The Writer monad of presuppositions: a computation yields a value and logs the propositions over
-`W` it presupposes. A sentence, as the projection rules see it, is a computation whose value is its
-assertion. -/
+/-- The Writer monad of presuppositions, in which a computation yields a value and logs the
+propositions over `W` it presupposes. A sentence, as the projection rules see it, is a computation
+whose value is its assertion. -/
 abbrev Presupposing (W : Type u) := Writer (List (Set W))
 
 namespace Presupposing
 
 variable (A : Presupposing W (Set W)) {C : Set W}
 
-/-- Where the sentence is true: its presuppositions and its assertion hold. -/
+/-- The worlds where the sentence is true, those where its presuppositions and its assertion
+hold. -/
 def truth : Set W := A.val ∩ {w | ∀ C ∈ A.log, w ∈ C}
 
 /-- Internal negation is an involution. -/
@@ -120,20 +121,20 @@ section Filters
 variable (φ : Set W → Set W → Prop) (A B : Presupposing W (Set W)) {C : Set W}
 
 open Classical in
-/-- (13): `if A then B` presupposes what `A` presupposes and each presupposition of `B` that `A`
-does not filter, by the relation `φ` from the truth of `A`. -/
+/-- Under rule (13), `if A then B` presupposes what `A` presupposes and each presupposition of `B`
+that `A` does not filter, by the relation `φ` from the truth of `A`. -/
 noncomputable def cond : Presupposing W (Set W) :=
   Writer.mk (A.valᶜ ∪ B.val) (A.log ++ B.log.filter fun C ↦ ¬ φ A.truth C)
 
 open Classical in
-/-- (17): `A and B` presupposes what `A` presupposes and each presupposition of `B` that `A` does
-not filter. -/
+/-- Under rule (17), `A and B` presupposes what `A` presupposes and each presupposition of `B`
+that `A` does not filter. -/
 noncomputable def conj : Presupposing W (Set W) :=
   Writer.mk (A.val ∩ B.val) (A.log ++ B.log.filter fun C ↦ ¬ φ A.truth C)
 
 open Classical in
-/-- (24): `A or B` presupposes what `A` presupposes and each presupposition of `B` that the
-negation of `A` does not filter. -/
+/-- Under rule (24), `A or B` presupposes what `A` presupposes and each presupposition of `B` that
+the negation of `A` does not filter. -/
 noncomputable def disj : Presupposing W (Set W) :=
   Writer.mk (A.val ∪ B.val) (A.log ++ B.log.filter fun C ↦ ¬ φ ((·ᶜ) <$> A).truth C)
 
@@ -190,7 +191,7 @@ section Harman
 variable {S : Type*} {neg : S → S} {cond conj disj : S → S → S} {π : S → Set (Set W)}
   {f : S → Set W → Prop}
 
-/-- Harman's derivation of (17) from (13) (§8): if internal negation keeps presuppositions, and
+/-- In Harman's derivation of (17) from (13) (§8), if internal negation keeps presuppositions, and
 `A ⊃ B` shares them with `¬A ∨ B` and `A & B` with `¬(¬A ∨ ¬B)`, then a conditional that filters
 a presupposition of `B` when `A` filters it makes the conjunction filter it the same way. -/
 theorem harman_conj (hneg : ∀ A, π (neg A) = π A)
@@ -200,7 +201,7 @@ theorem harman_conj (hneg : ∀ A, π (neg A) = π A)
     π (conj A B) = π A ∪ {C ∈ π B | ¬ f A C} := by
   rw [hconj, hneg, ← hcond, h13, hneg]
 
-/-- The rule for disjunction (24) by the same reasoning (§8): with `A ∨ B` sharing its
+/-- The same reasoning (§8) derives the rule for disjunction (24). With `A ∨ B` sharing its
 presuppositions with `¬A ⊃ B`, the disjunction filters a presupposition of `B` when `¬A` filters
 it. -/
 theorem harman_disj (hneg : ∀ A, π (neg A) = π A)
@@ -231,8 +232,8 @@ private theorem truth_hasChildren : hasChildren.truth = {w | w.1} := by
 private theorem truth_compl_hasChildren : ((·ᶜ) <$> hasChildren).truth = {w | w.1 = false} := by
   ext w; simp [Presupposing.truth, hasChildren]
 
-/-- (16a) presupposes nothing and (16b) that Jack has children: conjunction is not commutative on
-presuppositions. -/
+/-- (16a) presupposes nothing and (16b) that Jack has children, so conjunction is not commutative
+on presuppositions. -/
 theorem log_conj_16 :
     (conj (· ⊆ ·) hasChildren allBald).log = [] ∧
       (conj (· ⊆ ·) allBald hasChildren).log = [{w | w.1}] := by
@@ -253,7 +254,7 @@ theorem log_disj_22 :
   · have hC : C = {w | w.1} := by simpa [allBald] using hC
     exact h (by rw [Presupposing.compl_map_compl, truth_hasChildren, hC])
 
-/-- The rule for conditionals does not carry over to disjunction (§8): (11a) presupposes nothing,
+/-- The rule for conditionals does not carry over to disjunction (§8). (11a) presupposes nothing,
 but `Either Jack has children or all of Jack's children are bald` presupposes that he has
 children, since his having none does not entail it. -/
 theorem log_cond_11a_disj :
@@ -268,7 +269,7 @@ theorem log_cond_11a_disj :
     rw [truth_compl_hasChildren] at h
     exact absurd (h (show (false, false) ∈ {w : Bool × Bool | w.1 = false} from rfl)) (by simp)
 
-/-- `Jack has children, and Jack's children regret that baldness is hereditary`: the second
+/-- In `Jack has children, and Jack's children regret that baldness is hereditary`, the second
 conjunct presupposes that Jack has children and that baldness is hereditary, and the rule (17)
 filters the first, which the first conjunct entails, and keeps the second. -/
 theorem mem_log_conj_regret :
@@ -283,9 +284,9 @@ theorem mem_log_conj_regret :
 
 /-! ### Assumed facts (§9) -/
 
-/-- (24b′) and (17b′): given the assumed facts `F`, the premise `P` filters `C` when some set of
-them, possibly empty, entails `C` together with `P`, though it does not entail the negation of `P`
-nor `C` alone (Murphy's restrictions). -/
+/-- Under (24b′) and (17b′), given the assumed facts `F`, the premise `P` filters `C` when some set
+of them, possibly empty, entails `C` together with `P`, though it does not entail the negation of
+`P` nor `C` alone (Murphy's restrictions). -/
 def Filters (F : Set (Set W)) (P C : Set W) : Prop :=
   ∃ X ⊆ F, ⋂₀ X ∩ P ⊆ C ∧ ¬ ⋂₀ X ⊆ Pᶜ ∧ ¬ ⋂₀ X ⊆ C
 
@@ -300,8 +301,8 @@ theorem not_filters_univ (F : Set (Set W)) (P : Set W) : ¬ Filters F P Set.univ
   fun ⟨_, _, _, _, h⟩ ↦ h (Set.subset_univ _)
 
 /-- Over the propositions a deductively closed context accepts, Murphy's first restriction blocks
-nothing: a context that entails `¬P` accepts `P ⊃ C` as well, which is consistent with `P` where
-`C` is and entails `C` with it. -/
+nothing, since a context that entails `¬P` accepts `P ⊃ C` as well, which is consistent with `P`
+where `C` is and entails `C` with it. -/
 theorem filters_sets_of_compl_mem {G : Filter W} {P C : Set W} (hP : Pᶜ ∈ G)
     (hPC : (P ∩ C).Nonempty) (hC : ¬ Pᶜ ⊆ C) : Filters G.sets P C := by
   refine ⟨{Pᶜ ∪ C}, Set.singleton_subset_iff.2 (G.mem_of_superset hP Set.subset_union_left), ?_,
@@ -339,12 +340,12 @@ private theorem mem_log_geraldine {φ : Set Geraldine → Set Geraldine → Prop
     simp [Presupposing.truth]
   simp [geraldine, this]
 
-/-- Absolutely, (25) presupposes (27): (26) does not entail it. -/
+/-- Absolutely, (25) presupposes (27), since (26) does not entail it. -/
 theorem worn_mem_log_geraldine : worn ∈ (geraldine (· ⊆ ·)).log :=
   mem_log_geraldine.2 fun h ↦ absurd (h (show Geraldine.mormonUnworn ∈ mormon by simp)) (by simp)
 
-/-- Given (28) `All Mormons have worn holy underwear`, (25) does not presuppose (27): (26) and
-(28) together entail it. -/
+/-- Given (28) `All Mormons have worn holy underwear`, (25) does not presuppose (27), since (26)
+and (28) together entail it. -/
 theorem worn_not_mem_log_geraldine_28 :
     worn ∉ (geraldine (Filters {{Geraldine.mormonUnworn}ᶜ})).log := by
   rw [mem_log_geraldine, not_not]
@@ -370,7 +371,7 @@ theorem worn_mem_log_geraldine_contrary :
     exact absurd (h (show Geraldine.mormonUnworn ∈ ({.mormonWorn}ᶜ ∩ mormon : Set Geraldine) by
       simp)) (by simp)
 
-/-- Murphy's first restriction: an assumed fact that contradicts the negated first disjunct,
+/-- By Murphy's first restriction, an assumed fact that contradicts the negated first disjunct,
 `Geraldine is not a Mormon`, filters nothing, so (25) presupposes (27) relative to it. -/
 theorem worn_mem_log_geraldine_notMormon : worn ∈ (geraldine (Filters {mormonᶜ})).log := by
   rw [mem_log_geraldine]
@@ -399,7 +400,7 @@ private theorem filters_32 : Filters {{w : Bool × Bool | w.2}} {w | w.1} {w | w
   · exact absurd (h (show (true, true) ∈ {w : Bool × Bool | w.2} from rfl)) (by simp)
   · exact absurd (h (show (false, true) ∈ {w : Bool × Bool | w.2} from rfl)) (by simp)
 
-/-- (30a–c) with no assumed facts: each presupposes (31), which (33) alone does not entail. -/
+/-- With no assumed facts, each of (30a–c) presupposes (31), which (33) alone does not entail. -/
 theorem mem_log_30 :
     {w | w.1 ∧ w.2} ∈ (cond (Filters ∅) appoint regret).log ∧
       {w | w.1 ∧ w.2} ∈ (conj (Filters ∅) appoint regret).log ∧
@@ -409,8 +410,8 @@ theorem mem_log_30 :
   simp only [mem_log_cond, mem_log_conj, mem_log_disj, truth_appoint, truth_compl_compl_appoint]
   exact ⟨.inr ⟨by simp [regret], h⟩, .inr ⟨by simp [regret], h⟩, .inr ⟨by simp [regret], h⟩⟩
 
-/-- (30a–c): given (32), none of the conditional, the conjunction and the disjunction presupposes
-(31), since (32) and (33) together entail it. -/
+/-- Given (32), none of the conditional, the conjunction and the disjunction of (30a–c)
+presupposes (31), since (32) and (33) together entail it. -/
 theorem not_mem_log_30 :
     {w | w.1 ∧ w.2} ∉ (cond (Filters {{w | w.2}}) appoint regret).log ∧
       {w | w.1 ∧ w.2} ∉ (conj (Filters {{w | w.2}}) appoint regret).log ∧
@@ -424,15 +425,15 @@ def johnDumb : Presupposing Bool (Set Bool) := Writer.mk {true} []
 /-- `He knows that if it rains, it rains`, which presupposes a tautology (fn. 13). -/
 def knowsTautology : Presupposing Bool (Set Bool) := Writer.mk Set.univ [Set.univ]
 
-/-- Fn. 13: the original condition (24b) filters the tautology presupposed by the second disjunct
-of `Either John is dumb, or he knows that if it rains, it rains`. -/
+/-- The original condition (24b) filters the tautology presupposed by the second disjunct of
+`Either John is dumb, or he knows that if it rains, it rains` (fn. 13). -/
 theorem univ_not_mem_log_disj : Set.univ ∉ (disj (· ⊆ ·) johnDumb knowsTautology).log := by
   intro h
   rcases (mem_log_disj _ _ _).1 h with h | ⟨-, h⟩
   · simp [johnDumb] at h
   · exact h (Set.subset_univ _)
 
-/-- Fn. 13's tautology, which the revised condition (24b′) keeps: with Murphy's restrictions no
+/-- The revised condition (24b′) keeps fn. 13's tautology, since with Murphy's restrictions no
 set of assumed facts filters it. -/
 theorem univ_mem_log_disj_filters (F : Set (Set Bool)) :
     Set.univ ∈ (disj (Filters F) johnDumb knowsTautology).log :=
@@ -444,12 +445,12 @@ section TruthFunctional
 
 variable (p q : PartialProp W) (w : W)
 
-/-- Bochvar's internal conjunction (34a) ([bochvar-1937]), the substrate's `PartialProp.and`, is
-a hole: it is defined only where both conjuncts are. -/
+/-- Bochvar's internal conjunction (34a) ([bochvar-1938]), the substrate's `PartialProp.and`, is
+a hole, defined only where both conjuncts are. -/
 theorem presup_and : (p.and q).presup w ↔ p.presup w ∧ q.presup w := Iff.rfl
 
 /-- Bochvar's external conjunction (34d), the conjunction of the conjuncts' truth, `t(A) & t(B)`
-(fn. 18), is a plug: it is defined everywhere. -/
+(fn. 18), is a plug, defined everywhere. -/
 theorem presup_and_truthOp : (p.truthOp.and q.truthOp).presup w := ⟨trivial, trivial⟩
 
 /-- Łukasiewicz's conjunction (34b), the substrate's `PartialProp.andStrong`, is defined wherever a
@@ -476,16 +477,16 @@ abbrev hasKing : Set France := {.parisKing, .marseilleKing}
 /-- `The king of France is bald`, which presupposes a king; the assertion is idealized. -/
 def kingBald : PartialProp France := ⟨(· ∈ hasKing), fun _ ↦ True⟩
 
-/-- (35) at the actual world, with no king: Łukasiewicz's conjunction leaves (35a) `Paris is the
-capital of France, and the king of France is bald` undefined but makes (35b), with `Marseilles`,
-false. -/
+/-- At the actual world of (35), with no king, Łukasiewicz's conjunction leaves (35a) `Paris is
+the capital of France, and the king of France is bald` undefined but makes (35b), with
+`Marseilles`, false. -/
 theorem presup_andStrong_35 :
     ¬ ((PartialProp.ofProp (· ∈ capitalParis)).andStrong kingBald).presup .parisNoKing ∧
       ((PartialProp.ofProp (· ∉ capitalParis)).andStrong kingBald).presup .parisNoKing := by
   refine ⟨?_, presup_andStrong_of_false _ _ _ trivial (by simp [PartialProp.ofProp])⟩
   simp [PartialProp.andStrong, PartialProp.ofProp, kingBald]
 
-/-- (35): by (17) both sentences presuppose a king, since neither capital entails one. -/
+/-- By (17) both sentences of (35) presuppose a king, since neither capital entails one. -/
 theorem hasKing_mem_log_conj_35 :
     {w | w ∈ hasKing} ∈ (conj (· ⊆ ·) (.ofPartialProp (.ofProp (· ∈ capitalParis)))
         (.ofPartialProp kingBald)).log ∧
@@ -501,7 +502,7 @@ theorem hasKing_mem_log_conj_35 :
       simp [Presupposing.truth, Presupposing.ofPartialProp, PartialProp.ofProp])) (by simp)
 
 /-- The substrate's middle-Kleene `PartialProp.andFilter` is a truth table too, and shares
-Łukasiewicz's verdict on (35b): it filters the presupposition of the second conjunct where the
+Łukasiewicz's verdict on (35b), filtering the presupposition of the second conjunct where the
 first is false. -/
 theorem andFilter_35b :
     ((PartialProp.ofProp (· ∉ capitalParis)).andFilter kingBald).presup .parisNoKing := by
@@ -516,23 +517,23 @@ section Attitudes
 
 variable (φ : Set W → Set W → Prop) (att att₁ att₂ : Set W → Set W) (a c : Set W)
 
-/-- (37) `Bill believes that Fred has been beating Zelda, and furthermore, Bill believes that Fred
-has stopped beating Zelda`, and (42) with *hope* as the second attitude, with holes: the compound
-presupposes that Fred has been beating Zelda unless believing it filters it, which under entailment
-takes a veridical belief. -/
+/-- With hole attitudes, the compound (37) `Bill believes that Fred has been beating Zelda, and
+furthermore, Bill believes that Fred has stopped beating Zelda`, or (42) with *hope* as the second
+attitude, presupposes that Fred has been beating Zelda unless believing it filters it, which under
+entailment takes a veridical belief. -/
 theorem mem_log_conj_hole :
     a ∈ (conj φ (att₁ <$> Writer.mk a []) (att₂ <$> Writer.mk c [a])).log ↔ ¬ φ (att₁ a) a := by
   simp [Presupposing.truth]
 
-/-- (39) `Bill believes that Fred has been beating Zelda, and furthermore, that Fred has stopped
-beating her`: the filter applies inside the complement, and nothing is presupposed whether the verb
+/-- In (39) `Bill believes that Fred has been beating Zelda, and furthermore, that Fred has stopped
+beating her`, the filter applies inside the complement, and nothing is presupposed whether the verb
 is a hole or a plug. -/
 theorem log_map_conj : (att <$> conj (· ⊆ ·) (Writer.mk a []) (Writer.mk c [a])).log = [] := by
   simp [conj, Presupposing.truth]
 
-/-- (38): with belief as necessity over the believer's doxastic alternatives, (37) and (39)
-assert the same ([hintikka-1962]), so a hole *believe* is saved on (37) only by the
-equivalence. -/
+/-- With belief as necessity over the believer's doxastic alternatives, (37) and (39) assert
+the same ([hintikka-1962]), which is the equivalence (38), so a hole *believe* is saved on (37)
+only by the equivalence. -/
 theorem val_map_box_conj (R : SetRel W W) (A B : Presupposing W (Set W)) :
     (R.core <$> conj φ A B).val = (conj φ (R.core <$> A) (R.core <$> B)).val :=
   SetRel.core_inter R _ _

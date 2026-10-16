@@ -13,7 +13,7 @@ presupposition.
 ## Main declarations
 
 * `PartialProp W`: partial propositions, with `presup, assertion : W → Prop`.
-* `PartialProp.eval`: evaluation into `W → Trivalent`, with `eval_eq_true_iff`,
+* `PartialProp.eval`: evaluation into `W → SignType`, with `eval_eq_true_iff`,
   `eval_eq_false_iff` and `eval_eq_indet_iff`; `eval_surjective` and `eval_eq_eval_iff` show
   that `PartialProp` presents the trivalent propositions by total representatives.
 
@@ -68,15 +68,15 @@ def ofProp (p : W → Prop) : PartialProp W where
 
 /-- The canonical total representative of a trivalent proposition is defined exactly where
 `p` is and asserts that `p` is true there. It is a section of `PartialProp.eval`. -/
-def ofTrivalent (p : W → Trivalent) : PartialProp W where
-  presup := fun w => p w ≠ .indet
-  assertion := fun w => p w = .true
+def ofTrivalent (p : W → SignType) : PartialProp W where
+  presup := fun w => p w ≠ 0
+  assertion := fun w => p w = 1
 
-@[simp] theorem ofTrivalent_presup (p : W → Trivalent) (w : W) :
-    (ofTrivalent p).presup w ↔ p w ≠ .indet := Iff.rfl
+@[simp] theorem ofTrivalent_presup (p : W → SignType) (w : W) :
+    (ofTrivalent p).presup w ↔ p w ≠ 0 := Iff.rfl
 
-@[simp] theorem ofTrivalent_assertion (p : W → Trivalent) (w : W) :
-    (ofTrivalent p).assertion w ↔ p w = .true := Iff.rfl
+@[simp] theorem ofTrivalent_assertion (p : W → SignType) (w : W) :
+    (ofTrivalent p).assertion w ↔ p w = 1 := Iff.rfl
 
 /-! ### Satisfaction relations -/
 
@@ -113,45 +113,39 @@ def undefined : PartialProp W where
 /-- Evaluate a presuppositional proposition to three-valued truth.
     Noncomputable because it decides Prop-valued presupposition and
     assertion via classical logic. -/
-noncomputable def eval (p : PartialProp W) : W → Trivalent := fun w =>
+noncomputable def eval (p : PartialProp W) : W → SignType := fun w =>
   if p.presup w then
-    if p.assertion w then .true else .false
-  else .indet
+    if p.assertion w then 1 else -1
+  else 0
 
 /-! The simp-normal interface to `eval`: consumers reason through the three value
 characterizations rather than the classical `if`-nest. -/
 
 @[simp] theorem eval_eq_true_iff (p : PartialProp W) (w : W) :
-    p.eval w = .true ↔ p.presup w ∧ p.assertion w := by
+    p.eval w = 1 ↔ p.presup w ∧ p.assertion w := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;> simp [eval, hp, ha]
 
 @[simp] theorem eval_eq_false_iff (p : PartialProp W) (w : W) :
-    p.eval w = .false ↔ p.presup w ∧ ¬p.assertion w := by
+    p.eval w = -1 ↔ p.presup w ∧ ¬p.assertion w := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;> simp [eval, hp, ha]
 
 @[simp] theorem eval_eq_indet_iff (p : PartialProp W) (w : W) :
-    p.eval w = .indet ↔ ¬p.presup w := by
+    p.eval w = 0 ↔ ¬p.presup w := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;> simp [eval, hp, ha]
-
-/-- Evaluation is defined iff the presupposition holds. -/
-@[simp] theorem isDefined_eval (p : PartialProp W) (w : W) :
-    (p.eval w).isDefined ↔ p.presup w := by
-  by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
-    simp [eval, hp, ha, Trivalent.isDefined]
 
 /-! ### Round-trip: trivalent propositions ↔ `PartialProp` -/
 
-/-- The `(W → Trivalent) → PartialProp → (W → Trivalent)` round-trip is the identity. -/
-theorem eval_ofTrivalent (p : W → Trivalent) : (ofTrivalent p).eval = p := by
+/-- The `(W → SignType) → PartialProp → (W → SignType)` round-trip is the identity. -/
+theorem eval_ofTrivalent (p : W → SignType) : (ofTrivalent p).eval = p := by
   funext w; cases h : p w <;> simp [eval, ofTrivalent, h]
 
 /-- `eval` is surjective — every trivalent proposition has a total representative,
     `ofTrivalent` being a section. -/
-theorem eval_surjective : Function.Surjective (eval : PartialProp W → W → Trivalent) :=
+theorem eval_surjective : Function.Surjective (eval : PartialProp W → W → SignType) :=
   fun p ↦ ⟨ofTrivalent p, eval_ofTrivalent p⟩
 
 /-- `eval` identifies exactly agreement on definedness and, where defined, on assertion.
-    `PartialProp` is the *total-representative* presentation of `W → Trivalent`, carrying
+    `PartialProp` is the *total-representative* presentation of `W → SignType`, carrying
     (linguistically inert) assertion values outside the presupposition that `eval`
     forgets — so `ofTrivalent ∘ eval` is not the identity, only `eval ∘ ofTrivalent` is
     (`eval_ofTrivalent`). -/
@@ -162,7 +156,7 @@ theorem eval_eq_eval_iff (p q : PartialProp W) :
   · intro h w
     have hw : p.eval w = q.eval w := congrFun h w
     have hpq : p.presup w ↔ q.presup w := by
-      rw [← isDefined_eval p w, ← isDefined_eval q w, hw]
+      rw [← not_iff_not, ← eval_eq_indet_iff p w, ← eval_eq_indet_iff q w, hw]
     refine ⟨hpq, fun hp ↦ ⟨fun ha ↦ ?_, fun ha ↦ ?_⟩⟩
     · exact ((eval_eq_true_iff q w).mp
         (hw.symm.trans ((eval_eq_true_iff p w).mpr ⟨hp, ha⟩))).2

@@ -148,7 +148,7 @@ variable {α : Type*} (S : α → Prop) (φ : α → PartialProp W) (w : W)
 theorem eval_forallPartial :
     (forallPartial S φ).eval w =
       Trivalent.forallWeak fun x : {x // S x} => (φ x.1).eval w := by
-  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_ <;>
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>
     simp [forallPartial, Subtype.forall, Subtype.exists, not_forall, Classical.not_imp,
       forall_and]
 
@@ -156,9 +156,9 @@ theorem eval_forallPartial :
 theorem eval_existsPartialUniv :
     (existsPartialUniv S φ).eval w =
       Trivalent.existsWeak fun x : {x // S x} => (φ x.1).eval w := by
-  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
   · simp [existsPartialUniv, Subtype.exists, not_forall, Classical.not_imp]
-  · simp only [eval_eq_true_iff, Trivalent.existsWeak_eq_true_iff, ne_eq, eval_eq_indet_iff,
+  · simp only [eval_eq_true_iff, Trivalent.existsWeak_eq_one_iff, ne_eq, eval_eq_indet_iff,
       not_not, Subtype.forall, Subtype.exists, exists_prop, existsPartialUniv]
     exact and_congr_right fun hp => exists_congr fun x =>
       and_congr_right fun hx => (and_iff_right (hp x hx)).symm
@@ -167,8 +167,8 @@ theorem eval_existsPartialUniv :
 existential. -/
 theorem eval_negExistsPartial :
     (negExistsPartial S φ).eval w =
-      Trivalent.neg (Trivalent.existsWeak fun x : {x // S x} => (φ x.1).eval w) := by
-  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_ <;>
+      -Trivalent.existsWeak (fun x : {x // S x} => (φ x.1).eval w) := by
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>
     simp [negExistsPartial, Subtype.forall, Subtype.exists, not_forall, Classical.not_imp,
       not_exists, not_and, forall_and]
 
@@ -176,9 +176,9 @@ theorem eval_negExistsPartial :
 theorem eval_existsPartialExist :
     (existsPartialExist S φ).eval w =
       Trivalent.existsHaug fun x : {x // S x} => (φ x.1).eval w := by
-  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
   · simp [existsPartialExist, Subtype.forall, not_exists, not_and]
-  · simp only [eval_eq_true_iff, Trivalent.existsHaug_eq_true_iff, Subtype.exists,
+  · simp only [eval_eq_true_iff, Trivalent.existsHaug_eq_one_iff, Subtype.exists,
       exists_prop, existsPartialExist, holds]
     exact ⟨fun ⟨_, h⟩ => h, fun ⟨x, hx, hp, ha⟩ => ⟨⟨x, hx, hp⟩, x, hx, hp, ha⟩⟩
 
@@ -186,8 +186,8 @@ theorem eval_existsPartialExist :
 theorem eval_existsPartialStrong :
     (existsPartialStrong S φ).eval w =
       Trivalent.existsStrong fun x : {x // S x} => (φ x.1).eval w := by
-  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
-  · rw [eval_eq_indet_iff, Trivalent.existsStrong_eq_indet_iff]
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
+  · rw [eval_eq_indet_iff, Trivalent.existsStrong_eq_zero_iff]
     constructor
     · intro hnp
       have h1 : ¬ ∃ x, S x ∧ (φ x).holds w := fun h => hnp (.inl h)
@@ -201,7 +201,7 @@ theorem eval_existsPartialStrong :
     · rintro ⟨hnt, ⟨x, hx⟩, hind⟩ (⟨y, hy, hh⟩ | hall)
       · exact hnt ⟨y, hy⟩ ((eval_eq_true_iff _ _).2 hh)
       · exact (eval_eq_indet_iff _ _).1 hind (hall x hx).1
-  · simp only [eval_eq_true_iff, Trivalent.existsStrong_eq_true_iff, Subtype.exists,
+  · simp only [eval_eq_true_iff, Trivalent.existsStrong_eq_one_iff, Subtype.exists,
       exists_prop, existsPartialStrong, holds]
     exact ⟨fun ⟨_, h⟩ => h, fun ⟨x, hx, hh⟩ => ⟨.inl ⟨x, hx, hh⟩, x, hx, hh⟩⟩
 

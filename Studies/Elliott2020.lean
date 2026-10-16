@@ -38,9 +38,9 @@ makes a disjunction look externally static until one disjunct is ruled out.
 
 ## Implementation notes
 
-* A sentence denotes a `StateSet D Trivalent`, a map from assignments to sets of truth value and
+* A sentence denotes a `StateSet D SignType`, a map from assignments to sets of truth value and
   output pairs (Def. A.1), as in the paper's appendix; there is no syntax. Its relation at
-  `.true` (`StateT.rel`) is the positive extension as a DPL relation. Atoms are monadic, and
+  `1` (`StateT.rel`) is the positive extension as a DPL relation. Atoms are monadic, and
   a constant atom is `pure` of its truth value.
 * The existentials of Defs. 2.3 and 3.3 are one definition with a parameter; the destructive one
   overwrites a valued variable, and the guarded one is undefined there.
@@ -76,7 +76,7 @@ attribute [local instance] Set.monad
 
 namespace Elliott2020
 
-open Trivalent (ofProp presuppose meetWeak)
+open SignType (ofProp presuppose meetWeak)
 open DynamicSemantics
 open scoped SetRel
 
@@ -92,11 +92,11 @@ abbrev StateSet (D : Type) := StateT (PartialAssign ℕ D) Set
 open Classical in
 /-- The value of `P n` at `g`, `∂ (n ∈ dom g) ∧ gₙ ∈ P`, with Beaver's ∂ and a weak Kleene
 conjunction (Def. 2.2 and fn. 10). -/
-noncomputable def valueAt (P : Set D) (g : PartialAssign ℕ D) (n : ℕ) : Trivalent :=
+noncomputable def valueAt (P : Set D) (g : PartialAssign ℕ D) (n : ℕ) : SignType :=
   meetWeak (presuppose (ofProp (g n ≠ ⊥))) (ofProp (∃ d : D, g n = ↑d ∧ d ∈ P))
 
 @[simp] theorem valueAt_of_eq_bot (P : Set D) {g : PartialAssign ℕ D} {n : ℕ} (h : g n = ⊥) :
-    valueAt P g n = .indet := by
+    valueAt P g n = 0 := by
   simp [valueAt, h]
 
 open Classical in
@@ -105,20 +105,20 @@ open Classical in
   simp [valueAt, h]
 
 /-- A monadic predicate of a variable (Def. 2.2). -/
-noncomputable def atom (P : Set D) (n : ℕ) : StateSet D Trivalent := fun g ↦ {(valueAt P g n, g)}
+noncomputable def atom (P : Set D) (n : ℕ) : StateSet D SignType := fun g ↦ {(valueAt P g n, g)}
 
 open Classical in
 /-- A monadic predicate of an individual constant (Def. 2.2), whose value does not depend on the
 assignment. -/
-noncomputable def atomConst (P : Set D) (c : D) : StateSet D Trivalent :=
+noncomputable def atomConst (P : Set D) (c : D) : StateSet D SignType :=
   pure (ofProp (c ∈ P))
 
 @[simp] theorem mem_atom {P : Set D} {n : ℕ} {g : PartialAssign ℕ D}
-    {p : Trivalent × PartialAssign ℕ D} : p ∈ atom P n g ↔ p = (valueAt P g n, g) := Iff.rfl
+    {p : SignType × PartialAssign ℕ D} : p ∈ atom P n g ↔ p = (valueAt P g n, g) := Iff.rfl
 
 open Classical in
 @[simp] theorem mem_atomConst {P : Set D} {c : D} {g : PartialAssign ℕ D}
-    {p : Trivalent × PartialAssign ℕ D} : p ∈ atomConst P c g ↔ p = (ofProp (c ∈ P), g) :=
+    {p : SignType × PartialAssign ℕ D} : p ∈ atomConst P c g ↔ p = (ofProp (c ∈ P), g) :=
   Iff.rfl
 
 /-! ### Connectives
@@ -127,79 +127,79 @@ Each connective lifts its strong Kleene truth function, passing the output of it
 to its second (Def. 2.9); in the applicative a binary one is `η R ⊛ m ⊛ n` (Def. A.3). -/
 
 /-- Negation lifts strong Kleene negation (Def. 2.4). -/
-def neg (m : StateSet D Trivalent) : StateSet D Trivalent := Trivalent.neg <$> m
+def neg (m : StateSet D SignType) : StateSet D SignType := Neg.neg <$> m
 
 /-- Conjunction lifts strong Kleene conjunction (Def. 2.10). -/
-def conj (m n : StateSet D Trivalent) : StateSet D Trivalent := (· ⊓ ·) <$> m <*> n
+def conj (m n : StateSet D SignType) : StateSet D SignType := (· ⊓ ·) <$> m <*> n
 
 /-- Disjunction lifts strong Kleene disjunction (Def. 2.11). -/
-def disj (m n : StateSet D Trivalent) : StateSet D Trivalent := (· ⊔ ·) <$> m <*> n
+def disj (m n : StateSet D SignType) : StateSet D SignType := (· ⊔ ·) <$> m <*> n
 
 /-- Material implication lifts strong Kleene `¬t ∨ u` (§2.9). -/
-def imp (m n : StateSet D Trivalent) : StateSet D Trivalent := (fun t u ↦ t.neg ⊔ u) <$> m <*> n
+def imp (m n : StateSet D SignType) : StateSet D SignType := (fun t u ↦ -t ⊔ u) <$> m <*> n
 
 /-- The applicative laws of Def. A.4 are those of `StateT` over `Set`. -/
 example : LawfulApplicative (StateSet D) := inferInstance
 
 /-! ### Extensions and truth -/
 
-/-- `extension v m g` is the set of outputs of `m` at `g` tagged `v`; at `.true`, `.false` and
-`.indet` these are the positive, negative and maybe extensions (Def. 2.5). -/
-def extension (v : Trivalent) (m : StateSet D Trivalent) (g : PartialAssign ℕ D) :
+/-- `extension v m g` is the set of outputs of `m` at `g` tagged `v`; at `1`, `(-1)` and
+`0` these are the positive, negative and maybe extensions (Def. 2.5). -/
+def extension (v : SignType) (m : StateSet D SignType) (g : PartialAssign ℕ D) :
     Set (PartialAssign ℕ D) :=
   {h | (v, h) ∈ m g}
 
-@[simp] theorem mem_extension {v : Trivalent} {m : StateSet D Trivalent} {g h : PartialAssign ℕ D} :
+@[simp] theorem mem_extension {v : SignType} {m : StateSet D SignType} {g h : PartialAssign ℕ D} :
     h ∈ extension v m g ↔ (v, h) ∈ m g := Iff.rfl
 
 /-- `m` is true at `g` when its positive extension is nonempty (Def. 2.6). -/
-def IsTrue (m : StateSet D Trivalent) (g : PartialAssign ℕ D) : Prop :=
-  (extension .true m g).Nonempty
+def IsTrue (m : StateSet D SignType) (g : PartialAssign ℕ D) : Prop :=
+  (extension 1 m g).Nonempty
 
 /-- `m` is false at `g` when it has no positive output and some negative one (Def. 2.6). -/
-def IsFalse (m : StateSet D Trivalent) (g : PartialAssign ℕ D) : Prop :=
-  extension .true m g = ∅ ∧ (extension .false m g).Nonempty
+def IsFalse (m : StateSet D SignType) (g : PartialAssign ℕ D) : Prop :=
+  extension 1 m g = ∅ ∧ (extension (-1) m g).Nonempty
 
 /-- `m` is maybe at `g` when all its outputs are tagged maybe (Def. 2.6). -/
-def IsIndet (m : StateSet D Trivalent) (g : PartialAssign ℕ D) : Prop :=
-  extension .true m g = ∅ ∧ extension .false m g = ∅ ∧ (extension .indet m g).Nonempty
+def IsIndet (m : StateSet D SignType) (g : PartialAssign ℕ D) : Prop :=
+  extension 1 m g = ∅ ∧ extension (-1) m g = ∅ ∧ (extension 0 m g).Nonempty
 
 /-- `m` is true or false at `g` when it has a positive or a negative output, the condition
 Stalnaker's bridge puts on every point of a state (Def. 3.2). -/
-theorem isTrue_or_isFalse_iff {m : StateSet D Trivalent} {g : PartialAssign ℕ D} :
+theorem isTrue_or_isFalse_iff {m : StateSet D SignType} {g : PartialAssign ℕ D} :
     IsTrue m g ∨ IsFalse m g ↔
-      (extension .true m g).Nonempty ∨ (extension .false m g).Nonempty := by
-  rcases (extension .true m g).eq_empty_or_nonempty with h | h <;> simp [IsTrue, IsFalse, h]
+      (extension 1 m g).Nonempty ∨ (extension (-1) m g).Nonempty := by
+  rcases (extension 1 m g).eq_empty_or_nonempty with h | h <;> simp [IsTrue, IsFalse, h]
 
-theorem rel_neg (v : Trivalent) (m : StateSet D Trivalent) :
-    StateT.rel (neg m) v = StateT.rel m v.neg := by
+theorem rel_neg (v : SignType) (m : StateSet D SignType) :
+    StateT.rel (neg m) v = StateT.rel m (-v) := by
   rw [neg, StateT.rel_map]
   ext p
   simp only [Set.mem_iUnion, exists_prop]
-  exact ⟨fun ⟨t, ht, hp⟩ ↦ by rwa [← ht, Trivalent.neg_neg],
-    fun hp ↦ ⟨v.neg, Trivalent.neg_neg v, hp⟩⟩
+  exact ⟨fun ⟨t, ht, hp⟩ ↦ by rwa [← ht, neg_neg],
+    fun hp ↦ ⟨-v, neg_neg v, hp⟩⟩
 
 /-- Negation permutes the extensions by strong Kleene negation (Obs. 2.1). -/
-theorem extension_neg (v : Trivalent) (m : StateSet D Trivalent) (g : PartialAssign ℕ D) :
-    extension v (neg m) g = extension v.neg m g :=
+theorem extension_neg (v : SignType) (m : StateSet D SignType) (g : PartialAssign ℕ D) :
+    extension v (neg m) g = extension (-v) m g :=
   Set.ext fun h ↦ Set.ext_iff.1 (rel_neg v m) (g, h)
 
 /-- Double negation is the identity (Obs. 2.2). -/
-theorem neg_neg (m : StateSet D Trivalent) : neg (neg m) = m := by
-  simp only [neg, Functor.map_map, Trivalent.neg_neg, id_map']
+theorem neg_neg (m : StateSet D SignType) : neg (neg m) = m := by
+  simp only [neg, Functor.map_map, _root_.neg_neg, id_map']
 
 /-- de Morgan's law for disjunction (Obs. 2.6). -/
-theorem neg_disj (m n : StateSet D Trivalent) : neg (disj m n) = conj (neg m) (neg n) := by
+theorem neg_disj (m n : StateSet D SignType) : neg (disj m n) = conj (neg m) (neg n) := by
   simp only [neg, disj, conj, map_seq, seq_map_assoc, Functor.map_map,
-    Function.comp_def, Trivalent.neg_sup]
+    Function.comp_def, SignType.neg_sup]
 
 /-- de Morgan's law for conjunction (Obs. 2.6). -/
-theorem neg_conj (m n : StateSet D Trivalent) : neg (conj m n) = disj (neg m) (neg n) := by
+theorem neg_conj (m n : StateSet D SignType) : neg (conj m n) = disj (neg m) (neg n) := by
   simp only [neg, disj, conj, map_seq, seq_map_assoc, Functor.map_map,
-    Function.comp_def, Trivalent.neg_inf]
+    Function.comp_def, SignType.neg_inf]
 
 /-- Material implication is the disjunction of the negated antecedent with the consequent. -/
-theorem imp_eq_disj_neg (m n : StateSet D Trivalent) : imp m n = disj (neg m) n := by
+theorem imp_eq_disj_neg (m n : StateSet D SignType) : imp m n = disj (neg m) n := by
   simp only [imp, disj, neg, Functor.map_map]
 
 /-! ### Existential quantification -/
@@ -207,9 +207,9 @@ theorem imp_eq_disj_neg (m n : StateSet D Trivalent) : imp m n = disj (neg m) n 
 /-- A DPL existential either overwrites a valued variable, as in Def. 2.3, or is undefined there,
 as in Def. 3.3. -/
 inductive Existential where
-  /-- Def. 2.3: reset the variable whether or not it is valued. -/
+  /-- The existential of Def. 2.3 resets the variable whether or not it is valued. -/
   | destructive
-  /-- Def. 3.3: reset only an unvalued variable. -/
+  /-- The existential of Def. 3.3 resets only an unvalued variable. -/
   | guarded
   deriving DecidableEq, Repr
 
@@ -226,41 +226,41 @@ def Existential.Fresh : Existential → PartialAssign ℕ D → ℕ → Prop
 
 /-- The DPL existential takes the union of `m` over the resets of `n` when it may reset `n`, and is
 maybe otherwise (Defs. 2.3 and 3.3). -/
-def dplExists (e : Existential) (n : ℕ) (m : StateSet D Trivalent) : StateSet D Trivalent := fun g ↦
-  {p | e.Fresh g n ∧ ∃ x, p ∈ m (g.update n x)} ∪ {p | ¬ e.Fresh g n ∧ p = (.indet, g)}
+def dplExists (e : Existential) (n : ℕ) (m : StateSet D SignType) : StateSet D SignType := fun g ↦
+  {p | e.Fresh g n ∧ ∃ x, p ∈ m (g.update n x)} ∪ {p | ¬ e.Fresh g n ∧ p = (0, g)}
 
 /-- Positive closure keeps the true outputs, or else returns the input tagged false or maybe
 (Def. 2.7). -/
-def positiveClosure (m : StateSet D Trivalent) : StateSet D Trivalent := fun g ↦
-  {p | p.1 = .true ∧ p ∈ m g} ∪ {p | IsFalse m g ∧ p = (.false, g)} ∪
-    {p | IsIndet m g ∧ p = (.indet, g)}
+def positiveClosure (m : StateSet D SignType) : StateSet D SignType := fun g ↦
+  {p | p.1 = 1 ∧ p ∈ m g} ∪ {p | IsFalse m g ∧ p = (-1, g)} ∪
+    {p | IsIndet m g ∧ p = (0, g)}
 
 /-- Existential quantification, the positive closure of the DPL existential (Def. 2.8). -/
-def exists_ (e : Existential) (n : ℕ) (m : StateSet D Trivalent) : StateSet D Trivalent :=
+def exists_ (e : Existential) (n : ℕ) (m : StateSet D SignType) : StateSet D SignType :=
   positiveClosure (dplExists e n m)
 
-@[simp] theorem mem_dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
-    {g : PartialAssign ℕ D} {p : Trivalent × PartialAssign ℕ D} :
+@[simp] theorem mem_dplExists {e : Existential} {n : ℕ} {m : StateSet D SignType}
+    {g : PartialAssign ℕ D} {p : SignType × PartialAssign ℕ D} :
     p ∈ dplExists e n m g ↔
-      (e.Fresh g n ∧ ∃ x, p ∈ m (g.update n x)) ∨ (¬ e.Fresh g n ∧ p = (.indet, g)) :=
+      (e.Fresh g n ∧ ∃ x, p ∈ m (g.update n x)) ∨ (¬ e.Fresh g n ∧ p = (0, g)) :=
   Iff.rfl
 
-@[simp] theorem mem_positiveClosure {m : StateSet D Trivalent} {g : PartialAssign ℕ D}
-    {p : Trivalent × PartialAssign ℕ D} :
-    p ∈ positiveClosure m g ↔ (p.1 = .true ∧ p ∈ m g) ∨ (IsFalse m g ∧ p = (.false, g)) ∨
-      (IsIndet m g ∧ p = (.indet, g)) := by
+@[simp] theorem mem_positiveClosure {m : StateSet D SignType} {g : PartialAssign ℕ D}
+    {p : SignType × PartialAssign ℕ D} :
+    p ∈ positiveClosure m g ↔ (p.1 = 1 ∧ p ∈ m g) ∨ (IsFalse m g ∧ p = (-1, g)) ∨
+      (IsIndet m g ∧ p = (0, g)) := by
   simp only [positiveClosure, Set.mem_union, Set.mem_ofPred_eq, or_assoc]
 
 /-- Positive closure keeps the positive extension ((19a)). -/
-@[simp] theorem extension_true_positiveClosure (m : StateSet D Trivalent) (g : PartialAssign ℕ D) :
-    extension .true (positiveClosure m) g = extension .true m g := by
+@[simp] theorem extension_true_positiveClosure (m : StateSet D SignType) (g : PartialAssign ℕ D) :
+    extension 1 (positiveClosure m) g = extension 1 m g := by
   ext h
   simp only [mem_extension, mem_positiveClosure, true_and, Prod.mk.injEq]
   exact ⟨by rintro (h | ⟨-, ⟨⟩, -⟩ | ⟨-, ⟨⟩, -⟩); exact h, Or.inl⟩
 
 /-- The negative extension of a positive closure is the input, when `m` is false ((19b)). -/
-theorem extension_false_positiveClosure (m : StateSet D Trivalent) (g : PartialAssign ℕ D) :
-    extension .false (positiveClosure m) g = {h | IsFalse m g ∧ h = g} := by
+theorem extension_false_positiveClosure (m : StateSet D SignType) (g : PartialAssign ℕ D) :
+    extension (-1) (positiveClosure m) g = {h | IsFalse m g ∧ h = g} := by
   ext h
   simp only [mem_extension, mem_positiveClosure, Prod.mk.injEq, Set.mem_ofPred_eq]
   constructor
@@ -268,26 +268,26 @@ theorem extension_false_positiveClosure (m : StateSet D Trivalent) (g : PartialA
   · rintro ⟨hf, rfl⟩; exact Or.inr (Or.inl ⟨hf, by simp⟩)
 
 /-- The DPL existential and negation commute (Obs. 2.3). -/
-theorem dplExists_neg (e : Existential) (n : ℕ) (m : StateSet D Trivalent) :
+theorem dplExists_neg (e : Existential) (n : ℕ) (m : StateSet D SignType) :
     dplExists e n (neg m) = neg (dplExists e n m) := by
   funext g; ext ⟨v, h⟩
   simp only [mem_dplExists, neg, Set.mk_mem_stateT_map, Prod.mk.injEq]
   constructor
   · rintro (⟨hf, x, t, ht, rfl⟩ | ⟨hf, rfl, rfl⟩)
     · exact ⟨t, .inl ⟨hf, x, ht⟩, rfl⟩
-    · exact ⟨.indet, .inr ⟨hf, rfl, rfl⟩, rfl⟩
+    · exact ⟨0, .inr ⟨hf, rfl, rfl⟩, rfl⟩
   · rintro ⟨t, (⟨hf, x, ht⟩ | ⟨hf, rfl, rfl⟩), rfl⟩
     · exact .inl ⟨hf, x, t, ht, rfl⟩
     · exact .inr ⟨hf, rfl, rfl⟩
 
 /-- A guarded existential over a valued variable is maybe at the input. -/
-theorem exists_guarded_of_ne_bot {n : ℕ} {m : StateSet D Trivalent} {g : PartialAssign ℕ D}
-    (hg : g n ≠ ⊥) : exists_ .guarded n m g = {(.indet, g)} := by
-  have heps : dplExists .guarded n m g = {(.indet, g)} := by
+theorem exists_guarded_of_ne_bot {n : ℕ} {m : StateSet D SignType} {g : PartialAssign ℕ D}
+    (hg : g n ≠ ⊥) : exists_ .guarded n m g = {(0, g)} := by
+  have heps : dplExists .guarded n m g = {(0, g)} := by
     ext p; simp [mem_dplExists, hg]
-  have hT : extension .true (dplExists .guarded n m) g = ∅ := by ext h; simp [heps]
-  have hF : extension .false (dplExists .guarded n m) g = ∅ := by ext h; simp [heps]
-  have hI : (extension .indet (dplExists .guarded n m) g).Nonempty := ⟨g, by simp [heps]⟩
+  have hT : extension 1 (dplExists .guarded n m) g = ∅ := by ext h; simp [heps]
+  have hF : extension (-1) (dplExists .guarded n m) g = ∅ := by ext h; simp [heps]
+  have hI : (extension 0 (dplExists .guarded n m) g).Nonempty := ⟨g, by simp [heps]⟩
   ext ⟨v, h⟩
   rw [exists_, mem_positiveClosure, heps]
   simp only [IsFalse, IsIndet, hT, hF, hI, Set.not_nonempty_empty, Set.mem_singleton_iff,
@@ -304,7 +304,7 @@ existential decomposes, a random reset bound to its scope, but positive closure 
 def reset (n : ℕ) : StateSet D PUnit := fun g ↦ {q | ∃ x, q = ((), g.update n x)}
 
 /-- The destructive DPL existential is a random reset bound to its scope. -/
-theorem dplExists_destructive (n : ℕ) (m : StateSet D Trivalent) :
+theorem dplExists_destructive (n : ℕ) (m : StateSet D SignType) :
     dplExists .destructive n m = reset n >>= fun _ ↦ m := by
   funext g
   ext p
@@ -318,62 +318,62 @@ theorem dplExists_destructive (n : ℕ) (m : StateSet D Trivalent) :
 /-- Positive closure is not a bind, since a bind treats each output separately while closure drops
 the false outputs exactly when a true one exists (App. A). -/
 theorem not_exists_bind_eq_positiveClosure :
-    ¬ ∃ k : Trivalent → StateSet D Trivalent, ∀ m, positiveClosure m = m >>= k := by
+    ¬ ∃ k : SignType → StateSet D SignType, ∀ m, positiveClosure m = m >>= k := by
   rintro ⟨k, hk⟩
-  have hk₀ : ((.false : Trivalent), (⊥ : PartialAssign ℕ D)) ∈ k .false ⊥ := by
-    have h := hk (pure .false)
-    have : ((.false : Trivalent), (⊥ : PartialAssign ℕ D)) ∈ positiveClosure (pure .false) ⊥ := by
+  have hk₀ : ((-1 : SignType), (⊥ : PartialAssign ℕ D)) ∈ k (-1) ⊥ := by
+    have h := hk (pure (-1))
+    have : ((-1 : SignType), (⊥ : PartialAssign ℕ D)) ∈ positiveClosure (pure (-1)) ⊥ := by
       rw [mem_positiveClosure]
       refine .inr (.inl ⟨⟨?_, ⊥, rfl⟩, rfl⟩)
       ext h
       simp [Set.mem_stateT_pure]
     rw [h] at this
     simpa using this
-  let both : StateSet D Trivalent := fun g ↦ {(.true, g), (.false, g)}
-  have hf : ((.false : Trivalent), (⊥ : PartialAssign ℕ D)) ∉ positiveClosure both ⊥ := by
+  let both : StateSet D SignType := fun g ↦ {(1, g), (-1, g)}
+  have hf : ((-1 : SignType), (⊥ : PartialAssign ℕ D)) ∉ positiveClosure both ⊥ := by
     simp [mem_positiveClosure, IsFalse, IsIndet, both, Set.eq_empty_iff_forall_notMem]
-  exact hf (hk both ▸ Set.mem_stateT_bind _ _ _ _ |>.2 ⟨(.false, ⊥), by simp [both], hk₀⟩)
+  exact hf (hk both ▸ Set.mem_stateT_bind _ _ _ _ |>.2 ⟨(-1, ⊥), by simp [both], hk₀⟩)
 
 /-! ### Positive extensions and DPL
 
-At `.true` the relation a sentence induces (`StateT.rel`) is its positive extension, a DPL
+At `1` the relation a sentence induces (`StateT.rel`) is its positive extension, a DPL
 relation between assignments. -/
 
 /-- The positive extension of a conjunction is the DPL composition of its conjuncts' ((26a)). -/
-theorem rel_true_conj (m n : StateSet D Trivalent) :
-    StateT.rel (conj m n) .true = StateT.rel m .true ○ StateT.rel n .true := by
+theorem rel_true_conj (m n : StateSet D SignType) :
+    StateT.rel (conj m n) 1 = StateT.rel m 1 ○ StateT.rel n 1 := by
   rw [conj, StateT.rel_map_seq]
   ext p
-  simp only [Set.mem_iUnion, exists_prop, Trivalent.inf_eq_true_iff]
+  simp only [Set.mem_iUnion, exists_prop, SignType.inf_eq_one_iff]
   exact ⟨fun ⟨_, _, ⟨rfl, rfl⟩, h⟩ ↦ h, fun h ↦ ⟨_, _, ⟨rfl, rfl⟩, h⟩⟩
 
 /-- The negative extension of a disjunction is the DPL composition of its disjuncts' ((32b)). -/
-theorem rel_false_disj (m n : StateSet D Trivalent) :
-    StateT.rel (disj m n) .false = StateT.rel m .false ○ StateT.rel n .false := by
+theorem rel_false_disj (m n : StateSet D SignType) :
+    StateT.rel (disj m n) (-1) = StateT.rel m (-1) ○ StateT.rel n (-1) := by
   rw [disj, StateT.rel_map_seq]
   ext p
-  simp only [Set.mem_iUnion, exists_prop, Trivalent.sup_eq_false_iff]
+  simp only [Set.mem_iUnion, exists_prop, SignType.sup_eq_neg_one_iff]
   exact ⟨fun ⟨_, _, ⟨rfl, rfl⟩, h⟩ ↦ h, fun h ↦ ⟨_, _, ⟨rfl, rfl⟩, h⟩⟩
 
 /-- A negated existential is a test, by positive closure ((22a)). -/
-theorem isTest_rel_true_neg_exists (e : Existential) (n : ℕ) (m : StateSet D Trivalent) :
-    Update.IsTest (StateT.rel (neg (exists_ e n m)) .true) := by
+theorem isTest_rel_true_neg_exists (e : Existential) (n : ℕ) (m : StateSet D SignType) :
+    Update.IsTest (StateT.rel (neg (exists_ e n m)) 1) := by
   rintro ⟨g, h⟩ hgh
-  rw [rel_neg, Trivalent.neg_true] at hgh
-  have : h ∈ extension .false (exists_ e n m) g := hgh
+  rw [rel_neg] at hgh
+  have : h ∈ extension (-1) (exists_ e n m) g := hgh
   rw [exists_, extension_false_positiveClosure] at this
   exact this.2.symm
 
 /-- A negated DPL existential is not a test, since it resets its variable to the individuals its
 scope is false of ((18)). -/
 theorem not_isTest_rel_true_neg_dplExists [Nonempty D] :
-    ¬ Update.IsTest (StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) .true) := by
+    ¬ Update.IsTest (StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) 1) := by
   obtain ⟨x⟩ := ‹Nonempty D›
   intro h
   have hmem : ((⊥ : PartialAssign ℕ D), (⊥ : PartialAssign ℕ D).update 1 x) ∈
-      StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) .true := by
-    rw [rel_neg, Trivalent.neg_true]
-    show (Trivalent.false, _) ∈ dplExists _ _ _ _
+      StateT.rel (neg (dplExists .destructive 1 (atom (∅ : Set D) 1))) 1 := by
+    rw [rel_neg]
+    show (-1, _) ∈ dplExists _ _ _ _
     simp only [mem_dplExists]
     exact .inl ⟨trivial, x, by simp⟩
   have h1 : (⊥ : PartialAssign ℕ D) = (⊥ : PartialAssign ℕ D).update 1 x := h hmem
@@ -383,52 +383,52 @@ theorem not_isTest_rel_true_neg_dplExists [Nonempty D] :
 
 /-- An output verifies `m ∨ n` when `m` is verified and `n` has any output from there, or `m` has
 any output from which `n` is verified ((32a)). -/
-theorem mem_extension_true_disj {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
-    i ∈ extension .true (disj m n) g ↔
-      (∃ h ∈ extension .true m g, ∃ u, (u, i) ∈ n h) ∨
-        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .true n h := by
+theorem mem_extension_true_disj {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
+    i ∈ extension 1 (disj m n) g ↔
+      (∃ h ∈ extension 1 m g, ∃ u, (u, i) ∈ n h) ∨
+        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension 1 n h := by
   simp only [mem_extension, disj, Set.mk_mem_stateT_map_seq]
-  grind [Trivalent.sup_eq_true_iff]
+  grind [SignType.sup_eq_one_iff]
 
 /-- An output falsifies `m ∨ n` when it falsifies `n` after an output falsifying `m` ((32b)). -/
-theorem mem_extension_false_disj {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
-    i ∈ extension .false (disj m n) g ↔ ∃ h ∈ extension .false m g, i ∈ extension .false n h := by
-  have : (g, i) ∈ StateT.rel (disj m n) .false ↔
-      (g, i) ∈ StateT.rel m .false ○ StateT.rel n .false := by
+theorem mem_extension_false_disj {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
+    i ∈ extension (-1) (disj m n) g ↔ ∃ h ∈ extension (-1) m g, i ∈ extension (-1) n h := by
+  have : (g, i) ∈ StateT.rel (disj m n) (-1) ↔
+      (g, i) ∈ StateT.rel m (-1) ○ StateT.rel n (-1) := by
     rw [rel_false_disj]
   simpa [SetRel.mem_comp] using this
 
 /-- An output verifies `m → n` when `m` is falsified and `n` has any output from there, or `m`
 has any output from which `n` is verified ((38a)). -/
-theorem mem_extension_true_imp {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
-    i ∈ extension .true (imp m n) g ↔
-      (∃ h ∈ extension .false m g, ∃ u, (u, i) ∈ n h) ∨
-        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .true n h := by
+theorem mem_extension_true_imp {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
+    i ∈ extension 1 (imp m n) g ↔
+      (∃ h ∈ extension (-1) m g, ∃ u, (u, i) ∈ n h) ∨
+        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension 1 n h := by
   simp only [mem_extension, imp, Set.mk_mem_stateT_map_seq]
-  grind [Trivalent.sup_eq_true_iff, Trivalent.neg_eq_true_iff]
+  grind [SignType.sup_eq_one_iff, neg_eq_iff_eq_neg]
 
 /-- An output falsifies `m ∧ n` when `m` is falsified and `n` has any output from there, or `m`
 has any output from which `n` is falsified ((26b)). -/
-theorem mem_extension_false_conj {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
-    i ∈ extension .false (conj m n) g ↔
-      (∃ h ∈ extension .false m g, ∃ u, (u, i) ∈ n h) ∨
-        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension .false n h := by
+theorem mem_extension_false_conj {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
+    i ∈ extension (-1) (conj m n) g ↔
+      (∃ h ∈ extension (-1) m g, ∃ u, (u, i) ∈ n h) ∨
+        ∃ t h, (t, h) ∈ m g ∧ i ∈ extension (-1) n h := by
   simp only [mem_extension, conj, Set.mk_mem_stateT_map_seq]
-  grind [Trivalent.inf_eq_false_iff]
+  grind [SignType.inf_eq_neg_one_iff]
 
 /-! ### Egli's theorem -/
 
 /-- A conjunction's positive extension, from `rel_true_conj`. -/
-theorem mem_extension_true_conj {m n : StateSet D Trivalent} {g i : PartialAssign ℕ D} :
-    i ∈ extension .true (conj m n) g ↔ ∃ h ∈ extension .true m g, i ∈ extension .true n h := by
-  have : (g, i) ∈ StateT.rel (conj m n) .true ↔
-      (g, i) ∈ StateT.rel m .true ○ StateT.rel n .true := by
+theorem mem_extension_true_conj {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
+    i ∈ extension 1 (conj m n) g ↔ ∃ h ∈ extension 1 m g, i ∈ extension 1 n h := by
+  have : (g, i) ∈ StateT.rel (conj m n) 1 ↔
+      (g, i) ∈ StateT.rel m 1 ○ StateT.rel n 1 := by
     rw [rel_true_conj]
   simpa [SetRel.mem_comp] using this
 
 /-- Egli's theorem for positive extensions, for either existential (Obs. 2.4). -/
-theorem egli (e : Existential) (n : ℕ) (m k : StateSet D Trivalent) (g : PartialAssign ℕ D) :
-    extension .true (exists_ e n (conj m k)) g = extension .true (conj (exists_ e n m) k) g := by
+theorem egli (e : Existential) (n : ℕ) (m k : StateSet D SignType) (g : PartialAssign ℕ D) :
+    extension 1 (exists_ e n (conj m k)) g = extension 1 (conj (exists_ e n m) k) g := by
   ext i
   rw [mem_extension_true_conj]
   simp only [exists_, extension_true_positiveClosure]
@@ -456,14 +456,14 @@ open Classical
 
 variable (W B U : Set D) {e : Existential} {n : ℕ} {g : PartialAssign ℕ D}
 
-theorem mem_atom_update (x : D) {v : Trivalent} {h : PartialAssign ℕ D} :
+theorem mem_atom_update (x : D) {v : SignType} {h : PartialAssign ℕ D} :
     (v, h) ∈ atom W n (g.update n x) ↔ v = ofProp (x ∈ W) ∧ h = g.update n x := by
   rw [mem_atom, valueAt_of_eq_coe W (PartialAssign.update_self n x g), Prod.mk.injEq]
 
 /-- The negation of an atom is the atom of the complement. -/
 theorem neg_atom (n : ℕ) : neg (atom W n) = atom Wᶜ n := by
   funext g
-  have key : (valueAt W g n).neg = valueAt Wᶜ g n := by
+  have key : -valueAt W g n = valueAt Wᶜ g n := by
     cases hg : g n with
     | bot => simp [valueAt_of_eq_bot _ hg]
     | coe d => by_cases hd : d ∈ W <;> simp [valueAt_of_eq_coe _ hg, hd]
@@ -474,37 +474,37 @@ theorem neg_atom (n : ℕ) : neg (atom W n) = atom Wᶜ n := by
 
 /-- The positive extension of `εₙ W n` consists of the resets of `n` to a `W` ((17a)). -/
 theorem extension_true_dplExists_atom (hf : e.Fresh g n) :
-    extension .true (dplExists e n (atom W n)) g = {h | ∃ x ∈ W, h = g.update n x} := by
+    extension 1 (dplExists e n (atom W n)) g = {h | ∃ x ∈ W, h = g.update n x} := by
   ext h
   simp only [mem_extension, mem_dplExists, hf, true_and, not_true_eq_false, false_and,
     or_false, mem_atom_update, Set.mem_ofPred_eq]
   constructor
-  · rintro ⟨x, hx, rfl⟩; exact ⟨x, Trivalent.ofProp_eq_true_iff.1 hx.symm, rfl⟩
+  · rintro ⟨x, hx, rfl⟩; exact ⟨x, SignType.ofProp_eq_one_iff.1 hx.symm, rfl⟩
   · rintro ⟨x, hx, rfl⟩; exact ⟨x, by simp [hx], rfl⟩
 
 /-- The negative extension of `εₙ W n` consists of the resets of `n` to a non-`W` ((17b)). -/
 theorem extension_false_dplExists_atom (hf : e.Fresh g n) :
-    extension .false (dplExists e n (atom W n)) g = {h | ∃ x ∉ W, h = g.update n x} := by
+    extension (-1) (dplExists e n (atom W n)) g = {h | ∃ x ∉ W, h = g.update n x} := by
   ext h
   simp only [mem_extension, mem_dplExists, hf, true_and, not_true_eq_false, false_and,
     or_false, mem_atom_update, Set.mem_ofPred_eq]
   constructor
-  · rintro ⟨x, hx, rfl⟩; exact ⟨x, Trivalent.ofProp_eq_false_iff.1 hx.symm, rfl⟩
+  · rintro ⟨x, hx, rfl⟩; exact ⟨x, SignType.ofProp_eq_neg_one_iff.1 hx.symm, rfl⟩
   · rintro ⟨x, hx, rfl⟩; exact ⟨x, by simp [hx], rfl⟩
 
 theorem extension_indet_dplExists_atom (hf : e.Fresh g n) :
-    extension .indet (dplExists e n (atom W n)) g = ∅ := by
+    extension 0 (dplExists e n (atom W n)) g = ∅ := by
   ext h
   rw [mem_extension, mem_dplExists]
   simp only [hf, true_and, not_true_eq_false, false_and, or_false, Set.mem_empty_iff_false,
     iff_false, not_exists]
   intro x hx
   rw [mem_atom_update] at hx
-  exact Trivalent.ofProp_ne_indet hx.1.symm
+  exact SignType.ofProp_ne_zero hx.1.symm
 
 /-- The positive extension of `∃ₙ W n` ((20a)). -/
 theorem extension_true_exists_atom (hf : e.Fresh g n) :
-    extension .true (exists_ e n (atom W n)) g = {h | ∃ x ∈ W, h = g.update n x} := by
+    extension 1 (exists_ e n (atom W n)) g = {h | ∃ x ∈ W, h = g.update n x} := by
   rw [exists_, extension_true_positiveClosure, extension_true_dplExists_atom W hf]
 
 theorem isFalse_dplExists_atom_iff [Nonempty D] (hf : e.Fresh g n) :
@@ -521,7 +521,7 @@ theorem isFalse_dplExists_atom_iff [Nonempty D] (hf : e.Fresh g n) :
 
 /-- The negative extension of `∃ₙ W n` is the input, when nothing is a `W`. -/
 theorem extension_false_exists_atom [Nonempty D] (hf : e.Fresh g n) :
-    extension .false (exists_ e n (atom W n)) g = {h | h = g ∧ W = ∅} := by
+    extension (-1) (exists_ e n (atom W n)) g = {h | h = g ∧ W = ∅} := by
   rw [exists_, extension_false_positiveClosure]
   ext h
   simp only [Set.mem_ofPred_eq, isFalse_dplExists_atom_iff W hf, and_comm]
@@ -529,18 +529,18 @@ theorem extension_false_exists_atom [Nonempty D] (hf : e.Fresh g n) :
 /-- The negation of an existential is a test, whose positive extension is the input when nothing
 is a `W` ((22a)). -/
 theorem extension_true_neg_exists_atom [Nonempty D] (hf : e.Fresh g n) :
-    extension .true (neg (exists_ e n (atom W n))) g = {h | h = g ∧ W = ∅} := by
-  rw [extension_neg, Trivalent.neg_true, extension_false_exists_atom W hf]
+    extension 1 (neg (exists_ e n (atom W n))) g = {h | h = g ∧ W = ∅} := by
+  rw [extension_neg, extension_false_exists_atom W hf]
 
 /-- The negative extension of `¬ ∃ₙ W n` resets `n` to the `W`s, the outputs double negation
 passes on ((22b)). -/
 theorem extension_false_neg_exists_atom (hf : e.Fresh g n) :
-    extension .false (neg (exists_ e n (atom W n))) g = {h | ∃ x ∈ W, h = g.update n x} := by
-  rw [extension_neg, Trivalent.neg_false, extension_true_exists_atom W hf]
+    extension (-1) (neg (exists_ e n (atom W n))) g = {h | ∃ x ∈ W, h = g.update n x} := by
+  rw [extension_neg, _root_.neg_neg, extension_true_exists_atom W hf]
 
 theorem extension_indet_neg_exists_atom (hf : e.Fresh g n) :
-    extension .indet (neg (exists_ e n (atom W n))) g = ∅ := by
-  rw [extension_neg, Trivalent.neg_indet, exists_]
+    extension 0 (neg (exists_ e n (atom W n))) g = ∅ := by
+  rw [extension_neg, SignType.neg_zero, exists_]
   ext h
   simp only [mem_extension, mem_positiveClosure, Set.mem_empty_iff_false, iff_false,
     Prod.mk.injEq]
@@ -552,7 +552,7 @@ theorem extension_indet_neg_exists_atom (hf : e.Fresh g n) :
 verified by the input when there is no bathroom, and by the resets of 1 to the bathrooms
 upstairs ((35)). -/
 theorem extension_true_bathroom [Nonempty D] (hf : e.Fresh g 1) :
-    extension .true (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g =
+    extension 1 (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g =
       {h | h = g ∧ B = ∅} ∪ {h | ∃ x ∈ B, x ∈ U ∧ h = g.update 1 x} := by
   ext i
   rw [mem_extension_true_disj, extension_true_neg_exists_atom B hf, Set.mem_union]
@@ -560,56 +560,56 @@ theorem extension_true_bathroom [Nonempty D] (hf : e.Fresh g 1) :
   · rintro (⟨h, ⟨rfl, hB⟩, u, hu⟩ | ⟨t, h, hm, hi⟩)
     · exact .inl ⟨(Prod.mk.inj (mem_atom.1 hu)).2, hB⟩
     · rcases t with _ | _ | _
-      · have : h ∈ extension .true (neg (exists_ e 1 (atom B 1))) g := hm
-        rw [extension_true_neg_exists_atom B hf] at this
-        obtain ⟨rfl, hB⟩ := this
-        exact .inl ⟨(Prod.mk.inj (mem_atom.1 hi)).2, hB⟩
-      · have : h ∈ extension .false (neg (exists_ e 1 (atom B 1))) g := hm
+      · have : h ∈ extension 0 (neg (exists_ e 1 (atom B 1))) g := hm
+        rw [extension_indet_neg_exists_atom B hf] at this
+        exact absurd this (Set.notMem_empty h)
+      · have : h ∈ extension (-1) (neg (exists_ e 1 (atom B 1))) g := hm
         rw [extension_false_neg_exists_atom B hf] at this
         obtain ⟨x, hxB, rfl⟩ := this
         rw [mem_extension, mem_atom_update] at hi
-        exact .inr ⟨x, hxB, Trivalent.ofProp_eq_true_iff.1 hi.1.symm, hi.2⟩
-      · have : h ∈ extension .indet (neg (exists_ e 1 (atom B 1))) g := hm
-        rw [extension_indet_neg_exists_atom B hf] at this
-        exact absurd this (Set.notMem_empty h)
+        exact .inr ⟨x, hxB, SignType.ofProp_eq_one_iff.1 hi.1.symm, hi.2⟩
+      · have : h ∈ extension 1 (neg (exists_ e 1 (atom B 1))) g := hm
+        rw [extension_true_neg_exists_atom B hf] at this
+        obtain ⟨rfl, hB⟩ := this
+        exact .inl ⟨(Prod.mk.inj (mem_atom.1 hi)).2, hB⟩
   · rintro (⟨rfl, hB⟩ | ⟨x, hxB, hxU, rfl⟩)
     · exact .inl ⟨i, ⟨rfl, hB⟩, _, rfl⟩
-    · refine .inr ⟨.false, g.update 1 x, ?_, ?_⟩
-      · show g.update 1 x ∈ extension .false (neg (exists_ e 1 (atom B 1))) g
+    · refine .inr ⟨-1, g.update 1 x, ?_, ?_⟩
+      · show g.update 1 x ∈ extension (-1) (neg (exists_ e 1 (atom B 1))) g
         rw [extension_false_neg_exists_atom B hf]; exact ⟨x, hxB, rfl⟩
       · rw [mem_extension, mem_atom_update]; exact ⟨by simp [hxU], rfl⟩
 
 /-- The bathroom sentence is falsified by the resets of 1 to a bathroom that is not upstairs. -/
 theorem extension_false_bathroom (hf : e.Fresh g 1) :
-    extension .false (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g =
+    extension (-1) (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g =
       {h | ∃ x ∈ B, x ∉ U ∧ h = g.update 1 x} := by
   ext i
   rw [mem_extension_false_disj, extension_false_neg_exists_atom B hf]
   constructor
   · rintro ⟨h, ⟨x, hxB, rfl⟩, hi⟩
     rw [mem_extension, mem_atom_update] at hi
-    exact ⟨x, hxB, Trivalent.ofProp_eq_false_iff.1 hi.1.symm, hi.2⟩
+    exact ⟨x, hxB, SignType.ofProp_eq_neg_one_iff.1 hi.1.symm, hi.2⟩
   · rintro ⟨x, hxB, hxU, rfl⟩
     exact ⟨g.update 1 x, ⟨x, hxB, rfl⟩, by rw [mem_extension, mem_atom_update]; simp [hxU]⟩
 
 /-- The donkey conditional `∃₁ B 1 → U 1`, *if anyone is outside, they are happy*, has the same
 positive extension as the bathroom sentence, so its truth conditions are existential ((42)). -/
 theorem extension_true_donkey [Nonempty D] (hf : e.Fresh g 1) :
-    extension .true (imp (exists_ e 1 (atom B 1)) (atom U 1)) g =
+    extension 1 (imp (exists_ e 1 (atom B 1)) (atom U 1)) g =
       {h | h = g ∧ B = ∅} ∪ {h | ∃ x ∈ B, x ∈ U ∧ h = g.update 1 x} := by
   rw [imp_eq_disj_neg, extension_true_bathroom B U hf]
 
 /-- The donkey conditional is falsified by the resets of 1 to someone outside and unhappy
 ((43)). -/
 theorem extension_false_donkey (hf : e.Fresh g 1) :
-    extension .false (imp (exists_ e 1 (atom B 1)) (atom U 1)) g =
+    extension (-1) (imp (exists_ e 1 (atom B 1)) (atom U 1)) g =
       {h | ∃ x ∈ B, x ∉ U ∧ h = g.update 1 x} := by
   rw [imp_eq_disj_neg, extension_false_bathroom B U hf]
 
 /-- A pronoun before its indefinite, `P 1 ∧ ∃₁ Q 1`, is never verified at an input not valuing
 1 ((27)). -/
 theorem extension_true_conj_atom_exists (P Q : Set D) (hg : g 1 = ⊥) :
-    extension .true (conj (atom P 1) (exists_ e 1 (atom Q 1))) g = ∅ := by
+    extension 1 (conj (atom P 1) (exists_ e 1 (atom Q 1))) g = ∅ := by
   ext i
   simp only [Set.mem_empty_iff_false, iff_false]
   rw [mem_extension_true_conj]
@@ -620,14 +620,14 @@ theorem extension_true_conj_atom_exists (P Q : Set D) (hg : g 1 = ⊥) :
 /-- An indefinite before its pronoun, `∃₁ P 1 ∧ Q 1`, is verified by the resets of 1 to a `P`
 that is a `Q`, as in DPL. -/
 theorem extension_true_conj_exists_atom (P Q : Set D) (hf : e.Fresh g 1) :
-    extension .true (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g =
+    extension 1 (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g =
       {h | ∃ x ∈ P, x ∈ Q ∧ h = g.update 1 x} := by
   ext i
   rw [mem_extension_true_conj, extension_true_exists_atom P hf]
   constructor
   · rintro ⟨h, ⟨x, hxP, rfl⟩, hi⟩
     rw [mem_extension, mem_atom_update] at hi
-    exact ⟨x, hxP, Trivalent.ofProp_eq_true_iff.1 hi.1.symm, hi.2⟩
+    exact ⟨x, hxP, SignType.ofProp_eq_one_iff.1 hi.1.symm, hi.2⟩
   · rintro ⟨x, hxP, hxQ, rfl⟩
     exact ⟨g.update 1 x, ⟨x, hxP, rfl⟩, by rw [mem_extension, mem_atom_update]; simp [hxQ]⟩
 
@@ -635,9 +635,9 @@ theorem extension_true_conj_exists_atom (P Q : Set D) (hf : e.Fresh g 1) :
 `P` that is not a `Q` ((30)). By de Morgan's law these are the outputs verifying the bathroom
 sentence `¬ ∃₁ P 1 ∨ ¬ Q 1` ((31)). -/
 theorem extension_false_conj_exists_atom [Nonempty D] (P Q : Set D) (hf : e.Fresh g 1) :
-    extension .false (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g =
+    extension (-1) (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g =
       {h | h = g ∧ P = ∅} ∪ {h | ∃ x ∈ P, x ∉ Q ∧ h = g.update 1 x} := by
-  have h := extension_neg .true (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g
+  have h := extension_neg 1 (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g
   rw [neg_conj, neg_atom, extension_true_bathroom P Qᶜ hf] at h
   exact h.symm
 
@@ -646,11 +646,11 @@ end Atoms
 /-- Egli's theorem fails for negative extensions (Obs. 2.5). When everyone walked in and nobody sat
 down, the input falsifies `∃₁ (W 1 ∧ S 1)` but only its resets falsify `∃₁ W 1 ∧ S 1`. -/
 theorem not_egli_negative [Nonempty D] :
-    extension .false (exists_ .destructive 1 (conj (atom (Set.univ : Set D) 1) (atom ∅ 1))) ⊥ ≠
-      extension .false (conj (exists_ .destructive 1 (atom Set.univ 1)) (atom ∅ 1)) ⊥ := by
+    extension (-1) (exists_ .destructive 1 (conj (atom (Set.univ : Set D) 1) (atom ∅ 1))) ⊥ ≠
+      extension (-1) (conj (exists_ .destructive 1 (atom Set.univ 1)) (atom ∅ 1)) ⊥ := by
   obtain ⟨x⟩ := ‹Nonempty D›
   intro h
-  have hl : (⊥ : PartialAssign ℕ D) ∈ extension .false
+  have hl : (⊥ : PartialAssign ℕ D) ∈ extension (-1)
       (exists_ .destructive 1 (conj (atom (Set.univ : Set D) 1) (atom ∅ 1))) ⊥ := by
     rw [exists_, extension_false_positiveClosure]
     refine ⟨⟨Set.eq_empty_iff_forall_notMem.2 fun i hi ↦ ?_,
@@ -666,7 +666,7 @@ theorem not_egli_negative [Nonempty D] :
     · rw [mem_extension, mem_dplExists]
       refine .inl ⟨trivial, x, ?_⟩
       rw [← mem_extension, mem_extension_false_conj]
-      refine .inr ⟨.true, (⊥ : PartialAssign ℕ D).update 1 x, by rw [mem_atom_update]; simp, ?_⟩
+      refine .inr ⟨1, (⊥ : PartialAssign ℕ D).update 1 x, by rw [mem_atom_update]; simp, ?_⟩
       rw [mem_extension, mem_atom_update]; simp
   rw [h, mem_extension_false_conj] at hl
   rcases hl with ⟨j, hj, -⟩ | ⟨t, j, hj, hk⟩
@@ -698,10 +698,10 @@ instance : (domainLE (D := D)).IsRefl := ⟨fun g ↦ show g.domain ⊆ g.domain
 instance : (domainLE (D := D)).IsTrans := ⟨fun _ _ _ h₁ h₂ ↦ Set.Subset.trans (α := ℕ) h₁ h₂⟩
 
 /-- Every output of `m` values the variables its input values. -/
-def Expanding (m : StateSet D Trivalent) : Prop := ∀ t, StateT.rel m t ⊆ domainLE
+def Expanding (m : StateSet D SignType) : Prop := ∀ t, StateT.rel m t ⊆ domainLE
 
-theorem Expanding.domain_subset {m : StateSet D Trivalent} (hm : Expanding m)
-    {g h : PartialAssign ℕ D} {t : Trivalent} (hh : (t, h) ∈ m g) : g.domain ⊆ h.domain :=
+theorem Expanding.domain_subset {m : StateSet D SignType} (hm : Expanding m)
+    {g h : PartialAssign ℕ D} {t : SignType} (hh : (t, h) ∈ m g) : g.domain ⊆ h.domain :=
   hm t (show (g, h) ∈ StateT.rel m t from hh)
 
 theorem expanding_atom (P : Set D) (n : ℕ) : Expanding (atom P n) := by
@@ -714,26 +714,26 @@ theorem expanding_atomConst (P : Set D) (c : D) : Expanding (atomConst P c) := b
   change g.domain ⊆ h.domain
   rw [(Prod.mk.inj (mem_atomConst.1 hm)).2]
 
-theorem Expanding.map {f : Trivalent → Trivalent} {m : StateSet D Trivalent} (hm : Expanding m) :
+theorem Expanding.map {f : SignType → SignType} {m : StateSet D SignType} (hm : Expanding m) :
     Expanding (f <$> m) :=
   StateT.rel_map_subset hm f
 
-theorem Expanding.map_seq {R : Trivalent → Trivalent → Trivalent} {m n : StateSet D Trivalent}
+theorem Expanding.map_seq {R : SignType → SignType → SignType} {m n : StateSet D SignType}
     (hm : Expanding m) (hn : Expanding n) : Expanding (R <$> m <*> n) :=
   StateT.rel_map_seq_subset hm hn R
 
-theorem Expanding.neg {m : StateSet D Trivalent} (hm : Expanding m) : Expanding (neg m) := hm.map
+theorem Expanding.neg {m : StateSet D SignType} (hm : Expanding m) : Expanding (neg m) := hm.map
 
-theorem Expanding.conj {m n : StateSet D Trivalent} (hm : Expanding m) (hn : Expanding n) :
+theorem Expanding.conj {m n : StateSet D SignType} (hm : Expanding m) (hn : Expanding n) :
     Expanding (conj m n) := hm.map_seq hn
 
-theorem Expanding.disj {m n : StateSet D Trivalent} (hm : Expanding m) (hn : Expanding n) :
+theorem Expanding.disj {m n : StateSet D SignType} (hm : Expanding m) (hn : Expanding n) :
     Expanding (disj m n) := hm.map_seq hn
 
-theorem Expanding.imp {m n : StateSet D Trivalent} (hm : Expanding m) (hn : Expanding n) :
+theorem Expanding.imp {m n : StateSet D SignType} (hm : Expanding m) (hn : Expanding n) :
     Expanding (imp m n) := hm.map_seq hn
 
-theorem Expanding.dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
+theorem Expanding.dplExists {e : Existential} {n : ℕ} {m : StateSet D SignType}
     (hm : Expanding m) : Expanding (dplExists e n m) := by
   rintro t ⟨g, h⟩ (hh : (t, h) ∈ Elliott2020.dplExists e n m g)
   change g.domain ⊆ h.domain
@@ -744,7 +744,7 @@ theorem Expanding.dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalen
     · rw [PartialAssign.mem_domain, PartialAssign.update_of_ne hyn]; exact hy
   · rw [(Prod.mk.inj hx).2]
 
-theorem Expanding.positiveClosure {m : StateSet D Trivalent} (hm : Expanding m) :
+theorem Expanding.positiveClosure {m : StateSet D SignType} (hm : Expanding m) :
     Expanding (positiveClosure m) := by
   rintro t ⟨g, h⟩ (hh : (t, h) ∈ Elliott2020.positiveClosure m g)
   change g.domain ⊆ h.domain
@@ -752,12 +752,12 @@ theorem Expanding.positiveClosure {m : StateSet D Trivalent} (hm : Expanding m) 
   · exact hm.domain_subset hh
   all_goals rw [(Prod.mk.inj hh).2]
 
-theorem Expanding.exists_ {e : Existential} {n : ℕ} {m : StateSet D Trivalent} (hm : Expanding m) :
+theorem Expanding.exists_ {e : Existential} {n : ℕ} {m : StateSet D SignType} (hm : Expanding m) :
     Expanding (exists_ e n m) := hm.dplExists.positiveClosure
 
 /-- Every positive output of an existential values its variable. -/
-theorem ne_bot_of_mem_extension_true_exists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
-    (hm : Expanding m) {g h : PartialAssign ℕ D} (hh : h ∈ extension .true (exists_ e n m) g) :
+theorem ne_bot_of_mem_extension_true_exists {e : Existential} {n : ℕ} {m : StateSet D SignType}
+    (hm : Expanding m) {g h : PartialAssign ℕ D} (hh : h ∈ extension 1 (exists_ e n m) g) :
     h n ≠ ⊥ := by
   rw [exists_, extension_true_positiveClosure, mem_extension, mem_dplExists] at hh
   rcases hh with ⟨-, x, hx⟩ | ⟨-, hx⟩
@@ -769,7 +769,7 @@ theorem ne_bot_of_mem_extension_true_exists {e : Existential} {n : ℕ} {m : Sta
 /-- With the guarded existential, *a linguist is here and a philosopher is here* with one index is
 never true, since the second indefinite finds its variable valued (fn. 26 and (61)). -/
 theorem extension_true_conj_exists_guarded (L P : Set D) (g : PartialAssign ℕ D) :
-    extension .true (conj (exists_ .guarded 1 (atom L 1)) (exists_ .guarded 1 (atom P 1))) g =
+    extension 1 (conj (exists_ .guarded 1 (atom L 1)) (exists_ .guarded 1 (atom P 1))) g =
       ∅ := by
   ext i
   simp only [Set.mem_empty_iff_false, iff_false]
@@ -782,20 +782,20 @@ theorem extension_true_conj_exists_guarded (L P : Set D) (g : PartialAssign ℕ 
 /-- The dynamic Hurford constraint (70), read as validity, marks a disjunction of `φ` and `ψ` odd
 when, in every model and at every input, `¬φ ∧ ψ` has no positive output, or `φ ∧ ¬ψ` has
 none. -/
-def HurfordOdd {M : Type*} (φ ψ : M → StateSet D Trivalent) : Prop :=
-  (∀ x g, extension .true (conj (neg (φ x)) (ψ x)) g = ∅) ∨
-    ∀ x g, extension .true (conj (φ x) (neg (ψ x))) g = ∅
+def HurfordOdd {M : Type*} (φ ψ : M → StateSet D SignType) : Prop :=
+  (∀ x g, extension 1 (conj (neg (φ x)) (ψ x)) g = ∅) ∨
+    ∀ x g, extension 1 (conj (φ x) (neg (ψ x))) g = ∅
 
 /-- An output making `¬ ∃ₙ φ` true is the input, which `∃ₙ φ` found false. -/
 theorem eq_and_isFalse_of_mem_extension_true_neg_exists {e : Existential} {n : ℕ}
-    {m : StateSet D Trivalent} {g h : PartialAssign ℕ D}
-    (hh : h ∈ extension .true (neg (exists_ e n m)) g) :
+    {m : StateSet D SignType} {g h : PartialAssign ℕ D}
+    (hh : h ∈ extension 1 (neg (exists_ e n m)) g) :
     h = g ∧ IsFalse (dplExists e n m) g := by
-  rw [extension_neg, Trivalent.neg_true, exists_, extension_false_positiveClosure] at hh
+  rw [extension_neg, exists_, extension_false_positiveClosure] at hh
   exact ⟨hh.2, hh.1⟩
 
 /-- A false DPL existential found its variable fresh. -/
-theorem fresh_of_isFalse_dplExists {e : Existential} {n : ℕ} {m : StateSet D Trivalent}
+theorem fresh_of_isFalse_dplExists {e : Existential} {n : ℕ} {m : StateSet D SignType}
     {g : PartialAssign ℕ D} (h : IsFalse (dplExists e n m) g) : e.Fresh g n := by
   by_contra hf
   obtain ⟨-, j, hj⟩ := h
@@ -830,7 +830,7 @@ theorem hurfordOdd_bathroom :
   rintro ⟨h, hh, hi⟩
   obtain ⟨rfl, hF⟩ := eq_and_isFalse_of_mem_extension_true_neg_exists hh
   have hg : h 1 = ⊥ := fresh_of_isFalse_dplExists hF
-  rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atom, valueAt_of_eq_bot _ hg] at hi
+  rw [extension_neg, mem_extension, mem_atom, valueAt_of_eq_bot _ hg] at hi
   simp at hi
 
 /-- With the destructive existential, (70) does not mark (65) odd, because its first test is
@@ -854,7 +854,7 @@ theorem not_hurfordOdd_someone_or_they_destructive :
     refine ⟨(⊥ : PartialAssign ℕ Bool).update 1 true, ?_, ?_⟩
     · rw [extension_true_exists_atom _ (Existential.fresh_destructive _ _)]
       exact ⟨true, trivial, rfl⟩
-    · rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atom,
+    · rw [extension_neg, mem_extension, mem_atom,
         valueAt_of_eq_coe _ (PartialAssign.update_self 1 true ⊥)]
       simp
 
@@ -878,7 +878,7 @@ theorem not_hurfordOdd_bathroom_destructive :
     dsimp only
     refine ⟨(⊥ : PartialAssign ℕ Bool).update 1 true, ?_, ?_⟩
     · rw [extension_true_neg_exists_atom _ (Existential.fresh_destructive _ _)]; exact ⟨rfl, rfl⟩
-    · rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atom,
+    · rw [extension_neg, mem_extension, mem_atom,
         valueAt_of_eq_coe _ (PartialAssign.update_self 1 true ⊥)]
       simp
 
@@ -912,14 +912,14 @@ variable {W : Type}
 
 /-- Stalnaker's bridge requires a sentence to be true or false at every point of the state
 (Def. 3.2). -/
-def Defined (c : State W ℕ D) (φ : W → StateSet D Trivalent) : Prop :=
+def Defined (c : State W ℕ D) (φ : W → StateSet D SignType) : Prop :=
   ∀ p ∈ c, IsTrue (φ p.world) p.assignment ∨ IsFalse (φ p.world) p.assignment
 
 /-- Update gathers the positive outputs at every point when the bridge holds, and is absurd
 otherwise (Def. 3.2). -/
-def update (c : State W ℕ D) (φ : W → StateSet D Trivalent) : State W ℕ D :=
+def update (c : State W ℕ D) (φ : W → StateSet D SignType) : State W ℕ D :=
   {p | Defined c φ ∧ ∃ q ∈ c, q.world = p.world ∧
-    p.assignment ∈ extension .true (φ q.world) q.assignment}
+    p.assignment ∈ extension 1 (φ q.world) q.assignment}
 
 theorem Existential.fresh_of_eq_bot {e : Existential} {g : PartialAssign ℕ D} {n : ℕ}
     (h : g n = ⊥) : e.Fresh g n := by
@@ -930,7 +930,7 @@ theorem Existential.fresh_of_eq_bot {e : Existential} {g : PartialAssign ℕ D} 
 /-- After an existential its variable is familiar, so the familiarity presupposition of a later
 pronoun is satisfied (§3.5). -/
 theorem familiar_update_exists (e : Existential) (n : ℕ) (c : State W ℕ D)
-    (φ : W → StateSet D Trivalent) (hφ : ∀ w, Expanding (φ w)) :
+    (φ : W → StateSet D SignType) (hφ : ∀ w, Expanding (φ w)) :
     State.Familiar (update c fun w ↦ exists_ e n (φ w)) n := by
   rintro ⟨w, h⟩ ⟨-, ⟨w', g⟩, -, rfl, hh⟩
   exact ne_bot_of_mem_extension_true_exists (hφ _) hh
@@ -938,7 +938,7 @@ theorem familiar_update_exists (e : Existential) (n : ℕ) (c : State W ℕ D)
 /-- Familiarity persists through the update with any sentence whose outputs value what their
 inputs value (§3.5). -/
 theorem familiar_update {c : State W ℕ D} {n : ℕ} (h : State.Familiar c n)
-    {φ : W → StateSet D Trivalent} (hφ : ∀ w, Expanding (φ w)) :
+    {φ : W → StateSet D SignType} (hφ : ∀ w, Expanding (φ w)) :
     State.Familiar (update c φ) n := by
   rintro ⟨w, i⟩ ⟨-, ⟨w', g⟩, hq, rfl, hi⟩
   exact (hφ w').domain_subset hi (h _ hq)
@@ -979,11 +979,11 @@ theorem nonempty_exists_atom [Nonempty D] (e : Existential) (W : Set D) (n : ℕ
     (g : PartialAssign ℕ D) : (exists_ e n (atom W n) g).Nonempty := by
   by_cases hf : e.Fresh g n
   · rcases Set.eq_empty_or_nonempty W with hW | ⟨x, hx⟩
-    · refine ⟨(.false, g), ?_⟩
-      show g ∈ extension .false (exists_ e n (atom W n)) g
+    · refine ⟨(-1, g), ?_⟩
+      show g ∈ extension (-1) (exists_ e n (atom W n)) g
       rw [extension_false_exists_atom W hf]; exact ⟨rfl, hW⟩
-    · refine ⟨(.true, g.update n x), ?_⟩
-      show g.update n x ∈ extension .true (exists_ e n (atom W n)) g
+    · refine ⟨(1, g.update n x), ?_⟩
+      show g.update n x ∈ extension 1 (exists_ e n (atom W n)) g
       rw [extension_true_exists_atom W hf]; exact ⟨x, hx, rfl⟩
   · cases e
     · exact absurd trivial hf
@@ -992,7 +992,7 @@ theorem nonempty_exists_atom [Nonempty D] (e : Existential) (W : Set D) (n : ℕ
 
 variable {e : Existential} {g : PartialAssign ℕ D}
 
-theorem mem_atomConst_iff {P : Set D} {c : D} {v : Trivalent} {h : PartialAssign ℕ D} :
+theorem mem_atomConst_iff {P : Set D} {c : D} {v : SignType} {h : PartialAssign ℕ D} :
     (v, h) ∈ atomConst P c g ↔ v = ofProp (c ∈ P) ∧ h = g := by
   rw [mem_atomConst, Prod.mk.injEq]
 
@@ -1017,7 +1017,7 @@ theorem isTrue_or_isFalse_conj_exists_atom [Nonempty D] (P Q : Set D) (hf : e.Fr
     exacts [.inl ⟨_, x, hx, hQ, rfl⟩, .inr ⟨_, .inr ⟨x, hx, hQ, rfl⟩⟩]
 
 /-- The initial state admits *a philosopher₁ is attending this talk and she₁'s sitting in the
-back*: the indefinite values 1 on every output the pronoun is read at ((10a)). -/
+back*, since the indefinite values 1 on every output the pronoun is read at ((10a)). -/
 theorem defined_initial_someone_and_they [Nonempty D] (P Q : W → Set D) :
     Defined (⊤ : State W ℕ D) fun w ↦ conj (exists_ e 1 (atom (P w) 1)) (atom (Q w) 1) :=
   fun _ hp ↦ isTrue_or_isFalse_conj_exists_atom _ _
@@ -1046,7 +1046,7 @@ theorem not_familiar_update_neg_exists [Nonempty D] (P : W → Set D) {w : W} (h
   intro hfam
   refine hfam ⟨w, ⊥⟩ ⟨fun p hp ↦ ?_, ⟨w, ⊥⟩, State.mem_top.2 fun _ ↦ rfl, rfl, ?_⟩ rfl
   · exact isTrue_or_isFalse_neg_exists_atom _ (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
-  · show ⊥ ∈ extension .true (neg (exists_ e 1 (atom (P w) 1))) ⊥
+  · show ⊥ ∈ extension 1 (neg (exists_ e 1 (atom (P w) 1))) ⊥
     rw [extension_true_neg_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨rfl, hw⟩
 
 /-- A disjunction of an existential and a constant atom is true or false at an input not valuing
@@ -1057,8 +1057,8 @@ theorem isTrue_or_isFalse_disj_exists_atomConst [Nonempty D] (A P : Set D) (c : 
       IsFalse (disj (exists_ e 1 (atom A 1)) (atomConst P c)) g := by
   rcases Set.eq_empty_or_nonempty A with hA | ⟨x, hx⟩
   · by_cases hc : c ∈ P
-    · refine .inl ⟨g, mem_extension_true_disj.2 (.inr ⟨.false, g, ?_, ?_⟩)⟩
-      · show g ∈ extension .false (exists_ e 1 (atom A 1)) g
+    · refine .inl ⟨g, mem_extension_true_disj.2 (.inr ⟨-1, g, ?_, ?_⟩)⟩
+      · show g ∈ extension (-1) (exists_ e 1 (atom A 1)) g
         rw [extension_false_exists_atom A hf]; exact ⟨rfl, hA⟩
       · rw [mem_extension, mem_atomConst_iff]; simp [hc]
     · refine .inr ⟨Set.eq_empty_iff_forall_notMem.2 fun i hi ↦ ?_, g, ?_⟩
@@ -1087,8 +1087,8 @@ theorem not_familiar_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w 
   refine hfam ⟨w, ⊥⟩ ⟨fun p hp ↦ ?_, ⟨w, ⊥⟩, State.mem_top.2 fun _ ↦ rfl, rfl, ?_⟩ rfl
   · exact isTrue_or_isFalse_disj_exists_atomConst _ _ _
       (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
-  · refine mem_extension_true_disj.2 (.inr ⟨.false, ⊥, ?_, ?_⟩)
-    · show ⊥ ∈ extension .false (exists_ e 1 (atom (A w) 1)) ⊥
+  · refine mem_extension_true_disj.2 (.inr ⟨-1, ⊥, ?_, ?_⟩)
+    · show ⊥ ∈ extension (-1) (exists_ e 1 (atom (A w) 1)) ⊥
       rw [extension_false_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨rfl, hA⟩
     · rw [mem_extension, mem_atomConst_iff]; simp [hDis]
 
@@ -1101,7 +1101,7 @@ theorem familiar_update_update_disj (A Dis : W → Set D) (ev : D) :
   rintro ⟨w, i⟩ ⟨-, ⟨w', h⟩, ⟨-, ⟨w'', g⟩, -, hw, hh⟩, rfl, hi⟩
   dsimp only at hw hh hi
   subst hw
-  rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atomConst_iff] at hi
+  rw [extension_neg, mem_extension, mem_atomConst_iff] at hi
   obtain ⟨hev, rfl⟩ := hi
   rcases mem_extension_true_disj.1 hh with ⟨j, hj, u, hu⟩ | ⟨t, j, -, hj⟩
   · obtain ⟨-, rfl⟩ := mem_atomConst_iff.1 hu
@@ -1125,14 +1125,14 @@ theorem mem_update_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w : 
     ⟨hdef, ⟨w, ⊥⟩, State.mem_top.2 fun _ ↦ rfl, rfl, ?_⟩, rfl, ?_⟩
   · by_cases hc : ev ∈ Dis p.world
     · exact .inr ⟨Set.eq_empty_iff_forall_notMem.2 fun i hi ↦ by
-        rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atomConst_iff] at hi
+        rw [extension_neg, mem_extension, mem_atomConst_iff] at hi
         simp [hc] at hi, p.assignment, by
-        rw [extension_neg, Trivalent.neg_false, mem_extension, mem_atomConst_iff]; simp [hc]⟩
+        rw [extension_neg, _root_.neg_neg, mem_extension, mem_atomConst_iff]; simp [hc]⟩
     · exact .inl ⟨p.assignment, by
-        rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atomConst_iff]; simp [hc]⟩
+        rw [extension_neg, mem_extension, mem_atomConst_iff]; simp [hc]⟩
   · refine mem_extension_true_disj.2 (.inl ⟨_, ?_, _, mem_atomConst_iff.2 ⟨rfl, rfl⟩⟩)
     rw [extension_true_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨x, hx, rfl⟩
-  · rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atomConst_iff]; simp [hev]
+  · rw [extension_neg, mem_extension, mem_atomConst_iff]; simp [hev]
 
 /-- The positive outputs of a Stone disjunction value its variable, so after *either a linguist is
 here, or a philosopher is* with one index, 1 is familiar, for either existential
@@ -1150,13 +1150,13 @@ theorem familiar_update_stone (L P H : W → Set D) :
 
 /-- When nothing is a `W`, every output of `∃ₙ W n` is the input. -/
 theorem snd_eq_of_mem_exists_atom {W : Set D} {n : ℕ} (hW : W = ∅) (hf : e.Fresh g n)
-    {p : Trivalent × PartialAssign ℕ D} (hp : p ∈ exists_ e n (atom W n) g) : p.2 = g := by
+    {p : SignType × PartialAssign ℕ D} (hp : p ∈ exists_ e n (atom W n) g) : p.2 = g := by
   rw [exists_, mem_positiveClosure] at hp
   rcases hp with ⟨h1, hp⟩ | ⟨-, rfl⟩ | ⟨-, rfl⟩
   · obtain ⟨t, h⟩ := p
     dsimp only at h1
     subst h1
-    have : h ∈ extension .true (dplExists e n (atom W n)) g := hp
+    have : h ∈ extension 1 (dplExists e n (atom W n)) g := hp
     rw [extension_true_dplExists_atom W hf] at this
     obtain ⟨x, hx, -⟩ := this
     simp [hW] at hx
@@ -1183,8 +1183,8 @@ theorem isTrue_or_isFalse_disj_exists_atom [Nonempty D] (A B : Set D) (hg : g 1 
       · refine mem_extension_false_disj.2 ⟨g, ?_, ?_⟩
         · rw [extension_false_exists_atom A hf]; exact ⟨rfl, hA⟩
         · rw [extension_false_exists_atom B hf]; exact ⟨rfl, hB⟩
-    · refine .inl ⟨g.update 1 y, mem_extension_true_disj.2 (.inr ⟨.false, g, ?_, ?_⟩)⟩
-      · show g ∈ extension .false (exists_ e 1 (atom A 1)) g
+    · refine .inl ⟨g.update 1 y, mem_extension_true_disj.2 (.inr ⟨-1, g, ?_, ?_⟩)⟩
+      · show g ∈ extension (-1) (exists_ e 1 (atom A 1)) g
         rw [extension_false_exists_atom A hf]; exact ⟨rfl, hA⟩
       · rw [extension_true_exists_atom B hf]; exact ⟨y, hy, rfl⟩
   · obtain ⟨⟨u, i⟩, hu⟩ := nonempty_exists_atom e B 1 (g.update 1 x)

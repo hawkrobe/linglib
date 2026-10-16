@@ -51,26 +51,32 @@ namespace AlonsoOvalle2009
 
 open Conditional McKayVanInwagen1977
 
-variable {W : Type*} [DecidableEq W] [Fintype W] (ord : W → Preorder W)
-  [∀ w, DecidableRel (ord w).le] (S : Finset (Finset W)) (C : Set W) [DecidablePred (· ∈ C)]
-  (w : W)
+variable {W : Type*} (ord : W → Preorder W) (S : Finset (Finset W)) (C : Set W) (w : W)
+
+section
+
+variable [DecidableEq W]
 
 /-! ### Conditionals as correlatives (§2) -/
 
-/-- *Might* in the consequent (70)–(71) under the universal *if*-clause (25): the closest
-worlds of every alternative are compatible with the consequent. -/
+section
+
+variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)]
+
+/-- *Might* in the consequent (70)–(71) under the universal *if*-clause (25) holds when the
+closest worlds of every alternative are compatible with the consequent. -/
 def DistributiveMight : Prop := ∀ A ∈ S, w ∈ might (closestImp ord) ↑A C
 
 instance : Decidable (DistributiveMight ord S C w) :=
   inferInstanceAs (Decidable (∀ A ∈ S, w ∈ might (closestImp ord) ↑A C))
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] in
+end
+
 /-- Simplification (27) says that the disjunctive counterfactual entails each disjunct's. -/
 theorem simplification {A B : Finset W} (h : w ∈ distributiveImp ord {A, B} C) :
     w ∈ closestImp ord ↑A C ∧ w ∈ closestImp ord ↑B C :=
   mem_distributiveImp_pair.1 h
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] in
 /-- Simplification for *might* (54), the extension of §3.3. -/
 theorem simplification_might {A B : Finset W} (h : DistributiveMight ord {A, B} C w) :
     w ∈ might (closestImp ord) ↑A C ∧ w ∈ might (closestImp ord) ↑B C :=
@@ -94,8 +100,9 @@ theorem bumperCrop_alternatives :
 
 /-- A sum analysis falsifies a disjunctive counterfactual only when every disjunct's
 counterfactual fails. -/
-theorem homogeneity_ne_false {A : Finset W} (hA : A ∈ S)
-    (h : w ∈ closestImp ord ↑A C) : homogeneousImp ord S C w ≠ .false :=
+theorem homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)]
+    {A : Finset W} (hA : A ∈ S)
+    (h : w ∈ closestImp ord ↑A C) : homogeneousImp ord S C w ≠ -1 :=
   fun hf ↦ (homogeneousImp_eq_false_iff.1 hf).2 A hA h
 
 /-- In (29)–(31) Spain joining Germany is closer than Spain joining the U.S., and Hitler is
@@ -119,7 +126,9 @@ theorem hitler_negation :
     .actual ∉ distributiveImp hitlerSim {joinedGermany, joinedUS} pleased ∧
       .actual ∈ closestImp hitlerSim ↑joinedGermany pleased ∧
       .actual ∉ closestImp hitlerSim ↑joinedUS pleased ∧
-      homogeneousImp hitlerSim {joinedGermany, joinedUS} pleased .actual = .indet := by decide
+      homogeneousImp hitlerSim {joinedGermany, joinedUS} pleased .actual = 0 := by decide
+
+end
 
 /-! ### Downward entailingness (§3) -/
 
@@ -127,14 +136,12 @@ section Strict
 
 variable {I : Type*} (access : I → Set W) (φ ψ χ : Set W)
 
-omit [DecidableEq W] [Fintype W] in
 /-- A strict conditional is antitone in its antecedent, so Simplification is a monotonicity
 inference, (37)–(38). -/
 theorem strict_simplification {i : I} (h : i ∈ strictImp access (φ ∪ ψ) χ) :
     i ∈ strictImp access φ χ ∧ i ∈ strictImp access ψ χ :=
   ⟨strictImp_anti_left Set.subset_union_left h, strictImp_anti_left Set.subset_union_right h⟩
 
-omit [DecidableEq W] [Fintype W] in
 /-- Stalnaker's *might* counterfactual, epistemic possibility over `E` of the strict *would*,
 inherits Simplification, (60)–(64). -/
 theorem stalnaker_might_simplification (E : I → Set I) {i : I}
@@ -146,10 +153,20 @@ theorem stalnaker_might_simplification (E : I → Set I) {i : I}
 
 end Strict
 
+section
+
+variable [DecidableEq W]
+
+section
+
+variable [Fintype W] [∀ w, DecidableRel (ord w).le]
+
 /-- Accommodation (44) grows the modal horizon `f` by every world at least as close as the
 closest antecedent worlds. -/
 def expand (f : W → Finset W) (φ : Finset W) (w : W) : Finset W :=
   f w ∪ Finset.univ.filter fun w' => ∀ w'' ∈ φ, (ord w).le w' w''
+
+end
 
 /-- The counterfactual on a horizon (45) holds when every antecedent world in the horizon is a
 consequent world. -/
@@ -162,7 +179,6 @@ def HorizonReaches (f : W → Finset W) (φ : Finset W) (w : W) : Prop := (f w �
 instance (f : W → Finset W) (φ : Finset W) : Decidable (HorizonReaches f φ w) :=
   inferInstanceAs (Decidable (f w ∩ φ).Nonempty)
 
-omit [Fintype W] in
 /-- Strengthening the Antecedent and Simplification alike are Strawson valid (50), since on a
 horizon that already reaches the stronger antecedent, (45) is antitone in it. -/
 theorem horizonWould_anti {f : W → Finset W} {φ φ' ψ : Finset W} (h : φ' ⊆ φ)
@@ -239,7 +255,6 @@ theorem manner_insufficient :
 
 /-! ### The visibility of the disjuncts (§5.2) -/
 
-omit [Fintype W] [∀ w, DecidableRel (ord w).le] in
 /-- On Nute's recipe (80), when the consequent is one of two incompatible disjuncts, the
 analysis makes the counterfactual true only if the other disjunct is impossible. -/
 theorem distributive_pair_disjoint_iff {A B : Finset W} (h : Disjoint A B) :
@@ -292,6 +307,8 @@ def forkAlts : String → Option (Finset (Finset ForkWorld))
   | "magic book or newborn baby" => some {hasBook, newborn}
   | _ => none
 
+variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)]
+
 /-- The verdict of the analysis for a *would* or *might* consequent, possibly negated. -/
 def verdict : String → Bool → Option Bool
   | "would", neg => some (decide (w ∈ distributiveImp ord S C) != neg)
@@ -322,5 +339,7 @@ example :
     (Examples.all.filter fun row =>
       (row.feature? "verdict").isSome ∧ (predicted row).isSome).length = 10 := by
   decide +kernel
+
+end
 
 end AlonsoOvalle2009

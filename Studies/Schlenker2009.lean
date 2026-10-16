@@ -443,24 +443,24 @@ theorem resolve_of_filter_presup {F : Formula Atom} (h : (F.filter I).presup w)
 
 /-! #### Theorem 41: Strong Kleene is supervaluation over trigger tokens -/
 
-private theorem inf_ne_false {a b : Trivalent} : a ⊓ b ≠ .false ↔ a ≠ .false ∧ b ≠ .false := by
+private theorem inf_ne_neg_one {a b : SignType} : a ⊓ b ≠ -1 ↔ a ≠ -1 ∧ b ≠ -1 := by
   cases a <;> cases b <;> decide
-private theorem inf_ne_true {a b : Trivalent} : a ⊓ b ≠ .true ↔ a ≠ .true ∨ b ≠ .true := by
+private theorem inf_ne_one {a b : SignType} : a ⊓ b ≠ 1 ↔ a ≠ 1 ∨ b ≠ 1 := by
   cases a <;> cases b <;> decide
-private theorem sup_ne_false {a b : Trivalent} : a ⊔ b ≠ .false ↔ a ≠ .false ∨ b ≠ .false := by
+private theorem sup_ne_neg_one {a b : SignType} : a ⊔ b ≠ -1 ↔ a ≠ -1 ∨ b ≠ -1 := by
   cases a <;> cases b <;> decide
-private theorem sup_ne_true {a b : Trivalent} : a ⊔ b ≠ .true ↔ a ≠ .true ∧ b ≠ .true := by
+private theorem sup_ne_one {a b : SignType} : a ⊔ b ≠ 1 ↔ a ≠ 1 ∧ b ≠ 1 := by
   cases a <;> cases b <;> decide
-private theorem neg_ne_false {a : Trivalent} : Trivalent.neg a ≠ .false ↔ a ≠ .true := by
+private theorem neg_ne_neg_one {a : SignType} : -a ≠ -1 ↔ a ≠ 1 := by
   cases a <;> decide
-private theorem neg_ne_true {a : Trivalent} : Trivalent.neg a ≠ .true ↔ a ≠ .false := by
+private theorem neg_ne_one {a : SignType} : -a ≠ 1 ↔ a ≠ -1 := by
   cases a <;> decide
 
 /-- A formula can be true under some resolution of its tokens iff its Strong Kleene value is not
 false, and false under some resolution iff its value is not true. -/
 private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment Atom) :
-    ((∃ ρ, resolve I w ρ K F) ↔ (F.strong I).eval w ≠ .false) ∧
-      ((∃ ρ, ¬ resolve I w ρ K F) ↔ (F.strong I).eval w ≠ .true) := by
+    ((∃ ρ, resolve I w ρ K F) ↔ (F.strong I).eval w ≠ -1) ∧
+      ((∃ ρ, ¬ resolve I w ρ K F) ↔ (F.strong I).eval w ≠ 1) := by
   induction F generalizing K with
   | atom p =>
     simp [resolve, Formula.strong, PartialProp.eval_eq_false_iff, PartialProp.eval_eq_true_iff]
@@ -476,15 +476,15 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
         PartialProp.eval_eq_true_iff]
     tauto
   | not F ih =>
-    simp only [resolve, Formula.strong, PartialProp.eval_neg, neg_ne_false, neg_ne_true, not_not]
+    simp only [resolve, Formula.strong, PartialProp.eval_neg, neg_ne_neg_one, neg_ne_one, not_not]
     exact ⟨(ih _).2, (ih _).1⟩
   | bin c F G ihF ihG =>
     obtain ⟨hF₁, hF₀⟩ := ihF (.left c G :: K)
     obtain ⟨hG₁, hG₀⟩ := ihG (.right c F :: K)
     have merge := exists_resolve_merge I (w := w) c F G K
     cases c <;> simp only [resolve, Formula.strong, Connective.strong, Connective.eval,
-      PartialProp.eval_andStrong, PartialProp.eval_orStrong, PartialProp.eval_neg, inf_ne_false,
-      inf_ne_true, sup_ne_false, sup_ne_true, neg_ne_false, neg_ne_true, ← hF₁, ← hF₀, ← hG₁,
+      PartialProp.eval_andStrong, PartialProp.eval_orStrong, PartialProp.eval_neg, inf_ne_neg_one,
+      inf_ne_one, sup_ne_neg_one, sup_ne_one, neg_ne_neg_one, neg_ne_one, ← hF₁, ← hF₀, ← hG₁,
       ← hG₀]
     · refine ⟨⟨fun ⟨ρ, a, b⟩ ↦ ⟨⟨ρ, a⟩, ⟨ρ, b⟩⟩, fun ⟨⟨ρ₁, a⟩, ⟨ρ₂, b⟩⟩ ↦ ?_⟩,
         ⟨fun ⟨ρ, h⟩ ↦ ?_, fun h ↦ h.elim (fun ⟨ρ, a⟩ ↦ ⟨ρ, fun h ↦ a h.1⟩)
@@ -514,9 +514,9 @@ theorem resolve_iff_of_presup {F : Formula Atom} (h : (F.strong I).presup w)
     resolve I w ρ [] F ↔ (F.strong I).assertion w := by
   obtain ⟨h₁, h₀⟩ := exists_resolve_iff I (w := w) F []
   by_cases ha : (F.strong I).assertion w
-  · have he : (F.strong I).eval w = .true := (PartialProp.eval_eq_true_iff _ _).2 ⟨h, ha⟩
+  · have he : (F.strong I).eval w = 1 := (PartialProp.eval_eq_true_iff _ _).2 ⟨h, ha⟩
     exact iff_of_true (by by_contra hn; exact h₀.1 ⟨ρ, hn⟩ he) ha
-  · have he : (F.strong I).eval w = .false := (PartialProp.eval_eq_false_iff _ _).2 ⟨h, ha⟩
+  · have he : (F.strong I).eval w = -1 := (PartialProp.eval_eq_false_iff _ _).2 ⟨h, ha⟩
     exact iff_of_false (fun hr ↦ h₁.1 ⟨ρ, hr⟩ he) ha
 
 /-- A formula is Kleene-defined in the sense of items 27–28 iff its Strong Kleene evaluation is
@@ -707,9 +707,9 @@ theorem incrementally_strong_iff (w : W) (F : Formula Atom) :
     (fun c F Y hF ↦ ?_) F
   · have : Nonempty Atom := X.nonempty_atom
     let a := Classical.arbitrary Atom
-    have hpres (Y : Formula Atom) : (Y.strong I).presup w ↔ (Y.strong I).eval w ≠ .indet := by
+    have hpres (Y : Formula Atom) : (Y.strong I).presup w ↔ (Y.strong I).eval w ≠ 0 := by
       rw [ne_eq, PartialProp.eval_eq_indet_iff, not_not]
-    have htaut : ((taut a).strong I).eval w = .true := by
+    have htaut : ((taut a).strong I).eval w = 1 := by
       rw [PartialProp.eval_eq_true_iff]
       by_cases ha : w ∈ I a <;>
         simp [taut, Formula.strong, Connective.strong, PartialProp.orStrong, PartialProp.neg, ha]
@@ -934,18 +934,18 @@ variable {E : Type*} (J : Atom → Set (W × E)) {C : Set W} {c : QuantifiedClau
 namespace QuantifiedClause
 
 /-- The incremental theory consults at a gap of a quantified clause each good final of the gap's
-argument inside each good final of the clause: any scope after a restrictor, the given restrictor
-before a scope. -/
+argument inside each good final of the clause, namely any scope after a restrictor and the given
+restrictor before a scope. -/
 def goodFinals (k : QuantifiedClause.Env Atom) : Set (Set (W × E) → Set W) :=
   Set.image2 (· ∘ ·) (k.arg.finals J k.quantifier) (Schlenker2009.goodFinals J k.inner)
 
-/-- Incremental Transparency for a quantified clause: at every trigger the presupposition is a
-transparent restriction for every good final. -/
+/-- Incremental Transparency holds for a quantified clause when at every trigger the
+presupposition is a transparent restriction for every good final. -/
 def TranspI (C : Set W) (c : QuantifiedClause Atom) : Prop :=
   ∀ o ∈ c.occurrences, Transparent C (goodFinals J o.1) (J o.2.1)
 
-/-- Symmetric Transparency for a quantified clause: at every trigger the presupposition is a
-transparent restriction for the actual clause. -/
+/-- Symmetric Transparency holds for a quantified clause when at every trigger the
+presupposition is a transparent restriction for the actual clause. -/
 def TranspS (C : Set W) (c : QuantifiedClause Atom) : Prop :=
   ∀ o ∈ c.occurrences, Transparent C {o.1.truth J} (J o.2.1)
 

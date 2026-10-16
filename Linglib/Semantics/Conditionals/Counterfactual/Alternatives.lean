@@ -32,16 +32,23 @@ proposition's counterfactual holds, false when none does, and indeterminate othe
 
 namespace Conditional
 
-variable {W : Type*} [DecidableEq W] (ord : W → Preorder W) (S : Finset (Finset W)) (C : Set W)
-
-/-- The counterfactual over `S` quantifies over the closest worlds of the union of its
-propositions. -/
-def disjunctiveImp : Set W := closestImp ord ↑(S.sup id) C
+variable {W : Type*} (ord : W → Preorder W) (S : Finset (Finset W)) (C : Set W)
 
 /-- The distributive reading, on which the counterfactual holds of each proposition in `S`. -/
 def distributiveImp : Set W := ⋂ A ∈ S, closestImp ord ↑A C
 
 variable {ord S C} {w : W}
+
+@[simp] theorem mem_distributiveImp :
+    w ∈ distributiveImp ord S C ↔ ∀ A ∈ S, w ∈ closestImp ord ↑A C :=
+  Set.mem_iInter₂
+
+variable [DecidableEq W]
+
+variable (ord S C) in
+/-- The counterfactual over `S` quantifies over the closest worlds of the union of its
+propositions. -/
+def disjunctiveImp : Set W := closestImp ord ↑(S.sup id) C
 
 theorem coe_sup_id : (↑(S.sup id) : Set W) = ⋃ A ∈ S, (↑A : Set W) := by
   ext; simp
@@ -49,10 +56,6 @@ theorem coe_sup_id : (↑(S.sup id) : Set W) = ⋃ A ∈ S, (↑A : Set W) := by
 theorem disjunctiveImp_eq_closestImp_iUnion :
     disjunctiveImp ord S C = closestImp ord (⋃ A ∈ S, (↑A : Set W)) C := by
   rw [disjunctiveImp, coe_sup_id]
-
-@[simp] theorem mem_distributiveImp :
-    w ∈ distributiveImp ord S C ↔ ∀ A ∈ S, w ∈ closestImp ord ↑A C :=
-  Set.mem_iInter₂
 
 theorem disjunctiveImp_singleton (A : Finset W) :
     disjunctiveImp ord {A} C = closestImp ord ↑A C := by
@@ -77,7 +80,7 @@ section Homogeneity
 variable (ord S C) [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] (w : W)
 
 /-- The all-or-nothing verdict over `S`, super-truth over its propositions' counterfactuals. -/
-def homogeneousImp : Trivalent := Trivalent.supervaluation S fun A ↦ w ∈ closestImp ord ↑A C
+def homogeneousImp : SignType := SignType.supervaluation S fun A ↦ w ∈ closestImp ord ↑A C
 
 instance : Decidable (w ∈ disjunctiveImp ord S C) :=
   inferInstanceAs (Decidable (w ∈ closestImp ord ↑(S.sup id) C))
@@ -88,17 +91,17 @@ instance : Decidable (w ∈ distributiveImp ord S C) :=
 variable {ord S C w}
 
 theorem homogeneousImp_eq_true_iff :
-    homogeneousImp ord S C w = .true ↔ w ∈ distributiveImp ord S C := by
-  rw [homogeneousImp, Trivalent.supervaluation_eq_true_iff, mem_distributiveImp]
+    homogeneousImp ord S C w = 1 ↔ w ∈ distributiveImp ord S C := by
+  rw [homogeneousImp, SignType.supervaluation_eq_one_iff, mem_distributiveImp]
 
 theorem homogeneousImp_eq_false_iff :
-    homogeneousImp ord S C w = .false ↔ S.Nonempty ∧ ∀ A ∈ S, w ∉ closestImp ord ↑A C :=
-  Trivalent.supervaluation_eq_false_iff ..
+    homogeneousImp ord S C w = -1 ↔ S.Nonempty ∧ ∀ A ∈ S, w ∉ closestImp ord ↑A C :=
+  SignType.supervaluation_eq_neg_one_iff ..
 
 theorem homogeneousImp_eq_indet_iff :
-    homogeneousImp ord S C w = .indet ↔
+    homogeneousImp ord S C w = 0 ↔
       (∃ A ∈ S, w ∈ closestImp ord ↑A C) ∧ ∃ A ∈ S, w ∉ closestImp ord ↑A C :=
-  Trivalent.supervaluation_eq_indet_iff ..
+  SignType.supervaluation_eq_zero_iff ..
 
 end Homogeneity
 

@@ -149,7 +149,7 @@ theorem eval_pexPossOr :
   have hq : (pexPossOr R a b).assertion w ↔ w ∈ R.preimage a ∨ w ∈ R.preimage b := by
     change w ∈ R.preimage (a ∪ b) ↔ _
     rw [preimage_union, Set.mem_union]
-  simp only [eval, barePlural, Trivalent.supervaluation, pexPossOr_presup hF, hq,
+  simp only [eval, barePlural, SignType.supervaluation, pexPossOr_presup hF, hq,
     Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, exists_eq_or_imp,
     exists_eq_left]
   split_ifs <;> grind

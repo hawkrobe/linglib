@@ -15,7 +15,7 @@ antecedent is the De Morgan equivalent of the disjunction (Table 3). The contras
 every minimal-change semantics, not one choice of similarity: whenever the two simple
 counterfactuals are true, any counterfactual quantifying over the closest antecedent worlds
 makes the not-both-up one true as well, a closest not-both-up world in which A is down being a
-closest A-down world (§1.2), and the argument extends to [kratzer-1981]'s premise semantics
+closest A-down world (§1.2), and the argument extends to Kratzer's premise semantics
 (§6.3). The paper's positive proposal, a background semantics with the inquisitive lifting of
 disjunction (§3.2, §4), is not represented.
 
@@ -111,21 +111,21 @@ theorem notBothUp_off_at_uu :
 
 /-- The selectional counterfactual makes the same prediction. -/
 theorem selectional_notBothUp_off_at_uu :
-    selectionalCounterfactual hammingSim notBothUp lightOff .uu = .true := by
+    selectionalCounterfactual hammingSim notBothUp lightOff .uu = 1 := by
   decide
 
 /-- The homogeneity counterfactual makes the same prediction, with its presupposition satisfied.
 -/
 theorem homogeneity_notBothUp_off_at_uu :
-    (homogeneityCounterfactual hammingSim notBothUp lightOff).eval .uu = .true := by
+    (homogeneityCounterfactual hammingSim notBothUp lightOff).eval .uu = 1 := by
   rw [eval_homogeneityCounterfactual]
   decide
 
 /-! ### Minimal change forces the equivalence (§1.2) -/
 
 /-- For any similarity ordering and consequent, if the A-down and the B-down counterfactuals
-are true, so is the not-both-up one: a closest not-both-up world is a closest A-down or a closest
-B-down world. -/
+are true, so is the not-both-up one, since a closest not-both-up world is a closest A-down or a
+closest B-down world. -/
 theorem minimal_change_forces_notBothUp (ord : World → Preorder World) (w₀ : World)
     {C : Set World} (h_a : w₀ ∈ closestImp ord aDn C) (h_b : w₀ ∈ closestImp ord bDn C) :
     w₀ ∈ closestImp ord notBothUp C :=
@@ -134,9 +134,9 @@ theorem minimal_change_forces_notBothUp (ord : World → Preorder World) (w₀ :
 /-- The selectional counterfactual's true verdict is the same quantifier. -/
 theorem selectional_minimal_change_forces_notBothUp_off
     (ord : World → Preorder World) [∀ w, DecidableRel (ord w).le] (w₀ : World)
-    (h_a : selectionalCounterfactual ord aDn lightOff w₀ = .true)
-    (h_b : selectionalCounterfactual ord bDn lightOff w₀ = .true) :
-    selectionalCounterfactual ord notBothUp lightOff w₀ = .true := by
+    (h_a : selectionalCounterfactual ord aDn lightOff w₀ = 1)
+    (h_b : selectionalCounterfactual ord bDn lightOff w₀ = 1) :
+    selectionalCounterfactual ord notBothUp lightOff w₀ = 1 := by
   rw [selectionalCounterfactual_eq_true_iff] at *
   exact minimal_change_forces_notBothUp ord w₀ h_a h_b
 
@@ -144,9 +144,9 @@ theorem selectional_minimal_change_forces_notBothUp_off
 same quantifier. -/
 theorem homogeneity_minimal_change_forces_notBothUp_off
     (ord : World → Preorder World) [∀ w, DecidableRel (ord w).le] (w₀ : World)
-    (h_a : (homogeneityCounterfactual ord aDn lightOff).eval w₀ = .true)
-    (h_b : (homogeneityCounterfactual ord bDn lightOff).eval w₀ = .true) :
-    (homogeneityCounterfactual ord notBothUp lightOff).eval w₀ = .true := by
+    (h_a : (homogeneityCounterfactual ord aDn lightOff).eval w₀ = 1)
+    (h_b : (homogeneityCounterfactual ord bDn lightOff).eval w₀ = 1) :
+    (homogeneityCounterfactual ord notBothUp lightOff).eval w₀ = 1 := by
   simp only [eval_homogeneityCounterfactual] at *
   exact selectional_minimal_change_forces_notBothUp_off ord w₀ h_a h_b
 

@@ -6,25 +6,24 @@ public import Mathlib.Data.Finset.Lattice.Fold
 /-!
 # Ramotowska, Marty, Romoli, and Santorio (2025): Counterfactuals and Quantificational Force
 
-This file formalizes [ramotowska-marty-romoli-santorio-2025]'s comparison of three theories of
-counterfactuals on quantified sentences in mixed scenarios, where some but not all of the
-players would have won. The universal theory of [lewis-1973] and [kratzer-2012] quantifies over
-the closest antecedent worlds (2); the selectional theory of [stalnaker-1968] evaluates the whole
-sentence at a selected world and supervaluates over the candidate selections after composition
-(5); the
-homogeneity theory of [von-fintel-1997] and [kriz-2015] gives each counterfactual a third
-status during composition (6). Unembedded, the last two agree that a single player's
-counterfactual has a third status and the first calls it false (Table 1, `unembedded`).
-Embedded under a quantifier they part ways: the universal theory makes the sentence turn on its
-polarity (`universal_polarity`), the selectional theory on its quantificational force, the
-universal sentences false and the existential ones true whatever the question under discussion
-(`selectional_force`), and the homogeneity theory leaves every quantified sentence undefined
-under either projection algorithm (`homogeneity_undefined`), so that only there is a gap for a
-question under discussion to resolve, as it does for the plural definite of the same scenario
-(`dissociation`). The implicature variant of [bassi-bar-lev-2018] (§8) mispredicts *some* and
-*not all* (`implicature_some`, `implicature_notAll`). The paper's two experiments find the force
-effect and no effect of the question under discussion on counterfactuals, alongside a question
-effect on plural definites, the pattern of the selectional theory.
+Ramotowska, Marty, Romoli, and Santorio compare three theories of counterfactuals on quantified
+sentences in mixed scenarios, where some but not all of the players would have won. The universal
+theory of Lewis and Kratzer quantifies over the closest antecedent worlds (2); Stalnaker's
+selectional theory evaluates the whole sentence at a selected world and supervaluates over the
+candidate selections after composition (5); the homogeneity theory of von Fintel and Križ gives
+each counterfactual a third status during composition (6). Unembedded, the last two agree that a
+single player's counterfactual has a third status and the first calls it false (Table 1,
+`unembedded`). Embedded under a quantifier they part ways: the universal theory makes the
+sentence turn on its polarity (`universal_polarity`), the selectional theory on its
+quantificational force, the universal sentences false and the existential ones true whatever the
+question under discussion (`selectional_force`), and the homogeneity theory leaves every
+quantified sentence undefined under either projection algorithm (`homogeneity_undefined`), so
+that only there is a gap for a question under discussion to resolve, as it does for the plural
+definite of the same scenario (`dissociation`). Bassi and Bar-Lev's implicature variant (§8)
+mispredicts *some* and *not all* (`implicature_some`, `implicature_notAll`). The paper's two
+experiments find the force effect and no effect of the question under discussion on
+counterfactuals, alongside a question effect on plural definites, the pattern of the selectional
+theory.
 
 ## Implementation notes
 
@@ -36,7 +35,7 @@ conjunctive or disjunctive over the values or their negations; the paper notes t
 makes no difference when every instance is undefined, and its Table 3 row for that theory,
 which rests on a pragmatic resolution of undefinedness by the question under discussion, is
 not derived. Force is the paper's binary, universal against existential, which differs from the
-weak/strong labels of [barwise-cooper-1981] on *no*. The mean ratings and mixed-effects models
+weak/strong labels Barwise and Cooper give *no*. The mean ratings and mixed-effects models
 of §5 and §6 are not restated.
 
 ## References
@@ -84,9 +83,9 @@ def Quant.IsPositive : Quant → Prop
   | .none | .notAll => False
 
 /-- The selectional theory's verdict in a mixed scenario is fixed by force alone. -/
-def Force.verdict : Force → Trivalent
-  | .universal => .false
-  | .existential => .true
+def Force.verdict : Force → SignType
+  | .universal => (-1)
+  | .existential => 1
 
 /-- The quantifier applied to a domain and a predicate. -/
 def Quant.eval {ι : Type*} (q : Quant) (D : Finset ι) (P : ι → Prop) : Prop :=
@@ -103,22 +102,20 @@ instance {ι : Type*} (q : Quant) (D : Finset ι) (P : ι → Prop) [DecidablePr
 /-- The quantifier projects through the players' trivalent values by the Kleene meet for the
 universal quantifiers and the Kleene join for the existential ones, over the values or their
 negations. -/
-def Quant.aggregate {ι : Type*} (q : Quant) (D : Finset ι) (v : ι → Trivalent) : Trivalent :=
+def Quant.aggregate {ι : Type*} (q : Quant) (D : Finset ι) (v : ι → SignType) : SignType :=
   match q with
   | .all => D.inf v
-  | .none => D.inf fun d ↦ (v d).neg
+  | .none => D.inf fun d ↦ -v d
   | .some => D.sup v
-  | .notAll => D.sup fun d ↦ (v d).neg
+  | .notAll => D.sup fun d ↦ -v d
 
-variable {W ι : Type*} [Fintype W] (ord : W → Preorder W)
-  [∀ w, DecidableRel (ord w).le] (A : Set W) [DecidablePred (· ∈ A)] (w : W) (D : Finset ι)
-  (B : ι → Set W)
+variable {W ι : Type*} (ord : W → Preorder W) (A : Set W) (w : W) (D : Finset ι) (B : ι → Set W)
 
 /-! ### Mixed scenarios -/
 
-/-- A win-some-lose-some scenario: there are players, every closest antecedent world has a
-winner and a loser among them, and every player wins in some closest world and loses in
-another. -/
+/-- A scenario is mixed, win some and lose some, when there are players, every closest
+antecedent world has a winner and a loser among them, and every player wins in some closest
+world and loses in another. -/
 structure Mixed : Prop where
   nonempty : D.Nonempty
   worlds : ∀ w' ∈ (ord w).minimals A, (∃ d ∈ D, w' ∈ B d) ∧ ∃ d ∈ D, w' ∉ B d
@@ -133,7 +130,10 @@ theorem Mixed.closest_nonempty (h : Mixed ord A w D B) : ((ord w).minimals A).No
 
 /-! ### The theories on a quantified sentence -/
 
-variable [∀ d, DecidablePred (· ∈ B d)]
+section
+
+variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ A)]
+  [∀ d, DecidablePred (· ∈ B d)]
 
 /-- The universal theory (2) applies the quantifier to the players' universal counterfactuals. -/
 def universal (q : Quant) : Prop := q.eval D fun d ↦ w ∈ closestImp ord A (B d)
@@ -143,12 +143,12 @@ instance (q : Quant) : DecidablePred (· ∈ {v : W | q.eval D fun d ↦ v ∈ B
 
 /-- The selectional theory (5) takes the selectional counterfactual of the quantified sentence,
 the sentence evaluated at the selected world and supervaluated over the candidate selections. -/
-def selectional (q : Quant) : Trivalent :=
+def selectional (q : Quant) : SignType :=
   selectionalCounterfactual ord A {v | q.eval D fun d ↦ v ∈ B d} w
 
 /-- On the homogeneity theory (6) each player's counterfactual carries its third status into
 composition, and the quantifier projects it. -/
-noncomputable def homogeneity (q : Quant) : Trivalent :=
+noncomputable def homogeneity (q : Quant) : SignType :=
   q.aggregate D fun d ↦ (homogeneityCounterfactual ord A (B d)).eval w
 
 /-- The implicature theory (§8) pairs the basic existential meaning (23) with its exhaustified
@@ -169,7 +169,7 @@ variable {ord A w D B}
 indeterminate on the selectional theory, and undefined on the homogeneity theory. -/
 theorem unembedded (h : Mixed ord A w D B) {d : ι} (hd : d ∈ D) :
     w ∉ closestImp ord A (B d) ∧
-      selectionalCounterfactual ord A (B d) w = .indet ∧
+      selectionalCounterfactual ord A (B d) w = 0 ∧
       ¬ (homogeneityCounterfactual ord A (B d)).presup w := by
   obtain ⟨⟨w₁, hw₁, hB₁⟩, ⟨w₂, hw₂, hB₂⟩⟩ := h.players d hd
   have hnot : w ∉ closestImp ord A (B d) := fun hall ↦ hB₂ (hall hw₂)
@@ -213,19 +213,19 @@ theorem selectional_force (h : Mixed ord A w D B) (q : Quant) :
 /-- No selectional value is a gap, so there is nothing for a question under discussion to
 resolve. -/
 theorem selectional_determinate (h : Mixed ord A w D B) (q : Quant) :
-    selectional ord A w D B q ≠ .indet := by
+    selectional ord A w D B q ≠ 0 := by
   rw [selectional_force h]
   cases q <;> simp [Quant.force, Force.verdict]
 
 /-- Every player's counterfactual is undefined, so the quantified sentence is undefined under
-either projection algorithm, for every quantifier: the homogeneity theory leaves the sentences
-to pragmatics. -/
+either projection algorithm, for every quantifier, and the homogeneity theory leaves the
+sentences to pragmatics. -/
 theorem homogeneity_undefined (h : Mixed ord A w D B) (q : Quant) :
-    homogeneity ord A w D B q = .indet := by
-  have hv : ∀ d ∈ D, (homogeneityCounterfactual ord A (B d)).eval w = .indet := fun d hd ↦
+    homogeneity ord A w D B q = 0 := by
+  have hv : ∀ d ∈ D, (homogeneityCounterfactual ord A (B d)).eval w = 0 := fun d hd ↦
     (Presupposition.PartialProp.eval_eq_indet_iff _ _).2 (unembedded h hd).2.2
-  have hn : ∀ d ∈ D, ((homogeneityCounterfactual ord A (B d)).eval w).neg = .indet :=
-    fun d hd ↦ by rw [hv d hd, Trivalent.neg_indet]
+  have hn : ∀ d ∈ D, -(homogeneityCounterfactual ord A (B d)).eval w = 0 :=
+    fun d hd ↦ by rw [hv d hd, SignType.neg_zero]
   cases q
   · exact (Finset.inf_congr rfl hv).trans (Finset.inf_const h.nonempty _)
   · exact (Finset.inf_congr rfl hn).trans (Finset.inf_const h.nonempty _)
@@ -237,7 +237,10 @@ win (25), which is false in the scenario. -/
 theorem implicature_some (h : Mixed ord A w D B) : ¬ implicature ord A w D B .some :=
   fun ⟨_, hd, hc⟩ ↦ (unembedded h hd).1 hc
 
-omit [∀ d, DecidablePred (· ∈ B d)] in
+end
+
+variable {ord A w D B}
+
 /-- With the basic existential meaning in its scope, *not all* says that some player could not
 have won (26), which is false in the scenario. -/
 theorem implicature_notAll (h : Mixed ord A w D B) : ¬ implicature ord A w D B .notAll :=
@@ -245,13 +248,15 @@ theorem implicature_notAll (h : Mixed ord A w D B) : ¬ implicature ord A w D B 
     let ⟨_, hw₁, hB₁⟩ := (h.players d hd).1
     hall hw₁ hB₁
 
+variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ A)]
+  [∀ d, DecidablePred (· ∈ B d)]
+
 /-- Experiment 2 dissociates the two constructions. At a world where some but not all of the
 players won, the plural definite *the players won* has a gap, while the quantified
 counterfactuals of the same scenario have none. -/
 theorem dissociation (h : Mixed ord A w D B) {v : W}
     (hv : (∃ d ∈ D, v ∈ B d) ∧ ∃ d ∈ D, v ∉ B d) (q : Quant) :
-    Trivalent.supervaluation D (v ∈ B ·) = .indet ∧ selectional ord A w D B q ≠ .indet :=
-  ⟨(Trivalent.supervaluation_eq_indet_iff D (v ∈ B ·)).2 hv, selectional_determinate h q⟩
-
+    SignType.supervaluation D (v ∈ B ·) = 0 ∧ selectional ord A w D B q ≠ 0 :=
+  ⟨(SignType.supervaluation_eq_zero_iff D (v ∈ B ·)).2 hv, selectional_determinate h q⟩
 
 end RamotowskaEtAl2025

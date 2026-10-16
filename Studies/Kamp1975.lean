@@ -89,22 +89,19 @@ end Bridge
 /-! ### The many-valued dilemma -/
 
 /-- No truth-functional conjunction is both idempotent at the borderline value and false on
-borderline contradictions, since with `neg indet = indet` both demands constrain the same pair
-of inputs. Kamp states the dilemma (pp. 130–131) for every linearly ordered n-valued logic, of
-which `Trivalent` is the smallest. -/
+borderline contradictions, since with `-0 = 0` both demands constrain the same pair of inputs.
+Kamp states the dilemma (pp. 130–131) for every linearly ordered n-valued logic, of which
+`SignType` is the smallest. -/
 theorem kleene_dilemma :
-    ¬∃ (meet : Trivalent → Trivalent → Trivalent),
-      meet .indet .indet = .indet ∧
-      meet .indet (Trivalent.neg .indet) = .false := by
+    ¬∃ (meet : SignType → SignType → SignType), meet 0 0 = 0 ∧ meet 0 (-0) = -1 := by
   rintro ⟨meet, hidem, hcontra⟩
-  rw [Trivalent.neg_indet, hidem] at hcontra
+  rw [SignType.neg_zero, hidem] at hcontra
   cases hcontra
 
-/-- Strong Kleene conjunction, `⊓` on `Trivalent`, takes the idempotent horn of the dilemma, so
+/-- Strong Kleene conjunction, `⊓` on `SignType`, takes the idempotent horn of the dilemma, so
 borderline contradictions are not false. -/
-example : Trivalent.indet ⊓ Trivalent.indet = Trivalent.indet ∧
-    Trivalent.indet ⊓ Trivalent.indetᶜ ≠ ⊥ :=
-  ⟨inf_idem _, Trivalent.inf_compl_indet_ne_bot⟩
+example : (0 : SignType) ⊓ 0 = 0 ∧ (0 : SignType) ⊓ 0ᶜ ≠ ⊥ :=
+  ⟨inf_idem _, SignType.inf_compl_zero_ne_bot⟩
 
 /-! ### The completion comparative
 

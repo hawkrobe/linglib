@@ -9,7 +9,7 @@ public import Studies.Magri2014
 public import Mathlib.Data.List.Sections
 
 /-!
-# Križ and Chemla (2015): Two Methods to Find Truth-Value Gaps and Their Application to the Projection Problem of Homogeneity
+# Križ and Chemla (2015): finding truth-value gaps
 
 Križ and Chemla introduce two experimental methods for detecting truth-value gaps and use them to
 ask where the homogeneity gap of a plural definite survives embedding, under sentential negation,
@@ -28,7 +28,7 @@ predicts gaps where false was found.
 * `items_variants`: every display of Table 13 realizes its condition, except the faulty A2 and B2
   *no* items (`faulty_items`) and the GAP? item 5599 (`misprinted_gapQQ`).
 * `found_iff`: Table 2 finds a gap exactly outside GAP?, apart from the discounted *no* tests.
-* `supervaluation_eq_true_iff_condition`, `supervaluation_eq_indet_iff_found`: the supervaluation
+* `supervaluation_eq_one_iff_condition`, `supervaluation_eq_zero_iff_found`: the supervaluation
   predicts every designed value and every finding.
 * `globalConstrual_misfit_iff`: the implicature construal misfits exactly the downward-entailing
   GAP items and the GAP?? items; `globalConstrual_wideScope`: a wide-scope definite rescues it
@@ -79,23 +79,23 @@ open Trivalent (Designation designated)
 /-! ### Displays and their resolutions -/
 
 /-- A display lists, for each boy, the trivalent value of *he found his presents*. -/
-abbrev Display := List Trivalent
+abbrev Display := List SignType
 
 /-- A cell in which `n` of the nine objects are found or target-colored has the value of the
 bare plural over the nine, true when all are, false when none are, and a gap otherwise. -/
-def cell (n : ℕ) : Trivalent :=
+def cell (n : ℕ) : SignType :=
   Homogeneity.barePlural (fun j m ↦ j < m) (Finset.range 9) n
 
 /-- A cell is true, designated at K3, when all nine objects are found. -/
 theorem designated_k3_cell (n : ℕ) : designated .k3 (cell n) ↔ 9 ≤ n := by
   rw [Trivalent.designated_k3_iff, cell, Homogeneity.barePlural,
-    Trivalent.supervaluation_eq_true_iff]
+    SignType.supervaluation_eq_one_iff]
   exact ⟨fun h ↦ h 8 (by simp), fun h j hj ↦ by simp at hj; omega⟩
 
 /-- A cell is non-false, designated at LP, when at least one object is found. -/
 theorem designated_lp_cell (n : ℕ) : designated .lp (cell n) ↔ 1 ≤ n := by
   rw [Trivalent.designated_lp_iff, Ne, cell, Homogeneity.barePlural,
-    Trivalent.supervaluation_eq_false_iff]
+    SignType.supervaluation_eq_neg_one_iff]
   simp only [Finset.mem_range, not_and, not_forall, not_not, exists_prop]
   exact ⟨fun h ↦ by obtain ⟨j, -, hj⟩ := h ⟨0, by simp⟩; omega,
     fun h _ ↦ ⟨0, by omega, h⟩⟩
@@ -122,7 +122,7 @@ def resolve (δ : Designation) (d : Display) : List Bool := d.map fun v ↦ deci
 
 /-- Negating every cell resolves at the dual standard and reverses the result. -/
 theorem resolve_map_neg (δ : Designation) (d : Display) :
-    resolve δ (d.map Trivalent.neg) = (resolve δ.dual d).map not := by
+    resolve δ (d.map Neg.neg) = (resolve δ.dual d).map not := by
   simp only [resolve, List.map_map]
   refine List.map_congr_left fun v _ ↦ ?_
   have := Trivalent.designated_neg_iff δ.dual v
@@ -148,9 +148,9 @@ theorem resolve_le_of_mem_resolutions {d : Display} {c : List Bool} (hc : c ∈ 
   cases v <;> cases b <;> simp_all
 
 /-- A display without partial cells has a single resolution. -/
-theorem resolve_lp_eq_resolve_k3 {d : Display} (h : ∀ v ∈ d, v.isDefined) :
+theorem resolve_lp_eq_resolve_k3 {d : Display} (h : ∀ v ∈ d, v ≠ 0) :
     resolve .lp d = resolve .k3 d :=
-  List.map_congr_left fun v hv ↦ by cases v <;> first | rfl | exact absurd (h _ hv) id
+  List.map_congr_left fun v hv ↦ by cases v <;> first | rfl | exact absurd rfl (h _ hv)
 
 /-- Moving boys into the scope preserves a scope-monotone quantifier. -/
 theorem holds_of_forall₂_le {q : NumberTree} (hq : q.ScopeMonotone) {c c' : List Bool}
@@ -212,11 +212,11 @@ theorem reading_no (δ : Designation) : reading NumberTree.no d δ ↔ ∀ v ∈
 /-- Negating the predicate in every cell evaluates the inner negation of the quantifier at the
 dual standard, so it exchanges the some- and all-substituted readings. -/
 theorem reading_map_neg (δ : Designation) :
-    reading q (d.map Trivalent.neg) δ ↔ reading q.innerNeg d δ.dual := by
+    reading q (d.map Neg.neg) δ ↔ reading q.innerNeg d δ.dual := by
   rw [reading, reading, resolve_map_neg, holds_map_not]
 
 /-- On a display without partial cells the two resolutions coincide. -/
-theorem someReading_iff_allReading (h : ∀ v ∈ d, v.isDefined) :
+theorem someReading_iff_allReading (h : ∀ v ∈ d, v ≠ 0) :
     someReading q d ↔ allReading q d := by
   rw [someReading, allReading, reading, reading, resolve_lp_eq_resolve_k3 h]
 
@@ -234,26 +234,26 @@ end Readings
 
 /-- The verdict from two meaning components is the supervaluation over the pair, clearly true
 when both hold, clearly false when neither does, and a truth-value gap when they conflict. -/
-def gapValue (p q : Prop) [Decidable p] [Decidable q] : Trivalent :=
-  Trivalent.supervaluation Finset.univ fun b : Bool ↦ if b then p else q
+def gapValue (p q : Prop) [Decidable p] [Decidable q] : SignType :=
+  SignType.supervaluation Finset.univ fun b : Bool ↦ if b then p else q
 
 section GapValue
 
 variable {p q : Prop} [Decidable p] [Decidable q]
 
-@[simp] theorem gapValue_eq_true_iff : gapValue p q = .true ↔ p ∧ q := by
-  simp [gapValue, Trivalent.supervaluation_eq_true_iff, Bool.forall_bool, and_comm]
+@[simp] theorem gapValue_eq_one_iff : gapValue p q = 1 ↔ p ∧ q := by
+  simp [gapValue, SignType.supervaluation_eq_one_iff, Bool.forall_bool, and_comm]
 
-@[simp] theorem gapValue_eq_false_iff : gapValue p q = .false ↔ ¬ p ∧ ¬ q := by
-  simp [gapValue, Trivalent.supervaluation_eq_false_iff, Bool.forall_bool, and_comm]
+@[simp] theorem gapValue_eq_neg_one_iff : gapValue p q = -1 ↔ ¬ p ∧ ¬ q := by
+  simp [gapValue, SignType.supervaluation_eq_neg_one_iff, Bool.forall_bool, and_comm]
 
-@[simp] theorem gapValue_eq_indet_iff : gapValue p q = .indet ↔ ¬ (p ↔ q) := by
-  simp only [gapValue, Trivalent.supervaluation_eq_indet_iff, Finset.mem_univ, true_and,
+@[simp] theorem gapValue_eq_zero_iff : gapValue p q = 0 ↔ ¬ (p ↔ q) := by
+  simp only [gapValue, SignType.supervaluation_eq_zero_iff, Finset.mem_univ, true_and,
     Bool.exists_bool, Bool.false_eq_true, ite_false, ite_true]
   tauto
 
 /-- Two components that agree yield a bivalent verdict. -/
-theorem gapValue_ne_indet (h : p ↔ q) : gapValue p q ≠ .indet := by simp [h]
+theorem gapValue_ne_zero (h : p ↔ q) : gapValue p q ≠ 0 := by simp [h]
 
 end GapValue
 
@@ -284,77 +284,77 @@ variable (q : NumberTree) [DecidableRel q] (d : Display)
 /-- The supervaluation of [spector-2013b] (§6.2) makes the sentence true when it is true however
 the definite is resolved, existentially or universally, and false when it is false however it is
 resolved. -/
-def supervaluation : Trivalent := Trivalent.supervaluation Finset.univ (reading q d)
+def supervaluation : SignType := SignType.supervaluation Finset.univ (reading q d)
 
 instance : Decidable (globalExh q d) := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The implicature construals (si1) and (si3) of §6.1.2, after [magri-2009]'s oddness condition,
 put a gap where the literal and the globally exhaustified meaning conflict. -/
-def globalConstrual : Trivalent := gapValue (someReading q d) (globalExh q d)
+def globalConstrual : SignType := gapValue (someReading q d) (globalExh q d)
 
 /-- Homogeneity as a presupposition projecting universally from the quantifier's scope, after
 [schwarzschild-1994], [lobner-2000] and [gajewski-2005] as assessed in §6.3, is the presupposition
 that every cell is homogeneous weakly conjoined with the universal-force assertion, in the
 ∂-operator notation of [beaver-krahmer-2001]. -/
-def universalPresupposition : Trivalent :=
-  (Trivalent.ofProp (∀ v ∈ d, v.isDefined)).presuppose.meetWeak (.ofProp (allReading q d))
+def universalPresupposition : SignType :=
+  (SignType.ofProp (∀ v ∈ d, v ≠ 0)).presuppose.meetWeak (.ofProp (allReading q d))
 
 /-- Supervaluation over the resolutions that treat the partial cells one by one, a richer
 candidate set than the existential and universal readings, of the kind §6.2 says predicts a gap
 in the gap? condition; footnote 19 notes that quantified trivalent logics make the same
 prediction. -/
-def pointwise : Trivalent := Trivalent.supervaluation (resolutions d).toFinset (holds q)
+def pointwise : SignType := SignType.supervaluation (resolutions d).toFinset (holds q)
 
 variable {q d}
 
 /-- The supervaluation ranges over the two designation standards. -/
 theorem supervaluation_eq_designations :
-    supervaluation q d = Trivalent.supervaluation Finset.univ (reading q d) :=
+    supervaluation q d = SignType.supervaluation Finset.univ (reading q d) :=
   rfl
 
 private theorem forall_designation {P : Designation → Prop} : (∀ δ, P δ) ↔ P .lp ∧ P .k3 :=
   ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨h₁, h₂⟩ δ ↦ by cases δ <;> assumption⟩
 
 /-- The supervaluation is true when both variants are. -/
-theorem supervaluation_eq_true_iff :
-    supervaluation q d = .true ↔ someReading q d ∧ allReading q d := by
-  simp [supervaluation, Trivalent.supervaluation_eq_true_iff, forall_designation]
+theorem supervaluation_eq_one_iff :
+    supervaluation q d = 1 ↔ someReading q d ∧ allReading q d := by
+  simp [supervaluation, SignType.supervaluation_eq_one_iff, forall_designation]
 
 /-- The supervaluation is false when neither variant is true. -/
-theorem supervaluation_eq_false_iff :
-    supervaluation q d = .false ↔ ¬ someReading q d ∧ ¬ allReading q d := by
-  simp [supervaluation, Trivalent.supervaluation_eq_false_iff, forall_designation]
+theorem supervaluation_eq_neg_one_iff :
+    supervaluation q d = -1 ↔ ¬ someReading q d ∧ ¬ allReading q d := by
+  simp [supervaluation, SignType.supervaluation_eq_neg_one_iff, forall_designation]
 
 /-- The supervaluation gaps when the variants differ. -/
-theorem supervaluation_eq_indet_iff :
-    supervaluation q d = .indet ↔ ¬ (someReading q d ↔ allReading q d) := by
+theorem supervaluation_eq_zero_iff :
+    supervaluation q d = 0 ↔ ¬ (someReading q d ↔ allReading q d) := by
   have h {P : Designation → Prop} : (∃ δ, P δ) ↔ P .lp ∨ P .k3 :=
     ⟨fun ⟨δ, h⟩ ↦ by cases δ <;> tauto, fun h ↦ h.elim (⟨_, ·⟩) (⟨_, ·⟩)⟩
-  simp only [supervaluation, Trivalent.supervaluation_eq_indet_iff, Finset.mem_univ, true_and, h]
+  simp only [supervaluation, SignType.supervaluation_eq_zero_iff, Finset.mem_univ, true_and, h]
   tauto
 
 /-- A display without partial cells gets a bivalent verdict, whatever the quantifier. -/
-theorem supervaluation_ne_indet (h : ∀ v ∈ d, v.isDefined) : supervaluation q d ≠ .indet := by
-  simp [supervaluation_eq_indet_iff, someReading_iff_allReading h]
+theorem supervaluation_ne_zero (h : ∀ v ∈ d, v ≠ 0) : supervaluation q d ≠ 0 := by
+  simp [supervaluation_eq_zero_iff, someReading_iff_allReading h]
 
 /-- The supervaluation does not see the scope of the definite relative to a negation inside the
 cells, since negating every cell gives the supervaluation of the inner negation. -/
 theorem supervaluation_map_neg :
-    supervaluation q (d.map Trivalent.neg) = supervaluation q.innerNeg d := by
+    supervaluation q (d.map Neg.neg) = supervaluation q.innerNeg d := by
   have h : (Finset.univ : Finset Designation).image Designation.dual = Finset.univ := by decide
   rw [supervaluation, supervaluation]
-  conv_rhs => rw [← h, Trivalent.supervaluation_image]
-  exact Trivalent.supervaluation_congr fun δ _ ↦ reading_map_neg δ
+  conv_rhs => rw [← h, SignType.supervaluation_image]
+  exact SignType.supervaluation_congr fun δ _ ↦ reading_map_neg δ
 
 /-- The outer negation of the quantifier negates the supervaluation. -/
-theorem supervaluation_compl : supervaluation qᶜ d = (supervaluation q d).neg := by
-  rw [supervaluation, supervaluation, ← Trivalent.supervaluation_not _ Finset.univ_nonempty]
+theorem supervaluation_compl : supervaluation qᶜ d = -supervaluation q d := by
+  rw [supervaluation, supervaluation, ← SignType.supervaluation_not _ Finset.univ_nonempty]
   rfl
 
 /-- The global construal gaps where the literal meaning holds and the all-substituted one fails. -/
-theorem globalConstrual_eq_indet_iff :
-    globalConstrual q d = .indet ↔ someReading q d ∧ ¬ allReading q d := by
-  rw [globalConstrual, gapValue_eq_indet_iff, globalExh]
+theorem globalConstrual_eq_zero_iff :
+    globalConstrual q d = 0 ↔ someReading q d ∧ ¬ allReading q d := by
+  rw [globalConstrual, gapValue_eq_zero_iff, globalExh]
   tauto
 
 /-- The global construals depart from supervaluation exactly where the literal meaning is false
@@ -363,8 +363,8 @@ theorem globalConstrual_ne_supervaluation_iff :
     globalConstrual q d ≠ supervaluation q d ↔ ¬ someReading q d ∧ allReading q d := by
   rcases h₁ : globalConstrual q d with _ | _ | _ <;>
     rcases h₂ : supervaluation q d with _ | _ | _ <;>
-    simp_all [globalConstrual, globalExh, supervaluation_eq_true_iff, supervaluation_eq_false_iff,
-      supervaluation_eq_indet_iff]
+    simp_all [globalConstrual, globalExh, supervaluation_eq_one_iff, supervaluation_eq_neg_one_iff,
+      supervaluation_eq_zero_iff]
 
 /-- In the scope of a scope-monotone quantifier such as *every* the implicature construals all
 align, since comparing the literal meaning with global exhaustification and with local
@@ -377,41 +377,37 @@ theorem globalConstrual_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone
 /-- Without local exhaustification no gap can arise in the scope of a downward-entailing
 quantifier such as *no*, since exhaustification is vacuous there and the literal and globally
 exhaustified meanings never conflict. -/
-theorem globalConstrual_ne_indet_of_scopeAntitone (hq : q.ScopeAntitone) :
-    globalConstrual q d ≠ .indet :=
-  gapValue_ne_indet (globalExh_iff_of_scopeAntitone hq).symm
+theorem globalConstrual_ne_zero_of_scopeAntitone (hq : q.ScopeAntitone) :
+    globalConstrual q d ≠ 0 :=
+  gapValue_ne_zero (globalExh_iff_of_scopeAntitone hq).symm
 
 /-- Universal projection fails exactly on the displays with a partial cell. -/
-theorem universalPresupposition_eq_indet_iff :
-    universalPresupposition q d = .indet ↔ .indet ∈ d := by
-  rw [universalPresupposition, Trivalent.meetWeak_eq_indet_iff]
-  simp only [Trivalent.presuppose_eq_indet_iff, Trivalent.ofProp_ne_indet, or_false, Ne,
-    Trivalent.ofProp_eq_true_iff, not_forall, exists_prop]
-  constructor
-  · rintro ⟨v, hv, h⟩
-    cases v <;> simp_all [Trivalent.isDefined]
-  · exact fun h ↦ ⟨_, h, by simp [Trivalent.isDefined]⟩
+theorem universalPresupposition_eq_zero_iff :
+    universalPresupposition q d = 0 ↔ 0 ∈ d := by
+  rw [universalPresupposition, SignType.meetWeak_eq_zero_iff]
+  simp only [SignType.presuppose_eq_zero_iff, SignType.ofProp_ne_zero, or_false, Ne,
+    SignType.ofProp_eq_one_iff, not_forall, exists_prop, not_not, exists_eq_right]
 
 end Approaches
 
 /-! ### Negation and the wide-scope parse (§6.1.3) -/
 
 /-- Over one cell the unembedded sentence takes the cell's value. -/
-theorem supervaluation_all_singleton (v : Trivalent) : supervaluation NumberTree.all [v] = v := by
+theorem supervaluation_all_singleton (v : SignType) : supervaluation NumberTree.all [v] = v := by
   cases v <;> decide
 
 /-- The literal-against-global construal never gaps under plain negation, which is downward
 entailing. -/
-theorem globalConstrual_notAll_ne_indet (v : Trivalent) :
-    globalConstrual NumberTree.notAll [v] ≠ .indet :=
-  globalConstrual_ne_indet_of_scopeAntitone NumberTree.scopeAntitone_notAll
+theorem globalConstrual_notAll_ne_zero (v : SignType) :
+    globalConstrual NumberTree.notAll [v] ≠ 0 :=
+  globalConstrual_ne_zero_of_scopeAntitone NumberTree.scopeAntitone_notAll
 
 /-- On the parse (35) where the definite takes scope over negation, the literal-against-global
 construal of *the shapes are not green* is the supervaluation of its narrow-scope negation, so it
 gaps exactly on the mixed cell. No such parse is available under *no*, whose definite contains a
 variable the quantifier binds. -/
-theorem globalConstrual_wideScope (v : Trivalent) :
-    globalConstrual NumberTree.all [v.neg] = supervaluation NumberTree.notAll [v] := by
+theorem globalConstrual_wideScope (v : SignType) :
+    globalConstrual NumberTree.all [-v] = supervaluation NumberTree.notAll [v] := by
   rw [globalConstrual_eq_supervaluation_of_scopeMonotone NumberTree.scopeMonotone_all]
   exact supervaluation_map_neg (q := NumberTree.all) (d := [v]) |>.trans (by cases v <;> decide)
 
@@ -424,11 +420,11 @@ open Magri2014 (strengthened primalMates primal)
 variable (q : NumberTree) [DecidableRel q] (n : ℕ)
 
 /-- The displays of `n` boys on which the some-substituted reading holds, the weak pole. -/
-def weakPole : Finset (Fin n → Trivalent) :=
+def weakPole : Finset (Fin n → SignType) :=
   Finset.univ.filter fun w ↦ someReading q (List.ofFn w)
 
 /-- The displays of `n` boys on which the all-substituted reading holds, the strong pole. -/
-def strongPole : Finset (Fin n → Trivalent) :=
+def strongPole : Finset (Fin n → SignType) :=
   Finset.univ.filter fun w ↦ allReading q (List.ofFn w)
 
 variable {q n}
@@ -438,7 +434,7 @@ variable {q n}
 pole is weaker, as in a downward-entailing scope, or the two poles are compatible. -/
 theorem globalExh_iff_mem_strengthened
     (h : weakPole q n ⊆ strongPole q n ∨ (weakPole q n ∩ strongPole q n).Nonempty)
-    (w : Fin n → Trivalent) :
+    (w : Fin n → SignType) :
     globalExh q (List.ofFn w) ↔
       w ∈ strengthened primalMates (primal (weakPole q n) (strongPole q n)) .mystery := by
   rcases (weakPole q n \ strongPole q n).eq_empty_or_nonempty with h₀ | h₀
@@ -462,16 +458,16 @@ variable {q : NumberTree} [DecidableRel q] {d : Display}
 /-- The two-candidate supervaluation ranges over the uniform resolutions. -/
 theorem supervaluation_eq_image :
     supervaluation q d =
-      Trivalent.supervaluation (Finset.univ.image fun δ ↦ resolve δ d) (holds q) := by
-  rw [supervaluation, Trivalent.supervaluation_image]
+      SignType.supervaluation (Finset.univ.image fun δ ↦ resolve δ d) (holds q) := by
+  rw [supervaluation, SignType.supervaluation_image]
   rfl
 
 /-- Richer candidates can only add gaps, since whatever the quantifier the per-boy supervaluation
 is at most as informative as the two-candidate one. -/
 theorem toFlat_pointwise_le :
-    Trivalent.toFlat (pointwise q d) ≤ Trivalent.toFlat (supervaluation q d) := by
+    SignType.toFlat (pointwise q d) ≤ SignType.toFlat (supervaluation q d) := by
   rw [supervaluation_eq_image]
-  refine Trivalent.toFlat_supervaluation_mono _ (fun c hc ↦ ?_) (Finset.univ_nonempty.image _)
+  refine SignType.toFlat_supervaluation_mono _ (fun c hc ↦ ?_) (Finset.univ_nonempty.image _)
   obtain ⟨δ, -, rfl⟩ := Finset.mem_image.1 hc
   exact List.mem_toFinset.2 (resolve_mem_resolutions δ d)
 
@@ -489,23 +485,23 @@ theorem pointwise_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
       (resolve_le_of_mem_resolutions (List.mem_toFinset.1 hc)).2 h, fun h ↦ ⟨_, hlp, h⟩⟩
   have hle := allReading_imp_someReading (d := d) hq
   cases h : supervaluation q d
-  · exact (Trivalent.supervaluation_eq_true_iff ..).2 (hall.2 (supervaluation_eq_true_iff.1 h).2)
-  · exact (Trivalent.supervaluation_eq_false_iff ..).2 ⟨⟨_, hk3⟩,
-      fun c hc hq' ↦ (supervaluation_eq_false_iff.1 h).1 (hex.1 ⟨c, hc, hq'⟩)⟩
   · have ⟨hs, ha⟩ : someReading q d ∧ ¬ allReading q d := by
-      have := supervaluation_eq_indet_iff.1 h
+      have := supervaluation_eq_zero_iff.1 h
       tauto
-    exact (Trivalent.supervaluation_eq_indet_iff ..).2 ⟨hex.2 hs, _, hk3, ha⟩
+    exact (SignType.supervaluation_eq_zero_iff ..).2 ⟨hex.2 hs, _, hk3, ha⟩
+  · exact (SignType.supervaluation_eq_neg_one_iff ..).2 ⟨⟨_, hk3⟩,
+      fun c hc hq' ↦ (supervaluation_eq_neg_one_iff.1 h).1 (hex.1 ⟨c, hc, hq'⟩)⟩
+  · exact (SignType.supervaluation_eq_one_iff ..).2 (hall.2 (supervaluation_eq_one_iff.1 h).2)
 
 /-- The outer negation of the quantifier negates the per-boy supervaluation. -/
-theorem pointwise_compl : pointwise qᶜ d = (pointwise q d).neg :=
-  Trivalent.supervaluation_not _ ⟨_, List.mem_toFinset.2 (resolve_mem_resolutions .k3 d)⟩
+theorem pointwise_compl : pointwise qᶜ d = -pointwise q d :=
+  SignType.supervaluation_not _ ⟨_, List.mem_toFinset.2 (resolve_mem_resolutions .k3 d)⟩
 
 /-- Under a scope-antitone quantifier, likewise. -/
 theorem pointwise_eq_supervaluation_of_scopeAntitone (hq : q.ScopeAntitone) :
     pointwise q d = supervaluation q d := by
   have := pointwise_eq_supervaluation_of_scopeMonotone (d := d) hq.compl
-  rwa [pointwise_compl, supervaluation_compl, Trivalent.neg_involutive.injective.eq_iff] at this
+  rwa [pointwise_compl, supervaluation_compl, neg_involutive.injective.eq_iff] at this
 
 end Pointwise
 
@@ -606,35 +602,35 @@ theorem found_iff : ∀ t ∈ gapTests, (t.found = .yes ↔ t.condition ≠ .gap
 theorem gapTests_condition : ∀ t ∈ gapTests, t.condition ∈ [.gap, .gapQ, .gapQQ] := by decide
 
 /-- The supervaluation is true exactly on the variants' agreement in truth. -/
-theorem supervaluation_eq_true_iff_weak (e : Embedding) (d : Display) :
-    supervaluation e.tree d = .true ↔ weak e d ∧ strong e d := by
+theorem supervaluation_eq_one_iff_weak (e : Embedding) (d : Display) :
+    supervaluation e.tree d = 1 ↔ weak e d ∧ strong e d := by
   unfold weak strong
-  split_ifs <;> simp [supervaluation_eq_true_iff, and_comm]
+  split_ifs <;> simp [supervaluation_eq_one_iff, and_comm]
 
 /-- The supervaluation gaps exactly where the variants differ. -/
-theorem supervaluation_eq_indet_iff_weak (e : Embedding) (d : Display) :
-    supervaluation e.tree d = .indet ↔ ¬ (weak e d ↔ strong e d) := by
+theorem supervaluation_eq_zero_iff_weak (e : Embedding) (d : Display) :
+    supervaluation e.tree d = 0 ↔ ¬ (weak e d ↔ strong e d) := by
   unfold weak strong
-  split_ifs <;> simp [supervaluation_eq_indet_iff, Iff.comm]
+  split_ifs <;> simp [supervaluation_eq_zero_iff, Iff.comm]
 
 /-- The supervaluation is true exactly on the items designed true. -/
-theorem supervaluation_eq_true_iff_condition : ∀ i ∈ tested, i.status ≠ .faulty →
-    i ≠ misprinted → (supervaluation i.embedding.tree i.display = .true ↔
+theorem supervaluation_eq_one_iff_condition : ∀ i ∈ tested, i.status ≠ .faulty →
+    i ≠ misprinted → (supervaluation i.embedding.tree i.display = 1 ↔
       i.condition = .clearlyTrue) := by
   intro i hi hs hm
   obtain ⟨h₁, h₂⟩ := items_variants i hi hs hm
-  rw [supervaluation_eq_true_iff_weak, h₁, h₂]
+  rw [supervaluation_eq_one_iff_weak, h₁, h₂]
   cases i.condition <;> simp
 
 /-- The supervaluation gaps on an item exactly when its environment and condition were found to
 gap, outside the discounted tests. -/
-theorem supervaluation_eq_indet_iff_found : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
+theorem supervaluation_eq_zero_iff_found : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     ∀ t ∈ gapTests, ¬ t.Discounted → t.embedding = i.embedding → t.condition = i.condition →
-      (supervaluation i.embedding.tree i.display = .indet ↔ t.found = .yes) := by
+      (supervaluation i.embedding.tree i.display = 0 ↔ t.found = .yes) := by
   intro i hi hs hm t ht hd _ hc
   obtain ⟨h₁, h₂⟩ := items_variants i hi hs hm
   have hg := gapTests_condition t ht
-  rw [supervaluation_eq_indet_iff_weak, h₁, h₂, (found_iff t ht).2 hd, hc]
+  rw [supervaluation_eq_zero_iff_weak, h₁, h₂, (found_iff t ht).2 hd, hc]
   rw [hc] at hg
   revert hg
   cases i.condition <;> simp
@@ -644,7 +640,7 @@ scope, sentential negation and *no*, and the GAP?? items, where the all-variant 
 some-variant false (§6.1.3). -/
 theorem globalConstrual_misfit_iff : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     ∀ t ∈ gapTests, ¬ t.Discounted → t.embedding = i.embedding → t.condition = i.condition →
-      (¬ (globalConstrual i.embedding.tree i.display = .indet ↔ t.found = .yes) ↔
+      (¬ (globalConstrual i.embedding.tree i.display = 0 ↔ t.found = .yes) ↔
         (i.embedding.tree.ScopeAntitone ∧ i.condition = .gap) ∨ i.condition = .gapQQ) := by
   decide
 
@@ -652,7 +648,7 @@ theorem globalConstrual_misfit_iff : ∀ i ∈ tested, i.status ≠ .faulty → 
 sentence was judged false as soon as one cell has no target symbols, the argument from (42). -/
 theorem universalPresupposition_false_item :
     ∃ i ∈ items, i.embedding = .all ∧ i.condition = .clearlyFalse ∧
-      universalPresupposition i.embedding.tree i.display = .indet := by
+      universalPresupposition i.embedding.tree i.display = 0 := by
   decide
 
 /-- The per-boy supervaluation departs from the two-candidate one on exactly the GAP? items. -/
@@ -668,20 +664,20 @@ instance : DecidableRel atLeastTwo := fun _ b ↦ inferInstanceAs (Decidable (2 
 
 /-- On the at-least reading the GAP? items are gap items. -/
 theorem atLeastTwo_gapQ : ∀ i ∈ items, i.condition = .gapQ → i ≠ misprinted →
-    supervaluation atLeastTwo i.display = .indet := by
+    supervaluation atLeastTwo i.display = 0 := by
   decide
 
 /-- On the at-least reading the FALSE items of *exactly* with three or more full cells are true,
 the items with elevated true responses in Fig. 10. -/
 theorem atLeastTwo_false : ∀ i ∈ items, i.embedding = .exactly → i.condition = .clearlyFalse →
-    (supervaluation atLeastTwo i.display = .true ↔ 3 ≤ i.cells.count 9) := by
+    (supervaluation atLeastTwo i.display = 1 ↔ 3 ≤ i.cells.count 9) := by
   decide
 
 /-- A teacher's cell in a situation of Table 12. -/
-def Share.value : Share → Trivalent
-  | .all => .true
-  | .half => .indet
-  | .none => .false
+def Share.value : Share → SignType
+  | .all => 1
+  | .half => 0
+  | .none => (-1)
 
 /-- The display of a situation of Table 12, Bill's, Mary's and Sue's cells. -/
 def Situation.display (s : Situation) : Display := [s.bill, s.mary, s.sue].map Share.value
@@ -692,8 +688,8 @@ where a gap was found, and the (si1) and (si3) construals miss the GAP?? situati
 theorem situations_variants : ∀ s ∈ situations,
     (someReading Embedding.exactly.tree s.display ↔ s.condition ∈ [.clearlyTrue, .gap]) ∧
       (allReading Embedding.exactly.tree s.display ↔ s.condition ∈ [.clearlyTrue, .gapQQ]) ∧
-      (supervaluation Embedding.exactly.tree s.display = .indet ↔ s.found = .yes) ∧
-      (globalConstrual Embedding.exactly.tree s.display = .indet ↔ s.condition = .gap) := by
+      (supervaluation Embedding.exactly.tree s.display = 0 ↔ s.found = .yes) ∧
+      (globalConstrual Embedding.exactly.tree s.display = 0 ↔ s.condition = .gap) := by
   decide
 
 end KrizChemla2015

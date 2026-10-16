@@ -55,7 +55,7 @@ of donkey sentences, and a strong-truth operator internalizes universal readings
 
 namespace Spector2026
 
-open Trivalent (meetMiddle joinMiddle ofBool ofProp)
+open SignType (meetMiddle joinMiddle ofBool ofProp)
 
 /-! ### The language -/
 
@@ -95,51 +95,51 @@ variable {W D P R : Type*} (M : Model W D P R)
 
 /-- Whenever the first conjunct's truth guarantees the presupposition, the presupposition can be
 dropped from the second conjunct, the parametric core of Transparency for conjunction. -/
-theorem conj_transparency_parametric (E presup φ : Trivalent) (hw : E = .true → presup = .true) :
+theorem conj_transparency_parametric (E presup φ : SignType) (hw : E = 1 → presup = 1) :
     meetMiddle E (meetMiddle presup φ) = meetMiddle E φ :=
-  Trivalent.meetMiddle_congr_right fun h ↦ by rw [hw h, Trivalent.meetMiddle_true_left]
+  SignType.meetMiddle_congr_right fun h ↦ by rw [hw h, SignType.meetMiddle_one_left]
 
 /-- Whenever the first disjunct's falsity guarantees the presupposition, the presupposition can be
 dropped from the second disjunct, the parametric core of Transparency for disjunction. -/
-theorem disj_transparency_parametric (negE presup φ : Trivalent)
-    (hw : negE = .false → presup = .true) :
+theorem disj_transparency_parametric (negE presup φ : SignType)
+    (hw : negE = -1 → presup = 1) :
     joinMiddle negE (meetMiddle presup φ) = joinMiddle negE φ :=
-  Trivalent.joinMiddle_congr_right fun h ↦ by rw [hw h, Trivalent.meetMiddle_true_left]
+  SignType.joinMiddle_congr_right fun h ↦ by rw [hw h, SignType.meetMiddle_one_left]
 
 open Classical in
 /-- Evaluation at a world and a partial assignment. A predicate of an unvalued variable is
 undefined; the existential is true when its scope is, false when every value falsifies the
 scope, undefined otherwise. The universal and the strong-truth operator belong to the full
 system and are left undefined here. -/
-noncomputable def eval : Formula P R → W → PartialAssign ℕ D → Trivalent
+noncomputable def eval : Formula P R → W → PartialAssign ℕ D → SignType
   | .pred p x, w, g =>
     match g x with
-    | ⊥ => .indet
+    | ⊥ => 0
     | (d : D) => ofProp (d ∈ M.pred p w)
   | .rel r x y, w, g =>
     match g x, g y with
     | (a : D), (b : D) => ofProp ((a, b) ∈ M.rel r w)
-    | _, _ => .indet
+    | _, _ => 0
   | .valued x, _, g =>
     match g x with
-    | ⊥ => .false
-    | (_ : D) => .true
-  | .not φ, w, g => (eval φ w g).neg
+    | ⊥ => (-1)
+    | (_ : D) => 1
+  | .not φ, w, g => -eval φ w g
   | .and φ ψ, w, g => meetMiddle (eval φ w g) (eval ψ w g)
   | .or φ ψ, w, g => joinMiddle (eval φ w g) (eval ψ w g)
   | .ex x φ, w, g =>
-    if eval φ w g = .true then .true
-    else if ∀ a, eval φ w (g.update x a) = .false then .false
-    else .indet
-  | .all _ _, _, _ | .strong _, _, _ => .indet
+    if eval φ w g = 1 then 1
+    else if ∀ a, eval φ w (g.update x a) = -1 then -1
+    else 0
+  | .all _ _, _, _ | .strong _, _, _ => 0
 
 /-- A sentence is true at a world when some assignment makes it true. -/
-def TrueAt (φ : Formula P R) (w : W) : Prop := ∃ g : PartialAssign ℕ D, eval M φ w g = .true
+def TrueAt (φ : Formula P R) (w : W) : Prop := ∃ g : PartialAssign ℕ D, eval M φ w g = 1
 
 variable {M}
 
 theorem eval_pred_of_eq_bot {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x = ⊥) :
-    eval M (.pred p x) w g = .indet := by
+    eval M (.pred p x) w g = 0 := by
   simp [eval, h]
 
 open Classical in
@@ -148,31 +148,31 @@ theorem eval_pred_of_eq_coe {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} 
   simp [eval, h]
 
 theorem eval_pred_eq_true_iff {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} :
-    eval M (.pred p x) w g = .true ↔ ∃ d : D, g x = ↑d ∧ d ∈ M.pred p w := by
+    eval M (.pred p x) w g = 1 ↔ ∃ d : D, g x = ↑d ∧ d ∈ M.pred p w := by
   cases h : g x with
   | bot => simp [eval_pred_of_eq_bot h]
   | coe d => simp [eval_pred_of_eq_coe h]
 
 theorem eval_pred_eq_false_iff {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} :
-    eval M (.pred p x) w g = .false ↔ ∃ d : D, g x = ↑d ∧ d ∉ M.pred p w := by
+    eval M (.pred p x) w g = -1 ↔ ∃ d : D, g x = ↑d ∧ d ∉ M.pred p w := by
   cases h : g x with
   | bot => simp [eval_pred_of_eq_bot h]
   | coe d => simp [eval_pred_of_eq_coe h]
 
 theorem eval_valued_of_ne_bot {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x ≠ ⊥) :
-    eval M (.valued x) w g = .true := by
+    eval M (.valued x) w g = 1 := by
   obtain ⟨d, hd⟩ := Flat.ne_bot_iff_exists.1 h
   simp [eval, hd]
 
 theorem eval_valued_of_eq_bot {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x = ⊥) :
-    eval M (.valued x) w g = .false := by
+    eval M (.valued x) w g = -1 := by
   simp [eval, h]
 
 @[simp] theorem eval_valued_bot (x : ℕ) (w : W) :
-    eval M (.valued x) w (⊥ : PartialAssign ℕ D) = .false := rfl
+    eval M (.valued x) w (⊥ : PartialAssign ℕ D) = -1 := rfl
 
 theorem eval_not {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
-    eval M (.not φ) w g = (eval M φ w g).neg := rfl
+    eval M (.not φ) w g = -eval M φ w g := rfl
 
 theorem eval_and {φ ψ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
     eval M (.and φ ψ) w g = meetMiddle (eval M φ w g) (eval M ψ w g) := rfl
@@ -182,21 +182,21 @@ theorem eval_or {φ ψ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
 
 /-- The existential is true exactly when its scope is, since the assignment supplies the witness. -/
 theorem eval_ex_eq_true_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
-    eval M (.ex x φ) w g = .true ↔ eval M φ w g = .true := by
+    eval M (.ex x φ) w g = 1 ↔ eval M φ w g = 1 := by
   simp only [eval]
   split_ifs with h h' <;> simp [h]
 
 /-- The existential is false exactly when its scope is not true and every value falsifies
 it, the classical falsity condition. -/
 theorem eval_ex_eq_false_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
-    eval M (.ex x φ) w g = .false ↔
-      eval M φ w g ≠ .true ∧ ∀ a, eval M φ w (g.update x a) = .false := by
+    eval M (.ex x φ) w g = -1 ↔
+      eval M φ w g ≠ 1 ∧ ∀ a, eval M φ w (g.update x a) = -1 := by
   simp only [eval]
   split_ifs <;> simp [*]
 
 /-- A true existential over a predicate values its variable. -/
 theorem ne_bot_of_eval_ex_pred {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D}
-    (h : eval M (.ex x (.pred p x)) w g = .true) : g x ≠ ⊥ := by
+    (h : eval M (.ex x (.pred p x)) w g = 1) : g x ≠ ⊥ := by
   obtain ⟨d, hd, -⟩ := eval_pred_eq_true_iff.1 (eval_ex_eq_true_iff.1 h)
   simp [hd]
 
@@ -210,9 +210,9 @@ theorem trueAt_conj_iff (T Q : P) (x : ℕ) (w : W) :
   constructor
   · rintro ⟨g, hg⟩
     rw [eval_and] at hg
-    have h1 : eval M (.ex x (.pred T x)) w g = .true := by
+    have h1 : eval M (.ex x (.pred T x)) w g = 1 := by
       cases h : eval M (.ex x (.pred T x)) w g <;> simp_all [meetMiddle]
-    rw [h1, Trivalent.meetMiddle_true_left] at hg
+    rw [h1, SignType.meetMiddle_one_left] at hg
     obtain ⟨d, hd, hT⟩ := eval_pred_eq_true_iff.1 (eval_ex_eq_true_iff.1 h1)
     obtain ⟨d', hd', hQ⟩ := eval_pred_eq_true_iff.1 hg
     rw [hd] at hd'
@@ -220,7 +220,7 @@ theorem trueAt_conj_iff (T Q : P) (x : ℕ) (w : W) :
   · rintro ⟨d, hT, hQ⟩
     refine ⟨PartialAssign.single x d, ?_⟩
     rw [eval_and, eval_ex_eq_true_iff.2 (eval_pred_eq_true_iff.2 ⟨d, by simp, hT⟩),
-      Trivalent.meetMiddle_true_left]
+      SignType.meetMiddle_one_left]
     exact eval_pred_eq_true_iff.2 ⟨d, by simp, hQ⟩
 
 /-- The bathroom sentence *¬∃xB(x) ∨ F(x)* is true at a world exactly when either no
@@ -233,17 +233,17 @@ theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
   · rintro ⟨g, hg⟩
     rw [eval_or, eval_not] at hg
     cases hE : eval M (.ex x (.pred B x)) w g with
-    | indet => simp [hE, Trivalent.joinMiddle_indet_left] at hg
-    | «false» =>
+    | zero => simp [hE, SignType.joinMiddle_zero_left] at hg
+    | neg =>
       left
       intro d hd
       obtain ⟨-, hall⟩ := eval_ex_eq_false_iff.1 hE
       obtain ⟨d', hd', hnot⟩ := eval_pred_eq_false_iff.1 (hall d)
       rw [PartialAssign.update_self] at hd'
       exact hnot (Flat.coe_inj.1 hd' ▸ hd)
-    | «true» =>
+    | pos =>
       right
-      rw [hE, Trivalent.neg_true, Trivalent.joinMiddle_false_left] at hg
+      rw [hE, SignType.pos_eq_one, SignType.joinMiddle_neg_one_left] at hg
       obtain ⟨d, hd, hB⟩ := eval_pred_eq_true_iff.1 (eval_ex_eq_true_iff.1 hE)
       obtain ⟨d', hd', hF⟩ := eval_pred_eq_true_iff.1 hg
       rw [hd] at hd'
@@ -256,7 +256,7 @@ theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
       · exact eval_pred_eq_false_iff.2 ⟨a, PartialAssign.update_self _ _ _, hnone a⟩
     · refine ⟨PartialAssign.single x d, ?_⟩
       rw [eval_or, eval_not, eval_ex_eq_true_iff.2 (eval_pred_eq_true_iff.2 ⟨d, by simp, hB⟩),
-        Trivalent.neg_true, Trivalent.joinMiddle_false_left]
+        SignType.joinMiddle_neg_one_left]
       exact eval_pred_eq_true_iff.2 ⟨d, by simp, hF⟩
 
 /-! ### Contexts and Transparency
@@ -267,19 +267,19 @@ plural in the full one; update, Transparency and felicity are defined once over 
 
 section Contexts
 
-variable {A : Type*} (ev : Formula P R → W → A → Trivalent)
+variable {A : Type*} (ev : Formula P R → W → A → SignType)
 
 /-- The null context, all world–assignment pairs. -/
 def nullCtx : Set (W × A) := Set.univ
 
 /-- Stalnakerian update keeps the pairs of the context at which the accepted sentence is true. -/
-def update (C : Set (W × A)) (φ : Formula P R) : Set (W × A) := {p ∈ C | ev φ p.1 p.2 = .true}
+def update (C : Set (W × A)) (φ : Formula P R) : Set (W × A) := {p ∈ C | ev φ p.1 p.2 = 1}
 
 /-- Update intersects the context with the sentence's truth set, so it eliminates points and does
 so point by point. -/
 theorem isClassical_update (φ : Formula P R) :
     DynamicSemantics.CCP.IsClassical (update ev · φ) :=
-  DynamicSemantics.CCP.isClassical_up {p : W × A | ev φ p.1 p.2 = .true}
+  DynamicSemantics.CCP.isClassical_up {p : W × A | ev φ p.1 p.2 = 1}
 
 /-- A frame is a sentence with the occurrence under test as a hole. -/
 abbrev Frame (P R : Type*) := Formula P R → Formula P R
@@ -305,7 +305,7 @@ theorem not_transparent_id_null [Nonempty W] (x : ℕ) :
 theorem transparent_id_of_valued {C : Set (W × PartialAssign ℕ D)} {x : ℕ}
     (hC : ∀ p ∈ C, p.2 x ≠ ⊥) :
     Transparent (eval M) C id (.valued x) := fun _ p hp ↦ by
-  simp only [id, eval_and, eval_valued_of_ne_bot (hC p hp), Trivalent.meetMiddle_true_left]
+  simp only [id, eval_and, eval_valued_of_ne_bot (hC p hp), SignType.meetMiddle_one_left]
 
 /-- Accepting *∃xT(x)* leaves `x` valued throughout the updated context. -/
 theorem ne_bot_of_mem_update_ex {C : Set (W × PartialAssign ℕ D)} {T : P} {x : ℕ}
@@ -332,7 +332,7 @@ theorem not_transparent_reverse_conj [Nonempty W] (T : P) (x : ℕ) :
   intro h
   have := h (.pred T x) (Classical.arbitrary W, (⊥ : PartialAssign ℕ D)) trivial
   simp only [eval_and, eval_valued_bot, eval_pred_of_eq_bot (g := (⊥ : PartialAssign ℕ D)) rfl,
-    Trivalent.meetMiddle_false_left, Trivalent.meetMiddle_indet_left] at this
+    SignType.meetMiddle_neg_one_left, SignType.meetMiddle_zero_left] at this
   exact absurd this (by decide)
 
 /-- The bathroom sentence *¬∃xB(x) ∨ H(x)* is transparent in every context, because a false first
@@ -341,38 +341,38 @@ theorem transparent_bathroom (C : Set (W × PartialAssign ℕ D)) (B : P) (x : �
     Transparent (eval M) C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [eval_or, eval_not]
   exact disj_transparency_parametric _ _ _ fun h ↦
-    eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred (Trivalent.neg_eq_false_iff.1 h))
+    eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred (SignType.neg_eq_neg_one_iff.1 h))
 
-/-- The reversed bathroom sentence *H(x) ∨ ¬∃xB(x)* is not transparent in the null context:
-with a tautological *φ* and an unvalued variable, at a world with a bathroom the plain
+/-- The reversed bathroom sentence *H(x) ∨ ¬∃xB(x)* is not transparent in the null context,
+since with a tautological *φ* and an unvalued variable, at a world with a bathroom the plain
 sentence is true and the presuppositional one undefined. -/
 theorem not_transparent_reverse_bathroom (B : P) (x : ℕ) (hw : ∃ w d, d ∈ M.pred B w) :
     ¬ Transparent (eval M) nullCtx (fun ψ ↦ .or ψ (.not (.ex x (.pred B x)))) (.valued x) := by
   intro h
   obtain ⟨w, d, hd⟩ := hw
   have := h (.or (.valued x) (.not (.valued x))) (w, (⊥ : PartialAssign ℕ D)) trivial
-  have hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssign ℕ D) = .indet := by
+  have hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssign ℕ D) = 0 := by
     cases hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssign ℕ D) with
-    | indet => rfl
-    | «true» =>
+    | zero => rfl
+    | pos =>
       have := eval_ex_eq_true_iff.1 hE
       rw [eval_pred_of_eq_bot rfl] at this
       cases this
-    | «false» =>
+    | neg =>
       obtain ⟨-, hall⟩ := eval_ex_eq_false_iff.1 hE
       obtain ⟨d', hd', hnot⟩ := eval_pred_eq_false_iff.1 (hall d)
       rw [PartialAssign.update_self] at hd'
       exact (hnot (Flat.coe_inj.1 hd' ▸ hd)).elim
   simp only [eval_or, eval_and, eval_not, hE, eval_valued_bot,
-    Trivalent.meetMiddle_false_left] at this
+    SignType.meetMiddle_neg_one_left] at this
   exact absurd this (by decide)
 
 /-! ### The Transparency Condition for sentences and discourses -/
 
 /-- The occurrences of free variables in the atoms of a formula, below the variables `B` bound
-above them. Each is the frame holing the atom, paired with the presupposition tested there:
-*valued(x)* for each free argument, and *valued(x) ∧ valued(y)* for a relation whose two arguments
-are free (§2.2.2, items 1–2). -/
+above them. Each is the frame holing the atom, paired with the presupposition tested there,
+which is *valued(x)* for each free argument and *valued(x) ∧ valued(y)* for a relation whose two
+arguments are free (§2.2.2, items 1–2). -/
 def Formula.occurrences {P R : Type*} : List ℕ → Formula P R → List (Frame P R × Formula P R)
   | B, .pred _ x => if x ∈ B then [] else [(id, .valued x)]
   | B, .rel _ x y =>
@@ -392,7 +392,7 @@ def Formula.occurrences {P R : Type*} : List ℕ → Formula P R → List (Frame
 
 section Felicity
 
-variable {A : Type*} (ev : Formula P R → W → A → Trivalent)
+variable {A : Type*} (ev : Formula P R → W → A → SignType)
 
 /-- A sentence is felicitous in `C` when Transparency holds in `C` at every occurrence of every
 free variable (§2.2.2, item 4; §6.3). -/
@@ -457,20 +457,20 @@ theorem not_felicitous_reverse_bathroom (B H : P) (x : ℕ) (hw : ∃ w d, d ∈
 /-- A repeated existential means the same as one existential over the conjunction, which is
 never the reading of *someone smokes; someone drinks*. -/
 theorem eval_and_ex_ex_eq_true_iff (p q : P) (x : ℕ) (w : W) (g : PartialAssign ℕ D) :
-    eval M (.and (.ex x (.pred p x)) (.ex x (.pred q x))) w g = .true ↔
-      eval M (.ex x (.and (.pred p x) (.pred q x))) w g = .true := by
+    eval M (.and (.ex x (.pred p x)) (.ex x (.pred q x))) w g = 1 ↔
+      eval M (.ex x (.and (.pred p x) (.pred q x))) w g = 1 := by
   rw [eval_ex_eq_true_iff, eval_and, eval_and]
   constructor
   · intro h
-    have h1 : eval M (.ex x (.pred p x)) w g = .true := by
+    have h1 : eval M (.ex x (.pred p x)) w g = 1 := by
       cases h1 : eval M (.ex x (.pred p x)) w g <;> simp_all [meetMiddle]
-    rw [h1, Trivalent.meetMiddle_true_left, eval_ex_eq_true_iff] at h
-    rw [eval_ex_eq_true_iff.1 h1, Trivalent.meetMiddle_true_left, h]
+    rw [h1, SignType.meetMiddle_one_left, eval_ex_eq_true_iff] at h
+    rw [eval_ex_eq_true_iff.1 h1, SignType.meetMiddle_one_left, h]
   · intro h
-    have h1 : eval M (.pred p x) w g = .true := by
+    have h1 : eval M (.pred p x) w g = 1 := by
       cases h1 : eval M (.pred p x) w g <;> simp_all [meetMiddle]
-    rw [h1, Trivalent.meetMiddle_true_left] at h
-    rw [eval_ex_eq_true_iff.2 h1, Trivalent.meetMiddle_true_left, eval_ex_eq_true_iff.2 h]
+    rw [h1, SignType.meetMiddle_one_left] at h
+    rw [eval_ex_eq_true_iff.2 h1, SignType.meetMiddle_one_left, eval_ex_eq_true_iff.2 h]
 
 /-- The Novelty Condition rules the repeated existential out. -/
 theorem not_novel_repeat (p q : P) (x : ℕ) :
@@ -508,16 +508,16 @@ theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (
     TrueAt M (.not (.ex x (.not (.ex y (.rel S x y))))) w ↔
       ∃ b, ∀ a, (a, b) ∈ M.rel S w := by
   have key : ∀ (g : PartialAssign ℕ D) (a : D),
-      eval M (.not (.ex y (.rel S x y))) w (g.update x a) = .false ↔
+      eval M (.not (.ex y (.rel S x y))) w (g.update x a) = -1 ↔
         ∃ b : D, g y = ↑b ∧ (a, b) ∈ M.rel S w := by
     intro g a
-    rw [eval_not, Trivalent.neg_eq_false_iff, eval_ex_eq_true_iff]
+    rw [eval_not, SignType.neg_eq_neg_one_iff, eval_ex_eq_true_iff]
     cases hy : g y with
     | bot => simp [eval, hy, PartialAssign.update_of_ne hxy.symm]
     | coe b => simp [eval, hy, PartialAssign.update_of_ne hxy.symm]
   constructor
   · rintro ⟨g, hg⟩
-    rw [eval_not, Trivalent.neg_eq_true_iff, eval_ex_eq_false_iff] at hg
+    rw [eval_not, SignType.neg_eq_one_iff, eval_ex_eq_false_iff] at hg
     obtain ⟨-, hall⟩ := hg
     obtain ⟨a₀⟩ := ‹Nonempty D›
     obtain ⟨b, hb, -⟩ := (key g a₀).1 (hall a₀)
@@ -527,9 +527,9 @@ theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (
     exact Flat.coe_inj.1 hb' ▸ hS
   · rintro ⟨b, hb⟩
     refine ⟨PartialAssign.single y b, ?_⟩
-    rw [eval_not, Trivalent.neg_eq_true_iff, eval_ex_eq_false_iff]
+    rw [eval_not, SignType.neg_eq_one_iff, eval_ex_eq_false_iff]
     refine ⟨fun hne ↦ ?_, fun a ↦ (key _ a).2 ⟨b, by simp, hb a⟩⟩
-    rw [eval_not, Trivalent.neg_eq_true_iff, eval_ex_eq_false_iff] at hne
+    rw [eval_not, SignType.neg_eq_one_iff, eval_ex_eq_false_iff] at hne
     obtain ⟨a₀⟩ := ‹Nonempty D›
     have := hne.2 a₀
     simp [eval, PartialAssign.update_of_ne hxy, PartialAssign.single_eq_of_ne hxy] at this
@@ -545,42 +545,42 @@ restriction falsifies the scope; the universal is true under that coverage when 
 restriction verifies the scope; the strong-truth operator is true when its argument is true
 here and false at no plural assignment, false when its argument is false here and true at no
 plural assignment. -/
-noncomputable def evalP : Formula P R → W → PluralAssign ℕ D → Trivalent
+noncomputable def evalP : Formula P R → W → PluralAssign ℕ D → SignType
   | .pred p x, w, G =>
-    if ∃ d, G.SingularAt x d ∧ d ∈ M.pred p w then .true
-    else if ∃ d, G.SingularAt x d ∧ d ∉ M.pred p w then .false
-    else .indet
+    if ∃ d, G.SingularAt x d ∧ d ∈ M.pred p w then 1
+    else if ∃ d, G.SingularAt x d ∧ d ∉ M.pred p w then -1
+    else 0
   | .rel r x y, w, G =>
-    if ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∈ M.rel r w then .true
-    else if ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∉ M.rel r w then .false
-    else .indet
+    if ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∈ M.rel r w then 1
+    else if ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∉ M.rel r w then -1
+    else 0
   | .valued x, _, G => ofProp (G.Singular x)
-  | .not φ, w, G => (evalP φ w G).neg
+  | .not φ, w, G => -evalP φ w G
   | .and φ ψ, w, G => meetMiddle (evalP φ w G) (evalP ψ w G)
   | .or φ ψ, w, G => joinMiddle (evalP φ w G) (evalP ψ w G)
   | .ex x φ, w, G =>
-    if evalP φ w G = .true then .true
-    else if ∀ a, (G.restrict x a).Nonempty ∧ evalP φ w (G.restrict x a) = .false then .false
-    else .indet
+    if evalP φ w G = 1 then 1
+    else if ∀ a, (G.restrict x a).Nonempty ∧ evalP φ w (G.restrict x a) = -1 then -1
+    else 0
   | .all x φ, w, G =>
-    if ∀ a, (G.restrict x a).Nonempty ∧ evalP φ w (G.restrict x a) = .true then .true
-    else if (∀ a, (G.restrict x a).Nonempty) ∧ ∃ a, evalP φ w (G.restrict x a) = .false then
-      .false
-    else .indet
+    if ∀ a, (G.restrict x a).Nonempty ∧ evalP φ w (G.restrict x a) = 1 then 1
+    else if (∀ a, (G.restrict x a).Nonempty) ∧ ∃ a, evalP φ w (G.restrict x a) = -1 then
+      (-1)
+    else 0
   | .strong φ, w, G =>
-    if evalP φ w G = .true ∧ ∀ G', evalP φ w G' ≠ .false then .true
-    else if evalP φ w G = .false ∧ ∀ G', evalP φ w G' ≠ .true then .false
-    else .indet
+    if evalP φ w G = 1 ∧ ∀ G', evalP φ w G' ≠ -1 then 1
+    else if evalP φ w G = -1 ∧ ∀ G', evalP φ w G' ≠ 1 then -1
+    else 0
 
 variable (M) in
 /-- A sentence is weakly true at a world when some plural assignment makes it true. -/
-def TrueAtP (φ : Formula P R) (w : W) : Prop := ∃ G : PluralAssign ℕ D, evalP M φ w G = .true
+def TrueAtP (φ : Formula P R) (w : W) : Prop := ∃ G : PluralAssign ℕ D, evalP M φ w G = 1
 
 variable (M) in
 /-- A sentence is strongly true at a world when some plural assignment makes it true and none makes
 it false. -/
 def StronglyTrueAt (φ : Formula P R) (w : W) : Prop :=
-  TrueAtP M φ w ∧ ∀ G : PluralAssign ℕ D, evalP M φ w G ≠ .false
+  TrueAtP M φ w ∧ ∀ G : PluralAssign ℕ D, evalP M φ w G ≠ -1
 
 theorem StronglyTrueAt.trueAtP {φ : Formula P R} {w : W} (h : StronglyTrueAt M φ w) :
     TrueAtP M φ w :=
@@ -591,12 +591,12 @@ section Lemmas
 variable {p : P} {r : R} {x y : ℕ} {φ ψ : Formula P R} {w : W} {G : PluralAssign ℕ D}
 
 theorem evalP_pred_eq_true_iff :
-    evalP M (.pred p x) w G = .true ↔ ∃ d, G.SingularAt x d ∧ d ∈ M.pred p w := by
+    evalP M (.pred p x) w G = 1 ↔ ∃ d, G.SingularAt x d ∧ d ∈ M.pred p w := by
   simp only [evalP]
   split_ifs <;> simp [*]
 
 theorem evalP_pred_eq_false_iff :
-    evalP M (.pred p x) w G = .false ↔ ∃ d, G.SingularAt x d ∧ d ∉ M.pred p w := by
+    evalP M (.pred p x) w G = -1 ↔ ∃ d, G.SingularAt x d ∧ d ∉ M.pred p w := by
   simp only [evalP]
   split_ifs with h1 h2
   · refine iff_of_false (by decide) ?_
@@ -607,7 +607,7 @@ theorem evalP_pred_eq_false_iff :
   · exact iff_of_false (by decide) h2
 
 theorem evalP_rel_eq_true_iff :
-    evalP M (.rel r x y) w G = .true ↔
+    evalP M (.rel r x y) w G = 1 ↔
       ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∈ M.rel r w := by
   simp only [evalP]
   split_ifs with h1 h2
@@ -616,7 +616,7 @@ theorem evalP_rel_eq_true_iff :
   · exact iff_of_false (by decide) h1
 
 theorem evalP_rel_eq_false_iff :
-    evalP M (.rel r x y) w G = .false ↔
+    evalP M (.rel r x y) w G = -1 ↔
       ∃ a b, G.SingularAt x a ∧ G.SingularAt y b ∧ (a, b) ∉ M.rel r w := by
   simp only [evalP]
   split_ifs with h1 h2
@@ -627,31 +627,31 @@ theorem evalP_rel_eq_false_iff :
   · exact iff_of_true rfl h2
   · exact iff_of_false (by decide) h2
 
-theorem evalP_valued_eq_true_iff : evalP M (.valued x) w G = .true ↔ G.Singular x := by
+theorem evalP_valued_eq_true_iff : evalP M (.valued x) w G = 1 ↔ G.Singular x := by
   simp [evalP]
 
-theorem evalP_valued_eq_false_iff : evalP M (.valued x) w G = .false ↔ ¬ G.Singular x := by
+theorem evalP_valued_eq_false_iff : evalP M (.valued x) w G = -1 ↔ ¬ G.Singular x := by
   simp [evalP]
 
-theorem evalP_not : evalP M (.not φ) w G = (evalP M φ w G).neg := rfl
+theorem evalP_not : evalP M (.not φ) w G = -evalP M φ w G := rfl
 
 theorem evalP_and : evalP M (.and φ ψ) w G = meetMiddle (evalP M φ w G) (evalP M ψ w G) := rfl
 
 theorem evalP_or : evalP M (.or φ ψ) w G = joinMiddle (evalP M φ w G) (evalP M ψ w G) := rfl
 
-theorem evalP_ex_eq_true_iff : evalP M (.ex x φ) w G = .true ↔ evalP M φ w G = .true := by
+theorem evalP_ex_eq_true_iff : evalP M (.ex x φ) w G = 1 ↔ evalP M φ w G = 1 := by
   simp only [evalP]
   split_ifs <;> simp [*]
 
 theorem evalP_ex_eq_false_iff :
-    evalP M (.ex x φ) w G = .false ↔ evalP M φ w G ≠ .true ∧
-      ∀ a, (G.restrict x a).Nonempty ∧ evalP M φ w (G.restrict x a) = .false := by
+    evalP M (.ex x φ) w G = -1 ↔ evalP M φ w G ≠ 1 ∧
+      ∀ a, (G.restrict x a).Nonempty ∧ evalP M φ w (G.restrict x a) = -1 := by
   simp only [evalP]
   split_ifs <;> simp [*]
 
 theorem evalP_all_eq_true_iff :
-    evalP M (.all x φ) w G = .true ↔
-      ∀ a, (G.restrict x a).Nonempty ∧ evalP M φ w (G.restrict x a) = .true := by
+    evalP M (.all x φ) w G = 1 ↔
+      ∀ a, (G.restrict x a).Nonempty ∧ evalP M φ w (G.restrict x a) = 1 := by
   simp only [evalP]
   split_ifs with h1 h2
   · exact iff_of_true rfl h1
@@ -659,8 +659,8 @@ theorem evalP_all_eq_true_iff :
   · exact iff_of_false (by decide) h1
 
 theorem evalP_all_eq_false_iff :
-    evalP M (.all x φ) w G = .false ↔
-      (∀ a, (G.restrict x a).Nonempty) ∧ ∃ a, evalP M φ w (G.restrict x a) = .false := by
+    evalP M (.all x φ) w G = -1 ↔
+      (∀ a, (G.restrict x a).Nonempty) ∧ ∃ a, evalP M φ w (G.restrict x a) = -1 := by
   simp only [evalP]
   split_ifs with h1 h2
   · refine iff_of_false (by decide) ?_
@@ -671,19 +671,19 @@ theorem evalP_all_eq_false_iff :
   · exact iff_of_false (by decide) h2
 
 theorem evalP_strong_eq_true_iff :
-    evalP M (.strong φ) w G = .true ↔
-      evalP M φ w G = .true ∧ ∀ G', evalP M φ w G' ≠ .false := by
+    evalP M (.strong φ) w G = 1 ↔
+      evalP M φ w G = 1 ∧ ∀ G', evalP M φ w G' ≠ -1 := by
   simp only [evalP]
   split_ifs <;> simp [*]
 
 /-- A true existential over a predicate makes its variable atomic. -/
-theorem singular_of_evalP_ex_pred (h : evalP M (.ex x (.pred p x)) w G = .true) :
+theorem singular_of_evalP_ex_pred (h : evalP M (.ex x (.pred p x)) w G = 1) :
     G.Singular x :=
   (evalP_pred_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h)).elim fun _ h ↦ h.1.singular
 
 theorem evalP_strong_eq_false_iff :
-    evalP M (.strong φ) w G = .false ↔
-      evalP M φ w G = .false ∧ ∀ G', evalP M φ w G' ≠ .true := by
+    evalP M (.strong φ) w G = -1 ↔
+      evalP M φ w G = -1 ∧ ∀ G', evalP M φ w G' ≠ 1 := by
   simp only [evalP]
   split_ifs <;> simp [*]
 
@@ -703,7 +703,7 @@ theorem transparentP_bathroom (C : Set (W × PluralAssign ℕ D)) (B : P) (x : �
     Transparent (evalP M) C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [evalP_or, evalP_not]
   exact disj_transparency_parametric _ _ _ fun h ↦
-    evalP_valued_eq_true_iff.2 (singular_of_evalP_ex_pred (Trivalent.neg_eq_false_iff.1 h))
+    evalP_valued_eq_true_iff.2 (singular_of_evalP_ex_pred (SignType.neg_eq_neg_one_iff.1 h))
 
 /-- A plural assignment covering a domain with two individuals is not atomic at the covered
 variable. -/
@@ -721,15 +721,15 @@ tautological *φ*. -/
 theorem not_transparentP_forall_conj {a b : D} (hab : a ≠ b)
     {C : Set (W × PluralAssign ℕ D)} {P₀ : P} {x : ℕ}
     {w : W} {G : PluralAssign ℕ D} (hC : (w, G) ∈ C)
-    (hall : evalP M (.all x (.pred P₀ x)) w G = .true) :
+    (hall : evalP M (.all x (.pred P₀ x)) w G = 1) :
     ¬ Transparent (evalP M) C (fun ψ ↦ .and (.all x (.pred P₀ x)) ψ) (.valued x) := by
   intro h
-  have hx : evalP M (.valued x) w G = .false :=
+  have hx : evalP M (.valued x) w G = -1 :=
     evalP_valued_eq_false_iff.2
       (not_singular_of_covers hab fun a ↦ ((evalP_all_eq_true_iff.1 hall) a).1)
   have := h (.not (.valued x)) (w, G) hC
-  simp only [evalP_and, evalP_not, hall, hx, Trivalent.meetMiddle_true_left,
-    Trivalent.meetMiddle_false_left] at this
+  simp only [evalP_and, evalP_not, hall, hx, SignType.meetMiddle_one_left,
+    SignType.meetMiddle_neg_one_left] at this
   exact absurd this (by decide)
 
 variable (D) in
@@ -753,9 +753,9 @@ theorem not_transparentP_forall_conj_univ {a b : D} (hab : a ≠ b) {P₀ : P} (
 makes the variable atomic and the universal requires it to cover the domain. -/
 theorem evalP_ex_and_all_ne_true {a b : D} (hab : a ≠ b) (P₀ Q : P) (x : ℕ) (w : W)
     (G : PluralAssign ℕ D) :
-    evalP M (.and (.ex x (.pred P₀ x)) (.all x (.pred Q x))) w G ≠ .true := by
+    evalP M (.and (.ex x (.pred P₀ x)) (.all x (.pred Q x))) w G ≠ 1 := by
   intro h
-  rw [evalP_and, Trivalent.meetMiddle_eq_true_iff] at h
+  rw [evalP_and, SignType.meetMiddle_eq_one_iff] at h
   exact not_singular_of_covers hab (fun a ↦ ((evalP_all_eq_true_iff.1 h.2) a).1)
     (singular_of_evalP_ex_pred h.1)
 
@@ -769,24 +769,24 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
   · rintro ⟨G, hG⟩
     rw [evalP_or, evalP_not] at hG
     cases hE : evalP M (.ex x (.pred B x)) w G with
-    | indet => simp [hE, Trivalent.joinMiddle_indet_left] at hG
-    | «false» =>
+    | zero => simp [hE, SignType.joinMiddle_zero_left] at hG
+    | neg =>
       left
       intro d hd
       obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 hE
       obtain ⟨hne, hfalse⟩ := hall d
       obtain ⟨d', hd', hn⟩ := evalP_pred_eq_false_iff.1 hfalse
       exact hn ((PluralAssign.singularAt_restrict_iff.1 hd').2 ▸ hd)
-    | «true» =>
+    | pos =>
       right
-      rw [hE, Trivalent.neg_true, Trivalent.joinMiddle_false_left] at hG
+      rw [hE, SignType.pos_eq_one, SignType.joinMiddle_neg_one_left] at hG
       obtain ⟨d, hd, hB⟩ := evalP_pred_eq_true_iff.1 (evalP_ex_eq_true_iff.1 hE)
       obtain ⟨d', hd', hF⟩ := evalP_pred_eq_true_iff.1 hG
       exact ⟨d, hB, hd.unique hd' ▸ hF⟩
   · rintro (hnone | ⟨d, hB, hF⟩)
     · refine ⟨covering D x, ?_⟩
-      rw [evalP_or, evalP_not, evalP_ex_eq_false_iff.2 ⟨?_, fun a ↦ ?_⟩, Trivalent.neg_false,
-        Trivalent.joinMiddle_true_left]
+      rw [evalP_or, evalP_not, evalP_ex_eq_false_iff.2 ⟨?_, fun a ↦ ?_⟩, neg_neg,
+        SignType.joinMiddle_one_left]
       · rw [Ne, evalP_pred_eq_true_iff]
         rintro ⟨d, -, hd⟩
         exact hnone d hd
@@ -796,7 +796,7 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
       have hsing : ({PartialAssign.single x d} : PluralAssign ℕ D).SingularAt x d :=
         PluralAssign.singularAt_singleton.2 (by simp)
       rw [evalP_or, evalP_not, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨d, hsing, hB⟩),
-        Trivalent.neg_true, Trivalent.joinMiddle_false_left]
+        SignType.joinMiddle_neg_one_left]
       exact evalP_pred_eq_true_iff.2 ⟨d, hsing, hF⟩
 
 /-- The plural assignment pairing each individual `a` at `x` with `f a` at `y`. -/
@@ -827,19 +827,19 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
       ∀ a, ∃ b, (a, b) ∈ M.rel S w := by
   constructor
   · rintro ⟨G, hG⟩
-    rw [evalP_not, Trivalent.neg_eq_true_iff, evalP_ex_eq_false_iff] at hG
+    rw [evalP_not, SignType.neg_eq_one_iff, evalP_ex_eq_false_iff] at hG
     intro a
     obtain ⟨hne, hfalse⟩ := hG.2 a
-    rw [evalP_not, Trivalent.neg_eq_false_iff, evalP_ex_eq_true_iff,
+    rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_ex_eq_true_iff,
       evalP_rel_eq_true_iff] at hfalse
     obtain ⟨a', b, ha', hb, hS⟩ := hfalse
     exact ⟨b, (PluralAssign.singularAt_restrict_iff.1 ha').2 ▸ hS⟩
   · intro hS
     choose f hf using hS
     refine ⟨pairing x y f, ?_⟩
-    rw [evalP_not, Trivalent.neg_eq_true_iff, evalP_ex_eq_false_iff]
+    rw [evalP_not, SignType.neg_eq_one_iff, evalP_ex_eq_false_iff]
     refine ⟨?_, fun a ↦ ?_⟩
-    · rw [Ne, evalP_not, Trivalent.neg_eq_true_iff, evalP_ex_eq_false_iff]
+    · rw [Ne, evalP_not, SignType.neg_eq_one_iff, evalP_ex_eq_false_iff]
       rintro ⟨-, hall⟩
       obtain ⟨a₀⟩ := ‹Nonempty D›
       obtain ⟨-, hfalse⟩ := hall (f a₀)
@@ -853,7 +853,7 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
       exact hn (hf a₀)
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
       refine ⟨hne, ?_⟩
-      rw [evalP_not, Trivalent.neg_eq_false_iff, evalP_ex_eq_true_iff, evalP_rel_eq_true_iff]
+      rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_ex_eq_true_iff, evalP_rel_eq_true_iff]
       exact ⟨a, f a, PluralAssign.singularAt_restrict hne, hsing, hf a⟩
 
 /-- *∀x∃yS(x, y)* is true exactly when everyone spoke to someone. -/
@@ -904,10 +904,10 @@ theorem trueAtP_not_stronglyTrueAt_conj (B F : P) (x : ℕ) (w : W) {b₁ b₂ :
   refine ⟨⟨{PartialAssign.single x b₁}, ?_⟩,
     fun h ↦ h.2 {PartialAssign.single x b₂} ?_⟩
   · rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨b₁, hs b₁, h₁⟩),
-      Trivalent.meetMiddle_true_left]
+      SignType.meetMiddle_one_left]
     exact evalP_pred_eq_true_iff.2 ⟨b₁, hs b₁, hF₁⟩
   · rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨b₂, hs b₂, h₂⟩),
-      Trivalent.meetMiddle_true_left]
+      SignType.meetMiddle_one_left]
     exact evalP_pred_eq_false_iff.2 ⟨b₂, hs b₂, hF₂⟩
 
 /-- Weak truth of *O(S)* is strong truth of *S*. -/
@@ -930,16 +930,16 @@ theorem evalP_strong_congr {φ ψ : Formula P R} {w : W}
 /-- *O(atomic(x))* is undefined everywhere, since a singleton plural assignment makes *atomic(x)*
 true and the empty one makes it false. -/
 theorem evalP_strong_valued [Nonempty D] (x : ℕ) (w : W) (G : PluralAssign ℕ D) :
-    evalP M (.strong (.valued x)) w G = .indet := by
+    evalP M (.strong (.valued x)) w G = 0 := by
   obtain ⟨d⟩ := ‹Nonempty D›
-  have ht : evalP M (.valued x) w {PartialAssign.single x d} = .true :=
+  have ht : evalP M (.valued x) w {PartialAssign.single x d} = 1 :=
     evalP_valued_eq_true_iff.2 ⟨d, PluralAssign.singularAt_singleton.2 (by simp)⟩
-  have hf : evalP M (.valued x) w ∅ = .false :=
+  have hf : evalP M (.valued x) w ∅ = -1 :=
     evalP_valued_eq_false_iff.2 (by simp [PluralAssign.singular_iff])
   cases h : evalP M (.strong (.valued x)) w G with
-  | indet => rfl
-  | «true» => exact absurd hf ((evalP_strong_eq_true_iff.1 h).2 _)
-  | «false» => exact absurd ht ((evalP_strong_eq_false_iff.1 h).2 _)
+  | zero => rfl
+  | pos => exact absurd hf ((evalP_strong_eq_true_iff.1 h).2 _)
+  | neg => exact absurd ht ((evalP_strong_eq_false_iff.1 h).2 _)
 
 /-- *∃xS(x) ∧ O(H(x))* means that something is an *S* and everything is an *H*. -/
 theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
@@ -947,7 +947,7 @@ theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
       (∃ d, d ∈ M.pred S w) ∧ ∀ d, d ∈ M.pred H w := by
   constructor
   · rintro ⟨G, hG⟩
-    rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_ex_eq_true_iff,
+    rw [evalP_and, SignType.meetMiddle_eq_one_iff, evalP_ex_eq_true_iff,
       evalP_pred_eq_true_iff, evalP_strong_eq_true_iff] at hG
     obtain ⟨⟨d, -, hd⟩, -, hall⟩ := hG
     refine ⟨⟨d, hd⟩, fun d ↦ by_contra fun hn ↦ hall {PartialAssign.single x d} ?_⟩
@@ -956,7 +956,7 @@ theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
     have hs : ({PartialAssign.single x d} : PluralAssign ℕ D).SingularAt x d :=
       PluralAssign.singularAt_singleton.2 (by simp)
     refine ⟨{PartialAssign.single x d}, ?_⟩
-    rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_ex_eq_true_iff,
+    rw [evalP_and, SignType.meetMiddle_eq_one_iff, evalP_ex_eq_true_iff,
       evalP_strong_eq_true_iff]
     refine ⟨evalP_pred_eq_true_iff.2 ⟨d, hs, hd⟩, evalP_pred_eq_true_iff.2 ⟨d, hs, hall d⟩,
       fun G' hG' ↦ ?_⟩
@@ -966,22 +966,22 @@ theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
 /-- *∃xS(x) ∧ O(H(x))* violates Transparency, since at a pair where *∃xS(x)* is true a tautological
 *φ* makes *∃xS(x) ∧ O(φ)* true but *∃xS(x) ∧ O(atomic(x) ∧ φ)* undefined. -/
 theorem not_transparentP_ex_and_strong {C : Set (W × PluralAssign ℕ D)} {S : P} {x : ℕ} {w : W}
-    {G : PluralAssign ℕ D} (hC : (w, G) ∈ C) (hS : evalP M (.ex x (.pred S x)) w G = .true) :
+    {G : PluralAssign ℕ D} (hC : (w, G) ∈ C) (hS : evalP M (.ex x (.pred S x)) w G = 1) :
     ¬ Transparent (evalP M) C (fun ψ ↦ .and (.ex x (.pred S x)) (.strong ψ)) (.valued x) := by
   intro h
   obtain ⟨d, -⟩ := singular_of_evalP_ex_pred hS
   have : Nonempty D := ⟨d⟩
-  have htaut : ∀ G', evalP M (.or (.valued x) (.not (.valued x))) w G' = .true := by
+  have htaut : ∀ G', evalP M (.or (.valued x) (.not (.valued x))) w G' = 1 := by
     intro G'
     rw [evalP_or, evalP_not]
     cases hv : evalP M (.valued x) w G' with
-    | indet => exact absurd hv (by simp [evalP])
-    | «true» | «false» => rfl
+    | zero => exact absurd hv (by simp [evalP])
+    | pos | neg => rfl
   have hconj : ∀ G', evalP M (.and (.valued x) (.or (.valued x) (.not (.valued x)))) w G' =
       evalP M (.valued x) w G' := fun G' ↦ by
-    rw [evalP_and, htaut, Trivalent.meetMiddle_true_right]
+    rw [evalP_and, htaut, SignType.meetMiddle_one_right]
   have := h (.or (.valued x) (.not (.valued x))) (w, G) hC
-  simp only [evalP_and, hS, Trivalent.meetMiddle_true_left, evalP_strong_congr hconj,
+  simp only [evalP_and, hS, SignType.meetMiddle_one_left, evalP_strong_congr hconj,
     evalP_strong_valued, evalP_strong_eq_true_iff.2 ⟨htaut G, fun G' ↦ by rw [htaut G']; decide⟩]
     at this
   exact absurd this (by decide)
@@ -1006,7 +1006,7 @@ theorem trueAtP_qs_iff (Rd L : R) (hxy : x ≠ y) :
       ∀ a, ∃ b, (a, b) ∈ M.rel Rd w ∧ (a, b) ∈ M.rel L w := by
   constructor
   · rintro ⟨G, hG⟩ a
-    rw [evalP_and, Trivalent.meetMiddle_eq_true_iff] at hG
+    rw [evalP_and, SignType.meetMiddle_eq_one_iff] at hG
     obtain ⟨-, h1⟩ := evalP_all_eq_true_iff.1 hG.1 a
     obtain ⟨-, h2⟩ := evalP_all_eq_true_iff.1 hG.2 a
     obtain ⟨a₁, b₁, ha₁, hb₁, hR⟩ := evalP_rel_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h1)
@@ -1017,7 +1017,7 @@ theorem trueAtP_qs_iff (Rd L : R) (hxy : x ≠ y) :
   · intro h
     choose f hf using h
     refine ⟨pairing x y f, ?_⟩
-    rw [evalP_and, Trivalent.meetMiddle_eq_true_iff]
+    rw [evalP_and, SignType.meetMiddle_eq_one_iff]
     refine ⟨evalP_all_eq_true_iff.2 fun a ↦ ?_, evalP_all_eq_true_iff.2 fun a ↦ ?_⟩
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
       exact ⟨hne, evalP_ex_eq_true_iff.2 (evalP_rel_eq_true_iff.2
@@ -1035,10 +1035,10 @@ theorem felicitousP_qs (C : Set (W × PluralAssign ℕ D)) (Rd L : R) (hxy : x �
   subst ho
   intro φ p _
   simp only [Function.comp, evalP_and]
-  refine Trivalent.meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
+  refine SignType.meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
   obtain ⟨-, h1⟩ := evalP_all_eq_true_iff.1 h a
   obtain ⟨-, b, -, hb, -⟩ := evalP_rel_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h1)
-  rw [evalP_and, evalP_valued_eq_true_iff.2 hb.singular, Trivalent.meetMiddle_true_left]
+  rw [evalP_and, evalP_valued_eq_true_iff.2 hb.singular, SignType.meetMiddle_one_left]
 
 /-- Over a domain with two individuals *every student came. He …* is infelicitous in the null
 context, because a universal does not license a singular pronoun ((21)–(22)). -/
@@ -1051,17 +1051,17 @@ theorem not_felicitousP_forall_conj {a b : D} (hab : a ≠ b) {P₀ Q : P}
 /-- *A linguist came and not every linguist smiled*, with one variable, is never true over a
 domain with two individuals ((23)). -/
 theorem evalP_ex_and_not_all_ne_true {a b : D} (hab : a ≠ b) (P₀ Q : P) (G : PluralAssign ℕ D) :
-    evalP M (.and (.ex x (.pred P₀ x)) (.not (.all x (.pred Q x)))) w G ≠ .true := by
+    evalP M (.and (.ex x (.pred P₀ x)) (.not (.all x (.pred Q x)))) w G ≠ 1 := by
   intro h
-  rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_not, Trivalent.neg_eq_true_iff] at h
+  rw [evalP_and, SignType.meetMiddle_eq_one_iff, evalP_not, SignType.neg_eq_one_iff] at h
   exact not_singular_of_covers hab (evalP_all_eq_false_iff.1 h.2).1 (singular_of_evalP_ex_pred h.1)
 
 /-- `∀x P(x)` and `¬∃x¬P(x)` differ in falsity. Where `x` covers a domain with two individuals, one
 of which is not a `P`, the universal is false and the negated existential undefined (Remark 4). -/
 theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P)
     (hd : ∃ d, d ∉ M.pred P₀ w) :
-    evalP M (.all x (.pred P₀ x)) w (covering D x) = .false ∧
-      evalP M (.not (.ex x (.not (.pred P₀ x)))) w (covering D x) = .indet := by
+    evalP M (.all x (.pred P₀ x)) w (covering D x) = -1 ∧
+      evalP M (.not (.ex x (.not (.pred P₀ x)))) w (covering D x) = 0 := by
   obtain ⟨d, hd⟩ := hd
   have hns : ¬ (covering D x).Singular x :=
     not_singular_of_covers hab (restrict_covering_nonempty x)
@@ -1069,16 +1069,16 @@ theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P
     ⟨d, PluralAssign.singularAt_restrict (restrict_covering_nonempty x d), hd⟩⟩, ?_⟩
   rw [evalP_not]
   cases h : evalP M (.ex x (.not (.pred P₀ x))) w (covering D x) with
-  | indet => rfl
-  | «true» =>
+  | zero => rfl
+  | pos =>
     have := evalP_ex_eq_true_iff.1 h
-    rw [evalP_not, Trivalent.neg_eq_true_iff, evalP_pred_eq_false_iff] at this
+    rw [evalP_not, SignType.neg_eq_one_iff, evalP_pred_eq_false_iff] at this
     obtain ⟨d', hd', -⟩ := this
     exact absurd hd'.singular hns
-  | «false» =>
+  | neg =>
     obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 h
     have hf := (hall d).2
-    rw [evalP_not, Trivalent.neg_eq_false_iff, evalP_pred_eq_true_iff] at hf
+    rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_pred_eq_true_iff] at hf
     obtain ⟨d', hd', hm⟩ := hf
     rw [(PluralAssign.singularAt_restrict_iff.1 hd').2] at hm
     exact absurd hm hd
@@ -1128,15 +1128,15 @@ theorem trueAtP_qs_restricted_iff [Nonempty D] (S B : P) (Rd L : R) (hxy : x ≠
       ∀ a ∈ M.pred S w, ∃ b ∈ M.pred B w, (a, b) ∈ M.rel Rd w ∧ (a, b) ∈ M.rel L w := by
   constructor
   · rintro ⟨G, hG⟩ a ha
-    rw [evalP_and, Trivalent.meetMiddle_eq_true_iff] at hG
+    rw [evalP_and, SignType.meetMiddle_eq_one_iff] at hG
     obtain ⟨hne, h1⟩ := evalP_all_eq_true_iff.1 hG.1 a
     obtain ⟨-, h2⟩ := evalP_all_eq_true_iff.1 hG.2 a
-    have hS : evalP M (.not (.pred S x)) w (G.restrict x a) = .false := by
-      rw [evalP_not, Trivalent.neg_eq_false_iff]
+    have hS : evalP M (.not (.pred S x)) w (G.restrict x a) = -1 := by
+      rw [evalP_not, SignType.neg_eq_neg_one_iff]
       exact evalP_pred_eq_true_iff.2 ⟨a, PluralAssign.singularAt_restrict hne, ha⟩
-    rw [evalP_or, hS, Trivalent.joinMiddle_false_left, evalP_ex_eq_true_iff, evalP_and,
-      Trivalent.meetMiddle_eq_true_iff] at h1
-    rw [evalP_or, hS, Trivalent.joinMiddle_false_left] at h2
+    rw [evalP_or, hS, SignType.joinMiddle_neg_one_left, evalP_ex_eq_true_iff, evalP_and,
+      SignType.meetMiddle_eq_one_iff] at h1
+    rw [evalP_or, hS, SignType.joinMiddle_neg_one_left] at h2
     obtain ⟨b, hb, hB⟩ := evalP_pred_eq_true_iff.1 h1.1
     obtain ⟨a₁, b₁, ha₁, hb₁, hR⟩ := evalP_rel_eq_true_iff.1 h1.2
     obtain ⟨a₂, b₂, ha₂, hb₂, hL⟩ := evalP_rel_eq_true_iff.1 h2
@@ -1152,23 +1152,23 @@ theorem trueAtP_qs_restricted_iff [Nonempty D] (S B : P) (Rd L : R) (hxy : x ≠
       · exact ⟨Classical.arbitrary D, fun h ↦ absurd h ha⟩
     choose f hf using h'
     refine ⟨pairing x y f, ?_⟩
-    rw [evalP_and, Trivalent.meetMiddle_eq_true_iff]
+    rw [evalP_and, SignType.meetMiddle_eq_one_iff]
     refine ⟨evalP_all_eq_true_iff.2 fun a ↦ ?_, evalP_all_eq_true_iff.2 fun a ↦ ?_⟩ <;>
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
       have hsx := PluralAssign.singularAt_restrict hne
       refine ⟨hne, ?_⟩
       by_cases ha : a ∈ M.pred S w
       · obtain ⟨hB, hR, hL⟩ := hf a ha
-        rw [evalP_or, evalP_not, evalP_pred_eq_true_iff.2 ⟨a, hsx, ha⟩, Trivalent.neg_true,
-          Trivalent.joinMiddle_false_left]
+        rw [evalP_or, evalP_not, evalP_pred_eq_true_iff.2 ⟨a, hsx, ha⟩, 
+          SignType.joinMiddle_neg_one_left]
         first
         | exact evalP_ex_eq_true_iff.2 (by
-            rw [evalP_and, Trivalent.meetMiddle_eq_true_iff]
+            rw [evalP_and, SignType.meetMiddle_eq_one_iff]
             exact ⟨evalP_pred_eq_true_iff.2 ⟨f a, hsing, hB⟩,
               evalP_rel_eq_true_iff.2 ⟨a, f a, hsx, hsing, hR⟩⟩)
         | exact evalP_rel_eq_true_iff.2 ⟨a, f a, hsx, hsing, hL⟩
-      · rw [evalP_or, evalP_not, evalP_pred_eq_false_iff.2 ⟨a, hsx, ha⟩, Trivalent.neg_false,
-          Trivalent.joinMiddle_true_left]
+      · rw [evalP_or, evalP_not, evalP_pred_eq_false_iff.2 ⟨a, hsx, ha⟩, neg_neg,
+          SignType.joinMiddle_one_left]
 
 /-- The pronoun of *every student read a book and every student liked it* satisfies
 Transparency in every context ((32)). -/
@@ -1182,12 +1182,12 @@ theorem felicitousP_qs_restricted (C : Set (W × PluralAssign ℕ D)) (S B : P) 
   subst ho
   intro φ p _
   simp only [Function.comp, evalP_and]
-  refine Trivalent.meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
+  refine SignType.meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
   rw [evalP_or, evalP_or, evalP_and]
   refine disj_transparency_parametric _ _ _ fun hS ↦ ?_
   obtain ⟨-, h1⟩ := evalP_all_eq_true_iff.1 h a
-  rw [evalP_or, hS, Trivalent.joinMiddle_false_left, evalP_ex_eq_true_iff, evalP_and,
-    Trivalent.meetMiddle_eq_true_iff] at h1
+  rw [evalP_or, hS, SignType.joinMiddle_neg_one_left, evalP_ex_eq_true_iff, evalP_and,
+    SignType.meetMiddle_eq_one_iff] at h1
   obtain ⟨b, hb, -⟩ := evalP_pred_eq_true_iff.1 h1.1
   exact evalP_valued_eq_true_iff.2 hb.singular
 
@@ -1238,25 +1238,25 @@ theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : 
     simp only [row, PartialAssign.update_self] at h1 h2
     exact hcd (Flat.coe_inj.1 (h1.trans h2.symm))
   have hA : evalP M (.all x (.or (.not (.pred S x)) (.ex y (.and (.pred B y) (.rel Rd x y))))) w
-      (⋃ e, rows e) = .true := evalP_all_eq_true_iff.2 fun e ↦ ⟨hne e, by
+      (⋃ e, rows e) = 1 := evalP_all_eq_true_iff.2 fun e ↦ ⟨hne e, by
     by_cases he : e ∈ M.pred S w
-    · rw [evalP_or, evalP_not, evalP_pred_eq_true_iff.2 ⟨e, hsx e, he⟩, Trivalent.neg_true,
-        Trivalent.joinMiddle_false_left, evalP_ex_eq_true_iff, evalP_and,
-        Trivalent.meetMiddle_eq_true_iff]
+    · rw [evalP_or, evalP_not, evalP_pred_eq_true_iff.2 ⟨e, hsx e, he⟩, 
+        SignType.joinMiddle_neg_one_left, evalP_ex_eq_true_iff, evalP_and,
+        SignType.meetMiddle_eq_one_iff]
       exact ⟨evalP_pred_eq_true_iff.2 ⟨f e, hsy e he, (hf e he).1⟩,
         evalP_rel_eq_true_iff.2 ⟨e, f e, hsx e, hsy e he, (hf e he).2⟩⟩
-    · rw [evalP_or, evalP_not, evalP_pred_eq_false_iff.2 ⟨e, hsx e, he⟩, Trivalent.neg_false,
-        Trivalent.joinMiddle_true_left]⟩
+    · rw [evalP_or, evalP_not, evalP_pred_eq_false_iff.2 ⟨e, hsx e, he⟩, neg_neg,
+        SignType.joinMiddle_one_left]⟩
   have htaut : ∀ H : PluralAssign ℕ D,
-      evalP M (.or (.valued y) (.not (.valued y))) w H = .true := fun H ↦ by
+      evalP M (.or (.valued y) (.not (.valued y))) w H = 1 := fun H ↦ by
     rw [evalP_or, evalP_not]
     by_cases h : H.Singular y
     · rw [evalP_valued_eq_true_iff.2 h]; rfl
     · rw [evalP_valued_eq_false_iff.2 h]; rfl
   have := hT (.or (.valued y) (.not (.valued y))) (w, ⋃ e, rows e) trivial
-  simp only [Function.comp, evalP_and, hA, Trivalent.meetMiddle_true_left] at this
+  simp only [Function.comp, evalP_and, hA, SignType.meetMiddle_one_left] at this
   rw [evalP_all_eq_false_iff.2 ⟨hne, e₀, by
-      rw [evalP_and, evalP_valued_eq_false_iff.2 hnsy, Trivalent.meetMiddle_false_left]⟩,
+      rw [evalP_and, evalP_valued_eq_false_iff.2 hnsy, SignType.meetMiddle_neg_one_left]⟩,
     evalP_all_eq_true_iff.2 fun e ↦ ⟨hne e, htaut _⟩] at this
   exact absurd this (by decide)
 
@@ -1273,18 +1273,19 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
     obtain ⟨hne, hZ⟩ := evalP_all_eq_true_iff.1 hG a
     have hsx : (G.restrict x a).SingularAt x a := PluralAssign.singularAt_restrict hne
     rw [evalP_or, evalP_not, evalP_and, evalP_pred_eq_true_iff.2 ⟨a, hsx, ha⟩,
-      Trivalent.meetMiddle_true_left] at hZ
+      SignType.meetMiddle_one_left] at hZ
     cases hE : evalP M (.ex y (.and (.pred Dn y) (.rel O x y))) w (G.restrict x a) with
-    | «true» =>
-      rw [hE, Trivalent.neg_true, Trivalent.joinMiddle_false_left] at hZ
-      rw [evalP_ex_eq_true_iff, evalP_and, Trivalent.meetMiddle_eq_true_iff] at hE
+    | pos =>
+      rw [hE, SignType.pos_eq_one, SignType.joinMiddle_neg_one_left] at hZ
+      rw [SignType.pos_eq_one, evalP_ex_eq_true_iff, evalP_and,
+        SignType.meetMiddle_eq_one_iff] at hE
       obtain ⟨b, hb, hDn⟩ := evalP_pred_eq_true_iff.1 hE.1
       obtain ⟨a₁, b₁, ha₁, hb₁, hO⟩ := evalP_rel_eq_true_iff.1 hE.2
       obtain ⟨a₂, b₂, ha₂, hb₂, hB⟩ := evalP_rel_eq_true_iff.1 hZ
       rw [← hsx.unique ha₁, ← hb.unique hb₁] at hO
       rw [← hsx.unique ha₂, ← hb.unique hb₂] at hB
       exact ⟨b, hDn, hO, hB⟩
-    | «false» =>
+    | neg =>
       obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 hE
       obtain ⟨hne', hfalse⟩ := hall d₀
       have hs1 := PluralAssign.singularAt_restrict hne'
@@ -1292,13 +1293,13 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
         obtain ⟨g, hg⟩ := hne'
         exact PluralAssign.singularAt_iff.2 ⟨⟨g, hg, (PluralAssign.mem_restrict.1 hg).1.2⟩,
           fun g' hg' _ ↦ (PluralAssign.mem_restrict.1 hg').1.2⟩
-      rw [evalP_and, evalP_pred_eq_true_iff.2 ⟨d₀, hs1, hd₀⟩, Trivalent.meetMiddle_true_left,
+      rw [evalP_and, evalP_pred_eq_true_iff.2 ⟨d₀, hs1, hd₀⟩, SignType.meetMiddle_one_left,
         evalP_rel_eq_false_iff] at hfalse
       obtain ⟨a', b', ha', hb', hn⟩ := hfalse
       rw [← hs2.unique ha', ← hs1.unique hb'] at hn
       exact absurd hO₀ hn
-    | indet =>
-      rw [hE, Trivalent.neg_indet, Trivalent.joinMiddle_indet_left] at hZ
+    | zero =>
+      rw [hE, SignType.zero_eq_zero, SignType.neg_zero, SignType.joinMiddle_zero_left] at hZ
       exact absurd hZ (by decide)
   · intro h
     have h' : ∀ a, ∃ b, a ∈ M.pred F w → (∃ d ∈ M.pred Dn w, (a, d) ∈ M.rel O w) →
@@ -1331,23 +1332,23 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
     refine ⟨hne, ?_⟩
     rw [evalP_or, evalP_not, evalP_and]
     by_cases he : e ∈ M.pred F w
-    · rw [evalP_pred_eq_true_iff.2 ⟨e, hsx, he⟩, Trivalent.meetMiddle_true_left]
+    · rw [evalP_pred_eq_true_iff.2 ⟨e, hsx, he⟩, SignType.meetMiddle_one_left]
       by_cases hd : ∃ d ∈ M.pred Dn w, (e, d) ∈ M.rel O w
       · obtain ⟨hDn, hO, hB⟩ := hf e he hd
         have hsy : (PluralAssign.restrict (⋃ e, rows e) x e).SingularAt y (f e) := by
           rw [hres]
           simp [rows, he, hd, row]
         rw [evalP_ex_eq_true_iff.2 (by
-            rw [evalP_and, Trivalent.meetMiddle_eq_true_iff]
+            rw [evalP_and, SignType.meetMiddle_eq_one_iff]
             exact ⟨evalP_pred_eq_true_iff.2 ⟨f e, hsy, hDn⟩,
               evalP_rel_eq_true_iff.2 ⟨e, f e, hsx, hsy, hO⟩⟩),
-          Trivalent.neg_true, Trivalent.joinMiddle_false_left]
+          SignType.joinMiddle_neg_one_left]
         exact evalP_rel_eq_true_iff.2 ⟨e, f e, hsx, hsy, hB⟩
       · have hE : evalP M (.ex y (.and (.pred Dn y) (.rel O x y))) w
-            (PluralAssign.restrict (⋃ e, rows e) x e) = .false := by
+            (PluralAssign.restrict (⋃ e, rows e) x e) = -1 := by
           rw [evalP_ex_eq_false_iff]
           refine ⟨?_, fun v ↦ ?_⟩
-          · rw [evalP_and, Ne, Trivalent.meetMiddle_eq_true_iff]
+          · rw [evalP_and, Ne, SignType.meetMiddle_eq_one_iff]
             rintro ⟨h1, h2⟩
             obtain ⟨b, hb, hDnb⟩ := evalP_pred_eq_true_iff.1 h1
             obtain ⟨a₁, b₁, ha₁, hb₁, hO⟩ := evalP_rel_eq_true_iff.1 h2
@@ -1371,12 +1372,12 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
               simp [row, PartialAssign.update_of_ne hxy]
             rw [evalP_and]
             by_cases hv : v ∈ M.pred Dn w
-            · rw [evalP_pred_eq_true_iff.2 ⟨v, hsy, hv⟩, Trivalent.meetMiddle_true_left]
+            · rw [evalP_pred_eq_true_iff.2 ⟨v, hsy, hv⟩, SignType.meetMiddle_one_left]
               exact evalP_rel_eq_false_iff.2 ⟨e, v, hsx', hsy, fun hO ↦ hd ⟨v, hv, hO⟩⟩
-            · rw [evalP_pred_eq_false_iff.2 ⟨v, hsy, hv⟩, Trivalent.meetMiddle_false_left]
-        rw [hE, Trivalent.neg_false, Trivalent.joinMiddle_true_left]
-    · rw [evalP_pred_eq_false_iff.2 ⟨e, hsx, he⟩, Trivalent.meetMiddle_false_left,
-        Trivalent.neg_false, Trivalent.joinMiddle_true_left]
+            · rw [evalP_pred_eq_false_iff.2 ⟨v, hsy, hv⟩, SignType.meetMiddle_neg_one_left]
+        rw [hE, neg_neg, SignType.joinMiddle_one_left]
+    · rw [evalP_pred_eq_false_iff.2 ⟨e, hsx, he⟩, SignType.meetMiddle_neg_one_left,
+        neg_neg, SignType.joinMiddle_one_left]
 
 /-- The pronoun of the donkey sentence satisfies Transparency in every context ((37)–(38),
 §6.7.2). -/
@@ -1392,8 +1393,8 @@ theorem felicitousP_donkey (C : Set (W × PluralAssign ℕ D)) (F Dn : P) (O Bt 
   refine evalP_all_congr fun a ↦ ?_
   rw [evalP_or, evalP_or, evalP_and]
   refine disj_transparency_parametric _ _ _ fun h ↦ ?_
-  rw [evalP_not, Trivalent.neg_eq_false_iff, evalP_and, Trivalent.meetMiddle_eq_true_iff,
-    evalP_ex_eq_true_iff, evalP_and, Trivalent.meetMiddle_eq_true_iff] at h
+  rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_and, SignType.meetMiddle_eq_one_iff,
+    evalP_ex_eq_true_iff, evalP_and, SignType.meetMiddle_eq_one_iff] at h
   obtain ⟨b, hb, -⟩ := evalP_pred_eq_true_iff.1 h.2.1
   exact evalP_valued_eq_true_iff.2 hb.singular
 
@@ -1406,36 +1407,37 @@ theorem trueAtP_not_ex_and_iff (Dk OS BS : P) :
         ∃ d, d ∈ M.pred Dk w ∧ d ∈ M.pred OS w ∧ d ∉ M.pred BS w := by
   constructor
   · rintro ⟨G, hG⟩
-    rw [evalP_not, Trivalent.neg_eq_true_iff, evalP_and] at hG
+    rw [evalP_not, SignType.neg_eq_one_iff, evalP_and] at hG
     cases hE : evalP M (.ex x (.and (.pred Dk x) (.pred OS x))) w G with
-    | «false» =>
+    | neg =>
       refine .inl fun d ⟨hDk, hOS⟩ ↦ ?_
       obtain ⟨-, hall⟩ := evalP_ex_eq_false_iff.1 hE
       obtain ⟨hne, hf⟩ := hall d
       have hs := PluralAssign.singularAt_restrict hne
-      rw [evalP_and, evalP_pred_eq_true_iff.2 ⟨d, hs, hDk⟩, Trivalent.meetMiddle_true_left,
+      rw [evalP_and, evalP_pred_eq_true_iff.2 ⟨d, hs, hDk⟩, SignType.meetMiddle_one_left,
         evalP_pred_eq_false_iff] at hf
       obtain ⟨d', hd', hn⟩ := hf
       rw [← hs.unique hd'] at hn
       exact hn hOS
-    | «true» =>
-      rw [hE, Trivalent.meetMiddle_true_left] at hG
-      rw [evalP_ex_eq_true_iff, evalP_and, Trivalent.meetMiddle_eq_true_iff] at hE
+    | pos =>
+      rw [hE, SignType.pos_eq_one, SignType.meetMiddle_one_left] at hG
+      rw [SignType.pos_eq_one, evalP_ex_eq_true_iff, evalP_and,
+        SignType.meetMiddle_eq_one_iff] at hE
       obtain ⟨d, hd, hDk⟩ := evalP_pred_eq_true_iff.1 hE.1
       obtain ⟨d₁, hd₁, hOS⟩ := evalP_pred_eq_true_iff.1 hE.2
       obtain ⟨d₂, hd₂, hBS⟩ := evalP_pred_eq_false_iff.1 hG
       rw [← hd.unique hd₁] at hOS
       rw [← hd.unique hd₂] at hBS
       exact .inr ⟨d, hDk, hOS, hBS⟩
-    | indet =>
-      rw [hE, Trivalent.meetMiddle_indet_left] at hG
+    | zero =>
+      rw [hE, SignType.zero_eq_zero, SignType.meetMiddle_zero_left] at hG
       exact absurd hG (by decide)
   · rintro (hnone | ⟨d, hDk, hOS, hBS⟩)
     · refine ⟨covering D x, ?_⟩
       rw [evalP_not, evalP_and, evalP_ex_eq_false_iff.2 ⟨?_, fun e ↦
-        ⟨restrict_covering_nonempty x e, ?_⟩⟩, Trivalent.meetMiddle_false_left]
+        ⟨restrict_covering_nonempty x e, ?_⟩⟩, SignType.meetMiddle_neg_one_left]
       · rfl
-      · rw [evalP_and, Ne, Trivalent.meetMiddle_eq_true_iff]
+      · rw [evalP_and, Ne, SignType.meetMiddle_eq_one_iff]
         rintro ⟨h1, h2⟩
         obtain ⟨d, hd, hDk⟩ := evalP_pred_eq_true_iff.1 h1
         obtain ⟨d', hd', hOS⟩ := evalP_pred_eq_true_iff.1 h2
@@ -1444,16 +1446,16 @@ theorem trueAtP_not_ex_and_iff (Dk OS BS : P) :
       · have hs := PluralAssign.singularAt_restrict (restrict_covering_nonempty x e)
         rw [evalP_and]
         by_cases he : e ∈ M.pred Dk w
-        · rw [evalP_pred_eq_true_iff.2 ⟨e, hs, he⟩, Trivalent.meetMiddle_true_left]
+        · rw [evalP_pred_eq_true_iff.2 ⟨e, hs, he⟩, SignType.meetMiddle_one_left]
           exact evalP_pred_eq_false_iff.2 ⟨e, hs, fun h ↦ hnone e ⟨he, h⟩⟩
-        · rw [evalP_pred_eq_false_iff.2 ⟨e, hs, he⟩, Trivalent.meetMiddle_false_left]
+        · rw [evalP_pred_eq_false_iff.2 ⟨e, hs, he⟩, SignType.meetMiddle_neg_one_left]
     · have hs : ({PartialAssign.single x d} : PluralAssign ℕ D).SingularAt x d :=
         PluralAssign.singularAt_singleton.2 (by simp)
       refine ⟨{PartialAssign.single x d}, ?_⟩
       rw [evalP_not, evalP_and, evalP_ex_eq_true_iff.2 (by
-          rw [evalP_and, Trivalent.meetMiddle_eq_true_iff]
+          rw [evalP_and, SignType.meetMiddle_eq_one_iff]
           exact ⟨evalP_pred_eq_true_iff.2 ⟨d, hs, hDk⟩, evalP_pred_eq_true_iff.2 ⟨d, hs, hOS⟩⟩),
-        Trivalent.meetMiddle_true_left, evalP_pred_eq_false_iff.2 ⟨d, hs, hBS⟩]
+        SignType.meetMiddle_one_left, evalP_pred_eq_false_iff.2 ⟨d, hs, hBS⟩]
       rfl
 
 /-- Under Strong Truth, *there is a bathroom and it is upstairs* says that there is a bathroom
@@ -1465,31 +1467,31 @@ theorem stronglyTrueAt_ex_and_iff (B F : P) :
     fun d ↦ PluralAssign.singularAt_singleton.2 (by simp)
   constructor
   · rintro ⟨⟨G, hG⟩, hnf⟩
-    rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_ex_eq_true_iff] at hG
+    rw [evalP_and, SignType.meetMiddle_eq_one_iff, evalP_ex_eq_true_iff] at hG
     obtain ⟨d, -, hd⟩ := evalP_pred_eq_true_iff.1 hG.1
     refine ⟨⟨d, hd⟩, fun d' hd' ↦ by_contra fun hn ↦ hnf {PartialAssign.single x d'} ?_⟩
     rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨d', hs d', hd'⟩),
-      Trivalent.meetMiddle_true_left]
+      SignType.meetMiddle_one_left]
     exact evalP_pred_eq_false_iff.2 ⟨d', hs d', hn⟩
   · rintro ⟨⟨d, hd⟩, hall⟩
     refine ⟨⟨{PartialAssign.single x d}, ?_⟩, fun G hG ↦ ?_⟩
     · rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨d, hs d, hd⟩),
-        Trivalent.meetMiddle_true_left]
+        SignType.meetMiddle_one_left]
       exact evalP_pred_eq_true_iff.2 ⟨d, hs d, hall d hd⟩
     · rw [evalP_and] at hG
       cases hE : evalP M (.ex x (.pred B x)) w G with
-      | «false» =>
+      | neg =>
         obtain ⟨-, hf⟩ := evalP_ex_eq_false_iff.1 hE
         obtain ⟨d', hd', hn⟩ := evalP_pred_eq_false_iff.1 (hf d).2
         exact hn ((PluralAssign.singularAt_restrict_iff.1 hd').2 ▸ hd)
-      | «true» =>
-        rw [hE, Trivalent.meetMiddle_true_left, evalP_pred_eq_false_iff] at hG
+      | pos =>
+        rw [hE, SignType.pos_eq_one, SignType.meetMiddle_one_left, evalP_pred_eq_false_iff] at hG
         obtain ⟨d', hd', hn⟩ := hG
         obtain ⟨d'', hd'', hB⟩ := evalP_pred_eq_true_iff.1 (evalP_ex_eq_true_iff.1 hE)
         rw [hd''.unique hd'] at hB
         exact hn (hall d' hB)
-      | indet =>
-        rw [hE, Trivalent.meetMiddle_indet_left] at hG
+      | zero =>
+        rw [hE, SignType.zero_eq_zero, SignType.meetMiddle_zero_left] at hG
         exact absurd hG (by decide)
 
 end Rows

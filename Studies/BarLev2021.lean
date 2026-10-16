@@ -25,8 +25,8 @@ another's.
   under negation.
 * `exhIEII_pruned_eq_atLeast`, `isReading_polar_atLeast`: pruning yields the threshold
   readings, and a polar question on a threshold selects it.
-* `gappy_iff_barePlural_eq_indet`: the gappy worlds are those where Križ's trivalent plural is
-  undefined; `neg_barePlural_eq_indet_and_notMem_exhIEII_compl`: the accounts part under negation.
+* `gappy_iff_barePlural_eq_zero`: the gappy worlds are those where Križ's trivalent plural is
+  undefined; `neg_barePlural_eq_zero_and_notMem_exhIEII_compl`: the accounts part under negation.
 * `gappy_iff_krizChemla_gap`, `krizChemla_negation_residue`: on Križ and Chemla's unembedded
   displays the account predicts their gaps for the positive sentence and misses those under
   negation.
@@ -217,7 +217,7 @@ theorem mem_readings_iff (h : Separating D x P) {q : Set W} :
     rw [exhIEII_pruned_eq_atLeast h (by omega) (by omega)]
     congr 1; omega
 
-/-- The pruned readings are readings of the plural predication too: the threshold `k` reads the
+/-- The pruned readings are readings of the plural predication too, the threshold `k` reading the
 predicate over the parts of `x` with at least `k` atoms in the domain. -/
 theorem readings_subset_readings (h : Separating D x P) :
     readings D x P ⊆ Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
@@ -285,10 +285,10 @@ theorem gappy_iff (h : Separating D x P) (hcount : ∀ k ≤ (x ∩ D).card, ∃
 
 /-- A plain positive definite plural is gappy exactly where [kriz-2016]'s trivalent plural
 predication is undefined, where the accounts agree. -/
-theorem gappy_iff_barePlural_eq_indet (h : Separating D x P)
+theorem gappy_iff_barePlural_eq_zero (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) (w : W) :
-    Gappy D x P w ↔ Homogeneity.barePlural P (x ∩ D) w = .indet := by
-  rw [gappy_iff h hcount, Homogeneity.barePlural, Trivalent.supervaluation_eq_indet_iff, count,
+    Gappy D x P w ↔ Homogeneity.barePlural P (x ∩ D) w = 0 := by
+  rw [gappy_iff h hcount, Homogeneity.barePlural, SignType.supervaluation_eq_zero_iff, count,
     ← Finset.filter_ssubset, ← Finset.filter_nonempty_iff, Finset.card_pos]
   exact and_congr_right fun _ ↦ ⟨fun hlt ↦ Finset.ssubset_iff_subset_ne.2
     ⟨Finset.filter_subset _ _, ne_of_apply_ne _ hlt.ne⟩, Finset.card_lt_card⟩
@@ -296,12 +296,12 @@ theorem gappy_iff_barePlural_eq_indet (h : Separating D x P)
 /-- At a gappy world the trivalent negation is still undefined, while the negative sentence with
 negation over `∃-PL`, exhaustified over any of its alternatives, is plainly false, where the
 accounts part. -/
-theorem neg_barePlural_eq_indet_and_notMem_exhIEII_compl (h : Separating D x P)
+theorem neg_barePlural_eq_zero_and_notMem_exhIEII_compl (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) {w : W} (hw : Gappy D x P w)
     (C : Set (Set W)) :
-    (Homogeneity.barePlural P (x ∩ D) w).neg = .indet ∧
+    -Homogeneity.barePlural P (x ∩ D) w = 0 ∧
       w ∉ exhIEII C (⋃ b ∈ x ∩ D, atom P b)ᶜ := by
-  refine ⟨Trivalent.neg_eq_indet_iff.2 ((gappy_iff_barePlural_eq_indet h hcount w).1 hw), ?_⟩
+  refine ⟨SignType.neg_eq_zero_iff.2 ((gappy_iff_barePlural_eq_zero h hcount w).1 hw), ?_⟩
   obtain ⟨a, ha⟩ := Finset.card_pos.1 ((gappy_iff h hcount w).1 hw).1
   obtain ⟨ha, hPa⟩ := Finset.mem_filter.1 ha
   exact fun hmem ↦ hmem.1 (Set.mem_biUnion ha hPa)
@@ -437,13 +437,13 @@ theorem krizChemla_negation_residue :
     ∀ t ∈ gapTests, t.embedding = .negation → t.found = .yes := by
   refine ⟨fun i hi he hc w hw C ↦ ?_, by decide⟩
   have hg := (gappy_iff_krizChemla_gap.1 i hi he w hw).2 hc
-  simpa only [Finset.inter_self] using (neg_barePlural_eq_indet_and_notMem_exhIEII_compl
+  simpa only [Finset.inter_self] using (neg_barePlural_eq_zero_and_notMem_exhIEII_compl
     (separating_holds _ _) (exists_count_holds_eq _ _) hg C).2
 
 end KrizChemla
 
 /-- The paper's examples report gappiness for positive sentences and reduced gappiness for the
-negative (82b), the asymmetry `neg_barePlural_eq_indet_and_notMem_exhIEII_compl` idealizes. -/
+negative (82b), the asymmetry `neg_barePlural_eq_zero_and_notMem_exhIEII_compl` idealizes. -/
 theorem rows_gappiness_positive : ∀ e ∈ Examples.all,
     e.feature? "gappiness" = some "yes" → e.feature? "polarity" = some "positive" := by
   decide

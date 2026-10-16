@@ -12,31 +12,27 @@ public import Mathlib.Data.Finset.Lattice.Fold
 /-!
 # The knowledge order on three-valued truth
 
-`Trivalent`'s own order is the truth order `false < indet < true`. Transported along
-`equivFlatBool`, the flat domain `Flat Bool` gives the same carrier its knowledge order, in which
-`indet` lies below both `true` and `false`. Strong Kleene conjunction and disjunction are the
-truth-order operations `⊓`/`⊔`, and they are also monotone for the knowledge order, which is
-[kleene-1952]'s regularity condition; Weak Kleene conjunction is not even monotone for the truth
-order (`meetWeak_not_truthMono`).
-
-`Flat Bool` has a knowledge meet but only a partial knowledge join (`PartialUnify`): the three
-values lack the glut of Belnap's four-valued bilattice, of which `Trivalent` is the consistent
-part.
+The order of `SignType` is the truth order `-1 < 0 < 1`. The flat domain `Flat Bool` orders the
+same three values by information instead, with the undefined value `0` below both `1` and `-1`.
+Kleene's strong connectives are monotone for this knowledge order, which is Kleene's regularity
+condition, while the Weak Kleene connectives are not even monotone for the truth order.
+`Flat Bool` has a knowledge meet but only a partial knowledge join: the three values lack the glut
+of Belnap's four values, of which they are the consistent part.
 
 ## Main definitions
 
-* `Trivalent.toFlat`, `Trivalent.equivFlatBool`: `indet ↦ ⊥`, `true ↦ true`, `false ↦ false`.
+* `SignType.toFlat`, `SignType.equivFlatBool`: `0 ↦ ⊥`, `1 ↦ true`, `-1 ↦ false`.
 
 ## Main results
 
-* `Trivalent.truthOrder_ne_knowledgeOrder`: the two orders differ.
-* `Trivalent.toFlat_neg_mono`, `Trivalent.toFlat_inf_mono_left`, `Trivalent.toFlat_sup_mono_left`:
-  Strong Kleene connectives are knowledge-monotone.
-* `Trivalent.meetWeak_not_truthMono`, `Trivalent.joinWeak_not_truthMono`: Weak Kleene ones are
+* `SignType.truthOrder_ne_knowledgeOrder`: the two orders differ.
+* `SignType.toFlat_neg_mono`, `SignType.toFlat_inf_mono_left`, `SignType.toFlat_sup_mono_left`:
+  the Strong Kleene connectives are knowledge-monotone.
+* `SignType.meetWeak_not_truthMono`, `SignType.joinWeak_not_truthMono`: the Weak Kleene ones are
   not truth-monotone.
-* `Trivalent.toFlat_supervaluation`: over a nonempty family, the supervaluation is the knowledge
+* `SignType.toFlat_supervaluation`: over a nonempty family, the supervaluation is the knowledge
   meet of the classical values, so shrinking the family can only add information
-  (`Trivalent.toFlat_supervaluation_mono`).
+  (`SignType.toFlat_supervaluation_mono`).
 
 ## References
 
@@ -45,86 +41,82 @@ part.
 
 @[expose] public section
 
-namespace Trivalent
+namespace SignType
 
 section KnowledgeOrder
 
-/-- The carrier bijection `Trivalent ≃ Flat Bool`: `indet ↔ ⊥`, `true ↔ some true`,
-`false ↔ some false`. `Flat Bool` carries the knowledge order, distinct from the
-truth order — the two orders of the Kleene bilattice. -/
-def toFlat : Trivalent → Flat Bool
-  | .indet => none
-  | .true => some Bool.true
-  | .false => some Bool.false
+/-- The value in the flat domain sends `0` to `⊥`, and `1` and `-1` to `true` and `false`. -/
+def toFlat : SignType → Flat Bool
+  | .zero => none
+  | .pos => some Bool.true
+  | .neg => some Bool.false
 
-/-- Inverse of `toFlat`. -/
-def ofFlat : Flat Bool → Trivalent
-  | none => .indet
-  | some Bool.true => .true
-  | some Bool.false => .false
+/-- The inverse of `toFlat`. -/
+def ofFlat : Flat Bool → SignType
+  | none => 0
+  | some Bool.true => 1
+  | some Bool.false => -1
 
-/-- `Trivalent` and the flat domain `Flat Bool` share a carrier. -/
-def equivFlatBool : Trivalent ≃ Flat Bool where
+/-- `SignType` and the flat domain `Flat Bool` are the same three values. -/
+def equivFlatBool : SignType ≃ Flat Bool where
   toFun := toFlat
   invFun := ofFlat
   left_inv a := by cases a <;> rfl
   right_inv x := by cases x with | bot => rfl | coe b => cases b <;> rfl
 
-/-- The truth order and the knowledge order genuinely differ: in the truth order
-`false ≤ indet`, but in the knowledge order the committed value `false` is not below
-the uncommitted `indet = ⊥`. -/
+/-- The truth order and the knowledge order differ, since `-1 ≤ 0` in the truth order but the
+defined value `-1` is not below the undefined `0 = ⊥` in the knowledge order. -/
 theorem truthOrder_ne_knowledgeOrder :
-    Trivalent.false ≤ Trivalent.indet ∧ ¬ toFlat .false ≤ toFlat .indet := by decide
+    (-1 : SignType) ≤ 0 ∧ ¬ toFlat (-1) ≤ toFlat 0 := by decide
 
-/-- Strong Kleene negation is regular (knowledge-monotone); being unary, it is in
-fact the unique monotone extension of Boolean `not`. -/
-theorem toFlat_neg_mono {a b : Trivalent} (h : toFlat a ≤ toFlat b) :
-    toFlat (neg a) ≤ toFlat (neg b) := by
+/-- Strong Kleene negation is regular; being unary, it is the unique monotone extension of
+Boolean `not`. -/
+theorem toFlat_neg_mono {a b : SignType} (h : toFlat a ≤ toFlat b) :
+    toFlat (-a) ≤ toFlat (-b) := by
   cases a <;> cases b <;> revert h <;> decide
 
-/-- Strong Kleene conjunction is regular (knowledge-monotone in each argument). -/
-theorem toFlat_inf_mono_left {a a' : Trivalent} (b : Trivalent)
+/-- Strong Kleene conjunction is regular in each argument. -/
+theorem toFlat_inf_mono_left {a a' : SignType} (b : SignType)
     (h : toFlat a ≤ toFlat a') : toFlat (a ⊓ b) ≤ toFlat (a' ⊓ b) := by
   cases a <;> cases a' <;> cases b <;> revert h <;> decide
 
-/-- Strong Kleene disjunction is regular (knowledge-monotone in each argument). -/
-theorem toFlat_sup_mono_left {a a' : Trivalent} (b : Trivalent)
+/-- Strong Kleene disjunction is regular in each argument. -/
+theorem toFlat_sup_mono_left {a a' : SignType} (b : SignType)
     (h : toFlat a ≤ toFlat a') : toFlat (a ⊔ b) ≤ toFlat (a' ⊔ b) := by
   cases a <;> cases a' <;> cases b <;> revert h <;> decide
 
-/-- Weak Kleene conjunction is not interlaced — it fails truth-order monotonicity
-(`indet ≤ true`, yet `meetWeak .indet .false = .indet ≰ .false`), so unlike Strong
-Kleene `⊓` it is not a bilattice operation. -/
+/-- Weak Kleene conjunction is not truth-monotone, since `0 ≤ 1` but `meetWeak 0 (-1) = 0` is not
+below `meetWeak 1 (-1) = -1`; unlike `⊓` it is no bilattice operation. -/
 theorem meetWeak_not_truthMono :
-    ¬ ∀ a a' b : Trivalent, a ≤ a' → meetWeak a b ≤ meetWeak a' b :=
-  fun h ↦ absurd (h .indet .true .false (by decide)) (by decide)
+    ¬ ∀ a a' b : SignType, a ≤ a' → meetWeak a b ≤ meetWeak a' b :=
+  fun h ↦ absurd (h 0 1 (-1) (by decide)) (by decide)
 
-/-- Weak Kleene disjunction is likewise not interlaced. -/
+/-- Weak Kleene disjunction is not truth-monotone either. -/
 theorem joinWeak_not_truthMono :
-    ¬ ∀ a a' b : Trivalent, a ≤ a' → joinWeak a b ≤ joinWeak a' b :=
-  fun h ↦ absurd (h .false .indet .true (by decide)) (by decide)
+    ¬ ∀ a a' b : SignType, a ≤ a' → joinWeak a b ≤ joinWeak a' b :=
+  fun h ↦ absurd (h (-1) 0 1 (by decide)) (by decide)
 
 /-- Over a nonempty family, the supervaluation is the knowledge meet of the classical values. -/
 theorem toFlat_supervaluation {α : Type*} {s : Finset α} (P : α → Prop) [DecidablePred P]
     (hs : s.Nonempty) :
     toFlat (supervaluation s P) = s.inf' hs fun a ↦ (decide (P a) : Flat Bool) := by
   cases h : supervaluation s P
-  · have := (supervaluation_eq_true_iff ..).1 h
-    rw [Finset.inf'_congr hs rfl fun a ha ↦ by rw [decide_eq_true (this a ha)],
-      Finset.inf'_const]; rfl
-  · have := ((supervaluation_eq_false_iff ..).1 h).2
-    rw [Finset.inf'_congr hs rfl fun a ha ↦ by rw [decide_eq_false (this a ha)],
-      Finset.inf'_const]; rfl
-  · obtain ⟨⟨a, ha, hp⟩, b, hb, hn⟩ := (supervaluation_eq_indet_iff ..).1 h
+  · obtain ⟨⟨a, ha, hp⟩, b, hb, hn⟩ := (supervaluation_eq_zero_iff ..).1 h
     refine (le_bot_iff.1 ?_).symm
     calc s.inf' hs (fun a ↦ (decide (P a) : Flat Bool))
         ≤ (decide (P a) : Flat Bool) ⊓ (decide (P b) : Flat Bool) :=
           le_inf (Finset.inf'_le _ ha) (Finset.inf'_le _ hb)
       _ = ⊥ := by simp [hp, hn]
+  · have := ((supervaluation_eq_neg_one_iff ..).1 h).2
+    rw [Finset.inf'_congr hs rfl fun a ha ↦ by rw [decide_eq_false (this a ha)],
+      Finset.inf'_const]; rfl
+  · have := (supervaluation_eq_one_iff ..).1 h
+    rw [Finset.inf'_congr hs rfl fun a ha ↦ by rw [decide_eq_true (this a ha)],
+      Finset.inf'_const]; rfl
 
-/-- Shrinking a family to a nonempty subfamily can only add information. The nonemptiness is
-needed: the empty family's `.true` is a convention rather than a meet, and a family whose members
-all fail `P` has the incomparable value `.false`. -/
+/-- Shrinking a family to a nonempty subfamily can only add information. Nonemptiness is needed,
+since the empty family's `1` is a convention rather than a meet and a family whose members all fail
+`P` has the incomparable value `-1`. -/
 theorem toFlat_supervaluation_mono {α : Type*} {s t : Finset α} (P : α → Prop)
     [DecidablePred P] (h : s ⊆ t) (hs : s.Nonempty) :
     toFlat (supervaluation t P) ≤ toFlat (supervaluation s P) := by
@@ -133,4 +125,4 @@ theorem toFlat_supervaluation_mono {α : Type*} {s t : Finset α} (P : α → Pr
 
 end KnowledgeOrder
 
-end Trivalent
+end SignType

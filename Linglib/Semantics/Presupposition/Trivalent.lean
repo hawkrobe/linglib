@@ -8,7 +8,7 @@ public import Linglib.Semantics.Presupposition.Basic
 The rival connective families on `PartialProp`, beyond the classical (Weak Kleene) and
 filtering (Middle Kleene) canon of `Presupposition.Basic`: Strong Kleene, Belnap conditional
 assertion, and the symmetric two-dimensional disjunction of the Karttunen–Peters tradition.
-The first two descend along `eval` to operations on `Trivalent` like the canon; the
+The first two descend along `eval` to operations on `SignType` like the canon; the
 two-dimensional disjunction provably does not (`orKPSymmetric_not_trivalent`), because its
 presupposition reads the disjuncts' assertion values at worlds where their presuppositions
 fail — the dimension `eval` forgets. This is what makes `PartialProp` strictly more
@@ -16,7 +16,7 @@ expressive than trivalent propositions.
 
 ## Main declarations
 
-* `orStrong`, `andStrong`: Strong Kleene, the `Trivalent` lattice join and meet under `eval`.
+* `orStrong`, `andStrong`: Strong Kleene, the `SignType` lattice join and meet under `eval`.
 * `orBelnap`, `andBelnap`: Belnap conditional assertion.
 * `belnapLift`: Belnap's uniform rule, combining by a binary operator whose identity element
   substitutes for undefined operands.
@@ -51,8 +51,8 @@ variable {W : Type*}
     literature, matching [yagi-2025] Definition 2 (cf. [kalomoiros-schwarz-2021] for
     experimental support of symmetry). -/
 def orKPSymmetric (p q : PartialProp W) : PartialProp W where
-  presup := fun w => (q.assertion w ∨ p.presup w) ∧ (p.assertion w ∨ q.presup w)
-  assertion := fun w => p.assertion w ∨ q.assertion w
+  presup := fun w ↦ (q.assertion w ∨ p.presup w) ∧ (p.assertion w ∨ q.presup w)
+  assertion := fun w ↦ p.assertion w ∨ q.assertion w
 
 /-- When presuppositions conflict at `w`, the symmetric K&P presupposition entails the
     assertion — defined implies true — so the disjunction can never be both defined and
@@ -64,11 +64,11 @@ theorem orKPSymmetric_presup_entails_when_conflicting (p q : PartialProp W) (w :
   simp only [orKPSymmetric] at h_presup ⊢
   obtain ⟨h1, h2⟩ := h_presup
   by_cases hp : p.presup w
-  · have hq : ¬q.presup w := fun hq => h_conflict ⟨hp, hq⟩
+  · have hq : ¬q.presup w := fun hq ↦ h_conflict ⟨hp, hq⟩
     exact Or.inl (h2.resolve_right hq)
   · exact Or.inr (h1.resolve_right hp)
 
-/-- **Two-dimensionalism exceeds trivalence.** No binary operation on `Trivalent` computes
+/-- Two-dimensionalism exceeds trivalence, since no binary operation on `SignType` computes
     the evaluation of the symmetric two-dimensional disjunction from the evaluations of its
     disjuncts. Its presupposition reads the disjuncts' assertion values at worlds where their
     presuppositions fail, and `eval` forgets exactly those values (`eval_eq_eval_iff`). The
@@ -76,11 +76,11 @@ theorem orKPSymmetric_presup_entails_when_conflicting (p q : PartialProp W) (w :
     `eval_orBelnap`), so this disjunction is the reason `PartialProp` cannot be replaced by
     a trivalent proposition. -/
 theorem orKPSymmetric_not_trivalent (w : W) :
-    ¬ ∃ f : Trivalent → Trivalent → Trivalent,
+    ¬ ∃ f : SignType → SignType → SignType,
       ∀ p q : PartialProp W, (orKPSymmetric p q).eval w = f (p.eval w) (q.eval w) := by
   rintro ⟨f, hf⟩
-  have h₁ := hf ⟨fun _ => False, fun _ => True⟩ ⟨fun _ => False, fun _ => True⟩
-  have h₂ := hf ⟨fun _ => False, fun _ => False⟩ ⟨fun _ => False, fun _ => True⟩
+  have h₁ := hf ⟨fun _ ↦ False, fun _ ↦ True⟩ ⟨fun _ ↦ False, fun _ ↦ True⟩
+  have h₂ := hf ⟨fun _ ↦ False, fun _ ↦ False⟩ ⟨fun _ ↦ False, fun _ ↦ True⟩
   simp only [eval, orKPSymmetric] at h₁ h₂
   simp at h₁ h₂
   exact absurd (h₁.trans h₂.symm) (by decide)
@@ -89,37 +89,37 @@ theorem orKPSymmetric_not_trivalent (w : W) :
 
 /-- Strong Kleene disjunction ([kleene-1952]) is defined iff both disjuncts are defined or
     either is defined and true (`T ∨ # = T`, `F ∨ # = #`); under `eval` it is the
-    `Trivalent` lattice join (`eval_orStrong`). -/
+    `SignType` lattice join (`eval_orStrong`). -/
 def orStrong (p q : PartialProp W) : PartialProp W where
-  presup := fun w => (p.presup w ∧ q.presup w) ∨
+  presup := fun w ↦ (p.presup w ∧ q.presup w) ∨
     (p.presup w ∧ p.assertion w) ∨ (q.presup w ∧ q.assertion w)
-  assertion := fun w =>
+  assertion := fun w ↦
     (p.presup w ∧ p.assertion w) ∨ (q.presup w ∧ q.assertion w)
 
 /-- Strong Kleene conjunction is defined iff both conjuncts are defined or either is
-    defined and false (`F ∧ # = F`, `T ∧ # = #`); under `eval` it is the `Trivalent`
+    defined and false (`F ∧ # = F`, `T ∧ # = #`); under `eval` it is the `SignType`
     lattice meet (`eval_andStrong`). -/
 def andStrong (p q : PartialProp W) : PartialProp W where
-  presup := fun w => (p.presup w ∧ q.presup w) ∨
+  presup := fun w ↦ (p.presup w ∧ q.presup w) ∨
     (p.presup w ∧ ¬p.assertion w) ∨ (q.presup w ∧ ¬q.assertion w)
-  assertion := fun w =>
+  assertion := fun w ↦
     (p.presup w → p.assertion w) ∧ (q.presup w → q.assertion w)
 
-/-- `orStrong` evaluates to the `Trivalent` lattice join pointwise — Strong Kleene
-    disjunction is `⊔` in the `false < indet < true` order, unconditionally. -/
+/-- `orStrong` evaluates to the `SignType` lattice join pointwise — Strong Kleene
+    disjunction is `⊔` in the order `-1 < 0 < 1`, unconditionally. -/
 theorem eval_orStrong (p q : PartialProp W) (w : W) :
     (orStrong p q).eval w = p.eval w ⊔ q.eval w := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, orStrong, hp, hq, ha, hb] <;> decide
+    simp [eval, orStrong, hp, hq, ha, hb]
 
-/-- `andStrong` evaluates to the `Trivalent` lattice meet pointwise,
+/-- `andStrong` evaluates to the `SignType` lattice meet pointwise,
     unconditionally. -/
 theorem eval_andStrong (p q : PartialProp W) (w : W) :
     (andStrong p q).eval w = p.eval w ⊓ q.eval w := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [eval, andStrong, hp, hq, ha, hb] <;> decide
+    simp [eval, andStrong, hp, hq, ha, hb]
 
 /-! ### Belnap conditional assertion ([belnap-1970])
 
@@ -131,15 +131,15 @@ proposition asserts something at `w` (vs being nonassertive / silent). -/
     `PartialProp.and` (both must be defined) and filtering `PartialProp.andFilter`
     (left-to-right). -/
 def andBelnap (p q : PartialProp W) : PartialProp W where
-  presup := fun w => p.presup w ∨ q.presup w
-  assertion := fun w =>
+  presup := fun w ↦ p.presup w ∨ q.presup w
+  assertion := fun w ↦
     (p.presup w → p.assertion w) ∧ (q.presup w → q.assertion w)
 
 /-- Belnap disjunction ([belnap-1970], (9)) is assertive iff at least one disjunct is,
     asserting the disjunction of the assertive disjuncts' content. -/
 def orBelnap (p q : PartialProp W) : PartialProp W where
-  presup := fun w => p.presup w ∨ q.presup w
-  assertion := fun w =>
+  presup := fun w ↦ p.presup w ∨ q.presup w
+  assertion := fun w ↦
     (p.presup w ∧ p.assertion w) ∨ (q.presup w ∧ q.assertion w)
 
 
@@ -152,24 +152,24 @@ def orBelnap (p q : PartialProp W) : PartialProp W where
     fields classically. -/
 noncomputable def belnapLift (f : Prop → Prop → Prop) (unit : Prop)
     (p q : PartialProp W) : PartialProp W where
-  presup := fun w => p.presup w ∨ q.presup w
-  assertion := fun w => f (if p.presup w then p.assertion w else unit)
+  presup := fun w ↦ p.presup w ∨ q.presup w
+  assertion := fun w ↦ f (if p.presup w then p.assertion w else unit)
                           (if q.presup w then q.assertion w else unit)
 
 /-! ### Eval: Belnap -/
 
-/-- Belnap conjunction evaluates to `Trivalent.meetBelnap` pointwise. -/
+/-- Belnap conjunction evaluates to `SignType.meetBelnap` pointwise. -/
 theorem eval_andBelnap (p q : PartialProp W) (w : W) :
-    (andBelnap p q).eval w = Trivalent.meetBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, andBelnap, Trivalent.meetBelnap]
+    (andBelnap p q).eval w = SignType.meetBelnap (p.eval w) (q.eval w) := by
+  simp only [eval, andBelnap, SignType.meetBelnap]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb]
 
-/-- Belnap disjunction evaluates to `Trivalent.joinBelnap` pointwise. -/
+/-- Belnap disjunction evaluates to `SignType.joinBelnap` pointwise. -/
 theorem eval_orBelnap (p q : PartialProp W) (w : W) :
-    (orBelnap p q).eval w = Trivalent.joinBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, orBelnap, Trivalent.joinBelnap]
+    (orBelnap p q).eval w = SignType.joinBelnap (p.eval w) (q.eval w) := by
+  simp only [eval, orBelnap, SignType.joinBelnap]
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [ha, hb]
@@ -179,14 +179,14 @@ theorem eval_orBelnap (p q : PartialProp W) (w : W) :
 /-- `orBelnap` is the Belnap lift of `(· ∨ ·)` with identity `False`. -/
 theorem orBelnap_eq_belnapLift (p q : PartialProp W) :
     orBelnap p q = belnapLift (· ∨ ·) False p q :=
-  PartialProp.ext rfl (funext fun w => by
+  PartialProp.ext rfl (funext fun w ↦ by
     simp only [orBelnap, belnapLift]
     by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq])
 
 /-- `andBelnap` is the Belnap lift of `(· ∧ ·)` with identity `True`. -/
 theorem andBelnap_eq_belnapLift (p q : PartialProp W) :
     andBelnap p q = belnapLift (· ∧ ·) True p q :=
-  PartialProp.ext rfl (funext fun w => by
+  PartialProp.ext rfl (funext fun w ↦ by
     simp only [andBelnap, belnapLift]
     by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq])
 
@@ -219,8 +219,8 @@ theorem belnapLift_comm (f : Prop → Prop → Prop)
     (hcomm : ∀ a b, f a b = f b a) (unit : Prop) (p q : PartialProp W) :
     belnapLift f unit p q = belnapLift f unit q p :=
   PartialProp.ext
-    (funext fun _ => propext or_comm)
-    (funext fun w => by simp only [belnapLift]; exact hcomm _ _)
+    (funext fun _ ↦ propext or_comm)
+    (funext fun w ↦ by simp only [belnapLift]; exact hcomm _ _)
 
 /-! ### Collapse: all connective families agree when both defined -/
 

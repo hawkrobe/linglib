@@ -13,7 +13,7 @@ of a plurality (`Homogeneity.readings`), closest antecedent worlds
 (`Conditional.selectionalCounterfactual`), overlapping pluralities
 (`Kriz2016.generalisedTruthValue`), best modal worlds (`Studies/AghaJeretic2022`). Homogeneity
 removers such as *all*, *necessarily* and *completely* denote the Beaver–Krahmer assertion operator
-`Trivalent.metaAssert`, applied pointwise, which collapses the gap into the negative extension
+`SignType.metaAssert`, applied pointwise, which collapses the gap into the negative extension
 (`Trivalent.isBivalent_comp_metaAssert`). A family of propositions is `Homogeneous` at a world when
 its members are all true there or all false there, which is where the supervaluation over them is
 defined; presuppositional exhaustification presupposes this of its includable alternatives.
@@ -54,8 +54,8 @@ variable {S : Set (Set W)} {φ : Set W} {w : W}
 /-- On a finite family, homogeneity at `w` is definedness at `w` of the supervaluation of truth
 over the family. -/
 theorem homogeneous_coe_iff (s : Finset (Set W)) [DecidablePred fun α : Set W ↦ w ∈ α] :
-    Homogeneous (s : Set (Set W)) w ↔ Trivalent.supervaluation s (w ∈ ·) ≠ .indet := by
-  rw [Ne, Trivalent.supervaluation_eq_indet_iff]
+    Homogeneous (s : Set (Set W)) w ↔ SignType.supervaluation s (w ∈ ·) ≠ 0 := by
+  rw [Ne, SignType.supervaluation_eq_zero_iff]
   grind [Homogeneous]
 
 /-- Under homogeneity, a proposition between the meet and the join of `S` is true where every
