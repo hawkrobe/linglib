@@ -31,6 +31,8 @@ named as Bobaljik names the degree patterns, contiguity excludes exactly ABA.
 * `isContiguous_comp_iff`: postcomposition with an injective map preserves and reflects
   contiguity.
 * `isContiguous_iff_ker_ne_ker_aba`: over three cells contiguity excludes exactly ABA.
+* `ker_eq_ker_aba_iff`, `ker_eq_ker_aab_iff`, `ker_eq_ker_abc_iff`: the three-cell patterns by
+  equalities of their cells.
 * `isContiguous_iff_feasiblyMonotone`: over linearly ordered cells contiguity is feasible
   monotonicity.
 
@@ -162,6 +164,41 @@ theorem ker_eq_ker_aba_iff (p : Paradigm 3 F) :
     | exact iff_of_false h01.symm (by decide)
     | exact iff_of_false h12 (by decide)
     | exact iff_of_false h12.symm (by decide)
+
+/-- A three-cell paradigm has the AAB pattern iff its lower cells agree and its highest cell
+differs. -/
+theorem ker_eq_ker_aab_iff (p : Paradigm 3 F) :
+    Setoid.ker p = Setoid.ker Paradigm.aab ↔ p 0 = p 1 ∧ p 1 ≠ p 2 := by
+  simp only [Setoid.ext_iff, Setoid.ker_def]
+  refine ⟨fun h ↦ ⟨(h 0 1).mpr rfl, fun h12 ↦ absurd ((h 1 2).mp h12) (by decide)⟩, ?_⟩
+  rintro ⟨h01, h12⟩ a b
+  have h02 : p 0 ≠ p 2 := fun h ↦ h12 (h01.symm.trans h)
+  fin_cases a <;> fin_cases b <;>
+    first
+    | exact iff_of_true rfl rfl
+    | exact iff_of_true h01 rfl
+    | exact iff_of_true h01.symm rfl
+    | exact iff_of_false h12 (by decide)
+    | exact iff_of_false h12.symm (by decide)
+    | exact iff_of_false h02 (by decide)
+    | exact iff_of_false h02.symm (by decide)
+
+/-- A three-cell paradigm has the ABC pattern iff its cells differ pairwise. -/
+theorem ker_eq_ker_abc_iff (p : Paradigm 3 F) :
+    Setoid.ker p = Setoid.ker Paradigm.abc ↔ p 0 ≠ p 1 ∧ p 1 ≠ p 2 ∧ p 0 ≠ p 2 := by
+  simp only [Setoid.ext_iff, Setoid.ker_def]
+  refine ⟨fun h ↦ ⟨fun e ↦ absurd ((h 0 1).mp e) (by decide),
+    fun e ↦ absurd ((h 1 2).mp e) (by decide), fun e ↦ absurd ((h 0 2).mp e) (by decide)⟩, ?_⟩
+  rintro ⟨h01, h12, h02⟩ a b
+  fin_cases a <;> fin_cases b <;>
+    first
+    | exact iff_of_true rfl rfl
+    | exact iff_of_false h01 (by decide)
+    | exact iff_of_false h01.symm (by decide)
+    | exact iff_of_false h12 (by decide)
+    | exact iff_of_false h12.symm (by decide)
+    | exact iff_of_false h02 (by decide)
+    | exact iff_of_false h02.symm (by decide)
 
 /-- ABA is the only three-cell pattern contiguity excludes. -/
 theorem isContiguous_iff_ker_ne_ker_aba (p : Paradigm 3 F) :

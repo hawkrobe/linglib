@@ -100,7 +100,7 @@
       "Name": "Banda",
       "Glottocode": null,
       "Lineage": "Niger-Congo, Volta-Congo",
-      "comment": "Banda is a cluster of several Glottolog languages"
+      "comment": "Banda is a cluster of several Glottolog languages, and Appendix C lists a dictionary (Tisserant 1930) of none in particular"
     },
     {
       "ID": "lingala",
@@ -111,9 +111,9 @@
     {
       "ID": "nandi",
       "Name": "Nandi",
-      "Glottocode": null,
+      "Glottocode": "nand1266",
       "Lineage": "Niger-Congo, Bantu (Central J)",
-      "comment": "the lineage printed is Bantu (Central J), Glottolog's Nande, but the Nandi grammar the book cites (p. 111) is of Kalenjin Nandi"
+      "comment": "the lineage printed is Bantu (Central J), but Appendix C's source, Creider and Creider (1989), A grammar of Nandi, describes Kalenjin Nandi"
     },
     {
       "ID": "sotho_northern",
@@ -148,9 +148,9 @@
     {
       "ID": "kanuri",
       "Name": "Kanuri",
-      "Glottocode": null,
+      "Glottocode": "cent2050",
       "Lineage": "Nilo-Saharan, W Saharan",
-      "comment": "Glottolog has several Kanuri languages"
+      "comment": "Kanuri of Hutchison (1981), Appendix C's source"
     },
     {
       "ID": "irish",
@@ -199,7 +199,7 @@
       "Name": "Nenets",
       "Glottocode": null,
       "Lineage": "Uralic, Samoyed",
-      "comment": "Glottolog has Tundra and Forest Nenets"
+      "comment": "Glottolog has Tundra and Forest Nenets, and Appendix C's Nenets (Yurak) does not choose"
     },
     {
       "ID": "ket",
@@ -300,9 +300,9 @@
     {
       "ID": "yukagir",
       "Name": "Yukagir",
-      "Glottocode": null,
+      "Glottocode": "sout2750",
       "Lineage": "N Asia, isolate",
-      "comment": "Glottolog has Northern and Southern Yukaghir"
+      "comment": "Kolyma Yukaghir, of Maslova (2003), Appendix C's source"
     },
     {
       "ID": "basque",
@@ -685,7 +685,7 @@
       "Name": "Nishnaabemwin",
       "Glottocode": null,
       "Lineage": "Algic, Algonquian",
-      "comment": "Nishnaabemwin covers Ottawa and Eastern Ojibwa"
+      "comment": "Nishnaabemwin, after Valentine (2001) in Appendix C, covers Ottawa and Eastern Ojibwa"
     },
     {
       "ID": "cherokee",
@@ -732,9 +732,9 @@
     {
       "ID": "nahuatl",
       "Name": "Nahuatl",
-      "Glottocode": null,
+      "Glottocode": "clas1250",
       "Lineage": "Uto-Aztecan, Nawan",
-      "comment": "the book does not say which Nahuatl"
+      "comment": "Classical Nahuatl, as Appendix C lists it (Andrews 1975)"
     },
     {
       "ID": "comanche",
@@ -775,9 +775,9 @@
     {
       "ID": "totonac",
       "Name": "Totonac",
-      "Glottocode": null,
+      "Glottocode": "yecu1235",
       "Lineage": "N America, isolate",
-      "comment": "the book does not say which Totonac"
+      "comment": "Misantla Totonac, as Appendix C lists it (MacKay 1999); Glottolog's Yecuatla Totonac"
     },
     {
       "ID": "miskitu",
@@ -788,9 +788,9 @@
     {
       "ID": "mixtec",
       "Name": "Mixtec",
-      "Glottocode": null,
+      "Glottocode": "sanm1296",
       "Lineage": "Oto-Manguean",
-      "comment": "the book does not say which Mixtec; note n cites Macaulay (1996), a grammar of Chalcatongo Mixtec"
+      "comment": "Chalcatongo Mixtec, of Macaulay (1996), Appendix C's source"
     },
     {
       "ID": "wari",
