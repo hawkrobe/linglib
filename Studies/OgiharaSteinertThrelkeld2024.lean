@@ -107,7 +107,7 @@ theorem anscombe_after_of_eventAfter {P Q : E → Prop} (h : eventAfter P Q) :
 theorem anscombe_before_of_eventBefore {P Q : E → Prop} (h : eventBefore P Q) :
     Tense.beforeEver (τ '' {e | P e}) (τ '' {e | Q e}) := by
   obtain ⟨e₁, hp, hall⟩ := h
-  refine ⟨(τ e₁).snd, ?_, λ t' ht' => ?_⟩
+  refine ⟨(τ e₁).snd, ?_, fun t' ht' ↦ ?_⟩
   · rw [timeTrace_image]; exact ⟨e₁, hp, (τ e₁).fst_le_snd, le_rfl⟩
   · rw [timeTrace_image] at ht'
     obtain ⟨e₂, hq, ht'_lo, _⟩ := ht'
@@ -269,21 +269,19 @@ theorem equivIE_downward_closed (counterpart : Counterpart W T)
 and Condoravdi's initial branch point condition for a pair of worlds. -/
 theorem equivIE_trivial_iff_agree (agree : T → W → W → Prop)
     (w₁ w₂ : W) (startI e_start : T) :
-    equivIE (λ _ _ _ _ => True) (λ _ _ _ _ _ _ => True) agree w₁ w₂ startI e_start ↔
+    equivIE (fun _ _ _ _ ↦ True) (fun _ _ _ _ _ _ ↦ True) agree w₁ w₂ startI e_start ↔
     (∀ t', t' < e_start → agree t' w₁ w₂) := by
   simp [equivIE]
 
-/-- Any B&C alternative set obeying the initial branch point condition lands
-inside the trivial event-relative alternatives, so the event-relative equivalence generalizes
-Beaver and Condoravdi's. -/
-theorem histAlt_subset_altIE_trivial (alt : HistoricalAlternatives W T)
-    (agree : T → W → W → Prop)
-    (hIBP : BeaverCondoravdi2003.initialBranchPoint alt agree)
-    (w : W) (t : T) :
-    alt ⟨w, t⟩ ⊆ altIE (λ _ _ _ _ => True) (λ _ _ _ _ _ _ => True) agree w t t := by
+/-- Beaver and Condoravdi's alternatives over a T × W frame land inside the trivial event-relative
+alternatives for agreement by the frame, so the event-relative equivalence generalizes Beaver and
+Condoravdi's. -/
+theorem histAlt_subset_altIE_trivial {F : Temporal.TWFrame W T} {B : Set (W × T)}
+    (a : BeaverCondoravdi2003.Alternatives F B) (w : W) (t : T) :
+    a.alt ⟨w, t⟩ ⊆ altIE (fun _ _ _ _ ↦ True) (fun _ _ _ _ _ _ ↦ True) (fun t ↦ F.sim t) w t t := by
   intro w' hw'
   rw [altIE, Set.mem_ofPred_eq, equivIE_trivial_iff_agree]
-  exact hIBP w t w' hw'
+  exact fun _ ht' ↦ F.antitone_sim ht'.le (a.subset_alternatives _ hw')
 
 end EventRelative
 
@@ -358,8 +356,7 @@ def OST.before [Event.TemporalTrace E T]
   (beforeCase_veridical A B w₀ I₀ e₀ ∨
    beforeCase_modal A B alt cause counterpart w₀ I₀ e₀)
 
-/-- Case (i) is veridical: when the complement has already occurred (after I₀),
-    the complement is instantiated in the actual world. -/
+/-- Case (i) is veridical, the complement occurring after I₀ in the actual world. -/
 theorem beforeCase_veridical_entails_complement
     (A B : SitDenot W T E)
     (w₀ : W) (I₀ : NonemptyInterval T) (e₀ : E) :
@@ -367,8 +364,8 @@ theorem beforeCase_veridical_entails_complement
   rintro ⟨_, I₂, _, e₄, hB⟩
   exact ⟨I₂, e₄, hB⟩
 
-/-- The modal case is not veridical: in the witness the main clause holds only at the actual world
-`false` and the complement only at the alternative `true`. -/
+/-- The modal case is not veridical, as a model shows in which the main clause holds only at the
+actual world `false` and the complement only at the alternative `true`. -/
 theorem beforeCase_modal_nonveridical :
     ∃ (A B : SitDenot Bool ℤ (NonemptyInterval ℤ))
       (alt : Bool → NonemptyInterval ℤ → NonemptyInterval ℤ → Set Bool)
@@ -394,8 +391,8 @@ theorem cases_i_ii_exclusive
   have : I_B.snd < I_B.fst := lt_of_le_of_lt hBefore (lt_of_le_of_lt I₀.fst_le_snd hAfter)
   exact absurd this (not_lt.mpr I_B.fst_le_snd)
 
-/-- *Mozart died before he finished the Requiem* has the anti-veridical reading of case (iii):
-with no finishing in the actual world and the modal case holding, the revamped *before* holds. -/
+/-- With no finishing in the actual world and the modal case holding, the revamped *before* holds,
+so *Mozart died before he finished the Requiem* has the anti-veridical reading of case (iii). -/
 theorem mozart_is_case_iii
     {W E : Type*} [Event.TemporalTrace E ℤ]
     (A B : SitDenot W ℤ E)

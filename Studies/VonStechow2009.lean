@@ -426,8 +426,8 @@ theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
     BeaverCondoravdi2003.before {i : Index W T | i.time < s ∧ leave i.time}
         {i : Index W T | i.time < s ∧ arrive i.time} alt w ↔
       ∃ t₁, (t₁ < s ∧ leave t₁) ∧ ∃ m, IsLeast {t₂ | t₂ < s ∧ arrive t₂} m ∧ t₁ < m := by
-  rw [BeaverCondoravdi2003.before, BeaverCondoravdi2003.connective_singleton_alt _ _ _ _ _ h]
-  simp only [Set.mem_ofPred_eq, Reference.Index.time_mk]
+  rw [BeaverCondoravdi2003.before, BeaverCondoravdi2003.connective_iff_uniform_of_eq_singleton h]
+  simp only [BeaverCondoravdi2003.uniform, Set.mem_ofPred_eq, Reference.Index.time_mk]
 
 /-- With *will* in the adjunct of *John will enter the room before Mary will leave* (84e), the
 times after the speech time before some leaving have no earliest member in dense time, so
