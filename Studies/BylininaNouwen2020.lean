@@ -194,13 +194,14 @@ theorem maxIn_singleton_lt_individual (n : ℕ) : MaxIn {n} < (individual n : Se
     absurd ((maxIn_singleton.1 (h {n, n + 1} (Or.inl rfl))).2 (Or.inr rfl)) (by omega)
 
 /-- `MAX` of the lower-bound *zero A B* is Kennedy's *zero A B*, which is *no A B* ((51)). -/
-theorem MAX_individual_zero_iff {A B : Set α} :
+theorem MAX_individual_zero_iff [DecidableEq α] {A B : Set α} :
     MAX (individual 0) (countDegrees A (plural B)) ↔ GQ.no A B := by
   rw [MAX_individual]; exact maxIn_zero_countDegrees_iff
 
 section Polarity
 
 open PolarityItem (LicensingContext NonemptyPredicate)
+open scoped Classical
 
 /-- With `MAX` apart from the numeral, *zero* is a scalar licenser: the lower-bound numeral below
 `MAX` and its `MAX` above it. -/

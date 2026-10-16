@@ -14,6 +14,7 @@ individuals, `*` reduces to distribution over members.
 ## Definitions
 
 * `Plurality.Algebra.properPlural P`: the non-atomic elements of `*P`.
+* `Plurality.Algebra.fullPlural P`: `*P` with the empty sum, Bylinina and Nouwen's `×P`.
 * `Plurality.Algebra.IsDistr P`: `P` holds of atoms only.
 * `Plurality.Algebra.Inv h P`: `P` does not distinguish `h`-equivalent individuals.
 * `Plurality.Algebra.D P x`: Link's 1987 distributive operator.
@@ -32,7 +33,10 @@ individuals, `*` reduces to distribution over members.
   closed under sum.
 * `Plurality.Algebra.algClosure_image_singleton`: on finite sets of individuals, taken as
   singletons, `*` holds of exactly the nonempty subsets, Sternefeld's identification of `*P` with
-  `D P` (15).
+  `D P` (15), and `×` of all subsets (`fullPlural_image_singleton`).
+* `Plurality.Algebra.card_image_fullPlural`, `Plurality.Algebra.card_image_algClosure`: the
+  pluralities of `×S` have `0, …, |S|` atoms and those of `*S` have `1, …, |S|`, so only with
+  the empty sum does a count's set of degrees reach `0`.
 
 ## Implementation notes
 
@@ -41,7 +45,8 @@ and `Mereology.Atom` are used here. The plural closure `*P` is `Mereology.AlgClo
 `supClosure` of the extension of `P`. The complete atomic Boolean algebra of Landman and Champollion
 is a stronger assumption, which enters only through `AtomJoinPrime`. Schwarzschild's set-based
 ontology, where an individual is its singleton and sum is union, is the `Finset α` instance; Link's
-own model of nonempty sets of atoms has no bottom (`Individual`).
+own model of nonempty sets of atoms has no bottom (`Individual`). Where the carrier has one,
+`*P` still excludes it unless `P` holds of it, and `×P` adds it whatever `P` is.
 
 ## References
 
@@ -54,6 +59,7 @@ own model of nonempty sets of atoms has no bottom (`Individual`).
 * [L. Champollion, *Distributivity in formal semantics* (2019)][champollion-2019]
 * [R. Schwarzschild, *Pluralities* (1996)][schwarzschild-1996]
 * [W. Sternefeld, *Reciprocity and cumulative predication* (1998)][sternefeld-1998]
+* [L. Bylinina and R. Nouwen, *On 'zero' and semantic plurality* (2018)][bylinina-nouwen-2018]
 -/
 
 @[expose] public section
@@ -87,6 +93,23 @@ theorem D_of_atom (hx : Atom x) (hP : P x) : D P x :=
 
 theorem D_mono (h : ∀ x, P x → Q x) (hD : D P x) : D Q x :=
   fun y hle hy ↦ h y (hD y hle hy)
+
+/-! ### The full closure -/
+
+section FullPlural
+
+variable [OrderBot E]
+
+/-- The full plural closure `×P` holds of the sums of members of `P` and of the empty sum `⊥`
+([bylinina-nouwen-2018]'s (30)), where `*P` holds of the sums of nonempty sets of them. -/
+def fullPlural (P : E → Prop) (x : E) : Prop :=
+  AlgClosure P x ∨ x = ⊥
+
+theorem fullPlural_bot (P : E → Prop) : fullPlural P ⊥ := .inr rfl
+
+theorem _root_.Mereology.AlgClosure.fullPlural (h : AlgClosure P x) : fullPlural P x := .inl h
+
+end FullPlural
 
 /-! ### Materialization -/
 
@@ -203,6 +226,38 @@ theorem algClosure_iff_of_subset_range_singleton {P : Finset α → Prop}
   conv_lhs => rw [this]
   rw [algClosure_image_singleton]
   exact Iff.rfl
+
+/-- `×` of a set of individuals, taken as singletons, holds of exactly its subsets, the empty one
+among them. -/
+theorem fullPlural_image_singleton (S : Set α) (x : Finset α) :
+    fullPlural (· ∈ ({·} : α → Finset α) '' S) x ↔ ↑x ⊆ S := by
+  rw [fullPlural, algClosure_image_singleton]
+  refine ⟨fun h ↦ h.elim And.right fun h ↦ by simp [h], fun h ↦ ?_⟩
+  rcases x.eq_empty_or_nonempty with rfl | hx
+  exacts [.inr rfl, .inl ⟨hx, h⟩]
+
+/-- The pluralities of `×S` for a finite `S` number `0, …, |S|` atoms. -/
+theorem card_image_fullPlural {S : Set α} (h : S.Finite) :
+    Finset.card '' {x | fullPlural (· ∈ ({·} : α → Finset α) '' S) x} = Set.Iic S.ncard := by
+  rw [show {x | fullPlural (· ∈ ({·} : α → Finset α) '' S) x} = {x | x ⊆ h.toFinset} from
+    Set.ext fun x ↦ (fullPlural_image_singleton S x).trans h.subset_toFinset.symm,
+    Set.ncard_eq_toFinset_card _ h]
+  ext d
+  exact ⟨fun ⟨x, hx, hd⟩ ↦ hd ▸ Finset.card_le_card hx,
+    fun hd ↦ let ⟨y, hy, hc⟩ := Finset.exists_subset_card_eq hd; ⟨y, hy, hc⟩⟩
+
+/-- Those of `*S` number `1, …, |S|`: without the empty sum no plurality has zero atoms. -/
+theorem card_image_algClosure {S : Set α} (h : S.Finite) :
+    Finset.card '' {x | AlgClosure (· ∈ ({·} : α → Finset α) '' S) x} = Set.Icc 1 S.ncard := by
+  rw [show {x | AlgClosure (· ∈ ({·} : α → Finset α) '' S) x} =
+      {x | x.Nonempty ∧ x ⊆ h.toFinset} from
+    Set.ext fun x ↦
+      (algClosure_image_singleton S x).trans (and_congr_right' h.subset_toFinset.symm),
+    Set.ncard_eq_toFinset_card _ h]
+  ext d
+  refine ⟨fun ⟨x, ⟨hx, hS⟩, hd⟩ ↦ hd ▸ ⟨hx.card_pos, Finset.card_le_card hS⟩, fun ⟨h1, hd⟩ ↦ ?_⟩
+  obtain ⟨y, hy, hc⟩ := Finset.exists_subset_card_eq hd
+  exact ⟨y, ⟨Finset.card_pos.1 (hc ▸ h1), hy⟩, hc⟩
 
 end Finset
 

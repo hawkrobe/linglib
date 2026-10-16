@@ -38,6 +38,13 @@ greatest measure by the comparison `c`.
 * `maxComparative_iff_of_unique`: with unique witnesses the max-quantified comparative is direct
   measure comparison.
 
+## Implementation notes
+
+An entity's degrees are the principal lower set `Iic (μ x)`, which contains the bottom degree.
+For a count, the cardinalities of the pluralities a numeral ranges over, this is pluralization
+with the empty sum (`Plurality.Algebra.card_image_fullPlural`); Link's pluralization, without
+it, gives `Icc 1 n` instead (`Plurality.Algebra.card_image_algClosure`).
+
 ## References
 
 * [heim-2001]
