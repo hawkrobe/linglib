@@ -132,14 +132,14 @@ theorem exclusive_iff_subset_singleton {P : (E → SignType)} {x : E} :
 /-- The Weak Fregean definite article (50) returns the restrictor, presupposing weak
 uniqueness and no existence. -/
 def the [DecidablePred (WeakUnique (E := E))] (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ meetWeak (presuppose (ofProp (WeakUnique P))) (P x)
+  fun x ↦ meetWeak (ofProp (WeakUnique P) ⊔ 0) (P x)
 
 /-- The indefinite article (65) is an identity on predicates. -/
 def an (P : (E → SignType)) : (E → SignType) := P
 
 /-- Adjectival *only* (57) presupposes the prejacent and asserts exclusivity. -/
 def only [DecidableRel (Exclusive (E := E))] (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ meetWeak (presuppose (P x)) (ofProp (Exclusive P x))
+  fun x ↦ meetWeak (P x ⊔ 0) (ofProp (Exclusive P x))
 
 section Only
 
@@ -148,11 +148,11 @@ variable [DecidableRel (Exclusive (E := E))] {P : (E → SignType)} {x : E}
 theorem only_eq_one_iff : only P x = 1 ↔ P x = 1 ∧ Exclusive P x := by simp [only]
 
 theorem only_eq_neg_one_iff : only P x = -1 ↔ P x = 1 ∧ ∃ y, y ≠ x ∧ P y = 1 := by
-  simp only [only, meetWeak_eq_neg_one_iff, presuppose_ne_neg_one, presuppose_eq_zero_iff,
+  simp only [only, meetWeak_eq_neg_one_iff, sup_zero_ne_neg_one, sup_zero_eq_zero_iff,
     ofProp_eq_neg_one_iff, not_exclusive_iff, false_and, false_or, ne_eq, not_not]
 
 /-- *Only* presupposes its prejacent. -/
-theorem only_eq_zero_iff : only P x = 0 ↔ P x ≠ 1 := by simp [only]
+theorem only_eq_zero_iff : only P x = 0 ↔ P x ≠ 1 := by simp [only, nonpos_iff_ne_one]
 
 /-- An *only* phrase satisfies weak uniqueness, so there is never more than one only `P`. -/
 theorem weakUnique_only (P : (E → SignType)) : WeakUnique (only P) := fun _ hx y hy ↦
@@ -171,7 +171,7 @@ theorem the_eq_zero_of_not_weakUnique (h : ¬ WeakUnique P) (x : E) : the P x = 
   simp [the, h]
 
 theorem the_eq_zero_iff : the P x = 0 ↔ ¬ WeakUnique P ∨ P x = 0 := by
-  simp [the]
+  simp [the, nonpos_iff_ne_one]
 
 /-- The definite is classical exactly on weakly unique restrictors, where the noun is. -/
 theorem the_ne_zero_iff : the P x ≠ 0 ↔ WeakUnique P ∧ P x ≠ 0 := by
@@ -260,7 +260,7 @@ theorem atMostOne_eq_ofProp {P : E → SignType} [Decidable (WeakUnique P)]
 /-- The definite article is the paper's entry (50) pointwise. -/
 theorem the_eq_meetWeak_atMostOne [DecidablePred (WeakUnique (E := E))] (P : E → SignType)
     (x : E) :
-    the P x = meetWeak (presuppose (atMostOneFormula P)) (P x) := by
+    the P x = meetWeak (atMostOneFormula P ⊔ 0) (P x) := by
   by_cases h : ∃ y, P y ≠ 0
   · rw [atMostOne_eq_ofProp h]; rfl
   · push Not at h
@@ -284,10 +284,10 @@ theorem exclusiveFormula_eq_ofProp {P : (E → SignType)} {x : E} [Decidable (Ex
 
 /-- Adjectival *only* is the paper's entry (57) pointwise. -/
 theorem only_eq_meetWeak_exclusiveFormula [DecidableRel (Exclusive (E := E))] (P : (E → SignType))
-    (x : E) : only P x = meetWeak (presuppose (P x)) (exclusiveFormula P x) := by
+    (x : E) : only P x = meetWeak (P x ⊔ 0) (exclusiveFormula P x) := by
   by_cases h : P x = 1
   · rw [exclusiveFormula_eq_ofProp h]; rfl
-  · rw [only_eq_zero_iff.2 h, presuppose_eq_zero_iff.2 h, meetWeak_zero_left]
+  · rw [only_eq_zero_iff.2 h, sup_zero_eq_zero_iff.2 h, meetWeak_zero_left]
 
 /-! ### The exclusive schema
 
@@ -378,7 +378,7 @@ noncomputable def theRussellian (P : (E → SignType)) : (E → SignType) :=
 open Classical in
 /-- The Fregean predicative entry (52b) presupposes existence and uniqueness. -/
 noncomputable def theFregean (P : (E → SignType)) : (E → SignType) :=
-  fun x ↦ meetWeak (presuppose (ofProp (∃! y, P y = 1))) (P x)
+  fun x ↦ meetWeak (ofProp (∃! y, P y = 1) ⊔ 0) (P x)
 
 open Classical in
 /-- The Russellian quantificational entry (53a) asserts unique existence of the restrictor. -/
@@ -388,7 +388,7 @@ noncomputable def theRussellianGQ (P Q : (E → SignType)) : SignType :=
 open Classical in
 /-- The Fregean quantificational entry (53b) presupposes unique existence of the restrictor. -/
 noncomputable def theFregeanGQ (P Q : (E → SignType)) : SignType :=
-  meetWeak (presuppose (ofProp (∃! y, P y = 1))) (ofProp (posExt P ⊆ posExt Q))
+  meetWeak (ofProp (∃! y, P y = 1) ⊔ 0) (ofProp (posExt P ⊆ posExt Q))
 
 open Classical in
 /-- Partee's `be` lowers a generalized quantifier to a predicate. -/
@@ -475,14 +475,14 @@ theorem no_anti_uniqueness_fregean [DecidableRel (Exclusive (E := E))] (P : E �
   intro h
   rw [SignType.neg_eq_one_iff, theFregean] at h
   by_cases hu : ∃! y, only P y = 1
-  · rw [ofProp_eq_one_iff.2 hu, presuppose_one, meetWeak_one_left] at h
+  · rw [ofProp_eq_one_iff.2 hu, SignType.one_sup, meetWeak_one_left] at h
     obtain ⟨y, hy, -⟩ := hu
     obtain ⟨hx, z, hzx, hz⟩ := only_eq_neg_one_iff.1 h
     have hy' := only_eq_one_iff.1 hy
     by_cases hyx : y = x
     · subst hyx; exact hy'.2 z hzx hz
     · exact hy'.2 x (Ne.symm hyx) hx
-  · rw [ofProp_eq_neg_one_iff.2 hu, presuppose_neg_one, meetWeak_zero_left] at h
+  · rw [ofProp_eq_neg_one_iff.2 hu, SignType.neg_one_sup, meetWeak_zero_left] at h
     exact absurd h (by decide)
 
 end Rivals
@@ -674,7 +674,7 @@ presupposes that there is a `P` and denies that any sole `P` bears `Q`, the anti
 reading (89)–(94). -/
 theorem neg_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
     -ex (the (only P)) Q =
-      meetWeak (existsHaug (fun x ↦ presuppose (P x)))
+      meetWeak (existsHaug fun x ↦ P x ⊔ 0)
         (-existsHaug fun x ↦ meetWeak (P x) (meetWeak (ofProp (Exclusive P x)) (Q x))) := by
   have hψ : IsBivalent (fun x : E ↦ meetWeak (ofProp (Exclusive P x)) (Q x)) :=
     (isBivalent_iff_forall_ne_zero _).2 fun x ↦ by simp [hQ.ne_zero x]
@@ -687,7 +687,7 @@ theorem neg_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
 exactly when there is no `P`. -/
 theorem argumental_anti_uniqueness_presup (hQ : IsBivalent Q) :
     -ex (the (only P)) Q = 0 ↔ ∀ x, P x ≠ 1 := by
-  simp [ex, the_only, only, hQ.ne_zero]
+  simp [ex, the_only, only, hQ.ne_zero, nonpos_iff_ne_one]
 
 /-- The argumental anti-uniqueness reading is true exactly when there is a `P` and no sole
 `P` bears `Q`, as in (80a) with several talks, one of which Anna gave. -/

@@ -575,15 +575,17 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
     cases α with
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
-        Trivalent.Formula.realize_atom, Trivalent.designated_lp_iff, Trivalent.designated_k3_iff,
+        Trivalent.Formula.realize_atom, Trivalent.Designation.threshold_lp,
+        Trivalent.Designation.threshold_k3, SignType.nonneg_iff_ne_neg_one, SignType.one_le_iff,
         toMV]
       split_ifs with hs ht
       · exact ⟨iff_of_true ⟨_, (M.sim P).refl _, box_T hs⟩ (by decide), iff_of_true hs rfl⟩
       · exact ⟨iff_of_true ht (by decide), iff_of_false hs (by decide)⟩
       · exact ⟨iff_of_false ht (fun h ↦ h rfl), iff_of_false hs (by decide)⟩
     | sim P a b =>
-      simp only [TModel.realize_sim, Trivalent.Formula.realize_atom, Trivalent.designated_lp_iff,
-        Trivalent.designated_k3_iff, toMV]
+      simp only [TModel.realize_sim, Trivalent.Formula.realize_atom,
+        Trivalent.Designation.threshold_lp, Trivalent.Designation.threshold_k3,
+        SignType.nonneg_iff_ne_neg_one, SignType.one_le_iff, toMV]
       split_ifs with h <;> simp [h]
   | neg ψ ih =>
     simp only [TModel.realize_neg, Trivalent.Formula.realize_neg, Mode.dual_tolerant,
@@ -613,7 +615,8 @@ theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ)
     cases α with
     | pred P a =>
       simp only [TModel.realize_tolerant_pred, TModel.realize_strict_pred,
-        Trivalent.Formula.realize_atom, Trivalent.designated_lp_iff, Trivalent.designated_k3_iff,
+        Trivalent.Formula.realize_atom, Trivalent.Designation.threshold_lp,
+        Trivalent.Designation.threshold_k3, SignType.nonneg_iff_ne_neg_one, SignType.one_le_iff,
         ofMV, Box, Diamond]
       refine ⟨⟨?_, fun h ↦ ⟨(a, true), rfl, h⟩⟩, ⟨fun h ↦ h (a, false) rfl, ?_⟩⟩
       · rintro ⟨⟨b, i⟩, hb, h⟩
@@ -794,11 +797,11 @@ theorem exists_realize_pred_not_realize {m n : Mode} (P : Pred) (a : C) (h : n <
     ∃ M : TModels Pred C, M.Realize m (.atom (.pred P a)) ∧ ¬ M.Realize n (.atom (.pred P a)) := by
   have hv := ofMV_realize (fun _ ↦ 0) (φ := .atom (.pred P a)) trivial
   have hvt : (ofMV fun _ ↦ 0).Realize .tolerant (.atom (.pred P a)) :=
-    hv.1.2 (show Trivalent.designated .lp 0 by decide)
+    hv.1.2 (show 0 ≤ 0 by decide)
   have hvc : ¬ (ofMV fun _ ↦ 0).Realize .classical (.atom (.pred P a)) :=
     show ¬ 0 = 1 by decide
   have hvs : ¬ (ofMV fun _ ↦ 0).Realize .strict (.atom (.pred P a)) :=
-    fun hs ↦ absurd (hv.2.1 hs) (show ¬ Trivalent.designated .k3 0 by decide)
+    fun hs ↦ absurd (hv.2.1 hs) (show ¬ (1 : SignType) ≤ 0 by decide)
   have hb := allBorderline_realize (Pred := Pred) (C := C) (φ := .atom (.pred P a)) trivial
   cases m <;> cases n <;> first
     | exact absurd h (by decide)

@@ -174,7 +174,7 @@ theorem unembedded (h : Mixed ord A w D B) {d : ι} (hd : d ∈ D) :
   obtain ⟨⟨w₁, hw₁, hB₁⟩, ⟨w₂, hw₂, hB₂⟩⟩ := h.players d hd
   have hnot : w ∉ closestImp ord A (B d) := fun hall ↦ hB₂ (hall hw₂)
   have hnot' : w ∉ closestImp ord A (B d)ᶜ := fun hnone ↦ hnone hw₁ hB₁
-  exact ⟨hnot, selectionalCounterfactual_eq_indet_iff.2 ⟨hnot, hnot'⟩, fun h ↦ h.elim hnot hnot'⟩
+  exact ⟨hnot, selectionalCounterfactual_eq_zero_iff.2 ⟨hnot, hnot'⟩, fun h ↦ h.elim hnot hnot'⟩
 
 /-- The universal theory turns on polarity, since every player's counterfactual is false, so the
 positive sentences are false and the negative ones true. -/
@@ -199,16 +199,16 @@ theorem selectional_force (h : Mixed ord A w D B) (q : Quant) :
     selectional ord A w D B q = q.force.verdict := by
   obtain ⟨v, hv⟩ := h.closest_nonempty
   cases q
-  · exact selectionalCounterfactual_eq_false_iff.2 ⟨fun hall ↦
+  · exact selectionalCounterfactual_eq_neg_one_iff.2 ⟨fun hall ↦
       let ⟨d, hd, hB⟩ := (h.worlds v hv).2; hB (hall hv d hd),
       fun w' hw' (hall : ∀ d ∈ D, w' ∈ B d) ↦
         let ⟨d, hd, hB⟩ := (h.worlds w' hw').2; hB (hall d hd)⟩
-  · exact selectionalCounterfactual_eq_false_iff.2 ⟨fun hnone ↦
+  · exact selectionalCounterfactual_eq_neg_one_iff.2 ⟨fun hnone ↦
       let ⟨d, hd, hB⟩ := (h.worlds v hv).1; hnone hv d hd hB,
       fun w' hw' (hnone : ∀ d ∈ D, w' ∉ B d) ↦
         let ⟨d, hd, hB⟩ := (h.worlds w' hw').1; hnone d hd hB⟩
-  · exact selectionalCounterfactual_eq_true_iff.2 fun w' hw' ↦ (h.worlds w' hw').1
-  · exact selectionalCounterfactual_eq_true_iff.2 fun w' hw' ↦ (h.worlds w' hw').2
+  · exact selectionalCounterfactual_eq_one_iff.2 fun w' hw' ↦ (h.worlds w' hw').1
+  · exact selectionalCounterfactual_eq_one_iff.2 fun w' hw' ↦ (h.worlds w' hw').2
 
 /-- No selectional value is a gap, so there is nothing for a question under discussion to
 resolve. -/

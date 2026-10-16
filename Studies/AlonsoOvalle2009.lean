@@ -103,7 +103,7 @@ counterfactual fails. -/
 theorem homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)]
     {A : Finset W} (hA : A ∈ S)
     (h : w ∈ closestImp ord ↑A C) : homogeneousImp ord S C w ≠ -1 :=
-  fun hf ↦ (homogeneousImp_eq_false_iff.1 hf).2 A hA h
+  fun hf ↦ (homogeneousImp_eq_neg_one_iff.1 hf).2 A hA h
 
 /-- In (29)–(31) Spain joining Germany is closer than Spain joining the U.S., and Hitler is
 pleased only in the former. -/

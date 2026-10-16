@@ -90,15 +90,15 @@ instance : Decidable (w ∈ distributiveImp ord S C) :=
 
 variable {ord S C w}
 
-theorem homogeneousImp_eq_true_iff :
+theorem homogeneousImp_eq_one_iff :
     homogeneousImp ord S C w = 1 ↔ w ∈ distributiveImp ord S C := by
   rw [homogeneousImp, SignType.supervaluation_eq_one_iff, mem_distributiveImp]
 
-theorem homogeneousImp_eq_false_iff :
+theorem homogeneousImp_eq_neg_one_iff :
     homogeneousImp ord S C w = -1 ↔ S.Nonempty ∧ ∀ A ∈ S, w ∉ closestImp ord ↑A C :=
   SignType.supervaluation_eq_neg_one_iff ..
 
-theorem homogeneousImp_eq_indet_iff :
+theorem homogeneousImp_eq_zero_iff :
     homogeneousImp ord S C w = 0 ↔
       (∃ A ∈ S, w ∈ closestImp ord ↑A C) ∧ ∃ A ∈ S, w ∉ closestImp ord ↑A C :=
   SignType.supervaluation_eq_zero_iff ..

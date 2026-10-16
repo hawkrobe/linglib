@@ -66,7 +66,7 @@ open Quantifier (NumberTree)
 
 namespace AugurzkyEtAl2023
 
-open Trivalent (Designation designated)
+open Trivalent (Designation)
 open KrizChemla2015 (Display cell resolve reading someReading allReading supervaluation
   supervaluation_eq_zero_iff supervaluation_eq_designations reading_no)
 
@@ -121,13 +121,13 @@ def Context.issue (ctx : Context) : Setoid Display := Setoid.ker (resolve ctx.de
 
 /-- Over one boy the issue is the partition of (12) or (13). -/
 theorem issue_singleton (ctx : Context) (v v' : SignType) :
-    ctx.issue [v] [v'] ↔ (designated ctx.designation v ↔ designated ctx.designation v') := by
+    ctx.issue [v] [v'] ↔ (ctx.designation.threshold ≤ v ↔ ctx.designation.threshold ≤ v') := by
   simp [Setoid.ker_def, resolve]
 
 /-- A resolution, read back as a display, resolves to itself at every standard. -/
-private theorem resolve_map_ofBool (δ : Designation) (c : List Bool) :
-    resolve δ (c.map SignType.ofBool) = c := by
-  simp [resolve, List.map_map, Function.comp_def, Trivalent.designated_ofBool]
+private theorem resolve_map_ofProp (δ : Designation) (c : List Bool) :
+    resolve δ (c.map (fun b : Bool ↦ SignType.ofProp b)) = c := by
+  simp [resolve, List.map_map, Function.comp_def, Trivalent.Designation.threshold_le_ofProp_iff]
 
 /-! ### The non-implicature approach -/
 
@@ -149,12 +149,12 @@ theorem usable_iff_reading {Q : Setoid Display} {δ : Designation}
     rw [supervaluation_eq_designations, SignType.supervaluation_eq_neg_one_iff] at h
     exact h.2 δ (Finset.mem_univ δ)
   refine ⟨fun ⟨_, ⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
-    ⟨fun hf ↦ hfalse d hf h, ⟨(resolve δ d).map SignType.ofBool,
-      h₁ (Setoid.ker_def.2 (resolve_map_ofBool δ _).symm), ?_⟩,
+    ⟨fun hf ↦ hfalse d hf h, ⟨(resolve δ d).map (fun b : Bool ↦ SignType.ofProp b),
+      h₁ (Setoid.ker_def.2 (resolve_map_ofProp δ _).symm), ?_⟩,
       fun ⟨d₁, d₂, h₁₂, ht, hf⟩ ↦ hfalse d₂ hf ((hcell h₁₂).1 (htrue d₁ ht))⟩⟩
   rw [supervaluation_eq_designations, SignType.supervaluation_eq_one_iff]
   intro δ' _
-  rw [reading, resolve_map_ofBool]
+  rw [reading, resolve_map_ofProp]
   exact h
 
 /-- The non-implicature verdict is the usability of the trivalent sentence at the display relative
@@ -415,17 +415,17 @@ def nine : Finset ℕ := Finset.range 9
 /-- The resolution a context makes of a boy's cell is the threshold its question selects for his
 nine presents. -/
 theorem designated_cell (ctx : Context) (n : ℕ) :
-    designated ctx.designation (cell n) ↔ ctx.threshold nine ≤ n := by
+    ctx.designation.threshold ≤ cell n ↔ ctx.threshold nine ≤ n := by
   cases ctx
   · exact KrizChemla2015.designated_lp_cell n
   · rw [Context.threshold, nine, Finset.card_range]
-    exact KrizChemla2015.designated_k3_cell n
+    exact SignType.one_le_iff.trans (KrizChemla2015.designated_k3_cell n)
 
 /-- The reading pruning selects for a boy's presents under the context's question holds of the
 presents he opened exactly when the context's standard designates his cell. -/
 theorem mem_reading_iff_designated_cell (ctx : Context) {r : Set (Finset ℕ)}
     (hr : IsReading nine nine BarLev2021.holds (ctx.question nine) r) (w : Finset ℕ) :
-    w ∈ r ↔ designated ctx.designation (cell (nine ∩ w).card) := by
+    w ∈ r ↔ ctx.designation.threshold ≤ (cell (nine ∩ w).card) := by
   rw [hr.unique (isReading_question ⟨0, by simp [nine]⟩ ctx), BarLev2021.mem_atLeast,
     BarLev2021.count_holds, Finset.inter_self, designated_cell]
 
@@ -435,8 +435,8 @@ theorem barePlural_holds_eq_cell (w : Finset ℕ) :
     Homogeneity.barePlural BarLev2021.holds nine w = cell (nine ∩ w).card := by
   have h1 : Homogeneity.barePlural BarLev2021.holds nine w = 1 ↔
       cell (nine ∩ w).card = 1 := by
-    rw [← Trivalent.designated_k3_iff (cell _), KrizChemla2015.designated_k3_cell,
-      Homogeneity.barePlural, SignType.supervaluation_eq_one_iff]
+    rw [KrizChemla2015.designated_k3_cell, Homogeneity.barePlural,
+      SignType.supervaluation_eq_one_iff]
     constructor
     · intro h
       rw [Finset.inter_eq_left.2 fun a ha ↦ h a ha]
@@ -448,7 +448,7 @@ theorem barePlural_holds_eq_cell (w : Finset ℕ) :
       exact (Finset.mem_inter.1 ha).2
   have h2 : Homogeneity.barePlural BarLev2021.holds nine w = -1 ↔
       cell (nine ∩ w).card = -1 := by
-    rw [← not_iff_not, ← Ne, ← Ne, ← Trivalent.designated_lp_iff (cell _),
+    rw [← not_iff_not, ← Ne, ← Ne, ← SignType.nonneg_iff_ne_neg_one (a := cell _),
       KrizChemla2015.designated_lp_cell, Homogeneity.barePlural, Ne,
       SignType.supervaluation_eq_neg_one_iff, Nat.one_le_iff_ne_zero, Ne, Finset.card_eq_zero,
       ← Ne, ← Finset.nonempty_iff_ne_empty]
@@ -489,7 +489,7 @@ private theorem reading_inf {p q : NumberTree} (d : Display) (δ : Designation) 
     reading (p ⊓ q) d δ ↔ reading p d δ ∧ reading q d δ := Iff.rfl
 
 private theorem reading_some (d : Display) (δ : Designation) :
-    reading NumberTree.some d δ ↔ ∃ v ∈ d, designated δ v := by
+    reading NumberTree.some d δ ↔ ∃ v ∈ d, δ.threshold ≤ v := by
   rw [← NumberTree.compl_no, show reading NumberTree.noᶜ d δ ↔ ¬ reading NumberTree.no d δ from
     Iff.rfl, reading_no]
   simp

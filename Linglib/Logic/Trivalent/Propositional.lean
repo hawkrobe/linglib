@@ -27,7 +27,7 @@ and van Rooij do.
 
 * `Trivalent.Formula.realize_neg`, `Trivalent.Formula.isDual`: negation swaps the standards.
 * `Trivalent.consequence_iff_dual`: `Γ ⊨ Δ` in K3 iff `¬Δ ⊨ ¬Γ` in LP.
-* `Trivalent.Formula.realize_ofBool`: on a Boolean model both standards are classical truth.
+* `Trivalent.Formula.realize_ofProp`: on a Boolean model both standards are classical truth.
 * `Trivalent.k3_no_tautologies`, `Trivalent.lp_all_satisfiable`: the model sending every atom to
   `0` gives K3 no tautologies and LP no unsatisfiable formula.
 * `Trivalent.lp_no_explosion`: LP is paraconsistent.
@@ -95,27 +95,28 @@ def evalBool (v : Atom → Bool) : Formula Atom → Bool
     evalBool v (.conj φ ψ) = (evalBool v φ && evalBool v ψ) := rfl
 
 /-- On a Boolean model the strong Kleene tables are the classical ones. -/
-theorem eval_ofBool (v : Atom → Bool) (φ : Formula Atom) :
-    eval (SignType.ofBool ∘ v) φ = SignType.ofBool (evalBool v φ) := by
+theorem eval_ofProp (v : Atom → Bool) (φ : Formula Atom) :
+    eval (fun a ↦ ofProp (v a)) φ = ofProp (evalBool v φ) := by
   induction φ with
   | atom a => rfl
-  | neg φ ih => simp [ih, SignType.ofBool_not]
-  | conj φ ψ ihφ ihψ => simp [ihφ, ihψ]
+  | neg φ ih => rw [eval_neg, evalBool_neg, ih]; cases evalBool v φ <;> decide
+  | conj φ ψ ihφ ihψ =>
+    rw [eval_conj, evalBool_conj, ihφ, ihψ]; cases evalBool v φ <;> cases evalBool v ψ <;> decide
 
 /-- A formula is realized at a designation standard when its value clears the threshold, so
 `Realize M .k3` is strong Kleene satisfaction and `Realize M .lp` is Priest's LP. -/
 def Realize (M : Model Atom) (d : Trivalent.Designation) (φ : Formula Atom) : Prop :=
-  Trivalent.designated d (eval M φ)
+  d.threshold ≤ eval M φ
 
 @[inherit_doc] scoped notation:50 M " ⊨[" d "] " φ => Formula.Realize M d φ
 
 @[simp] theorem realize_atom (M : Model Atom) (d : Trivalent.Designation) (a : Atom) :
-    (M ⊨[d] Formula.atom a) ↔ Trivalent.designated d (M a) := Iff.rfl
+    (M ⊨[d] Formula.atom a) ↔ d.threshold ≤ M a := Iff.rfl
 
 /-- Negation swaps the designation standards at the level of formulas. -/
 @[simp] theorem realize_neg (M : Model Atom) (d : Trivalent.Designation) (φ : Formula Atom) :
     (M ⊨[d] Formula.neg φ) ↔ ¬(M ⊨[d.dual] φ) := by
-  have h := Trivalent.designated_neg_iff d.dual (eval M φ)
+  have h := Trivalent.Designation.dual_threshold_le_neg_iff d.dual (eval M φ)
   rwa [Trivalent.Designation.dual_dual] at h
 
 /-- Each standard is dual to the other along negation ([cobreros-etal-2012], Definition 20). -/
@@ -124,15 +125,15 @@ theorem isDual (d : Trivalent.Designation) :
   simp
 
 /-- On a Boolean model every standard is classical truth. -/
-theorem realize_ofBool (v : Atom → Bool) (d : Trivalent.Designation) (φ : Formula Atom) :
-    (SignType.ofBool ∘ v ⊨[d] φ) ↔ evalBool v φ = Bool.true := by
-  rw [Realize, eval_ofBool, Trivalent.designated_ofBool]
+theorem realize_ofProp (v : Atom → Bool) (d : Trivalent.Designation) (φ : Formula Atom) :
+    ((fun a ↦ ofProp (v a)) ⊨[d] φ) ↔ evalBool v φ = Bool.true := by
+  rw [Realize, eval_ofProp, Trivalent.Designation.threshold_le_ofProp_iff]
 
 /-- Realization distributes over conjunction at either standard. -/
 @[simp] theorem realize_conj (M : Model Atom) (d : Trivalent.Designation)
     (φ ψ : Formula Atom) :
     (M ⊨[d] Formula.conj φ ψ) ↔ (M ⊨[d] φ) ∧ (M ⊨[d] ψ) :=
-  Trivalent.designated_inf d (eval M φ) (eval M ψ)
+  le_inf_iff
 
 /-- Disjunction, defined classically from negation and conjunction. -/
 def disj (φ ψ : Formula Atom) : Formula Atom := .neg (.conj (.neg φ) (.neg ψ))

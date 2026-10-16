@@ -98,11 +98,11 @@ def selectionalCounterfactual : SignType :=
 
 variable {ord p q w}
 
-theorem selectionalCounterfactual_eq_true_iff :
+theorem selectionalCounterfactual_eq_one_iff :
     selectionalCounterfactual ord p q w = 1 ↔ w ∈ closestImp ord p q := by
   simp [selectionalCounterfactual, SignType.supervaluation_eq_one_iff, Set.subset_def]
 
-theorem selectionalCounterfactual_eq_false_iff :
+theorem selectionalCounterfactual_eq_neg_one_iff :
     selectionalCounterfactual ord p q w = -1 ↔
       w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
   simp only [selectionalCounterfactual, SignType.supervaluation_eq_neg_one_iff,
@@ -110,7 +110,7 @@ theorem selectionalCounterfactual_eq_false_iff :
   exact ⟨fun ⟨⟨v, hv⟩, h⟩ ↦ ⟨fun h' ↦ h v hv (h' v hv), h⟩, fun ⟨hn, h⟩ ↦
     ⟨Set.nonempty_iff_ne_empty.2 fun he ↦ hn fun v hv ↦ absurd hv (he ▸ Set.notMem_empty v), h⟩⟩
 
-theorem selectionalCounterfactual_eq_indet_iff :
+theorem selectionalCounterfactual_eq_zero_iff :
     selectionalCounterfactual ord p q w = 0 ↔
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
   simp [selectionalCounterfactual, SignType.supervaluation_eq_zero_iff, Set.not_subset, and_comm]
@@ -136,13 +136,13 @@ theorem eval_homogeneityCounterfactual :
     (homogeneityCounterfactual ord p q).eval w = selectionalCounterfactual ord p q w := by
   by_cases h₁ : w ∈ closestImp ord p q <;> by_cases h₂ : w ∈ closestImp ord p qᶜ
   · simp [PartialProp.eval, homogeneityCounterfactual, h₁,
-      selectionalCounterfactual_eq_true_iff.2 h₁]
+      selectionalCounterfactual_eq_one_iff.2 h₁]
   · simp [PartialProp.eval, homogeneityCounterfactual, h₁,
-      selectionalCounterfactual_eq_true_iff.2 h₁]
+      selectionalCounterfactual_eq_one_iff.2 h₁]
   · simp [PartialProp.eval, homogeneityCounterfactual, h₁, h₂,
-      selectionalCounterfactual_eq_false_iff.2 ⟨h₁, h₂⟩]
+      selectionalCounterfactual_eq_neg_one_iff.2 ⟨h₁, h₂⟩]
   · simp [PartialProp.eval, homogeneityCounterfactual, h₁, h₂,
-      selectionalCounterfactual_eq_indet_iff.2 ⟨h₁, h₂⟩]
+      selectionalCounterfactual_eq_zero_iff.2 ⟨h₁, h₂⟩]
 
 /-! ### *Might* counterfactuals
 
@@ -176,7 +176,7 @@ consequent. -/
 theorem distribution_selectional (h_unique : ((ord w).minimals p).Subsingleton)
     (h : selectionalCounterfactual ord p (q ∪ r) w = 1) :
     selectionalCounterfactual ord p q w = 1 ∨ selectionalCounterfactual ord p r w = 1 := by
-  simp only [selectionalCounterfactual_eq_true_iff, mem_closestImp] at h ⊢
+  simp only [selectionalCounterfactual_eq_one_iff, mem_closestImp] at h ⊢
   rcases h_unique.eq_empty_or_singleton with h0 | ⟨v, hv⟩
   · simp [h0]
   · simpa only [hv, Set.singleton_subset_iff, Set.mem_union] using h
@@ -216,17 +216,17 @@ variable {ord p q w} [Fintype W] [∀ w, DecidableRel (ord w).le]
 
 /-- The selectional counterfactual is true iff the selection conditional is true on every
 completion. -/
-theorem selectionalCounterfactual_eq_true_iff_forall_compatible (hc : IsCentered ord) :
+theorem selectionalCounterfactual_eq_one_iff_forall_compatible (hc : IsCentered ord) :
     selectionalCounterfactual ord p q w = 1 ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q :=
-  selectionalCounterfactual_eq_true_iff.trans (mem_closestImp_iff_forall_compatible hc)
+  selectionalCounterfactual_eq_one_iff.trans (mem_closestImp_iff_forall_compatible hc)
 
 /-- The selectional counterfactual is false iff the selection conditional is false on every
 completion. -/
-theorem selectionalCounterfactual_eq_false_iff_forall_compatible (hc : IsCentered ord) :
+theorem selectionalCounterfactual_eq_neg_one_iff_forall_compatible (hc : IsCentered ord) :
     selectionalCounterfactual ord p q w = -1 ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∉ selectionConditional s p q := by
-  rw [selectionalCounterfactual_eq_false_iff, mem_closestImp_iff_forall_compatible hc,
+  rw [selectionalCounterfactual_eq_neg_one_iff, mem_closestImp_iff_forall_compatible hc,
     mem_closestImp_iff_forall_compatible hc]
   obtain ⟨s₀, hs₀, -⟩ := SelectionFunction.exists_compatible (p := Set.univ) (w := w) hc
     ⟨Set.mem_univ w, fun u _ _ ↦ hc.le w u⟩
@@ -247,17 +247,17 @@ the selectional counterfactual. -/
 theorem superCounterfactual_eq_selectionalCounterfactual (hc : IsCentered ord) :
     superCounterfactual ord p q w = selectionalCounterfactual ord p q w := by
   unfold superCounterfactual
-  rw [← selectionalCounterfactual_eq_true_iff_forall_compatible hc,
-    ← selectionalCounterfactual_eq_false_iff_forall_compatible hc]
+  rw [← selectionalCounterfactual_eq_one_iff_forall_compatible hc,
+    ← selectionalCounterfactual_eq_neg_one_iff_forall_compatible hc]
   cases selectionalCounterfactual ord p q w <;> simp
 
 /-- Under the uniqueness assumption of [stalnaker-1981], at most one closest antecedent-world, any
 compatible selection function decides the selectional counterfactual. -/
-theorem selectionalCounterfactual_eq_ofBool {s : SelectionFunction W} (hs : s.Compatible ord)
+theorem selectionalCounterfactual_eq_ofProp {s : SelectionFunction W} (hs : s.Compatible ord)
     (hu : ((ord w).minimals p).Subsingleton) (hp : p.Nonempty) :
-    selectionalCounterfactual ord p q w = SignType.ofBool (decide (s.sel w p ∈ q)) := by
+    selectionalCounterfactual ord p q w = SignType.ofProp (s.sel w p ∈ q) := by
   have h : (ord w).minimals p = {s.sel w p} := hu.eq_singleton_of_mem (hs.sel_mem_minimals hp)
-  by_cases hq : s.sel w p ∈ q <;> simp [selectionalCounterfactual, h, hq, SignType.ofBool]
+  by_cases hq : s.sel w p ∈ q <;> simp [selectionalCounterfactual, h, hq]
 
 end Supervaluation
 

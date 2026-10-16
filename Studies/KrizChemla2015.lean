@@ -74,7 +74,7 @@ printed and not re-thresholded; the (si2) and (si4) construals are the supervalu
 namespace KrizChemla2015
 
 open Quantifier
-open Trivalent (Designation designated)
+open Trivalent (Designation)
 
 /-! ### Displays and their resolutions -/
 
@@ -87,14 +87,13 @@ def cell (n : ℕ) : SignType :=
   Homogeneity.barePlural (fun j m ↦ j < m) (Finset.range 9) n
 
 /-- A cell is true, designated at K3, when all nine objects are found. -/
-theorem designated_k3_cell (n : ℕ) : designated .k3 (cell n) ↔ 9 ≤ n := by
-  rw [Trivalent.designated_k3_iff, cell, Homogeneity.barePlural,
-    SignType.supervaluation_eq_one_iff]
+theorem designated_k3_cell (n : ℕ) : cell n = 1 ↔ 9 ≤ n := by
+  rw [cell, Homogeneity.barePlural, SignType.supervaluation_eq_one_iff]
   exact ⟨fun h ↦ h 8 (by simp), fun h j hj ↦ by simp at hj; omega⟩
 
 /-- A cell is non-false, designated at LP, when at least one object is found. -/
-theorem designated_lp_cell (n : ℕ) : designated .lp (cell n) ↔ 1 ≤ n := by
-  rw [Trivalent.designated_lp_iff, Ne, cell, Homogeneity.barePlural,
+theorem designated_lp_cell (n : ℕ) : 0 ≤ cell n ↔ 1 ≤ n := by
+  rw [SignType.nonneg_iff_ne_neg_one, Ne, cell, Homogeneity.barePlural,
     SignType.supervaluation_eq_neg_one_iff]
   simp only [Finset.mem_range, not_and, not_forall, not_not, exists_prop]
   exact ⟨fun h ↦ by obtain ⟨j, -, hj⟩ := h ⟨0, by simp⟩; omega,
@@ -118,20 +117,20 @@ theorem holds_map_not (q : NumberTree) (c : List Bool) :
 
 /-- The uniform resolution of a display at a designation standard puts each boy in the scope
 when his value is designated. -/
-def resolve (δ : Designation) (d : Display) : List Bool := d.map fun v ↦ decide (designated δ v)
+def resolve (δ : Designation) (d : Display) : List Bool := d.map fun v ↦ decide (δ.threshold ≤ v)
 
 /-- Negating every cell resolves at the dual standard and reverses the result. -/
 theorem resolve_map_neg (δ : Designation) (d : Display) :
     resolve δ (d.map Neg.neg) = (resolve δ.dual d).map not := by
   simp only [resolve, List.map_map]
   refine List.map_congr_left fun v _ ↦ ?_
-  have := Trivalent.designated_neg_iff δ.dual v
+  have := Trivalent.Designation.dual_threshold_le_neg_iff δ.dual v
   rw [Trivalent.Designation.dual_dual] at this
-  simp [this]
+  simp only [Function.comp_apply, this, decide_not]
 
 /-- The resolutions of a display that choose a designation standard boy by boy. -/
 def resolutions (d : Display) : List (List Bool) :=
-  (d.map fun v ↦ [decide (designated .lp v), decide (designated .k3 v)]).sections
+  (d.map fun v ↦ [decide (0 ≤ v), decide (v = 1)]).sections
 
 theorem resolve_mem_resolutions (δ : Designation) (d : Display) :
     resolve δ d ∈ resolutions d := by
@@ -202,11 +201,11 @@ instance [DecidableRel q] (δ : Designation) : Decidable (reading q d δ) :=
 variable {q d}
 
 /-- The universal quantifier holds of a resolution when every boy is in the scope. -/
-theorem reading_all (δ : Designation) : reading NumberTree.all d δ ↔ ∀ v ∈ d, designated δ v := by
+theorem reading_all (δ : Designation) : reading NumberTree.all d δ ↔ ∀ v ∈ d, δ.threshold ≤ v := by
   simp [reading, holds, resolve, NumberTree.all, List.count_eq_zero]
 
 /-- The negative quantifier holds of a resolution when no boy is in the scope. -/
-theorem reading_no (δ : Designation) : reading NumberTree.no d δ ↔ ∀ v ∈ d, ¬ designated δ v := by
+theorem reading_no (δ : Designation) : reading NumberTree.no d δ ↔ ∀ v ∈ d, ¬ δ.threshold ≤ v := by
   simp [reading, holds, resolve, NumberTree.no, List.count_eq_zero]
 
 /-- Negating the predicate in every cell evaluates the inner negation of the quantifier at the
@@ -294,10 +293,10 @@ def globalConstrual : SignType := gapValue (someReading q d) (globalExh q d)
 
 /-- Homogeneity as a presupposition projecting universally from the quantifier's scope, after
 [schwarzschild-1994], [lobner-2000] and [gajewski-2005] as assessed in §6.3, is the presupposition
-that every cell is homogeneous weakly conjoined with the universal-force assertion, in the
-∂-operator notation of [beaver-krahmer-2001]. -/
+that every cell is homogeneous weakly conjoined with the universal-force assertion. The
+presupposition is the ∂ of [beaver-krahmer-2001], the join `p ⊔ 0` with the gap. -/
 def universalPresupposition : SignType :=
-  (SignType.ofProp (∀ v ∈ d, v ≠ 0)).presuppose.meetWeak (.ofProp (allReading q d))
+  (SignType.ofProp (∀ v ∈ d, v ≠ 0) ⊔ 0).meetWeak (.ofProp (allReading q d))
 
 /-- Supervaluation over the resolutions that treat the partial cells one by one, a richer
 candidate set than the existential and universal readings, of the kind §6.2 says predicts a gap
@@ -385,7 +384,7 @@ theorem globalConstrual_ne_zero_of_scopeAntitone (hq : q.ScopeAntitone) :
 theorem universalPresupposition_eq_zero_iff :
     universalPresupposition q d = 0 ↔ 0 ∈ d := by
   rw [universalPresupposition, SignType.meetWeak_eq_zero_iff]
-  simp only [SignType.presuppose_eq_zero_iff, SignType.ofProp_ne_zero, or_false, Ne,
+  simp only [SignType.sup_zero_eq_zero_iff, SignType.ofProp_ne_zero, or_false, Ne,
     SignType.ofProp_eq_one_iff, not_forall, exists_prop, not_not, exists_eq_right]
 
 end Approaches

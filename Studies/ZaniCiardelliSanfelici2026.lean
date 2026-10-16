@@ -171,11 +171,11 @@ theorem dcr_of_would (htot : ∀ w, Std.Total (ord w).le) (h : w ∈ disjunctive
 
 /-- On the homogeneity accounts, DCR is the existential resolution of the homogeneous
 quantification over the disjuncts, on which the DAC is not false. SDA is its universal
-resolution, `homogeneousImp_eq_true_iff`. -/
+resolution, `homogeneousImp_eq_one_iff`. -/
 theorem dcr_iff_homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le]
     [DecidablePred (· ∈ C)] :
     DCR ord A B C w ↔ homogeneousImp ord {A, B} C w ≠ -1 := by
-  simp only [DCR, Ne, homogeneousImp_eq_false_iff, Finset.insert_nonempty, true_and,
+  simp only [DCR, Ne, homogeneousImp_eq_neg_one_iff, Finset.insert_nonempty, true_and,
     Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, not_and_or, not_not]
 
 open BarLevFox2020 in

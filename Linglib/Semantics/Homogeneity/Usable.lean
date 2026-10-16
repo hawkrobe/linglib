@@ -93,8 +93,8 @@ theorem gap_enables_nonmax (q : Setoid W) (p : W → SignType) (w w' : W)
 /-- Gap removal forces literal truth for usability, the general form of the result that
 homogeneity removers prevent non-maximal use. -/
 theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → SignType) (w : W)
-    (h : usable q (SignType.metaAssert ∘ p) w) : SignType.metaAssert (p w) = 1 :=
-  ((usable_iff_of_isBivalent (Trivalent.isBivalent_comp_metaAssert p) q w).mp h).1
+    (h : usable q ((fun v ↦ SignType.ofProp (v = 1)) ∘ p) w) : SignType.ofProp (p w = 1) = 1 :=
+  ((usable_iff_of_isBivalent (Trivalent.isBivalent_ofProp_eq_one p) q w).mp h).1
 
 /-- Exceptions are unmentionable ([kriz-2016] §4.1). When `p` is used at `w` under the issue
 `q`, an exception-mentioning sentence `e`, true at `w` but false wherever `p` is literally

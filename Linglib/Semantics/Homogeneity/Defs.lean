@@ -13,8 +13,8 @@ of a plurality (`Homogeneity.readings`), closest antecedent worlds
 (`Conditional.selectionalCounterfactual`), overlapping pluralities
 (`Kriz2016.generalisedTruthValue`), best modal worlds (`Studies/AghaJeretic2022`). Homogeneity
 removers such as *all*, *necessarily* and *completely* denote the Beaver–Krahmer assertion operator
-`SignType.metaAssert`, applied pointwise, which collapses the gap into the negative extension
-(`Trivalent.isBivalent_comp_metaAssert`). A family of propositions is `Homogeneous` at a world when
+applied pointwise, `fun w ↦ ofProp (p w = 1)`, which collapses the gap into the negative extension
+(`Trivalent.isBivalent_ofProp_eq_one`). A family of propositions is `Homogeneous` at a world when
 its members are all true there or all false there, which is where the supervaluation over them is
 defined; presuppositional exhaustification presupposes this of its includable alternatives.
 

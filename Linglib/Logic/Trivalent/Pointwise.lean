@@ -116,31 +116,26 @@ theorem isBivalent_iff_forall_ne_zero (p : W → SignType) :
 theorem IsBivalent.ne_zero {p : W → SignType} (h : IsBivalent p) (w : W) : p w ≠ 0 :=
   (isBivalent_iff_forall_ne_zero p).1 h w
 
-/-! ### Extensions under meta-assertion
+/-! ### Extensions under assertion
 
-Meta-assertion of a proposition is the pointwise composite `metaAssert ∘ p`; no dedicated
-pointwise operator is needed. -/
+Asserting a proposition pointwise, `fun w ↦ ofProp (p w = 1)`, keeps its positive extension and
+moves its gap into the negative extension. -/
 
-@[simp] theorem posExt_comp_metaAssert (p : W → SignType) :
-    posExt (metaAssert ∘ p) = posExt p := by
-  ext w; simp only [mem_posExt, Function.comp_apply]
-  cases p w <;> simp
+@[simp] theorem posExt_ofProp_eq_one (p : W → SignType) :
+    posExt (fun w ↦ ofProp (p w = 1)) = posExt p := by
+  ext w; simp
 
-@[simp] theorem negExt_comp_metaAssert (p : W → SignType) :
-    negExt (metaAssert ∘ p) = negExt p ∪ gapExt p := by
-  ext w
-  simp only [mem_negExt, Set.mem_union, mem_gapExt, Function.comp_apply]
-  cases p w <;> simp
+@[simp] theorem negExt_ofProp_eq_one (p : W → SignType) :
+    negExt (fun w ↦ ofProp (p w = 1)) = negExt p ∪ gapExt p := by
+  ext w; cases h : p w <;> simp [h]
 
-@[simp] theorem gapExt_comp_metaAssert (p : W → SignType) :
-    gapExt (metaAssert ∘ p) = ∅ := by
-  ext w
-  simp only [mem_gapExt, Function.comp_apply, Set.mem_empty_iff_false, iff_false]
-  cases p w <;> simp
+@[simp] theorem gapExt_ofProp_eq_one (p : W → SignType) :
+    gapExt (fun w ↦ ofProp (p w = 1)) = ∅ := by
+  ext w; simp
 
-/-- Meta-assertion produces a bivalent proposition. -/
-theorem isBivalent_comp_metaAssert (p : W → SignType) : IsBivalent (metaAssert ∘ p) := by
-  intro w; simp only [Function.comp_apply]; cases p w <;> simp
+/-- Asserting a proposition pointwise makes it bivalent. -/
+theorem isBivalent_ofProp_eq_one (p : W → SignType) : IsBivalent fun w ↦ ofProp (p w = 1) :=
+  fun w ↦ by by_cases h : p w = 1 <;> simp [h]
 
 /-! ### Quantifiers
 
@@ -411,7 +406,7 @@ end Pairs
 
 /-- An existentially quantified presupposition is true or undefined, never false. -/
 theorem existsHaug_presuppose_ne_neg_one (p : W → SignType) :
-    existsHaug (fun w => presuppose (p w)) ≠ -1 := by
+    existsHaug (fun w => (p w ⊔ 0)) ≠ -1 := by
   simp
 
 /-- Quantifier Projection ([coppock-beaver-2015]'s appendix) lets a presupposition under the
@@ -419,14 +414,14 @@ existential project as an existentially quantified presupposition, over bivalent
 `ψ`. -/
 theorem existsHaug_meetWeak_presuppose {φ ψ : W → SignType} (hφ : IsBivalent φ)
     (hψ : IsBivalent ψ) :
-    existsHaug (fun w => meetWeak (presuppose (φ w)) (ψ w)) =
-      meetWeak (existsHaug fun w => presuppose (φ w))
+    existsHaug (fun w => meetWeak (φ w ⊔ 0) (ψ w)) =
+      meetWeak (existsHaug fun w => (φ w ⊔ 0))
         (existsHaug fun w => meetWeak (φ w) (ψ w)) := by
   refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · simp only [existsHaug_eq_zero_iff, meetWeak_eq_zero_iff, presuppose_eq_zero_iff, hφ.ne_zero,
+  · simp only [existsHaug_eq_zero_iff, meetWeak_eq_zero_iff, sup_zero_eq_zero_iff, hφ.ne_zero,
       hψ.ne_zero, or_false]
     exact ⟨Or.inl, fun h => h.elim id fun h w => (h w).elim⟩
-  · simp only [existsHaug_eq_one_iff, meetWeak_eq_one_iff, presuppose_eq_one_iff]
+  · simp only [existsHaug_eq_one_iff, meetWeak_eq_one_iff, sup_zero_eq_one_iff]
     exact ⟨fun ⟨w, h⟩ => ⟨⟨w, h.1⟩, w, h⟩, fun h => h.2⟩
 
 end Trivalent
