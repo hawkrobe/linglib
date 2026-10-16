@@ -87,7 +87,7 @@ conjunction contributes a marker, which is where Slovene departs from same-gende
 * [G. G. Corbett, *Gender* (1991)][corbett-1991]
 * [G. G. Corbett and A. D. Mtenje, *Gender agreement in Chichewa* (1987)][corbett-mtenje-1987]
 * [I. A. Sag, G. Gazdar, T. Wasow and S. Weisler, *Coordination and how to distinguish
-  categories* (1985)][sag-gazdar-wasow-weisler-1985]
+  categories* (1985)][sag-etal-1985]
 * [A. M. Zwicky, *Hierarchies of person* (1977)][zwicky-1977b]
 * [R. M. Kaplan and J. Bresnan, *Lexical-functional grammar* (1982)][kaplan-bresnan-1982]
 * [S. M. Shieber, *An introduction to unification-based approaches to grammar*
