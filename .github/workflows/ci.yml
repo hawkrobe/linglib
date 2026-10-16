@@ -42,6 +42,9 @@ jobs:
       - name: Check generated paradigm data
         run: python3 scripts/gen_paradigms.py --check
 
+      - name: Check generated language sample data
+        run: python3 scripts/gen_structures.py --check
+
       - name: Check generated word order data
         run: python3 scripts/gen_word_order.py --check
 

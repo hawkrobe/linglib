@@ -8,6 +8,7 @@ Three sibling directories at this level:
 | `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
 | `Forms/` | Per-paper CLDF word forms (`FormTable`, `ParameterTable`, custom `FormRelationTable`) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
 | `Paradigms/` | Per-paper Paralex paradigms (`lexemes`, `cells`, `forms`, custom `root_classes`) | JSON, one file per paper | `Paradigms/{AuthorYear}.lean` |
+| `Structures/` | Per-paper CLDF language samples (`LanguageTable`, `ParameterTable`, `CodeTable`, `ValueTable`) | JSON, one file per paper | `Structures/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
 | `WALS/` | World Atlas of Language Structures | CSV (raw under `WALS/raw/`) | `Features/F*.lean`, the features some module imports |
 
@@ -73,6 +74,21 @@ validated but not emitted.
 - **Schema**: `Linglib/Data/Paradigms/Schema.lean`
 - **Generator**: `scripts/gen_paradigms.py` (`--check` verifies sync)
 - **Input/Output**: `Linglib/Data/Paradigms/{AuthorYear}.json` → `{AuthorYear}.lean`
+
+### Structures — CLDF language samples
+
+Per-paper language samples in the shape of the CLDF StructureDataset: a
+`LanguageTable` (the sample, with Glottocodes where the source's name
+determines one, and a comment saying why where it does not), a
+`ParameterTable` and `CodeTable` (each parameter with its codes, including
+codes no language takes), and a `ValueTable` (a language's codes, marked
+questionable or optional as the source marks them). Each parameter becomes an
+inductive type; the long `ValueTable` is emitted as one row per language with a
+list-valued field per parameter, so a theorem reads each language once.
+
+- **Schema**: `Linglib/Data/Structures/Schema.lean`
+- **Generator**: `scripts/gen_structures.py` (`--check` verifies sync)
+- **Input/Output**: `Linglib/Data/Structures/{AuthorYear}.json` → `{AuthorYear}.lean`
 
 ### Treebank coverage of non-projectivity constraints
 

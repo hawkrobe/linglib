@@ -1,0 +1,5110 @@
+{
+  "bibkey": "bobaljik-2012",
+  "source": "bobaljik-2012[Table A.1]",
+  "description": "The broad sample of Appendix A: 148 languages chosen on a quasi-random basis, each with the type of its comparative construction, the expression of comparison on the adjective and of the relative superlative, and whether there is suppletion (section 1.3).",
+  "LanguageTable": [
+    {
+      "ID": "tamashek",
+      "Name": "Tamashek",
+      "Glottocode": "tama1365",
+      "Lineage": "Afro-Asiatic, Berber"
+    },
+    {
+      "ID": "hausa",
+      "Name": "Hausa",
+      "Glottocode": "haus1257",
+      "Lineage": "Afro-Asiatic, Chadic (W)"
+    },
+    {
+      "ID": "lele",
+      "Name": "Lele",
+      "Glottocode": "lele1276",
+      "Lineage": "Afro-Asiatic, Chadic (E)"
+    },
+    {
+      "ID": "mina",
+      "Name": "Mina",
+      "Glottocode": "mina1276",
+      "Lineage": "Afro-Asiatic, Chadic (Daba)"
+    },
+    {
+      "ID": "qimant",
+      "Name": "Qimant",
+      "Glottocode": "qima1242",
+      "Lineage": "Afro-Asiatic, Cushitic"
+    },
+    {
+      "ID": "somali",
+      "Name": "Somali",
+      "Glottocode": "soma1255",
+      "Lineage": "Afro-Asiatic, Cushitic"
+    },
+    {
+      "ID": "arabic_std",
+      "Name": "Arabic (Std.)",
+      "Glottocode": "stan1318",
+      "Lineage": "Afro-Asiatic, Semitic (Central)"
+    },
+    {
+      "ID": "neo_aramaic",
+      "Name": "Neo-Aramaic",
+      "Glottocode": null,
+      "Lineage": "Afro-Asiatic, Semitic (Aramaic)",
+      "comment": "the book does not say which Neo-Aramaic language"
+    },
+    {
+      "ID": "hebrew",
+      "Name": "Hebrew",
+      "Glottocode": "hebr1245",
+      "Lineage": "Afro-Asiatic, Semitic"
+    },
+    {
+      "ID": "khoekhoe_nama",
+      "Name": "Khoekhoe (Nama)",
+      "Glottocode": "nama1264",
+      "Lineage": "Khoe (N Khoekhoe)"
+    },
+    {
+      "ID": "khwe",
+      "Name": "Khwe",
+      "Glottocode": "kxoe1243",
+      "Lineage": "Khoe (Kalahari)"
+    },
+    {
+      "ID": "koromfe",
+      "Name": "Koromfe",
+      "Glottocode": "koro1298",
+      "Lineage": "Niger-Congo, Gur"
+    },
+    {
+      "ID": "ijo",
+      "Name": "Ịjọ",
+      "Glottocode": null,
+      "Lineage": "Niger-Congo, Ijoid",
+      "comment": "the book does not say which Ijoid language"
+    },
+    {
+      "ID": "kana",
+      "Name": "Kana",
+      "Glottocode": "khan1278",
+      "Lineage": "Niger-Congo, Benue-Congo"
+    },
+    {
+      "ID": "ogbronuagum",
+      "Name": "Ogbronuagum",
+      "Glottocode": "ogbr1243",
+      "Lineage": "Niger-Congo, Benue-Congo"
+    },
+    {
+      "ID": "banda",
+      "Name": "Banda",
+      "Glottocode": null,
+      "Lineage": "Niger-Congo, Volta-Congo",
+      "comment": "Banda is a cluster of several Glottolog languages"
+    },
+    {
+      "ID": "lingala",
+      "Name": "Lingala",
+      "Glottocode": "ling1263",
+      "Lineage": "Niger-Congo, Bantu, NW Narrow"
+    },
+    {
+      "ID": "nandi",
+      "Name": "Nandi",
+      "Glottocode": null,
+      "Lineage": "Niger-Congo, Bantu (Central J)",
+      "comment": "the lineage printed is Bantu (Central J), Glottolog's Nande, but the Nandi grammar the book cites (p. 111) is of Kalenjin Nandi"
+    },
+    {
+      "ID": "sotho_northern",
+      "Name": "Sotho (Northern)",
+      "Glottocode": "pedi1238",
+      "Lineage": "Niger-Congo, Bantu (Central S)"
+    },
+    {
+      "ID": "zulu",
+      "Name": "Zulu",
+      "Glottocode": "zulu1248",
+      "Lineage": "Niger-Congo, Bantu (Central B)"
+    },
+    {
+      "ID": "lango",
+      "Name": "Lango",
+      "Glottocode": "lang1324",
+      "Lineage": "Nilo-Saharan, E Sudanic"
+    },
+    {
+      "ID": "mbay",
+      "Name": "Mbay",
+      "Glottocode": "mbay1241",
+      "Lineage": "Nilo-Saharan, Central Sudanic"
+    },
+    {
+      "ID": "koroboro_seno",
+      "Name": "Koroboro Seno",
+      "Glottocode": "koyr1242",
+      "Lineage": "Nilo-Saharan, Songhai"
+    },
+    {
+      "ID": "kanuri",
+      "Name": "Kanuri",
+      "Glottocode": null,
+      "Lineage": "Nilo-Saharan, W Saharan",
+      "comment": "Glottolog has several Kanuri languages"
+    },
+    {
+      "ID": "irish",
+      "Name": "Irish",
+      "Glottocode": "iris1253",
+      "Lineage": "IE, Celtic"
+    },
+    {
+      "ID": "modern_greek",
+      "Name": "Modern Greek",
+      "Glottocode": "mode1248",
+      "Lineage": "IE, Hellenic"
+    },
+    {
+      "ID": "kashmiri",
+      "Name": "Kashmiri",
+      "Glottocode": "kash1277",
+      "Lineage": "IE, Indo-Aryan (Dardic)"
+    },
+    {
+      "ID": "persian_farsi",
+      "Name": "Persian (Farsi)",
+      "Glottocode": "west2369",
+      "Lineage": "IE, Iranian (SW)"
+    },
+    {
+      "ID": "czech",
+      "Name": "Czech",
+      "Glottocode": "czec1258",
+      "Lineage": "IE, Slavic"
+    },
+    {
+      "ID": "finnish",
+      "Name": "Finnish",
+      "Glottocode": "finn1318",
+      "Lineage": "Uralic, Finno-Ugric"
+    },
+    {
+      "ID": "udmurt",
+      "Name": "Udmurt",
+      "Glottocode": "udmu1245",
+      "Lineage": "Uralic, Permian"
+    },
+    {
+      "ID": "nenets",
+      "Name": "Nenets",
+      "Glottocode": null,
+      "Lineage": "Uralic, Samoyed",
+      "comment": "Glottolog has Tundra and Forest Nenets"
+    },
+    {
+      "ID": "ket",
+      "Name": "Ket",
+      "Glottocode": "kett1243",
+      "Lineage": "Yeniseyan"
+    },
+    {
+      "ID": "even",
+      "Name": "Even",
+      "Glottocode": "even1260",
+      "Lineage": "Tungusic"
+    },
+    {
+      "ID": "evenki",
+      "Name": "Evenki",
+      "Glottocode": "even1259",
+      "Lineage": "Tungusic"
+    },
+    {
+      "ID": "khalkha",
+      "Name": "Khalkha",
+      "Glottocode": "halh1238",
+      "Lineage": "Mongolian"
+    },
+    {
+      "ID": "lezgian",
+      "Name": "Lezgian",
+      "Glottocode": "lezg1247",
+      "Lineage": "Nakh-Dagestanian, Lezgic"
+    },
+    {
+      "ID": "hunzib",
+      "Name": "Hunzib",
+      "Glottocode": "hunz1247",
+      "Lineage": "Nakh-Dagestanian, Tsezic"
+    },
+    {
+      "ID": "abkhaz",
+      "Name": "Abkhaz",
+      "Glottocode": "abkh1244",
+      "Lineage": "NW Caucasian"
+    },
+    {
+      "ID": "bashkir",
+      "Name": "Bashkir",
+      "Glottocode": "bash1264",
+      "Lineage": "Turkic"
+    },
+    {
+      "ID": "khakas",
+      "Name": "Khakas",
+      "Glottocode": "khak1248",
+      "Lineage": "Turkic"
+    },
+    {
+      "ID": "tyvan",
+      "Name": "Tyvan",
+      "Glottocode": "tuvi1240",
+      "Lineage": "Turkic"
+    },
+    {
+      "ID": "itelmen",
+      "Name": "Itelmen",
+      "Glottocode": "itel1242",
+      "Lineage": "Chukotko-Kamchatkan"
+    },
+    {
+      "ID": "chukchi",
+      "Name": "Chukchi",
+      "Glottocode": "chuk1273",
+      "Lineage": "Chukotko-Kamchatkan"
+    },
+    {
+      "ID": "malayalam",
+      "Name": "Malayalam",
+      "Glottocode": "mala1464",
+      "Lineage": "Dravidian, Tamil"
+    },
+    {
+      "ID": "ainu",
+      "Name": "Ainu",
+      "Glottocode": "ainu1240",
+      "Lineage": "NE Asia, isolate"
+    },
+    {
+      "ID": "nivkh",
+      "Name": "Nivkh",
+      "Glottocode": "gily1242",
+      "Lineage": "NE Asia, isolate"
+    },
+    {
+      "ID": "burushaski",
+      "Name": "Burushaski",
+      "Glottocode": "buru1296",
+      "Lineage": "S Asia, isolate"
+    },
+    {
+      "ID": "yukagir",
+      "Name": "Yukagir",
+      "Glottocode": null,
+      "Lineage": "N Asia, isolate",
+      "comment": "Glottolog has Northern and Southern Yukaghir"
+    },
+    {
+      "ID": "basque",
+      "Name": "Basque",
+      "Glottocode": "basq1248",
+      "Lineage": "Europe, isolate"
+    },
+    {
+      "ID": "asl",
+      "Name": "ASL",
+      "Glottocode": "amer1248",
+      "Lineage": "Sign (American)"
+    },
+    {
+      "ID": "cantonese",
+      "Name": "Cantonese",
+      "Glottocode": "cant1236",
+      "Lineage": "Sino-Tibetan, Chinese"
+    },
+    {
+      "ID": "kunming",
+      "Name": "Kunming",
+      "Glottocode": "kunm1234",
+      "Lineage": "Sino-Tibetan, Chinese"
+    },
+    {
+      "ID": "mandarin",
+      "Name": "Mandarin",
+      "Glottocode": "mand1415",
+      "Lineage": "Sino-Tibetan, Chinese"
+    },
+    {
+      "ID": "dzongkha",
+      "Name": "Dzongkha",
+      "Glottocode": "dzon1239",
+      "Lineage": "Sin.-Tib., Tib.-Burman (Tibetan)"
+    },
+    {
+      "ID": "kham",
+      "Name": "Kham",
+      "Glottocode": null,
+      "Lineage": "Sin.-Tib., Tib.-Burm. (Kham)",
+      "comment": "Glottolog has several Kham languages"
+    },
+    {
+      "ID": "limbu",
+      "Name": "Limbu",
+      "Glottocode": "limb1266",
+      "Lineage": "Sin.-Tib., Tib.-Burm. (E Kiranti)"
+    },
+    {
+      "ID": "newar_dolokha",
+      "Name": "Newar (Dolokha)",
+      "Glottocode": "dola1240",
+      "Lineage": "Sin.-Tib., Tib.-Burm. (Newari)"
+    },
+    {
+      "ID": "bisu",
+      "Name": "Bisu",
+      "Glottocode": "bisu1244",
+      "Lineage": "Sin.-Tib., Tib.-Burm. (Ngwi)"
+    },
+    {
+      "ID": "mongsen_ao",
+      "Name": "Mongsen Ao",
+      "Glottocode": "mong1332",
+      "Lineage": "Sin.-Tib., Tib.-Burm. (Naga)"
+    },
+    {
+      "ID": "mizo",
+      "Name": "Mizo",
+      "Glottocode": "lush1249",
+      "Lineage": "Sin.-Tib., Tib.-Burm. (Kuki-Chin)"
+    },
+    {
+      "ID": "dumi",
+      "Name": "Dumi",
+      "Glottocode": "dumi1241",
+      "Lineage": "Sin.-Tib., Tib.-Burm. (W Kiranti)"
+    },
+    {
+      "ID": "lao",
+      "Name": "Lao",
+      "Glottocode": "laoo1244",
+      "Lineage": "Tai-Kadai"
+    },
+    {
+      "ID": "thai",
+      "Name": "Thai",
+      "Glottocode": "thai1261",
+      "Lineage": "Tai-Kadai"
+    },
+    {
+      "ID": "japanese",
+      "Name": "Japanese",
+      "Glottocode": "nucl1643",
+      "Lineage": "East Asia"
+    },
+    {
+      "ID": "korean",
+      "Name": "Korean",
+      "Glottocode": "kore1280",
+      "Lineage": "East Asia"
+    },
+    {
+      "ID": "mayali",
+      "Name": "Mayali",
+      "Glottocode": "gunw1252",
+      "Lineage": "Australian, Gunwingguan"
+    },
+    {
+      "ID": "nunggubuyu",
+      "Name": "Nunggubuyu",
+      "Glottocode": "nung1290",
+      "Lineage": "Austr., Gunwingguan"
+    },
+    {
+      "ID": "arrernte",
+      "Name": "Arrernte",
+      "Glottocode": null,
+      "Lineage": "Austr., Pama-Nyungan (Arandic)",
+      "comment": "Glottolog has several Arrernte languages"
+    },
+    {
+      "ID": "dyirbal",
+      "Name": "Dyirbal",
+      "Glottocode": "dyir1250",
+      "Lineage": "Austr., Pam.-Nyu. (Dyirbalic)"
+    },
+    {
+      "ID": "gumbaynggir",
+      "Name": "Gumbaynggir",
+      "Glottocode": "kumb1268",
+      "Lineage": "Austr., Pam.-Nyu. (Gumbaynggiric)"
+    },
+    {
+      "ID": "warlpiri",
+      "Name": "Warlpiri",
+      "Glottocode": "warl1254",
+      "Lineage": "Austr., Pam.-Nyu. (SW)"
+    },
+    {
+      "ID": "yindjibarndi",
+      "Name": "Yindjibarndi",
+      "Glottocode": "yind1247",
+      "Lineage": "Austr., Pam.-Nyu. (SW)"
+    },
+    {
+      "ID": "kayardild",
+      "Name": "Kayardild",
+      "Glottocode": "kaya1319",
+      "Lineage": "Austr., Pam.-Nyu. (Tangkic)"
+    },
+    {
+      "ID": "jingulu",
+      "Name": "Jingulu",
+      "Glottocode": "djin1251",
+      "Lineage": "Austr., W Barkly"
+    },
+    {
+      "ID": "amis",
+      "Name": "Amis",
+      "Glottocode": "amis1246",
+      "Lineage": "Austronesian, E. Formosan"
+    },
+    {
+      "ID": "paiwan",
+      "Name": "Paiwan",
+      "Glottocode": "paiw1248",
+      "Lineage": "Austronesian, Paiwan"
+    },
+    {
+      "ID": "puyuma",
+      "Name": "Puyuma",
+      "Glottocode": "puyu1239",
+      "Lineage": "Austronesian, Puyuma"
+    },
+    {
+      "ID": "rukai",
+      "Name": "Rukai",
+      "Glottocode": "ruka1240",
+      "Lineage": "Austronesian, Rukai"
+    },
+    {
+      "ID": "seediq",
+      "Name": "Seediq",
+      "Glottocode": "taro1264",
+      "Lineage": "Austronesian, Atayalic"
+    },
+    {
+      "ID": "rapanui",
+      "Name": "Rapanui",
+      "Glottocode": "rapa1244",
+      "Lineage": "Austronesian, Malayo-Polynesian (Oceanic, E Nuclear Polynesian)"
+    },
+    {
+      "ID": "maori",
+      "Name": "Maori",
+      "Glottocode": "maor1246",
+      "Lineage": "Austronesian, Malayo-Polynesian (Oceanic, E Nuclear Polynesian)"
+    },
+    {
+      "ID": "muna",
+      "Name": "Muna",
+      "Glottocode": "muna1247",
+      "Lineage": "Austronesian, Malayo-Polynesian (Sulawesi - Munic)"
+    },
+    {
+      "ID": "pendau",
+      "Name": "Pendau",
+      "Glottocode": "pend1242",
+      "Lineage": "Austronesian, Malayo-Polynesian (Sulawesi - Tomini)"
+    },
+    {
+      "ID": "yapese",
+      "Name": "Yapese",
+      "Glottocode": "yape1248",
+      "Lineage": "Austronesian, Malayo-Polynesian (Oceanic, Yapese)"
+    },
+    {
+      "ID": "palauan",
+      "Name": "Palauan",
+      "Glottocode": "pala1344",
+      "Lineage": "Austronesian, Malayo-Polynesian (Palauan)"
+    },
+    {
+      "ID": "fijian_boumaa",
+      "Name": "Fijian (Boumaa)",
+      "Glottocode": "fiji1243",
+      "Lineage": "Austronesian, Malayo-Polynesian (Oceanic, W Fijian-Rotuman)"
+    },
+    {
+      "ID": "tuvaluan",
+      "Name": "Tuvaluan",
+      "Glottocode": "tuva1244",
+      "Lineage": "Austronesian, Malayo-Polynesian (Oceanic, Samoic)"
+    },
+    {
+      "ID": "manam",
+      "Name": "Manam",
+      "Glottocode": "mana1295",
+      "Lineage": "Austronesian, Malayo-Polynesian (Oceanic, W Oceanic)"
+    },
+    {
+      "ID": "sinaugoro",
+      "Name": "Sinaugoro",
+      "Glottocode": "sina1266",
+      "Lineage": "Austronesian, Malayo-Polynesian (Oceanic, W Oceanic)"
+    },
+    {
+      "ID": "amele",
+      "Name": "Amele",
+      "Glottocode": "amel1241",
+      "Lineage": "Trans-New Guinea, Madang"
+    },
+    {
+      "ID": "klon",
+      "Name": "Klon",
+      "Glottocode": "kelo1247",
+      "Lineage": "Tr.-New Guin., Timor-Alor-Pantor"
+    },
+    {
+      "ID": "teiwa",
+      "Name": "Teiwa",
+      "Glottocode": "teiw1235",
+      "Lineage": "Tr.-New Guin., Timor-Alor-Pantor"
+    },
+    {
+      "ID": "mian",
+      "Name": "Mian",
+      "Glottocode": "mian1256",
+      "Lineage": "Tr.-New Guin., Central W (Ok)"
+    },
+    {
+      "ID": "ekagi",
+      "Name": "Ekagi",
+      "Glottocode": "ekar1243",
+      "Lineage": "Tr.-New Guin., Central W (W Bomberai)"
+    },
+    {
+      "ID": "koiari",
+      "Name": "Koiari",
+      "Glottocode": "gras1249",
+      "Lineage": "Tr.-New Guin., Eastern (Koiarian)"
+    },
+    {
+      "ID": "mauwake",
+      "Name": "Mauwake",
+      "Glottocode": "mauw1238",
+      "Lineage": "Tr.-New Guin., Adelbert Range"
+    },
+    {
+      "ID": "arapesh",
+      "Name": "Arapesh",
+      "Glottocode": null,
+      "Lineage": "Papua New Guinea Torricelli",
+      "comment": "Glottolog has several Arapesh languages"
+    },
+    {
+      "ID": "skou",
+      "Name": "Skou",
+      "Glottocode": "nucl1634",
+      "Lineage": "Papuan"
+    },
+    {
+      "ID": "mundari",
+      "Name": "Mundari",
+      "Glottocode": "mund1320",
+      "Lineage": "Austro-Asiatic, Munda (N)"
+    },
+    {
+      "ID": "santali",
+      "Name": "Santali",
+      "Glottocode": "sant1410",
+      "Lineage": "Aust.-Asia., Munda (N)"
+    },
+    {
+      "ID": "remo",
+      "Name": "Remo",
+      "Glottocode": "bond1245",
+      "Lineage": "Aust.-Asia., Munda (S)"
+    },
+    {
+      "ID": "semalai",
+      "Name": "Semalai",
+      "Glottocode": "seme1247",
+      "Lineage": "Aust.-Asia., Mon Khmer (Aslian)"
+    },
+    {
+      "ID": "palaung",
+      "Name": "Palaung",
+      "Glottocode": null,
+      "Lineage": "Aust.-Asia., Mon Khmer (N)",
+      "comment": "Glottolog has several Palaung languages"
+    },
+    {
+      "ID": "vietnamese",
+      "Name": "Vietnamese",
+      "Glottocode": "viet1252",
+      "Lineage": "Aust.-Asia., Mon Khmer (Viet-Muong)"
+    },
+    {
+      "ID": "khmer",
+      "Name": "Khmer",
+      "Glottocode": "cent1989",
+      "Lineage": "Aust.-Asia., Mon Khmer (E, Khmer)"
+    },
+    {
+      "ID": "sapuan",
+      "Name": "Sapuan",
+      "Glottocode": "sapu1248",
+      "Lineage": "Aust.-Asia., Mon Khmer (E, Bahnaric)"
+    },
+    {
+      "ID": "aleut",
+      "Name": "Aleut",
+      "Glottocode": "aleu1260",
+      "Lineage": "Eskimo-Aleut"
+    },
+    {
+      "ID": "west_greenlandic",
+      "Name": "West Greenlandic",
+      "Glottocode": "kala1399",
+      "Lineage": "Eskimo-Aleut"
+    },
+    {
+      "ID": "straits_salish",
+      "Name": "Straits Salish",
+      "Glottocode": "stra1244",
+      "Lineage": "Salishan"
+    },
+    {
+      "ID": "navajo",
+      "Name": "Navajo",
+      "Glottocode": "nava1243",
+      "Lineage": "Na-Dene, Athapaskan"
+    },
+    {
+      "ID": "nishnaabemwin",
+      "Name": "Nishnaabemwin",
+      "Glottocode": null,
+      "Lineage": "Algic, Algonquian",
+      "comment": "Nishnaabemwin covers Ottawa and Eastern Ojibwa"
+    },
+    {
+      "ID": "cherokee",
+      "Name": "Cherokee",
+      "Glottocode": "cher1273",
+      "Lineage": "Iroquoian"
+    },
+    {
+      "ID": "kiowa",
+      "Name": "Kiowa",
+      "Glottocode": "kiow1266",
+      "Lineage": "Kiowa Tanoan"
+    },
+    {
+      "ID": "chimariko",
+      "Name": "Chimariko",
+      "Glottocode": "chim1301",
+      "Lineage": "N America, isolate (Hokan?)"
+    },
+    {
+      "ID": "kiliwa",
+      "Name": "Kiliwa",
+      "Glottocode": "kili1268",
+      "Lineage": "Yuman (Hokan)"
+    },
+    {
+      "ID": "choctaw",
+      "Name": "Choctaw",
+      "Glottocode": "choc1276",
+      "Lineage": "Muskogean"
+    },
+    {
+      "ID": "crow",
+      "Name": "Crow",
+      "Glottocode": "crow1244",
+      "Lineage": "Siouan"
+    },
+    {
+      "ID": "wappo",
+      "Name": "Wappo",
+      "Glottocode": "wapp1239",
+      "Lineage": "Yukian"
+    },
+    {
+      "ID": "nahuatl",
+      "Name": "Nahuatl",
+      "Glottocode": null,
+      "Lineage": "Uto-Aztecan, Nawan",
+      "comment": "the book does not say which Nahuatl"
+    },
+    {
+      "ID": "comanche",
+      "Name": "Comanche",
+      "Glottocode": "coma1245",
+      "Lineage": "Uto-Aztecan, Numic"
+    },
+    {
+      "ID": "tumpisa_shoshone",
+      "Name": "Tümpisa Shoshone",
+      "Glottocode": "pana1305",
+      "Lineage": "Uto-Aztecan, Numic"
+    },
+    {
+      "ID": "cupeno",
+      "Name": "Cupeño",
+      "Glottocode": "cupe1243",
+      "Lineage": "Uto-Aztecan, Takic"
+    },
+    {
+      "ID": "sonora_yaqui",
+      "Name": "Sonora Yaqui",
+      "Glottocode": "yaqu1251",
+      "Lineage": "Uto-Aztecan, Sonoran"
+    },
+    {
+      "ID": "tohono_oodham",
+      "Name": "Tohono O’odham",
+      "Glottocode": "toho1245",
+      "Lineage": "Uto-Aztecan, Sonoran"
+    },
+    {
+      "ID": "tarascan",
+      "Name": "Tarascan",
+      "Glottocode": "pure1242",
+      "Lineage": "N America, isolate"
+    },
+    {
+      "ID": "totonac",
+      "Name": "Totonac",
+      "Glottocode": null,
+      "Lineage": "N America, isolate",
+      "comment": "the book does not say which Totonac"
+    },
+    {
+      "ID": "miskitu",
+      "Name": "Miskitu",
+      "Glottocode": "misk1235",
+      "Lineage": "Misumalpan"
+    },
+    {
+      "ID": "mixtec",
+      "Name": "Mixtec",
+      "Glottocode": null,
+      "Lineage": "Oto-Manguean",
+      "comment": "the book does not say which Mixtec; note n cites Macaulay (1996), a grammar of Chalcatongo Mixtec"
+    },
+    {
+      "ID": "wari",
+      "Name": "Wari’",
+      "Glottocode": "wari1268",
+      "Lineage": "Chapacuran"
+    },
+    {
+      "ID": "yagua",
+      "Name": "Yagua",
+      "Glottocode": "yagu1244",
+      "Lineage": "Peba-Yaguan"
+    },
+    {
+      "ID": "bare",
+      "Name": "Bare",
+      "Glottocode": "bare1276",
+      "Lineage": "Arawakan, N (Central Upper Amazonian)"
+    },
+    {
+      "ID": "tariana",
+      "Name": "Tariana",
+      "Glottocode": "tari1256",
+      "Lineage": "Arawakan, N (E Nawiki)"
+    },
+    {
+      "ID": "warekena",
+      "Name": "Warekena",
+      "Glottocode": null,
+      "Lineage": "Arawakan, N (W Nawiki)",
+      "comment": "Glottolog has two Warekena varieties"
+    },
+    {
+      "ID": "paumari",
+      "Name": "Paumarí",
+      "Glottocode": "paum1247",
+      "Lineage": "Arawan"
+    },
+    {
+      "ID": "apalai",
+      "Name": "Apalai",
+      "Glottocode": "apal1257",
+      "Lineage": "Carib"
+    },
+    {
+      "ID": "hixkaryana",
+      "Name": "Hixkaryana",
+      "Glottocode": "hixk1239",
+      "Lineage": "Carib"
+    },
+    {
+      "ID": "bororo",
+      "Name": "Bororo",
+      "Glottocode": "boro1282",
+      "Lineage": "Bororoan (Macro-Ge?)"
+    },
+    {
+      "ID": "kayapo",
+      "Name": "Kayapó",
+      "Glottocode": "kaya1330",
+      "Lineage": "Jêan (Macro-Ge?)"
+    },
+    {
+      "ID": "piraha",
+      "Name": "Pirahã",
+      "Glottocode": "pira1253",
+      "Lineage": "Muran"
+    },
+    {
+      "ID": "mbya_guarani",
+      "Name": "Mbyá (Guaraní)",
+      "Glottocode": "mbya1239",
+      "Lineage": "Tupi-Guaraní (Guaraní)"
+    },
+    {
+      "ID": "urubu_kaapor",
+      "Name": "Urubu-Kaapor",
+      "Glottocode": "urub1250",
+      "Lineage": "Tupi-Guaraní (Tupi)"
+    },
+    {
+      "ID": "andoke",
+      "Name": "Andoke",
+      "Glottocode": "ando1256",
+      "Lineage": "S America, isolate"
+    },
+    {
+      "ID": "aymara",
+      "Name": "Aymara",
+      "Glottocode": null,
+      "Lineage": "S America, isolate",
+      "comment": "Glottolog has Central and Southern Aymara"
+    },
+    {
+      "ID": "mapuche",
+      "Name": "Mapuche",
+      "Glottocode": "mapu1245",
+      "Lineage": "S America, isolate"
+    },
+    {
+      "ID": "moseten",
+      "Name": "Mosetén",
+      "Glottocode": "mose1249",
+      "Lineage": "S America, isolate"
+    },
+    {
+      "ID": "urarina",
+      "Name": "Urarina",
+      "Glottocode": "urar1246",
+      "Lineage": "S America, isolate"
+    },
+    {
+      "ID": "kwaza",
+      "Name": "Kwaza",
+      "Glottocode": "kwaz1243",
+      "Lineage": "S America, isolate"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "region",
+      "Name": "region",
+      "Lean": "Region",
+      "Description": "The broad geographic region under which the table groups the language (p. 229)."
+    },
+    {
+      "ID": "cmpr_typ",
+      "Name": "CMPR TYP",
+      "Lean": "CmprTyp",
+      "Description": "The type of comparative construction the descriptions consulted indicate (pp. 229-230)."
+    },
+    {
+      "ID": "cmpr",
+      "Name": "CMPR",
+      "Lean": "Cmpr",
+      "Description": "The morphological expression of comparison on the adjective (pp. 230-231); a code in parentheses is described as optional."
+    },
+    {
+      "ID": "sprl",
+      "Name": "SPRL",
+      "Lean": "Sprl",
+      "Description": "The morphosyntactic expression of the relative superlative (pp. 232-233)."
+    },
+    {
+      "ID": "suppl",
+      "Name": "SUPPL",
+      "Lean": "Suppl",
+      "Description": "Whether there is evidence of suppletion in comparative or superlative formation (p. 233)."
+    }
+  ],
+  "CodeTable": [
+    {
+      "ID": "region_africa",
+      "Parameter_ID": "region",
+      "Name": "Africa",
+      "Lean": "africa",
+      "Description": "Africa"
+    },
+    {
+      "ID": "region_eurasia",
+      "Parameter_ID": "region",
+      "Name": "Eurasia",
+      "Lean": "eurasia",
+      "Description": "Eurasia"
+    },
+    {
+      "ID": "region_e_asia",
+      "Parameter_ID": "region",
+      "Name": "E Asia",
+      "Lean": "eAsia",
+      "Description": "East Asia"
+    },
+    {
+      "ID": "region_pacific",
+      "Parameter_ID": "region",
+      "Name": "Pacific",
+      "Lean": "pacific",
+      "Description": "the Pacific"
+    },
+    {
+      "ID": "region_americas",
+      "Parameter_ID": "region",
+      "Name": "Americas",
+      "Lean": "americas",
+      "Description": "the Americas"
+    },
+    {
+      "ID": "cmpr_typ_ex",
+      "Parameter_ID": "cmpr_typ",
+      "Name": "EX",
+      "Lean": "exceed",
+      "Description": "an 'exceed' comparative, with a verb meaning 'exceed' or 'surpass'"
+    },
+    {
+      "ID": "cmpr_typ_cn",
+      "Parameter_ID": "cmpr_typ",
+      "Name": "CN",
+      "Lean": "conjoined",
+      "Description": "a conjoined comparative, two conjoined clauses"
+    },
+    {
+      "ID": "cmpr_typ_st",
+      "Parameter_ID": "cmpr_typ",
+      "Name": "ST",
+      "Lean": "standard",
+      "Description": "a standard comparative, monoclausal with a marked standard of comparison"
+    },
+    {
+      "ID": "cmpr_typ_oth",
+      "Parameter_ID": "cmpr_typ",
+      "Name": "OTH",
+      "Lean": "other",
+      "Description": "none of the three main types"
+    },
+    {
+      "ID": "cmpr_m",
+      "Parameter_ID": "cmpr",
+      "Name": "M",
+      "Lean": "morphological",
+      "Description": "a synthetic comparative, an affix or process on the adjective, for at least some adjectives"
+    },
+    {
+      "ID": "cmpr_per",
+      "Parameter_ID": "cmpr",
+      "Name": "PER",
+      "Lean": "periphrastic",
+      "Description": "no regular synthetic comparative; an adverb or other free element marks comparison"
+    },
+    {
+      "ID": "cmpr_zero",
+      "Parameter_ID": "cmpr",
+      "Name": "ZERO",
+      "Lean": "zero",
+      "Description": "no marking of comparison on the adjective"
+    },
+    {
+      "ID": "sprl_m",
+      "Parameter_ID": "sprl",
+      "Name": "M",
+      "Lean": "morphological",
+      "Description": "a synthetic superlative"
+    },
+    {
+      "ID": "sprl_per",
+      "Parameter_ID": "sprl",
+      "Name": "PER",
+      "Lean": "periphrastic",
+      "Description": "a periphrastic superlative"
+    },
+    {
+      "ID": "sprl_abs",
+      "Parameter_ID": "sprl",
+      "Name": "ABS",
+      "Lean": "absolute",
+      "Description": "the source indicates only absolute superlatives"
+    },
+    {
+      "ID": "sprl_all",
+      "Parameter_ID": "sprl",
+      "Name": "ALL",
+      "Lean": "universal",
+      "Description": "the comparative construction with a universal quantifier as the standard"
+    },
+    {
+      "ID": "sprl_cpr",
+      "Parameter_ID": "sprl",
+      "Name": "CPR",
+      "Lean": "comparative",
+      "Description": "no clear morphosyntactic distinction between comparative and superlative"
+    },
+    {
+      "ID": "sprl_def",
+      "Parameter_ID": "sprl",
+      "Name": "DEF",
+      "Lean": "definite",
+      "Description": "the comparative (or positive) with a marker of definiteness"
+    },
+    {
+      "ID": "sprl_very",
+      "Parameter_ID": "sprl",
+      "Name": "VERY",
+      "Lean": "intensified",
+      "Description": "the comparative with an intensifier"
+    },
+    {
+      "ID": "sprl_pos",
+      "Parameter_ID": "sprl",
+      "Name": "POS",
+      "Lean": "positive",
+      "Description": "the positive, the superlative sense from context"
+    },
+    {
+      "ID": "sprl_none",
+      "Parameter_ID": "sprl",
+      "Name": "NONE",
+      "Lean": "none",
+      "Description": "no fixed superlative construction"
+    },
+    {
+      "ID": "sprl_ni",
+      "Parameter_ID": "sprl",
+      "Name": "n/i",
+      "Lean": "noInformation",
+      "Description": "no information available"
+    },
+    {
+      "ID": "sprl_oth",
+      "Parameter_ID": "sprl",
+      "Name": "OTH",
+      "Lean": "other",
+      "Description": "see the note at the entry"
+    },
+    {
+      "ID": "suppl_y",
+      "Parameter_ID": "suppl",
+      "Name": "Y",
+      "Lean": "yes",
+      "Description": "there is suppletion (YES in the legend)"
+    },
+    {
+      "ID": "suppl_no",
+      "Parameter_ID": "suppl",
+      "Name": "NO",
+      "Lean": "no",
+      "Description": "there is no suppletion"
+    },
+    {
+      "ID": "suppl_more",
+      "Parameter_ID": "suppl",
+      "Name": "MORE",
+      "Lean": "more",
+      "Description": "suppletion only in 'many/much - more'"
+    },
+    {
+      "ID": "suppl_v",
+      "Parameter_ID": "suppl",
+      "Name": "V",
+      "Lean": "verb",
+      "Description": "suppletive verbs may replace an 'exceed' comparative"
+    },
+    {
+      "ID": "suppl_ni",
+      "Parameter_ID": "suppl",
+      "Name": "n/i",
+      "Lean": "notIndicated",
+      "Description": "no suppletion is indicated in the available description"
+    },
+    {
+      "ID": "suppl_unclear",
+      "Parameter_ID": "suppl",
+      "Name": "?",
+      "Lean": "unclear",
+      "Description": "printed '?', a mark the legend does not define"
+    }
+  ],
+  "ValueTable": [
+    {
+      "Language_ID": "tamashek",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "tamashek",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "tamashek",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "tamashek",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "tamashek",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_def"
+    },
+    {
+      "Language_ID": "tamashek",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_v"
+    },
+    {
+      "Language_ID": "hausa",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "hausa",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "hausa",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "hausa",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "hausa",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "lele",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "lele",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "lele",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "lele",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "lele",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mina",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "mina",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "mina",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "mina",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "mina",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "mina",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "qimant",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "qimant",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "qimant",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "qimant",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "qimant",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "somali",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "somali",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "somali",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "somali",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "somali",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "arabic_std",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "arabic_std",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "arabic_std",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "arabic_std",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_def"
+    },
+    {
+      "Language_ID": "arabic_std",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "neo_aramaic",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "neo_aramaic",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "neo_aramaic",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "neo_aramaic",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_def"
+    },
+    {
+      "Language_ID": "neo_aramaic",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "hebrew",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "hebrew",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "hebrew",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "hebrew",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "hebrew",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_more"
+    },
+    {
+      "Language_ID": "khoekhoe_nama",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "khoekhoe_nama",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "khoekhoe_nama",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "khoekhoe_nama",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "khoekhoe_nama",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "khwe",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "khwe",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "khwe",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "khwe",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "khwe",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_pos",
+      "comment": "note a: There are also periphrastic expressions meaning very roughly ‘above all’ or ‘most’."
+    },
+    {
+      "Language_ID": "khwe",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "koromfe",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "koromfe",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "koromfe",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "koromfe",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "koromfe",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "ijo",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "ijo",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "ijo",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "ijo",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "ijo",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "kana",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "kana",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "kana",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "kana",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "kana",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "ogbronuagum",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "ogbronuagum",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "ogbronuagum",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "ogbronuagum",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "ogbronuagum",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "banda",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "banda",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "banda",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "banda",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "banda",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "banda",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "lingala",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "lingala",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "lingala",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "lingala",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "lingala",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "nandi",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "nandi",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "nandi",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "nandi",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "nandi",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "sotho_northern",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "sotho_northern",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "sotho_northern",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "sotho_northern",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "sotho_northern",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "zulu",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "zulu",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "zulu",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "zulu",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "zulu",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "zulu",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "lango",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "lango",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "lango",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "lango",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "lango",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mbay",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "mbay",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "mbay",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "mbay",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "mbay",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "koroboro_seno",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "koroboro_seno",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "koroboro_seno",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "koroboro_seno",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "koroboro_seno",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "koroboro_seno",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "kanuri",
+      "Parameter_ID": "region",
+      "Code_ID": "region_africa"
+    },
+    {
+      "Language_ID": "kanuri",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "kanuri",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "kanuri",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "Optional": true
+    },
+    {
+      "Language_ID": "kanuri",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "kanuri",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "irish",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "irish",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "irish",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "irish",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_cpr"
+    },
+    {
+      "Language_ID": "irish",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_y"
+    },
+    {
+      "Language_ID": "modern_greek",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "modern_greek",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "modern_greek",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "modern_greek",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_def"
+    },
+    {
+      "Language_ID": "modern_greek",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_y"
+    },
+    {
+      "Language_ID": "kashmiri",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "kashmiri",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "kashmiri",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "kashmiri",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "kashmiri",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni",
+      "comment": "note b: Kashmiri, like Hindi, has some borrowed adjectives (from Persian) that occur only in comparative/superlative meanings."
+    },
+    {
+      "Language_ID": "persian_farsi",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "persian_farsi",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "persian_farsi",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "persian_farsi",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "persian_farsi",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_y"
+    },
+    {
+      "Language_ID": "czech",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "czech",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "czech",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "czech",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "czech",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_y"
+    },
+    {
+      "Language_ID": "finnish",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "finnish",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "finnish",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "finnish",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "finnish",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_y"
+    },
+    {
+      "Language_ID": "udmurt",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "udmurt",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "udmurt",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "Optional": true
+    },
+    {
+      "Language_ID": "udmurt",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "udmurt",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "nenets",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "nenets",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "nenets",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "nenets",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "nenets",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_unclear"
+    },
+    {
+      "Language_ID": "ket",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "ket",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "ket",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "ket",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "ket",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "ket",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "even",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "even",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "even",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "even",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "even",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "evenki",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "evenki",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "evenki",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "evenki",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "evenki",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "evenki",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "khalkha",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "khalkha",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "khalkha",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "khalkha",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "khalkha",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "lezgian",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "lezgian",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "lezgian",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "lezgian",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "lezgian",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_more",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "hunzib",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "hunzib",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "hunzib",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "hunzib",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "hunzib",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "abkhaz",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "abkhaz",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "abkhaz",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "abkhaz",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "abkhaz",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "bashkir",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "bashkir",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "bashkir",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "Optional": true
+    },
+    {
+      "Language_ID": "bashkir",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "bashkir",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "khakas",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "khakas",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "khakas",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "khakas",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "khakas",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "tyvan",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "tyvan",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "tyvan",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "tyvan",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "tyvan",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "itelmen",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "itelmen",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "itelmen",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "itelmen",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "itelmen",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "chukchi",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "chukchi",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "chukchi",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "chukchi",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "chukchi",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "malayalam",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "malayalam",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "malayalam",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero",
+      "comment": "note c: The lack of morphological marking for comparative and superlative is reportedly characteristic of Dravidian (Caldwell 1875, 211–212; Steever 1998b, 19; Krishnamurti 2003, 29), but Elfenbein (1998, 398) reports the frequent, though optional, use of a comparative suffix (borrowed from Persian via Balochi) in Brahui, a North Dravidian language geographically remote from the rest of the family."
+    },
+    {
+      "Language_ID": "malayalam",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_very"
+    },
+    {
+      "Language_ID": "malayalam",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "malayalam",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "ainu",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "ainu",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "ainu",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "ainu",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "ainu",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "ainu",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "nivkh",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "nivkh",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "nivkh",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "Optional": true
+    },
+    {
+      "Language_ID": "nivkh",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_very",
+      "Questionable": true,
+      "comment": "note d: Gruzdeva (1998, 37) notes reduplication as a means for forming superlatives of adverbs. Crosslinguistically, this is a frequent strategy for forming absolute superlatives, or other intensified degrees, but the one example given by Gruzdeva is glossed as an apparent relative superlative: ‘most quickly [of all]’."
+    },
+    {
+      "Language_ID": "nivkh",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "burushaski",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "burushaski",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "burushaski",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "burushaski",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "burushaski",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "yukagir",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "yukagir",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "yukagir",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "yukagir",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "yukagir",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "basque",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "basque",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "basque",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "basque",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "basque",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_y"
+    },
+    {
+      "Language_ID": "asl",
+      "Parameter_ID": "region",
+      "Code_ID": "region_eurasia"
+    },
+    {
+      "Language_ID": "asl",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "asl",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "asl",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "asl",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "asl",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "cantonese",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "cantonese",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "cantonese",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "cantonese",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "cantonese",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "kunming",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "kunming",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "kunming",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "kunming",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "Optional": true
+    },
+    {
+      "Language_ID": "kunming",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m",
+      "Optional": true
+    },
+    {
+      "Language_ID": "kunming",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mandarin",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "mandarin",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "mandarin",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "mandarin",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "mandarin",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "dzongkha",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "dzongkha",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "dzongkha",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "dzongkha",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "dzongkha",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "kham",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "kham",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "kham",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "kham",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "kham",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "limbu",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "limbu",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "limbu",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "limbu",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "limbu",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "newar_dolokha",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "newar_dolokha",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "newar_dolokha",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "newar_dolokha",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "newar_dolokha",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "bisu",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "bisu",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "bisu",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "bisu",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "bisu",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "mongsen_ao",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "mongsen_ao",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "mongsen_ao",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "mongsen_ao",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "comment": "note e: The element that forms comparatives in this language is a nominalizing affix that also forms nominalized relative clauses; thus, a single form could be rendered as ‘(the) nearer (one)’ or ‘(the one) that is near’ (Coupe 2007, 61), making it less clear that it is correct to see the affix involved as representing a comparative structure per se."
+    },
+    {
+      "Language_ID": "mongsen_ao",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_very"
+    },
+    {
+      "Language_ID": "mongsen_ao",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mizo",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "mizo",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "mizo",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "mizo",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "mizo",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "dumi",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "dumi",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "dumi",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "dumi",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "dumi",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "lao",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "lao",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "lao",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "lao",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "lao",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "lao",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "lao",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "thai",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "thai",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "thai",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "thai",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "thai",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "japanese",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "japanese",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "japanese",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "japanese",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "japanese",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "korean",
+      "Parameter_ID": "region",
+      "Code_ID": "region_e_asia"
+    },
+    {
+      "Language_ID": "korean",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "korean",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "korean",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "korean",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "mayali",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "mayali",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "mayali",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "mayali",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "mayali",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_cpr"
+    },
+    {
+      "Language_ID": "mayali",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "nunggubuyu",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "nunggubuyu",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "nunggubuyu",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "nunggubuyu",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "nunggubuyu",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "arrernte",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "arrernte",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "arrernte",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "arrernte",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "arrernte",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "dyirbal",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "dyirbal",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "dyirbal",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "dyirbal",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "dyirbal",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "gumbaynggir",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "gumbaynggir",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "gumbaynggir",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "gumbaynggir",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "comment": "note f: Both Smythe (1948) and Eades (1979) give a standard comparative construction alongside the conjoined comparative, but only the former gives a comparative suffix."
+    },
+    {
+      "Language_ID": "gumbaynggir",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "gumbaynggir",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "warlpiri",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "warlpiri",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "warlpiri",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "warlpiri",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "warlpiri",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "yindjibarndi",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "yindjibarndi",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "yindjibarndi",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "yindjibarndi",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "yindjibarndi",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "yindjibarndi",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "kayardild",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "kayardild",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "kayardild",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "kayardild",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "kayardild",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "kayardild",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "jingulu",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "jingulu",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "jingulu",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "jingulu",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "jingulu",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "amis",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "amis",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "amis",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "amis",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "amis",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "amis",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "paiwan",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "paiwan",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "paiwan",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "paiwan",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "paiwan",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "puyuma",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "puyuma",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "puyuma",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "puyuma",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "puyuma",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "rukai",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "rukai",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "rukai",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "rukai",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "rukai",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "seediq",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "seediq",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "seediq",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "seediq",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_cpr"
+    },
+    {
+      "Language_ID": "seediq",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "rapanui",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "rapanui",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "rapanui",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "rapanui",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "rapanui",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "rapanui",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "maori",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "maori",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "maori",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "maori",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_very"
+    },
+    {
+      "Language_ID": "maori",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "muna",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "muna",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "muna",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "muna",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "muna",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "pendau",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "pendau",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "pendau",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "pendau",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "pendau",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "yapese",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "yapese",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "yapese",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "yapese",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "yapese",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "palauan",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "palauan",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "palauan",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "palauan",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "palauan",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "fijian_boumaa",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "fijian_boumaa",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "fijian_boumaa",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "fijian_boumaa",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "fijian_boumaa",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "fijian_boumaa",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "tuvaluan",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "tuvaluan",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "tuvaluan",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "tuvaluan",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "tuvaluan",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "tuvaluan",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_pos"
+    },
+    {
+      "Language_ID": "tuvaluan",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "manam",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "manam",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "manam",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "manam",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "manam",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "sinaugoro",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "sinaugoro",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "sinaugoro",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "sinaugoro",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "sinaugoro",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "amele",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "amele",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "amele",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "amele",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "amele",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "amele",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "klon",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "klon",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "klon",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "klon",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_cpr"
+    },
+    {
+      "Language_ID": "klon",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "teiwa",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "teiwa",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "teiwa",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "teiwa",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_pos",
+      "comment": "note g: In addition to the positive adjective with an existential verb, Klamer (2010) gives an apparently idiomatic serial verb construction with the verbs glossed ‘not know’ and ‘come’. The comparative is formed with an intensifier meaning ‘truly’, forming a conjoined construction when the standard is explicitly mentioned."
+    },
+    {
+      "Language_ID": "teiwa",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mian",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "mian",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "mian",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "mian",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "mian",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "ekagi",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "ekagi",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "ekagi",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "ekagi",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all",
+      "comment": "note h: The Ekagi superlative is not exactly parallel to the conjoined comparative, but close enough for the purposes of this table."
+    },
+    {
+      "Language_ID": "ekagi",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "koiari",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "koiari",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "koiari",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "koiari",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "koiari",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "koiari",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mauwake",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "mauwake",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "mauwake",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "mauwake",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "mauwake",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "mauwake",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "arapesh",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "arapesh",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "arapesh",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "arapesh",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "arapesh",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "skou",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "skou",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "skou",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "skou",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "skou",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mundari",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "mundari",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "mundari",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "mundari",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "mundari",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "santali",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "santali",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "santali",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "santali",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "santali",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "remo",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "remo",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "remo",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "remo",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "remo",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "semalai",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "semalai",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "semalai",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "semalai",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "semalai",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "semalai",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "palaung",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "palaung",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "palaung",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "palaung",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "palaung",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "vietnamese",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "vietnamese",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "vietnamese",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "vietnamese",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_oth",
+      "comment": "note i: Property predicates are verbal; the superlative meaning is rendered with aspectual morphology."
+    },
+    {
+      "Language_ID": "vietnamese",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "khmer",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "khmer",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "khmer",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "khmer",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "khmer",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "sapuan",
+      "Parameter_ID": "region",
+      "Code_ID": "region_pacific"
+    },
+    {
+      "Language_ID": "sapuan",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "sapuan",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "sapuan",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "sapuan",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "aleut",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "aleut",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "aleut",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "aleut",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "aleut",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "west_greenlandic",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "west_greenlandic",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "west_greenlandic",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "west_greenlandic",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_cpr"
+    },
+    {
+      "Language_ID": "west_greenlandic",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "straits_salish",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "straits_salish",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "straits_salish",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "straits_salish",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "straits_salish",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "navajo",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "navajo",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "navajo",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "navajo",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "navajo",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "nishnaabemwin",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "nishnaabemwin",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "nishnaabemwin",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "nishnaabemwin",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "nishnaabemwin",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "cherokee",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "cherokee",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "cherokee",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "cherokee",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "cherokee",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "kiowa",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "kiowa",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "kiowa",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "kiowa",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_cpr"
+    },
+    {
+      "Language_ID": "kiowa",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "kiowa",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "chimariko",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "chimariko",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "chimariko",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "chimariko",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_m"
+    },
+    {
+      "Language_ID": "chimariko",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni",
+      "comment": "note j: The available information is sketchy and includes no discussion of the syntax of comparatives, such as the expression of the standard. The language is of particular relevance here, as the superlative is derived from the comparative (Jany 2009, 97)."
+    },
+    {
+      "Language_ID": "kiliwa",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "kiliwa",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "kiliwa",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "comment": "note k: See footnote 14 in chapter 1."
+    },
+    {
+      "Language_ID": "kiliwa",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "kiliwa",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "choctaw",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "choctaw",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "choctaw",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "choctaw",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "choctaw",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "crow",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "crow",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_oth",
+      "comment": "note l: Property-denoting predicates are verbal; comparison is marked via aspectual morphology."
+    },
+    {
+      "Language_ID": "crow",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "crow",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "crow",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "wappo",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "wappo",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "wappo",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "wappo",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "wappo",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "nahuatl",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "nahuatl",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "nahuatl",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "nahuatl",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "nahuatl",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "comanche",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "comanche",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "comanche",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "comanche",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "comanche",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "tumpisa_shoshone",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "tumpisa_shoshone",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "tumpisa_shoshone",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "tumpisa_shoshone",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "tumpisa_shoshone",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "cupeno",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "cupeno",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "cupeno",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "cupeno",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "cupeno",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all",
+      "Optional": true
+    },
+    {
+      "Language_ID": "cupeno",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni",
+      "comment": "note m: Hill (2005) notes that borrowing of the comparative adverb and particle from Spanish has rendered an older comparative syntax somewhat trickier to discern."
+    },
+    {
+      "Language_ID": "sonora_yaqui",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "sonora_yaqui",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "sonora_yaqui",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "sonora_yaqui",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "sonora_yaqui",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "tohono_oodham",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "tohono_oodham",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "tohono_oodham",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "tohono_oodham",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_very"
+    },
+    {
+      "Language_ID": "tohono_oodham",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "tarascan",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "tarascan",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_oth"
+    },
+    {
+      "Language_ID": "tarascan",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "tarascan",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "tarascan",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "totonac",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "totonac",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "totonac",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "totonac",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_cpr"
+    },
+    {
+      "Language_ID": "totonac",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "totonac",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "miskitu",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "miskitu",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "miskitu",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "miskitu",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_abs"
+    },
+    {
+      "Language_ID": "miskitu",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mixtec",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "mixtec",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "mixtec",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "mixtec",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "mixtec",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_def",
+      "comment": "note n: The superlative is formed from the comparative by the addition of a nominalizing prefix, “yielding, in effect, ‘the one that is more X’, hence ‘the X-est’ ” (Macaulay 1996, 164)."
+    },
+    {
+      "Language_ID": "mixtec",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "wari",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "wari",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "wari",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "wari",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "wari",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "yagua",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "yagua",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "yagua",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "yagua",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "yagua",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "yagua",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "bare",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "bare",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "bare",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "bare",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "bare",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "tariana",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "tariana",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "tariana",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "tariana",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "tariana",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "tariana",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "warekena",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "warekena",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "warekena",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "warekena",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "warekena",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "paumari",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "paumari",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "paumari",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero",
+      "comment": "note o: The Portuguese loanword mais ‘more’ can be used in expressing comparison."
+    },
+    {
+      "Language_ID": "paumari",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "paumari",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "apalai",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "apalai",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "apalai",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "apalai",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "apalai",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "apalai",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "hixkaryana",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "hixkaryana",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "hixkaryana",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_oth",
+      "comment": "note p: One comparative strategy involves a relational element marking the standard, glossed as ‘bigger than’ and related to the word meaning ‘above’; in the examples given, the phrase containing this element and the standard appears to act as the main predicate."
+    },
+    {
+      "Language_ID": "hixkaryana",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "hixkaryana",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "hixkaryana",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "bororo",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "bororo",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "bororo",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "bororo",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "bororo",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "kayapo",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "kayapo",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "kayapo",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "kayapo",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_abs"
+    },
+    {
+      "Language_ID": "kayapo",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "piraha",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "piraha",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "piraha",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "piraha",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "piraha",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mbya_guarani",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "mbya_guarani",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "mbya_guarani",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_m"
+    },
+    {
+      "Language_ID": "mbya_guarani",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "mbya_guarani",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_no"
+    },
+    {
+      "Language_ID": "urubu_kaapor",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "urubu_kaapor",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "urubu_kaapor",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "urubu_kaapor",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "urubu_kaapor",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_ni"
+    },
+    {
+      "Language_ID": "urubu_kaapor",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "andoke",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "andoke",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "andoke",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "andoke",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_abs"
+    },
+    {
+      "Language_ID": "andoke",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per",
+      "Optional": true
+    },
+    {
+      "Language_ID": "andoke",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "aymara",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "aymara",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "aymara",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "aymara",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "aymara",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_per"
+    },
+    {
+      "Language_ID": "aymara",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "aymara",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "mapuche",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "mapuche",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_st"
+    },
+    {
+      "Language_ID": "mapuche",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_per"
+    },
+    {
+      "Language_ID": "mapuche",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "moseten",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "moseten",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn"
+    },
+    {
+      "Language_ID": "moseten",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "moseten",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_abs"
+    },
+    {
+      "Language_ID": "moseten",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "urarina",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "urarina",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_ex"
+    },
+    {
+      "Language_ID": "urarina",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "urarina",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_all"
+    },
+    {
+      "Language_ID": "urarina",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    },
+    {
+      "Language_ID": "kwaza",
+      "Parameter_ID": "region",
+      "Code_ID": "region_americas"
+    },
+    {
+      "Language_ID": "kwaza",
+      "Parameter_ID": "cmpr_typ",
+      "Code_ID": "cmpr_typ_cn",
+      "Questionable": true
+    },
+    {
+      "Language_ID": "kwaza",
+      "Parameter_ID": "cmpr",
+      "Code_ID": "cmpr_zero"
+    },
+    {
+      "Language_ID": "kwaza",
+      "Parameter_ID": "sprl",
+      "Code_ID": "sprl_none"
+    },
+    {
+      "Language_ID": "kwaza",
+      "Parameter_ID": "suppl",
+      "Code_ID": "suppl_ni"
+    }
+  ]
+}
