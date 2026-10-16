@@ -10,20 +10,27 @@ public import Linglib.Logic.Temporal.Basic
 /-!
 # T × W tense-modal logic: the `TW` calculus and soundness
 
-The Hilbert calculus `TW` of [von-kutschera-1997] and its soundness for T × W frames
-([thomason-1984]): every axiom is valid and every rule preserves validity. The distinctive rule is
-Gabbay's irreflexivity rule `Provable.ir`, whose soundness rests on a coincidence lemma — a formula's
-truth depends only on the valuation of the atoms it mentions.
+The Hilbert calculus `TW` is sound for T × W frames: every axiom is valid and every rule
+preserves validity. The distinctive rule is Gabbay's irreflexivity rule `Provable.ir`, whose
+soundness rests on a coincidence lemma, that a formula's truth depends only on the valuation of
+the atoms it mentions.
 
 ## Main definitions
-* `OForm.imp`, `OForm.or` — derived connectives.
-* `OForm.mentions` — the atoms occurring in a formula.
-* `Valid` — truth at every point of every T × W model.
-* `Provable` — the `TW` Hilbert calculus.
+
+* `OForm.imp`, `OForm.or`: derived connectives.
+* `OForm.mentions`: the atoms occurring in a formula.
+* `Valid`: truth at every point of every T × W model.
+* `Provable`: the `TW` Hilbert calculus.
 
 ## Main results
-* `TWFrame.sat_iff_of_agree` — the coincidence lemma.
-* `soundness` — `Provable a → Valid a`.
+
+* `TWFrame.sat_iff_of_agree`: the coincidence lemma.
+* `soundness`: `Provable a → Valid a`.
+
+## References
+
+* [von-kutschera-1997]
+* [thomason-1984]
 -/
 
 @[expose] public section
@@ -56,12 +63,12 @@ namespace TWFrame
 
 variable {T : Type*} {World : Type*} [LinearOrder T]
 
-@[simp] theorem sat_imp (F : TWFrame T World) (V : Atom → T → World → Prop)
+@[simp] theorem sat_imp (F : TWFrame World T) (V : Atom → T → World → Prop)
     (a b : OForm Atom) (t : T) (w : World) :
     F.sat V (a.imp b) t w ↔ (F.sat V a t w → F.sat V b t w) := by
   simp only [OForm.imp, sat_neg, sat_and, not_and, not_not]
 
-@[simp] theorem sat_or (F : TWFrame T World) (V : Atom → T → World → Prop)
+@[simp] theorem sat_or (F : TWFrame World T) (V : Atom → T → World → Prop)
     (a b : OForm Atom) (t : T) (w : World) :
     F.sat V (a.or b) t w ↔ (F.sat V a t w ∨ F.sat V b t w) := by
   simp only [OForm.or, sat_neg, sat_and, not_and_or, not_not]
@@ -70,7 +77,7 @@ variable {T : Type*} {World : Type*} [LinearOrder T]
 
 A formula's truth at a point depends only on the valuation of the atoms it mentions. -/
 
-theorem sat_iff_of_agree (F : TWFrame T World) (V₁ V₂ : Atom → T → World → Prop) :
+theorem sat_iff_of_agree (F : TWFrame World T) (V₁ V₂ : Atom → T → World → Prop) :
     ∀ (a : OForm Atom), (∀ p, a.mentions p → ∀ t w, V₁ p t w ↔ V₂ p t w) →
       ∀ t w, (F.sat V₁ a t w ↔ F.sat V₂ a t w)
   | .atom p,  h, t, w => h p rfl t w
@@ -100,15 +107,15 @@ end TWFrame
 /-- A formula is **valid** when it is true at every point of every T × W model. -/
 def Valid (a : OForm Atom) : Prop :=
   ∀ {T : Type u} {World : Type v} [LinearOrder T]
-    (F : TWFrame T World) (V : Atom → T → World → Prop) (t : T) (w : World),
+    (F : TWFrame World T) (V : Atom → T → World → Prop) (t : T) (w : World),
     F.sat V a t w
 
 /-! ### The `TW` calculus -/
 
 open OForm in
-/-- The Hilbert calculus `TW` ([von-kutschera-1997]): propositional axioms, the tense axioms
-`A1`–`A3`, the modal axioms `A4`–`A5`, the interaction axioms `A6`–`A8`, modus ponens, necessitation
-for `H`/`N`/`□`, and Gabbay's irreflexivity rule. -/
+/-- The Hilbert calculus `TW` of [von-kutschera-1997] has propositional axioms, the tense axioms
+`A1`–`A3`, the modal axioms `A4`–`A5`, the interaction axioms `A6`–`A8`, modus ponens,
+necessitation for `H`, `N` and `□`, and Gabbay's irreflexivity rule. -/
 inductive Provable : OForm Atom → Prop where
   /-- Propositional `K` combinator. -/
   | impK (a b : OForm Atom) : Provable (a.imp (b.imp a))
@@ -163,7 +170,7 @@ inductive Provable : OForm Atom → Prop where
   | necN {a : OForm Atom} : Provable a → Provable a.N
   /-- Necessitation for `□`. -/
   | necBox {a : OForm Atom} : Provable a → Provable a.box
-  /-- Gabbay's irreflexivity rule: from `□(¬q ∧ Gq) ⊃ A` with `q` not in `A`, infer `A`. -/
+  /-- Gabbay's irreflexivity rule infers `A` from `□(¬q ∧ Gq) ⊃ A` when `q` is not in `A`. -/
   | ir {a : OForm Atom} (q : Atom) :
       Provable ((OForm.and (.neg (.atom q)) (.G (.atom q))).box.imp a) →
       ¬ a.mentions q → Provable a
@@ -173,7 +180,7 @@ inductive Provable : OForm Atom → Prop where
 open TWFrame
 open ModalLogic (box_four)
 
-/-- **Soundness of `TW`** ([von-kutschera-1997]): every `TW`-provable formula is T × W-valid. -/
+/-- Every `TW`-provable formula is T × W-valid, the soundness of `TW` ([von-kutschera-1997]). -/
 theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
   intro T World _ F V t w
   induction h generalizing V t w with
@@ -210,7 +217,7 @@ theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
   | a6 _ =>
       simp only [sat_imp, sat_N, sat_Pst]
       rintro ⟨t', ht', hN⟩ w' hw'
-      exact ⟨t', ht', hN w' (F.sim_backward w w' ht'.le hw')⟩
+      exact ⟨t', ht', hN w' (F.antitone_sim ht'.le hw')⟩
   | a8a _ | a8b _ =>
       simp only [sat_imp, sat_box, sat_Pst, sat_Fut]
       rintro ⟨t', ht', hbox⟩ w'; exact ⟨t', ht', hbox w'⟩

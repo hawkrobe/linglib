@@ -4,6 +4,7 @@ public import Mathlib.Data.Set.Prod
 public import Mathlib.Order.Interval.Set.Disjoint
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Linglib.Semantics.Reference.Context.Index
+public import Linglib.Semantics.Tense.Defs
 public import Linglib.Logic.Temporal.Basic
 
 /-!
@@ -11,29 +12,29 @@ public import Linglib.Logic.Temporal.Basic
 
 The historical alternatives of a world at a time are the worlds that perfectly match it in
 matters of particular fact up to that time, Lewis's notion, which Cariani and Santorio take as
-the modal base of *will*. Restricted to times from, up to, or strictly after the index's own,
-the alternatives give Condoravdi's historical base and Klecha's doxastic and circumstantial
-bases. A relation has the historical properties when agreement up to each time is an
-equivalence and the alternatives shrink as time advances, and it is then a T × W frame whose
-historical necessity is truth throughout the alternatives.
+the modal base of *will*. A `HistoricalAlternatives` relation sends a world–time index to a set
+of worlds; restricted to times from, up to, or strictly after the index's own, it gives
+Condoravdi's historical base and Klecha's doxastic and circumstantial bases. A T × W frame
+determines its alternatives, the classes of its historical equivalence.
 
 ## Main definitions
 
 * `HistoricalAlternatives`, `metaphysicalBase`: the relation and its curried modal base.
-* `historicalBase`, `actualHistoryBase`, `futureHistoryBase`: its temporal slices.
-* `HistoricalProperties`, `ofDatedFacts`: the standard properties, and agreement on dated facts.
+* `orientedBase`: the alternatives at the times a tense cell admits, with `historicalBase`,
+  `actualHistoryBase` and `futureHistoryBase` its nonpast, nonfuture and future instances.
+* `Temporal.TWFrame.alternatives`: the historical alternatives of a T × W frame.
 * `settled`, `diverse`: settledness over a common ground, and Condoravdi's diversity condition.
-* `toTWFrame`: a relation with the historical properties as a `Temporal.TWFrame`.
 
 ## Main results
 
 * `time_le_of_mem_actualHistoryBase`: Abusch's Upper Limit Constraint for the doxastic base.
-* `actualHistoryBase_union_futureHistoryBase`: the actual and future bases partition the
-  alternatives.
-* `HistoricalProperties.history_eq_of_mem`: the alternatives of an alternative are the same.
-* `historicalProperties_ofDatedFacts`: agreement on dated facts has the historical properties.
-* `settled_not_diverse`, `settled_iff_determined`: a settled property is not diverse, and is
-  historically determined in the frame.
+* `compare_mem_of_mem_orientedBase`: an oriented base admits only its cell's orientations.
+* `actualHistoryBase_union_futureHistoryBase`: the actual and future bases together hold the
+  alternatives at all times.
+* `Temporal.TWFrame.alternatives_eq_of_mem`: the alternatives of an alternative are the same.
+* `settled_not_diverse`: a settled property is not diverse.
+* `settled_alternatives_iff`: over a frame, settledness is historical necessity of the property
+  or its negation.
 
 ## References
 
@@ -50,7 +51,9 @@ historical necessity is truth throughout the alternatives.
 
 @[expose] public section
 
-open Reference Set
+open Reference Set Semantics
+open scoped SetRel
+open scoped ModalLogic
 
 /-- The historical alternatives of a world–time index are the worlds that agree with its world
 up to its time. -/
@@ -65,94 +68,120 @@ and time the worlds that share the world's history up to that time. -/
 abbrev metaphysicalBase (history : HistoricalAlternatives W T) : W → T → Set W :=
   Function.curry history
 
-/-! ### The temporal slices -/
+/-! ### Bases oriented by a tense cell
 
-section Slices
+A modal over historical alternatives evaluates its prejacent at the alternatives of its index
+and at times oriented to the index's time by a tense cell, Condoravdi's temporal orientation
+of a modal relative to its perspective. The historical base is oriented to the nonpast, and
+Klecha's doxastic and circumstantial bases to the nonfuture and the future. -/
 
-variable [Preorder T] (history : HistoricalAlternatives W T) (s : Index W T)
+section Oriented
 
-/-- The historical modal base pairs the alternatives of an index with the times at or after its
-own, the past fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
-def historicalBase : Set (Index W T) := history s ×ˢ Ici s.time
+variable (history : HistoricalAlternatives W T) (s : Index W T) {s' : Index W T}
+  {C : Finset Ordering}
 
-/-- The actual-history base, [klecha-2016]'s doxastic base, pairs the alternatives with the
-times at or before the index's own. -/
-def actualHistoryBase : Set (Index W T) := history s ×ˢ Iic s.time
+/-- The base of the alternatives oriented by a tense cell `C` pairs the alternatives of an index
+with the times standing to the index's time in a position of `C`. -/
+def orientedBase [LT T] (C : Finset Ordering) : Set (Index W T) :=
+  history s ×ˢ {t | s.time ~[Tense.toSetRel C] t}
 
-/-- The future-history base, [klecha-2016]'s circumstantial base, pairs the alternatives with
-the times strictly after the index's own. -/
-def futureHistoryBase : Set (Index W T) := history s ×ˢ Ioi s.time
+/-- The historical modal base, the alternatives at times at or after the index's own, the past
+fixed and the future branching ([thomason-1984], [condoravdi-2002]). -/
+abbrev historicalBase [LT T] : Set (Index W T) := orientedBase history s Tense.nonpast
 
-variable {history s} {s' : Index W T}
+/-- The actual-history base, [klecha-2016]'s doxastic base, the alternatives at times at or
+before the index's own. -/
+abbrev actualHistoryBase [LT T] : Set (Index W T) := orientedBase history s ⟦Tense.future⟧ᶜ
 
-theorem mem_historicalBase :
-    s' ∈ historicalBase history s ↔ s'.world ∈ history s ∧ s.time ≤ s'.time :=
+/-- The future-history base, [klecha-2016]'s circumstantial base, the alternatives at times
+strictly after the index's own. -/
+abbrev futureHistoryBase [LT T] : Set (Index W T) := orientedBase history s ⟦Tense.future⟧
+
+variable {history s}
+
+theorem mem_orientedBase [LT T] :
+    s' ∈ orientedBase history s C ↔ s'.world ∈ history s ∧ s.time ~[Tense.toSetRel C] s'.time :=
   Iff.rfl
 
-theorem mem_actualHistoryBase :
-    s' ∈ actualHistoryBase history s ↔ s'.world ∈ history s ∧ s'.time ≤ s.time :=
-  Iff.rfl
+/-- On linear time the time of a situation in an oriented base stands to the index's time in a
+position of the cell. -/
+theorem compare_mem_of_mem_orientedBase [LinearOrder T] (h : s' ∈ orientedBase history s C) :
+    compare s'.time s.time ∈ C :=
+  Tense.mem_toSetRel_iff_compare.1 h.2
 
-theorem mem_futureHistoryBase :
-    s' ∈ futureHistoryBase history s ↔ s'.world ∈ history s ∧ s.time < s'.time :=
-  Iff.rfl
+theorem mem_historicalBase [PartialOrder T] :
+    s' ∈ historicalBase history s ↔ s'.world ∈ history s ∧ s.time ≤ s'.time := by
+  rw [mem_orientedBase, Tense.nonpast_eq_present_sup_future, Tense.toSetRel_sup, Set.mem_union,
+    Tense.mem_toSetRel_present, Tense.mem_toSetRel_future, le_iff_eq_or_lt, eq_comm]
+
+theorem mem_actualHistoryBase [PartialOrder T] :
+    s' ∈ actualHistoryBase history s ↔ s'.world ∈ history s ∧ s'.time ≤ s.time := by
+  rw [mem_orientedBase, ← Tense.past_sup_present, Tense.toSetRel_sup, Set.mem_union,
+    Tense.mem_toSetRel_past, Tense.mem_toSetRel_present, le_iff_lt_or_eq]
+
+theorem mem_futureHistoryBase [Preorder T] :
+    s' ∈ futureHistoryBase history s ↔ s'.world ∈ history s ∧ s.time < s'.time := by
+  rw [mem_orientedBase, Tense.mem_toSetRel_future]
 
 /-- A situation in the actual-history base is no later than the index, the Upper Limit
 Constraint of [abusch-1997] as [klecha-2016] derives it from the doxastic base. -/
-theorem time_le_of_mem_actualHistoryBase (h : s' ∈ actualHistoryBase history s) :
+theorem time_le_of_mem_actualHistoryBase [PartialOrder T] (h : s' ∈ actualHistoryBase history s) :
     s'.time ≤ s.time :=
-  h.2
+  (mem_actualHistoryBase.1 h).2
 
-/-- A situation in the future-history base is later than the index. -/
-theorem time_lt_of_mem_futureHistoryBase (h : s' ∈ futureHistoryBase history s) :
+theorem time_lt_of_mem_futureHistoryBase [Preorder T] (h : s' ∈ futureHistoryBase history s) :
     s.time < s'.time :=
-  h.2
+  (mem_futureHistoryBase.1 h).2
 
-theorem futureHistoryBase_subset_historicalBase :
-    futureHistoryBase history s ⊆ historicalBase history s :=
-  prod_mono le_rfl Ioi_subset_Ici_self
+/-- Bases oriented by the join of two cells are the union of the bases. -/
+theorem orientedBase_sup [LT T] (C D : Finset Ordering) :
+    orientedBase history s (C ⊔ D) = orientedBase history s C ∪ orientedBase history s D := by
+  ext
+  simp only [mem_orientedBase, Tense.toSetRel_sup, Set.mem_union, and_or_left]
 
-theorem disjoint_actualHistoryBase_futureHistoryBase :
-    Disjoint (actualHistoryBase history s) (futureHistoryBase history s) :=
-  disjoint_prod.2 (Or.inr (Iic_disjoint_Ioi le_rfl))
+/-- On linear time the actual and future bases together hold the alternatives at all times. -/
+theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T] :
+    actualHistoryBase history s ∪ futureHistoryBase history s = history s ×ˢ Set.univ := by
+  rw [← orientedBase_sup, compl_sup_eq_top]
+  ext
+  simp [mem_orientedBase]
 
-end Slices
+end Oriented
 
-/-- The actual and future bases together are the alternatives at every time. -/
-theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T]
-    (history : HistoricalAlternatives W T) (s : Index W T) :
-    actualHistoryBase history s ∪ futureHistoryBase history s = history s ×ˢ univ := by
-  rw [actualHistoryBase, futureHistoryBase, ← prod_union, Iic_union_Ioi]
+/-! ### The alternatives of a T × W frame
 
-/-! ### Historical equivalence -/
+The historical alternatives of a T × W frame are its classes of historical equivalence, so a
+world is an alternative to itself and the alternatives of an alternative are the same. -/
 
-/-- A historical-alternatives relation has the standard properties of [condoravdi-2002] when
-agreement up to each time is an equivalence and the alternatives shrink as time advances. -/
-structure HistoricalProperties [Preorder T] (history : HistoricalAlternatives W T) : Prop where
-  /-- Agreement up to a time is an equivalence relation. -/
-  equivalence (t : T) : Equivalence fun w w' ↦ w' ∈ history (w, t)
-  /-- The alternatives shrink as time advances. -/
-  antitone (w : W) : Antitone (metaphysicalBase history w)
+end HistoricalAlternatives
 
-/-- Agreement up to a time partitions the worlds, so an alternative of a world has the same
+namespace Temporal.TWFrame
+
+open HistoricalAlternatives
+
+variable {W T : Type*} [Preorder T] (F : TWFrame W T) {w v : W} {t : T}
+
+/-- The historical alternatives of a frame, at an index the worlds historically equivalent to
+its world at its time. -/
+def alternatives : HistoricalAlternatives W T := fun i ↦ {v | F.sim i.time i.world v}
+
+variable {F}
+
+@[simp] theorem mem_alternatives : v ∈ F.alternatives (w, t) ↔ F.sim t w v := Iff.rfl
+
+theorem mem_alternatives_self : w ∈ F.alternatives (w, t) := (F.sim t).iseqv.refl w
+
+/-- Historical equivalence partitions the worlds, so an alternative of a world has the same
 alternatives as the world. -/
-theorem HistoricalProperties.history_eq_of_mem [Preorder T] {history : HistoricalAlternatives W T}
-    (hp : HistoricalProperties history) {w w' : W} {t : T} (h : w' ∈ history (w, t)) :
-    history (w', t) = history (w, t) :=
-  Set.ext fun _ ↦ ⟨(hp.equivalence t).trans h, (hp.equivalence t).trans ((hp.equivalence t).symm h)⟩
+theorem alternatives_eq_of_mem (h : v ∈ F.alternatives (w, t)) :
+    F.alternatives (v, t) = F.alternatives (w, t) :=
+  Set.ext fun _ ↦ ⟨(F.sim t).iseqv.trans h, (F.sim t).iseqv.trans ((F.sim t).iseqv.symm h)⟩
 
-/-- Over a stock of dated facts, worlds are historical alternatives up to a time when they agree
-on every fact dated at or before it, the world–time model of [thomason-1984]. -/
-def ofDatedFacts [LE T] {F : Type*} (time : F → T) (holds : W → F → Prop) :
-    HistoricalAlternatives W T :=
-  fun s ↦ {w' | ∀ f, time f ≤ s.time → (holds s.world f ↔ holds w' f)}
+end Temporal.TWFrame
 
-/-- Agreement on dated facts is an equivalence at every time and is preserved backward. -/
-theorem historicalProperties_ofDatedFacts [Preorder T] {F : Type*} (time : F → T)
-    (holds : W → F → Prop) : HistoricalProperties (ofDatedFacts time holds) where
-  equivalence _ :=
-    ⟨fun _ _ _ ↦ Iff.rfl, fun h f hf ↦ (h f hf).symm, fun h₁ h₂ f hf ↦ (h₁ f hf).trans (h₂ f hf)⟩
-  antitone _ _ _ hle _ h f hf := h f (hf.trans hle)
+namespace HistoricalAlternatives
+
+variable {W T : Type*}
 
 /-! ### Settledness and diversity -/
 
@@ -175,76 +204,16 @@ theorem settled_not_diverse {history : HistoricalAlternatives W T} {MB : W → T
   fun ⟨w, hw, w', hw', w'', hw'', hP, hnP⟩ ↦
     hnP ((h w hw w'' (hMB w hw hw'')).mp ((h w hw w' (hMB w hw hw')).mpr hP))
 
-/-! ### Grounding in the T × W object logic
-
-A relation with the historical properties satisfies exactly the axioms of a `Temporal.TWFrame`,
-per-time equivalence and backward closure, so it is a T × W frame, and the object logic's
-historical necessity `N` is quantification over the metaphysical base: the denotational base
-and the object-language modality are one operator ([thomason-1984], [von-kutschera-1997]). -/
-
-section TWFrame
-
-open Temporal
-
-variable [LinearOrder T] {Atom : Type*} (history : HistoricalAlternatives W T)
-  (hp : HistoricalProperties history)
-
-/-- A relation with the historical properties as a `TWFrame`, with agreement up to a time as
-its similarity. -/
-def toTWFrame : TWFrame T W where
-  sim t w w' := w' ∈ history (w, t)
-  sim_equiv := hp.equivalence
-  sim_backward w _ hle h := hp.antitone w hle h
-
-@[simp] theorem toTWFrame_sim (t : T) (w w' : W) :
-    (toTWFrame history hp).sim t w w' ↔ w' ∈ metaphysicalBase history w t := Iff.rfl
-
-/-- Historical necessity `N` in the object logic is truth throughout the metaphysical base. -/
-theorem toTWFrame_sat_N_atom (V : Atom → T → W → Prop) (p : Atom) (t : T) (w : W) :
-    (toTWFrame history hp).sat V (.N (.atom p)) t w ↔
-      ∀ w' ∈ metaphysicalBase history w t, V p t w' := by
-  simp only [TWFrame.sat_N, TWFrame.sat_atom, toTWFrame_sim]
-
-/-- The all-worlds modality `box` is truth in every world, the unrestricted base. -/
-theorem toTWFrame_sat_box_atom (V : Atom → T → W → Prop) (p : Atom) (t : T) (w : W) :
-    (toTWFrame history hp).sat V (.box (.atom p)) t w ↔ ∀ w', V p t w' := by
-  simp only [TWFrame.sat_box, TWFrame.sat_atom]
-
-include hp in
-/-- The evaluation world is a metaphysical alternative to itself. -/
-theorem mem_metaphysicalBase_self (t : T) (w : W) :
-    w ∈ metaphysicalBase history w t := (hp.equivalence t).refl w
-
-/-- A formula is historically determined at `(t, w)`, decided as `N a ∨ N ¬a`, iff it is
-constant across the metaphysical base, the single-world core of settledness. -/
-theorem toTWFrame_N_or_N_neg_iff (V : Atom → T → W → Prop) (a : OForm Atom) (t : T) (w : W) :
-    ((toTWFrame history hp).sat V a.N t w ∨ (toTWFrame history hp).sat V a.neg.N t w) ↔
-      ∀ w' ∈ metaphysicalBase history w t,
-        ((toTWFrame history hp).sat V a t w' ↔ (toTWFrame history hp).sat V a t w) := by
-  simp only [TWFrame.sat_N, TWFrame.sat_neg, toTWFrame_sim]
-  constructor
-  · rintro (h | h) w' hw'
-    · exact iff_of_true (h w' hw') (h w (mem_metaphysicalBase_self history hp t w))
-    · exact iff_of_false (h w' hw') (h w (mem_metaphysicalBase_self history hp t w))
-  · intro hd
-    rcases Classical.em ((toTWFrame history hp).sat V a t w) with hw | hw
-    · exact Or.inl fun w' hw' ↦ (hd w' hw').mpr hw
-    · exact Or.inr fun w' hw' ha ↦ hw ((hd w' hw').mp ha)
-
-/-- Settledness over a common ground is historical determinacy, `N P ∨ N ¬P`, at every
-common-ground world. Here `P` is the world proposition after forward instantiation, whose
-wrapper `AT([t₀,_), ·, P)` the caller discharges. -/
-theorem settled_iff_determined (cg : Set W) (P : W → Prop) (t : T) :
-    settled history cg t P ↔
-      ∀ w ∈ cg,
-        ((toTWFrame history hp).sat (fun _ _ w' ↦ P w') (.N (.atom ())) t w ∨
-         (toTWFrame history hp).sat (fun _ _ w' ↦ P w') (.N (.neg (.atom ()))) t w) := by
-  unfold settled
-  refine forall_congr' fun w ↦ imp_congr_right fun _ ↦ ?_
-  rw [toTWFrame_N_or_N_neg_iff history hp]
-  simp only [TWFrame.sat_atom]
-  exact forall₂_congr fun _ _ ↦ Iff.comm
-
-end TWFrame
+/-- Over the alternatives of a T × W frame, a property is settled at a time over a common ground
+exactly when, at every common-ground world, it or its negation is historically necessary. -/
+theorem settled_alternatives_iff [Preorder T] {F : Temporal.TWFrame W T} {cg : Set W} {t : T}
+    {P : W → Prop} :
+    settled F.alternatives cg t P ↔ ∀ w ∈ cg, □[F.alt t] P w ∨ □[F.alt t] (fun v ↦ ¬ P v) w := by
+  refine forall₂_congr fun w _ ↦ ⟨fun h ↦ ?_, fun h v hv ↦ ?_⟩
+  · by_cases hw : P w
+    exacts [.inl fun v hv ↦ (h v hv).1 hw, .inr fun v hv hv' ↦ hw ((h v hv).2 hv')]
+  · rcases h with h | h
+    · exact iff_of_true (h w ((F.sim t).iseqv.refl w)) (h v hv)
+    · exact iff_of_false (h w ((F.sim t).iseqv.refl w)) (h v hv)
 
 end HistoricalAlternatives

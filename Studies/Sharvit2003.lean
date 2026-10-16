@@ -2,44 +2,36 @@ module
 
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Semantics.Tense.Pronoun
+public import Linglib.Semantics.Tense.Quantificational
 public import Linglib.Data.Examples.Sharvit2003
 
 /-!
 # Sharvit (2003): Embedded Tense and Universal Grammar
 
-This file formalizes the squib's typological argument. Under the Deletion Theory of
-Ogihara and von Stechow, sequence of tense is a parameter: an SOT language deletes
-an embedded tense under agreement with a c-commanding attitude tense, and the deleted tense is a
-bound zero tense, the relative now of Heim, so past under past has a nonpast
-reading beside its anteriority reading (`Tense.pastUnderPast`). A second parameter, matrix
-indexicality after Schlenker, is whether the present-tense morpheme must refer to the
-utterance time in present-under-past sentences or may be interpreted as a bound variable. The
-two cross to the typology (11): English deletes and has an indexical present, Hebrew neither
-deletes nor has an indexical present, Modern Greek deletes and has a bindable present, and the
-fourth type, no deletion and an indexical present, is unattested (`Language`). In such a language
-*Mary is pregnant* could not be reported under an attitude verb at all. The Embeddability
-Principle (13) is the principle of Universal Grammar that every well-formed matrix LF has a
-content-matching λ0-abstract embeddable under an attitude verb; a language meets it by providing
-a source of zero tense, a deleted tense or a bound present (`ZeroTense`, `Language.Provides`),
-which is exactly what type 4 lacks (`embeddabilityPrinciple_iff`).
+Sharvit derives a tense typology from two parameters. Under the Deletion Theory of Ogihara and
+von Stechow, an SOT language deletes an embedded tense under agreement with a c-commanding
+attitude tense, leaving a bound zero tense, Heim's relative now; after Schlenker, matrix
+indexicality decides whether a present under a past must refer to the utterance time. English
+deletes and has an indexical present, Hebrew does neither, Modern Greek deletes and has a
+bindable present, and the fourth type is unattested, as the Embeddability Principle (13)
+predicts: every matrix LF needs a content-matching λ0-abstract embeddable under an attitude
+verb, and the fourth type has no source of zero tense.
 
-The readings follow from the pronominal tense of `Semantics/Tense/Pronoun.lean`. A bound present
-denotes the attitude's now, the nonpast reading of (5) and (12a) (`boundPresent_nonpast`); an
-indexical present denotes the utterance time, which a past attitude's now cannot match, so (3) keeps
-only the double access reading (`indexicalPresent_no_nonpast`), and an interval too short to span
-the two years of (4b) cannot give it (`not_doubleAccess_of_short`). The LF (7) of the nonpast
-reading of (1), three λ0-abstracts rebinding one zero tense, denotes (10) under the entries (8) and
-(9) (`lf7_iff`). The typology predicts the availability of the nonpast reading across the paper's
-examples (1)–(6) and (12) (`nonpast_rows`).
+## Main results
+
+* `embeddabilityPrinciple_iff`: a language meets the principle iff it provides a zero tense.
+* `boundPresent_nonpast`, `indexicalPresent_no_nonpast`, `not_doubleAccess_of_short`: the
+  readings of a bound and of an indexical present.
+* `lf7_iff`: the LF (7) of the nonpast reading of (1) denotes (10).
+* `nonpast_rows`: the typology predicts the nonpast readings of (1)–(6) and (12).
 
 ## Implementation notes
 
-* The semantic half of the Embeddability Principle (15), matching in content, is met by the
-  λ0-abstract of the matrix LF itself; the principle's force is syntactic, that the language can
-  spell out the abstract's free zero tense, and that is what `EmbeddabilityPrinciple` states.
-* The classification of English, Hebrew and Modern Greek is the paper's and lives in the study,
-  not in the Fragments. The person-domain extension of the principle and free indirect discourse
-  (§3) are argued informally and are not formalized.
+* The semantic half of the Embeddability Principle (15) is met by the matrix LF's own
+  λ0-abstract, so `EmbeddabilityPrinciple` states its syntactic force, that the language can
+  spell out the abstract's free zero tense.
+* The classification of the three languages is the paper's and lives in the study; the
+  person-domain extension and free indirect discourse (§3) are not formalized.
 
 ## References
 
@@ -58,6 +50,7 @@ namespace Sharvit2003
 open Semantics
 
 open Tense
+open scoped ModalLogic
 open HeimKratzer
 
 variable {T : Type*}
@@ -153,7 +146,7 @@ instance (L : Language) : DecidablePred (NonpastAvailable L)
   | .present => inferInstanceAs (Decidable (L.Provides .boundPresent))
 
 /-- The simultaneous reading of a deleted tense is available exactly in languages with the SOT
-rule: the two parameters of the typology are the two sources of zero tense. -/
+rule, since the two parameters of the typology are the two sources of zero tense. -/
 theorem nonpastAvailable_past_iff (L : Language) :
     NonpastAvailable L .past ↔ L.Provides .deleted :=
   eq_mem_pastUnderPast_iff
@@ -190,8 +183,9 @@ what the holder decides or tells at `t`. -/
 def attitude (compatible : T → Set T) (p : T → Prop) (t : T) : Prop :=
   ∀ t' ∈ compatible t, p t'
 
-/-- By the entry (9) for *will*, the complement holds at some later time. -/
-def will [LT T] (p : T → Prop) (t : T) : Prop := ∃ t', t < t' ∧ p t'
+/-- By the entry (9) for *will*, the complement holds at some later time, possibility along the
+relation of the future cell. -/
+def will [LT T] (p : T → Prop) (t : T) : Prop := ◇[toSetRel ⟦future⟧] p t
 
 /-- In the LF (7) of the nonpast reading of (1), the matrix past locates the deciding before the
 utterance time, the time of the index `0`, and each complement is a λ0-abstract that rebinds the
@@ -215,7 +209,8 @@ theorem lf7_iff [LT T] (decides tells : T → Set T) (miss : T → Prop)
     (g : Assignment T) :
     lf7 decides tells miss g ↔
       ∃ t, t < g 0 ∧ ∀ t' ∈ decides t, ∃ t'', t' < t'' ∧ ∀ t''' ∈ tells t'', miss t''' := by
-  simp only [lf7, attitude, will, lambdaAbsG, interpPronoun, Function.update_self]
+  simp only [lf7, attitude, will, diamond_toSetRel_future, lambdaAbsG, interpPronoun,
+    Function.update_self]
 
 /-! ### The paper's examples -/
 
