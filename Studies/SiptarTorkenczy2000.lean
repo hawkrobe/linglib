@@ -365,32 +365,23 @@ def dzsungelOpaque : Stem := ofRow Forms.dzsungel [[.dor], [.cor]] []
 
 end Stem
 
-/-- A stem with its four suffixed forms of the derivations. -/
-def paradigm (stem : Data.Forms.Form) (s : Stem) (poss abl dat all : Data.Forms.Form) :
-    List (Data.Forms.Form × Stem × Suffix × Data.Forms.Form) :=
-  [(stem, s, .poss, poss), (stem, s, .abl, abl), (stem, s, .dat, dat), (stem, s, .all, all)]
+/-- The stems of Table 18, each with the row of its base form. -/
+def stems : List (Data.Forms.Form × Stem) :=
+  [(Forms.haz, .haz), (Forms.tuz, .tuz), (Forms.viz, .viz), (Forms.piros, .piros),
+    (Forms.nuansz, .nuansz), (Forms.oreg, .oreg), (Forms.szemolcs, .szemolcs),
+    (Forms.sofor, .sofor), (Forms.papir, .papir), (Forms.hid, .hid), (Forms.kodex, .kodex)]
 
-/-- The derivations (13) to (23) are the eleven stems of Table 18, each with the possessive,
-ablative, dative and allative. -/
-def derivationTable : List (Data.Forms.Form × Stem × Suffix × Data.Forms.Form) :=
-  paradigm Forms.haz .haz Forms.hazunk Forms.haztol Forms.haznak Forms.hazhoz ++
-    paradigm Forms.tuz .tuz Forms.tuzunk Forms.tuztol Forms.tuznek Forms.tuzhoz ++
-    paradigm Forms.viz .viz Forms.vizunk Forms.viztol Forms.viznek Forms.vizhez ++
-    paradigm Forms.piros .piros Forms.pirosunk Forms.pirostol Forms.pirosnak Forms.piroshoz ++
-    paradigm Forms.nuansz .nuansz Forms.nuanszunk Forms.nuansztol Forms.nuansznak
-      Forms.nuanszhoz ++
-    paradigm Forms.oreg .oreg Forms.oregunk Forms.oregtol Forms.oregnek Forms.oreghez ++
-    paradigm Forms.szemolcs .szemolcs Forms.szemolcsunk Forms.szemolcstol Forms.szemolcsnek
-      Forms.szemolcshoz ++
-    paradigm Forms.sofor .sofor Forms.soforunk Forms.sofortol Forms.sofornek Forms.soforhoz ++
-    paradigm Forms.papir .papir Forms.papirunk Forms.papirtol Forms.papirnak Forms.papirhoz ++
-    paradigm Forms.hid .hid Forms.hidunk Forms.hidtol Forms.hidnak Forms.hidhoz ++
-    paradigm Forms.kodex .kodex Forms.kodexunk Forms.kodextol Forms.kodexnek Forms.kodexhez
+/-- The suffixes of the derivations, by the names of the relations in the data. -/
+def suffixes : List (String × Suffix) :=
+  [("1pl", .poss), ("ablative", .abl), ("dative", .dat), ("allative", .all),
+    ("inessive", .iness)]
 
-/-- Every derivation of (13) to (23) yields the attested suffix, so transparency, antiharmony
-and opacity follow from the prelinking of Table 18 by the same rules. -/
-theorem derivations : ∀ t ∈ derivationTable,
-    derived t.2.1 t.2.2.1 = some (t.2.2.2.segments.drop t.1.segments.length) := by
+/-- Every derivation of (13) to (23), each a relation of the data from a stem of Table 18 other
+than the vacillating *dzsungel*, yields the attested suffix, so transparency, antiharmony and
+opacity follow from the prelinking of Table 18 by the same rules. -/
+theorem derivations : ∀ rel ∈ Forms.relations, rel.form ≠ Forms.dzsungel →
+    ∃ s ∈ stems.lookup rel.form, ∃ x ∈ suffixes.lookup rel.relation,
+      derived s x = some (rel.target.segments.drop rel.form.segments.length) := by
   decide +kernel
 
 /-- The vacillating stem of section 3.2.3.1 derives its back form from the transparent
@@ -407,11 +398,10 @@ theorem dzsungel_vacillates :
 The Fragment's palatal harmony system reads the backness of the last harmonic vowel through
 the transparent neutral vowels. -/
 
-/-- The stems whose harmonic vowels govern their suffixes as section 3.2 describes. -/
+/-- The stems whose harmonic vowels govern their suffixes as section 3.2 describes: all but the
+pure COR *víz*, the antiharmonic *híd* and the opaque *kódex*. -/
 def regular : List (Data.Forms.Form × Stem) :=
-  [(Forms.haz, .haz), (Forms.tuz, .tuz), (Forms.piros, .piros), (Forms.nuansz, .nuansz),
-    (Forms.oreg, .oreg), (Forms.szemolcs, .szemolcs), (Forms.sofor, .sofor),
-    (Forms.papir, .papir)]
+  stems.filter (·.1 ∉ [Forms.viz, Forms.hid, Forms.kodex])
 
 /-- On the regular stems the surface generalization and the derivations agree. -/
 theorem sourceValue_agrees : ∀ t ∈ regular,

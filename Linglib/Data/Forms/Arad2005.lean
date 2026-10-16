@@ -23,7 +23,6 @@ def lamad : Form :=
     parameterId := "learn"
     form := "lamad"
     segments := ["l", "a", "m", "a", "d"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (3)"⟩
     ]
@@ -35,7 +34,6 @@ def nilmad : Form :=
     parameterId := "learn_passive"
     form := "nilmad"
     segments := ["n", "i", "l", "m", "a", "d"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (3)"⟩
     ]
@@ -47,7 +45,6 @@ def siper : Form :=
     parameterId := "tell"
     form := "siper"
     segments := ["s", "i", "p", "e", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (3)"⟩
     ]
@@ -59,7 +56,6 @@ def supar : Form :=
     parameterId := "tell_passive"
     form := "supar"
     segments := ["s", "u", "p", "a", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (3)"⟩
     ]
@@ -71,7 +67,6 @@ def hiqlit : Form :=
     parameterId := "record"
     form := "hiqlit"
     segments := ["h", "i", "q", "l", "i", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (3)"⟩,
       ⟨"arad-2005", "Ch. 7 (4b)"⟩
@@ -84,7 +79,6 @@ def huqlat : Form :=
     parameterId := "record_passive"
     form := "huqlat"
     segments := ["h", "u", "q", "l", "a", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (3)"⟩
     ]
@@ -96,7 +90,6 @@ def hitpalel : Form :=
     parameterId := "pray"
     form := "hitpalel"
     segments := ["h", "i", "t", "p", "a", "l", "e", "l"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (3)"⟩
     ]
@@ -108,7 +101,6 @@ def nipec : Form :=
     parameterId := "shatter"
     form := "nipec"
     segments := ["n", "i", "p", "e", "c"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (6a)"⟩
     ]
@@ -120,7 +112,6 @@ def nupac : Form :=
     parameterId := "shatter_passive"
     form := "nupac"
     segments := ["n", "u", "p", "a", "c"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (6a)"⟩
     ]
@@ -132,7 +123,6 @@ def xileq : Form :=
     parameterId := "divide"
     form := "xileq"
     segments := ["x", "i", "l", "e", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (6b)"⟩
     ]
@@ -144,7 +134,6 @@ def xulaq : Form :=
     parameterId := "divide_passive"
     form := "xulaq"
     segments := ["x", "u", "l", "a", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (6b)"⟩
     ]
@@ -156,7 +145,6 @@ def histir : Form :=
     parameterId := "hide"
     form := "histir"
     segments := ["h", "i", "s", "t", "i", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (6c)"⟩
     ]
@@ -168,7 +156,6 @@ def hustar : Form :=
     parameterId := "hide_passive"
     form := "hustar"
     segments := ["h", "u", "s", "t", "a", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (6c)"⟩
     ]
@@ -180,7 +167,6 @@ def hifqid : Form :=
     parameterId := "deposit"
     form := "hifqid"
     segments := ["h", "i", "f", "q", "i", "d"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (6d)"⟩
     ]
@@ -192,7 +178,6 @@ def hufqad : Form :=
     parameterId := "deposit_passive"
     form := "hufqad"
     segments := ["h", "u", "f", "q", "a", "d"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (6d)"⟩
     ]
@@ -204,7 +189,6 @@ def shamar : Form :=
     parameterId := "guard"
     form := "šamar"
     segments := ["š", "a", "m", "a", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (27)"⟩
     ]
@@ -216,7 +200,6 @@ def tirgem : Form :=
     parameterId := "translate"
     form := "tirgem"
     segments := ["t", "i", "r", "g", "e", "m"]
-    comment := ""
     source := [
       ⟨"arad-2005", "p. 28"⟩
     ]
@@ -228,7 +211,6 @@ def qibel : Form :=
     parameterId := "receive"
     form := "qibel"
     segments := ["q", "i", "b", "e", "l"]
-    comment := ""
     source := [
       ⟨"arad-2005", "p. 29"⟩
     ]
@@ -240,7 +222,6 @@ def hitrakex : Form :=
     parameterId := "become_soft"
     form := "hitrakex"
     segments := ["h", "i", "t", "r", "a", "k", "e", "x"]
-    comment := ""
     source := [
       ⟨"arad-2005", "p. 29"⟩
     ]
@@ -252,7 +233,6 @@ def shemen : Form :=
     parameterId := "oil_grease"
     form := "šemen"
     segments := ["š", "e", "m", "e", "n"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (2a)"⟩
     ]
@@ -264,7 +244,6 @@ def shamenet : Form :=
     parameterId := "cream"
     form := "šamenet"
     segments := ["š", "a", "m", "e", "n", "e", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (2b)"⟩
     ]
@@ -276,7 +255,6 @@ def shuman : Form :=
     parameterId := "fat"
     form := "šuman"
     segments := ["š", "u", "m", "a", "n"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (2c)"⟩
     ]
@@ -288,7 +266,6 @@ def shamen : Form :=
     parameterId := "fat_adj"
     form := "šamen"
     segments := ["š", "a", "m", "e", "n"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (2d)"⟩
     ]
@@ -300,7 +277,6 @@ def hishmin : Form :=
     parameterId := "grow_fat_fatten"
     form := "hišmin"
     segments := ["h", "i", "š", "m", "i", "n"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (2e)"⟩
     ]
@@ -312,7 +288,6 @@ def shimen : Form :=
     parameterId := "grease"
     form := "šimen"
     segments := ["š", "i", "m", "e", "n"]
-    comment := "printed as a noun, (n), in a verbal pattern with a verbal gloss"
     source := [
       ⟨"arad-2005", "Ch. 7 (2f)"⟩
     ]
@@ -324,7 +299,6 @@ def xashav : Form :=
     parameterId := "to_think"
     form := "xašav"
     segments := ["x", "a", "š", "a", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (3a)"⟩
     ]
@@ -336,7 +310,6 @@ def xishev : Form :=
     parameterId := "to_calculate"
     form := "xišev"
     segments := ["x", "i", "š", "e", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (3b)"⟩
     ]
@@ -348,7 +321,6 @@ def hexshiv : Form :=
     parameterId := "to_consider"
     form := "hexšiv"
     segments := ["h", "e", "x", "š", "i", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (3c)"⟩
     ]
@@ -360,7 +332,6 @@ def hitxashev : Form :=
     parameterId := "to_be_considerate"
     form := "hitxašev"
     segments := ["h", "i", "t", "x", "a", "š", "e", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (3d)"⟩
     ]
@@ -372,7 +343,6 @@ def maxshev : Form :=
     parameterId := "computer"
     form := "maxšev"
     segments := ["m", "a", "x", "š", "e", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (29d)"⟩,
       ⟨"arad-2005", "Ch. 7 (3e)"⟩
@@ -385,7 +355,6 @@ def maxshava : Form :=
     parameterId := "a_thought"
     form := "maxšava"
     segments := ["m", "a", "x", "š", "a", "v", "a"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (3f)"⟩
     ]
@@ -397,7 +366,6 @@ def xashivut : Form :=
     parameterId := "importance"
     form := "xašivut"
     segments := ["x", "a", "š", "i", "v", "u", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (3g)"⟩
     ]
@@ -409,7 +377,6 @@ def xeshbon : Form :=
     parameterId := "arithmetic_bill"
     form := "xešbon"
     segments := ["x", "e", "š", "b", "o", "n"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (3h)"⟩
     ]
@@ -421,7 +388,6 @@ def taxshiv : Form :=
     parameterId := "calculus"
     form := "taxšiv"
     segments := ["t", "a", "x", "š", "i", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (3i)"⟩
     ]
@@ -433,7 +399,6 @@ def qalat : Form :=
     parameterId := "to_absorb_receive"
     form := "qalat"
     segments := ["q", "a", "l", "a", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (4a)"⟩
     ]
@@ -445,7 +410,6 @@ def miqlat : Form :=
     parameterId := "a_shelter"
     form := "miqlat"
     segments := ["m", "i", "q", "l", "a", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (4c)"⟩
     ]
@@ -457,7 +421,6 @@ def maqlet : Form :=
     parameterId := "a_receiver"
     form := "maqlet"
     segments := ["m", "a", "q", "l", "e", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (4d)"⟩
     ]
@@ -469,7 +432,6 @@ def taqlit : Form :=
     parameterId := "a_record"
     form := "taqlit"
     segments := ["t", "a", "q", "l", "i", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (4e)"⟩
     ]
@@ -481,7 +443,6 @@ def qaletet : Form :=
     parameterId := "a_cassette"
     form := "qaletet"
     segments := ["q", "a", "l", "e", "t", "e", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (4f)"⟩
     ]
@@ -493,7 +454,6 @@ def qelet : Form :=
     parameterId := "input"
     form := "qelet"
     segments := ["q", "e", "l", "e", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (4g)"⟩
     ]
@@ -505,7 +465,6 @@ def sagar : Form :=
     parameterId := "close"
     form := "sagar"
     segments := ["s", "a", "g", "a", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (5a)"⟩
     ]
@@ -517,7 +476,6 @@ def hisgir : Form :=
     parameterId := "extradite"
     form := "hisgir"
     segments := ["h", "i", "s", "g", "i", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (5b)"⟩
     ]
@@ -529,7 +487,6 @@ def histager : Form :=
     parameterId := "cocoon_oneself"
     form := "histager"
     segments := ["h", "i", "s", "t", "a", "g", "e", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (5c)"⟩
     ]
@@ -541,7 +498,6 @@ def seger : Form :=
     parameterId := "closure"
     form := "seger"
     segments := ["s", "e", "g", "e", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (5d)"⟩
     ]
@@ -553,7 +509,6 @@ def sograyim : Form :=
     parameterId := "parentheses"
     form := "sograyim"
     segments := ["s", "o", "g", "r", "a", "y", "i", "m"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (5e)"⟩
     ]
@@ -565,7 +520,6 @@ def misgeret : Form :=
     parameterId := "frame"
     form := "misgeret"
     segments := ["m", "i", "s", "g", "e", "r", "+", "e", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (32b)"⟩,
       ⟨"arad-2005", "Ch. 7 (5f)"⟩,
@@ -579,7 +533,6 @@ def patax : Form :=
     parameterId := "open_causative"
     form := "patax"
     segments := ["p", "a", "t", "a", "x"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (47)"⟩
     ]
@@ -591,7 +544,6 @@ def niftax : Form :=
     parameterId := "open_inchoative"
     form := "niftax"
     segments := ["n", "i", "f", "t", "a", "x"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (47)"⟩
     ]
@@ -603,7 +555,6 @@ def qafa : Form :=
     parameterId := "freeze_inchoative"
     form := "qafaʔ"
     segments := ["q", "a", "f", "a", "ʔ"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (48)"⟩
     ]
@@ -615,7 +566,6 @@ def hiqpi : Form :=
     parameterId := "freeze_causative"
     form := "hiqpiʔ"
     segments := ["h", "i", "q", "p", "i", "ʔ"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (48)"⟩
     ]
@@ -627,7 +577,6 @@ def namas : Form :=
     parameterId := "melt_inchoative"
     form := "namas"
     segments := ["n", "a", "m", "a", "s"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (49)"⟩
     ]
@@ -639,7 +588,6 @@ def hemes : Form :=
     parameterId := "melt_causative"
     form := "hemes"
     segments := ["h", "e", "m", "e", "s"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (49)"⟩
     ]
@@ -651,7 +599,6 @@ def hitxamem : Form :=
     parameterId := "heat_inchoative"
     form := "hitxamem"
     segments := ["h", "i", "t", "x", "a", "m", "e", "m"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (50)"⟩
     ]
@@ -663,7 +610,6 @@ def ximem : Form :=
     parameterId := "heat_causative"
     form := "ximem"
     segments := ["x", "i", "m", "e", "m"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (50)"⟩
     ]
@@ -675,7 +621,6 @@ def hitbaher : Form :=
     parameterId := "become_clear"
     form := "hitbaher"
     segments := ["h", "i", "t", "b", "a", "h", "e", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (51)"⟩
     ]
@@ -687,7 +632,6 @@ def hivhir : Form :=
     parameterId := "make_clear"
     form := "hivhir"
     segments := ["h", "i", "v", "h", "i", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (51)"⟩
     ]
@@ -699,7 +643,6 @@ def heedim_inchoative : Form :=
     parameterId := "be_red"
     form := "heʔedim"
     segments := ["h", "e", "ʔ", "e", "d", "i", "m"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (52)"⟩
     ]
@@ -711,7 +654,6 @@ def heedim_causative : Form :=
     parameterId := "redden"
     form := "heʔedim"
     segments := ["h", "e", "ʔ", "e", "d", "i", "m"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 6 (52)"⟩
     ]
@@ -723,7 +665,6 @@ def taqciv : Form :=
     parameterId := "budget"
     form := "taqciv"
     segments := ["t", "a", "q", "c", "i", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 1 (12a)"⟩
     ]
@@ -735,7 +676,6 @@ def tiqcev : Form :=
     parameterId := "to_budget"
     form := "tiqcev"
     segments := ["t", "i", "q", "c", "e", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 1 (12a)"⟩
     ]
@@ -747,7 +687,6 @@ def telefon : Form :=
     parameterId := "telephone"
     form := "telefon"
     segments := ["t", "e", "l", "e", "f", "o", "n"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (29a)"⟩
     ]
@@ -759,7 +698,6 @@ def tilfen : Form :=
     parameterId := "to_telephone"
     form := "tilfen"
     segments := ["t", "i", "l", "f", "e", "n"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (29a)"⟩
     ]
@@ -771,7 +709,6 @@ def mastul : Form :=
     parameterId := "drunk"
     form := "mastul"
     segments := ["m", "a", "s", "t", "u", "l"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (29b)"⟩
     ]
@@ -783,7 +720,6 @@ def hitmastel : Form :=
     parameterId := "to_get_drunk"
     form := "hitmastel"
     segments := ["h", "i", "t", "m", "a", "s", "t", "e", "l"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (29b)"⟩
     ]
@@ -795,7 +731,6 @@ def xrop : Form :=
     parameterId := "a_snooze"
     form := "xrop"
     segments := ["x", "r", "o", "p"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (29c)"⟩
     ]
@@ -807,7 +742,6 @@ def xarap : Form :=
     parameterId := "to_snooze"
     form := "xarap"
     segments := ["x", "a", "r", "a", "p"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (29c)"⟩
     ]
@@ -819,7 +753,6 @@ def mixshev : Form :=
     parameterId := "to_computerize"
     form := "mixšev"
     segments := ["m", "i", "x", "š", "e", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 1 (12b)"⟩,
       ⟨"arad-2005", "Ch. 2 (29d)"⟩
@@ -832,7 +765,6 @@ def taxzuqa : Form :=
     parameterId := "maintenance"
     form := "taxzuqa"
     segments := ["t", "a", "x", "z", "u", "q", "+", "a"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (32a)"⟩
     ]
@@ -844,7 +776,6 @@ def tixzeq : Form :=
     parameterId := "to_maintain"
     form := "tixzeq"
     segments := ["t", "i", "x", "z", "e", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (32a)"⟩
     ]
@@ -856,7 +787,6 @@ def misger : Form :=
     parameterId := "to_frame"
     form := "misger"
     segments := ["m", "i", "s", "g", "e", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (32b)"⟩,
       ⟨"arad-2005", "Ch. 7 (6b)"⟩
@@ -869,7 +799,6 @@ def musgar : Form :=
     parameterId := "was_framed"
     form := "musgar"
     segments := ["m", "u", "s", "g", "a", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 fn. 2"⟩
     ]
@@ -881,7 +810,6 @@ def cenzura : Form :=
     parameterId := "censorship"
     form := "cenzura"
     segments := ["c", "e", "n", "z", "u", "r", "a"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (32c)"⟩
     ]
@@ -893,7 +821,6 @@ def cinzer : Form :=
     parameterId := "to_censor"
     form := "cinzer"
     segments := ["c", "i", "n", "z", "e", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (32c)"⟩
     ]
@@ -905,7 +832,6 @@ def qav : Form :=
     parameterId := "line"
     form := "qav"
     segments := ["q", "a", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (33a)"⟩
     ]
@@ -917,7 +843,6 @@ def qivqev : Form :=
     parameterId := "to_draw_a_dotted_line"
     form := "qivqev"
     segments := ["q", "i", "v", "q", "e", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (33a)"⟩
     ]
@@ -929,7 +854,6 @@ def xov : Form :=
     parameterId := "debt"
     form := "xov"
     segments := ["x", "o", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (33b)"⟩
     ]
@@ -941,7 +865,6 @@ def xiyev : Form :=
     parameterId := "to_debit_oblige"
     form := "xiyev"
     segments := ["x", "i", "y", "e", "v"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (33b)"⟩
     ]
@@ -953,7 +876,6 @@ def faks : Form :=
     parameterId := "fax"
     form := "faks"
     segments := ["f", "a", "k", "s"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (33c)"⟩,
       ⟨"arad-2005", "Ch. 7 (41d)"⟩
@@ -966,7 +888,6 @@ def fikses : Form :=
     parameterId := "to_fax"
     form := "fikses"
     segments := ["f", "i", "k", "s", "e", "s"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 2 (33c)"⟩,
       ⟨"arad-2005", "Ch. 7 (41d)"⟩
@@ -979,7 +900,6 @@ def transfer : Form :=
     parameterId := "transfer"
     form := "transfer"
     segments := ["t", "r", "a", "n", "s", "f", "e", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 1 (12d)"⟩,
       ⟨"arad-2005", "Ch. 7 (39a)"⟩
@@ -992,7 +912,6 @@ def trinsfer : Form :=
     parameterId := "to_transfer"
     form := "trinsfer"
     segments := ["t", "r", "i", "n", "s", "f", "e", "r"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 1 (12d)"⟩,
       ⟨"arad-2005", "Ch. 7 (39a)"⟩
@@ -1005,7 +924,6 @@ def streptiz : Form :=
     parameterId := "striptease"
     form := "streptiz"
     segments := ["s", "t", "r", "e", "p", "t", "i", "z"]
-    comment := "Ch. 1 (12e) prints the base as striptiz"
     source := [
       ⟨"arad-2005", "Ch. 7 (39b)"⟩
     ]
@@ -1017,7 +935,6 @@ def striptez : Form :=
     parameterId := "to_perform_a_striptease"
     form := "striptez"
     segments := ["s", "t", "r", "i", "p", "t", "e", "z"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 1 (12e)"⟩,
       ⟨"arad-2005", "Ch. 7 (39b)"⟩
@@ -1030,7 +947,6 @@ def sinxroni : Form :=
     parameterId := "synchronic"
     form := "sinxroni"
     segments := ["s", "i", "n", "x", "r", "o", "n", "i"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (39c)"⟩
     ]
@@ -1042,7 +958,6 @@ def sinxren : Form :=
     parameterId := "synchronize"
     form := "sinxren"
     segments := ["s", "i", "n", "x", "r", "e", "n"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (39c)"⟩
     ]
@@ -1054,7 +969,6 @@ def qliq : Form :=
     parameterId := "a_click"
     form := "qliq"
     segments := ["q", "l", "i", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 1 (12c)"⟩,
       ⟨"arad-2005", "Ch. 7 (40a)"⟩
@@ -1067,7 +981,6 @@ def hiqliq : Form :=
     parameterId := "to_click"
     form := "hiqliq"
     segments := ["h", "i", "q", "l", "i", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 1 (12c)"⟩,
       ⟨"arad-2005", "Ch. 7 (40a)"⟩
@@ -1080,7 +993,6 @@ def fliq : Form :=
     parameterId := "a_slap"
     form := "fliq"
     segments := ["f", "l", "i", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (40b)"⟩
     ]
@@ -1092,7 +1004,6 @@ def hifliq : Form :=
     parameterId := "to_slap"
     form := "hifliq"
     segments := ["h", "i", "f", "l", "i", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (40b)"⟩
     ]
@@ -1104,7 +1015,6 @@ def shpritz : Form :=
     parameterId := "a_splash"
     form := "špritz"
     segments := ["š", "p", "r", "i", "t", "z"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (40c)"⟩
     ]
@@ -1116,7 +1026,6 @@ def hishpritz : Form :=
     parameterId := "to_splash"
     form := "hišpritz"
     segments := ["h", "i", "š", "p", "r", "i", "t", "z"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (40c)"⟩
     ]
@@ -1128,7 +1037,6 @@ def xoq : Form :=
     parameterId := "law"
     form := "xoq"
     segments := ["x", "o", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (41a)"⟩
     ]
@@ -1140,7 +1048,6 @@ def xoqeq : Form :=
     parameterId := "legislate"
     form := "xoqeq"
     segments := ["x", "o", "q", "e", "q"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (41a)"⟩
     ]
@@ -1152,7 +1059,6 @@ def qod : Form :=
     parameterId := "code"
     form := "qod"
     segments := ["q", "o", "d"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (41b)"⟩
     ]
@@ -1164,7 +1070,6 @@ def qoded : Form :=
     parameterId := "codify"
     form := "qoded"
     segments := ["q", "o", "d", "e", "d"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (41b)"⟩
     ]
@@ -1176,7 +1081,6 @@ def dam : Form :=
     parameterId := "blood"
     form := "dam"
     segments := ["d", "a", "m"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (41c)"⟩
     ]
@@ -1188,7 +1092,6 @@ def dimem : Form :=
     parameterId := "bleed"
     form := "dimem"
     segments := ["d", "i", "m", "e", "m"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (41c)"⟩
     ]
@@ -1200,7 +1103,6 @@ def chat : Form :=
     parameterId := "chat"
     form := "čat"
     segments := ["č", "a", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (41e)"⟩
     ]
@@ -1212,7 +1114,6 @@ def chitet : Form :=
     parameterId := "to_chat"
     form := "čitet"
     segments := ["č", "i", "t", "e", "t"]
-    comment := ""
     source := [
       ⟨"arad-2005", "Ch. 7 (41e)"⟩
     ]
@@ -1220,185 +1121,80 @@ def chitet : Form :=
 
 def all : List Form := [lamad, nilmad, siper, supar, hiqlit, huqlat, hitpalel, nipec, nupac, xileq, xulaq, histir, hustar, hifqid, hufqad, shamar, tirgem, qibel, hitrakex, shemen, shamenet, shuman, shamen, hishmin, shimen, xashav, xishev, hexshiv, hitxashev, maxshev, maxshava, xashivut, xeshbon, taxshiv, qalat, miqlat, maqlet, taqlit, qaletet, qelet, sagar, hisgir, histager, seger, sograyim, misgeret, patax, niftax, qafa, hiqpi, namas, hemes, hitxamem, ximem, hitbaher, hivhir, heedim_inchoative, heedim_causative, taqciv, tiqcev, telefon, tilfen, mastul, hitmastel, xrop, xarap, mixshev, taxzuqa, tixzeq, misger, musgar, cenzura, cinzer, qav, qivqev, xov, xiyev, faks, fikses, transfer, trinsfer, streptiz, striptez, sinxroni, sinxren, qliq, hiqliq, fliq, hifliq, shpritz, hishpritz, xoq, xoqeq, qod, qoded, dam, dimem, chat, chitet]
 
-def parameters : List Parameter := [
-  { id := "learn", name := "learn", description := "" },
-  { id := "learn_passive", name := "learn (passive)", description := "" },
-  { id := "tell", name := "tell", description := "" },
-  { id := "tell_passive", name := "tell (passive)", description := "" },
-  { id := "record", name := "record", description := "" },
-  { id := "record_passive", name := "record (passive)", description := "" },
-  { id := "pray", name := "pray", description := "" },
-  { id := "shatter", name := "shatter", description := "" },
-  { id := "shatter_passive", name := "shatter (passive)", description := "" },
-  { id := "divide", name := "divide", description := "" },
-  { id := "divide_passive", name := "divide (passive)", description := "" },
-  { id := "hide", name := "hide", description := "" },
-  { id := "hide_passive", name := "hide (passive)", description := "" },
-  { id := "deposit", name := "deposit", description := "" },
-  { id := "deposit_passive", name := "deposit (passive)", description := "" },
-  { id := "guard", name := "guard", description := "" },
-  { id := "translate", name := "translate", description := "" },
-  { id := "receive", name := "receive", description := "" },
-  { id := "become_soft", name := "become soft", description := "" },
-  { id := "oil_grease", name := "oil, grease", description := "" },
-  { id := "cream", name := "cream", description := "" },
-  { id := "fat", name := "fat", description := "" },
-  { id := "fat_adj", name := "fat", description := "" },
-  { id := "grow_fat_fatten", name := "grow fat/fatten", description := "" },
-  { id := "grease", name := "grease", description := "" },
-  { id := "to_think", name := "to think", description := "" },
-  { id := "to_calculate", name := "to calculate", description := "" },
-  { id := "to_consider", name := "to consider", description := "" },
-  { id := "to_be_considerate", name := "to be considerate", description := "" },
-  { id := "computer", name := "a computer/calculator", description := "" },
-  { id := "a_thought", name := "a thought", description := "" },
-  { id := "importance", name := "importance", description := "" },
-  { id := "arithmetic_bill", name := "arithmetic/bill", description := "" },
-  { id := "calculus", name := "calculus", description := "" },
-  { id := "to_absorb_receive", name := "to absorb, receive", description := "" },
-  { id := "a_shelter", name := "a shelter", description := "" },
-  { id := "a_receiver", name := "a receiver", description := "" },
-  { id := "a_record", name := "a record", description := "" },
-  { id := "a_cassette", name := "a cassette", description := "" },
-  { id := "input", name := "input", description := "" },
-  { id := "close", name := "close", description := "" },
-  { id := "extradite", name := "extradite", description := "" },
-  { id := "cocoon_oneself", name := "cocoon oneself", description := "" },
-  { id := "closure", name := "closure", description := "" },
-  { id := "parentheses", name := "parentheses", description := "" },
-  { id := "frame", name := "a frame", description := "" },
-  { id := "open_causative", name := "open (causative)", description := "" },
-  { id := "open_inchoative", name := "open (inchoative)", description := "" },
-  { id := "freeze_inchoative", name := "freeze (inchoative)", description := "" },
-  { id := "freeze_causative", name := "freeze (causative)", description := "" },
-  { id := "melt_inchoative", name := "melt (inchoative)", description := "" },
-  { id := "melt_causative", name := "melt (causative)", description := "" },
-  { id := "heat_inchoative", name := "heat (inchoative)", description := "" },
-  { id := "heat_causative", name := "heat (causative)", description := "" },
-  { id := "become_clear", name := "become clear", description := "" },
-  { id := "make_clear", name := "make clear", description := "" },
-  { id := "be_red", name := "be red", description := "" },
-  { id := "redden", name := "redden", description := "" },
-  { id := "budget", name := "budget", description := "" },
-  { id := "to_budget", name := "to budget", description := "" },
-  { id := "telephone", name := "telephone", description := "" },
-  { id := "to_telephone", name := "to telephone", description := "" },
-  { id := "drunk", name := "drunk", description := "" },
-  { id := "to_get_drunk", name := "to get drunk", description := "" },
-  { id := "a_snooze", name := "a snooze", description := "" },
-  { id := "to_snooze", name := "to snooze", description := "" },
-  { id := "to_computerize", name := "to computerize", description := "" },
-  { id := "maintenance", name := "maintenance", description := "" },
-  { id := "to_maintain", name := "to maintain", description := "" },
-  { id := "to_frame", name := "to frame", description := "" },
-  { id := "was_framed", name := "was framed", description := "" },
-  { id := "censorship", name := "censorship", description := "" },
-  { id := "to_censor", name := "to censor", description := "" },
-  { id := "line", name := "line", description := "" },
-  { id := "to_draw_a_dotted_line", name := "to draw a dotted line", description := "" },
-  { id := "debt", name := "debt", description := "" },
-  { id := "to_debit_oblige", name := "to debit/oblige", description := "" },
-  { id := "fax", name := "fax", description := "" },
-  { id := "to_fax", name := "to fax", description := "" },
-  { id := "transfer", name := "transfer", description := "" },
-  { id := "to_transfer", name := "to transfer", description := "" },
-  { id := "striptease", name := "striptease", description := "" },
-  { id := "to_perform_a_striptease", name := "to perform a striptease", description := "" },
-  { id := "synchronic", name := "synchronic", description := "" },
-  { id := "synchronize", name := "synchronize", description := "" },
-  { id := "a_click", name := "a click", description := "" },
-  { id := "to_click", name := "to click", description := "" },
-  { id := "a_slap", name := "a slap", description := "" },
-  { id := "to_slap", name := "to slap", description := "" },
-  { id := "a_splash", name := "a splash", description := "" },
-  { id := "to_splash", name := "to splash", description := "" },
-  { id := "law", name := "law", description := "" },
-  { id := "legislate", name := "legislate", description := "" },
-  { id := "code", name := "code", description := "" },
-  { id := "codify", name := "codify", description := "" },
-  { id := "blood", name := "blood", description := "" },
-  { id := "bleed", name := "bleed", description := "" },
-  { id := "chat", name := "chat", description := "" },
-  { id := "to_chat", name := "chat", description := "" }
-]
-
 def relations : List FormRelation := [
-  { id := "arad2005_tiqcev_from_taqciv", formId := "arad2005_taqciv", targetId := "arad2005_tiqcev", relation := "denominal", source := [
+  { id := "arad2005_tiqcev_from_taqciv", form := taqciv, target := tiqcev, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 1 (12a)"⟩
     ] },
-  { id := "arad2005_tilfen_from_telefon", formId := "arad2005_telefon", targetId := "arad2005_tilfen", relation := "denominal", source := [
+  { id := "arad2005_tilfen_from_telefon", form := telefon, target := tilfen, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (29a)"⟩
     ] },
-  { id := "arad2005_hitmastel_from_mastul", formId := "arad2005_mastul", targetId := "arad2005_hitmastel", relation := "denominal", source := [
+  { id := "arad2005_hitmastel_from_mastul", form := mastul, target := hitmastel, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (29b)"⟩
     ] },
-  { id := "arad2005_xarap_from_xrop", formId := "arad2005_xrop", targetId := "arad2005_xarap", relation := "denominal", source := [
+  { id := "arad2005_xarap_from_xrop", form := xrop, target := xarap, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (29c)"⟩
     ] },
-  { id := "arad2005_mixshev_from_maxshev", formId := "arad2005_maxshev", targetId := "arad2005_mixshev", relation := "denominal", source := [
+  { id := "arad2005_mixshev_from_maxshev", form := maxshev, target := mixshev, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 1 (12b)"⟩,
       ⟨"arad-2005", "Ch. 2 (29d)"⟩
     ] },
-  { id := "arad2005_tixzeq_from_taxzuqa", formId := "arad2005_taxzuqa", targetId := "arad2005_tixzeq", relation := "denominal", source := [
+  { id := "arad2005_tixzeq_from_taxzuqa", form := taxzuqa, target := tixzeq, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (32a)"⟩
     ] },
-  { id := "arad2005_misger_from_misgeret", formId := "arad2005_misgeret", targetId := "arad2005_misger", relation := "denominal", source := [
+  { id := "arad2005_misger_from_misgeret", form := misgeret, target := misger, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (32b)"⟩,
       ⟨"arad-2005", "Ch. 7 (6b)"⟩,
       ⟨"arad-2005", "Ch. 7 (7b)"⟩
     ] },
-  { id := "arad2005_musgar_from_misgeret", formId := "arad2005_misgeret", targetId := "arad2005_musgar", relation := "denominal", source := [
+  { id := "arad2005_musgar_from_misgeret", form := misgeret, target := musgar, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 7 fn. 2"⟩
     ] },
-  { id := "arad2005_cinzer_from_cenzura", formId := "arad2005_cenzura", targetId := "arad2005_cinzer", relation := "denominal", source := [
+  { id := "arad2005_cinzer_from_cenzura", form := cenzura, target := cinzer, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (32c)"⟩
     ] },
-  { id := "arad2005_qivqev_from_qav", formId := "arad2005_qav", targetId := "arad2005_qivqev", relation := "denominal", source := [
+  { id := "arad2005_qivqev_from_qav", form := qav, target := qivqev, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (33a)"⟩
     ] },
-  { id := "arad2005_xiyev_from_xov", formId := "arad2005_xov", targetId := "arad2005_xiyev", relation := "denominal", source := [
+  { id := "arad2005_xiyev_from_xov", form := xov, target := xiyev, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (33b)"⟩
     ] },
-  { id := "arad2005_fikses_from_faks", formId := "arad2005_faks", targetId := "arad2005_fikses", relation := "denominal", source := [
+  { id := "arad2005_fikses_from_faks", form := faks, target := fikses, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 2 (33c)"⟩,
       ⟨"arad-2005", "Ch. 7 (41d)"⟩
     ] },
-  { id := "arad2005_trinsfer_from_transfer", formId := "arad2005_transfer", targetId := "arad2005_trinsfer", relation := "denominal", source := [
+  { id := "arad2005_trinsfer_from_transfer", form := transfer, target := trinsfer, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 1 (12d)"⟩,
       ⟨"arad-2005", "Ch. 7 (39a)"⟩
     ] },
-  { id := "arad2005_striptez_from_streptiz", formId := "arad2005_streptiz", targetId := "arad2005_striptez", relation := "denominal", source := [
+  { id := "arad2005_striptez_from_streptiz", form := streptiz, target := striptez, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 1 (12e)"⟩,
       ⟨"arad-2005", "Ch. 7 (39b)"⟩
     ] },
-  { id := "arad2005_sinxren_from_sinxroni", formId := "arad2005_sinxroni", targetId := "arad2005_sinxren", relation := "denominal", source := [
+  { id := "arad2005_sinxren_from_sinxroni", form := sinxroni, target := sinxren, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 7 (39c)"⟩
     ] },
-  { id := "arad2005_hiqliq_from_qliq", formId := "arad2005_qliq", targetId := "arad2005_hiqliq", relation := "denominal", source := [
+  { id := "arad2005_hiqliq_from_qliq", form := qliq, target := hiqliq, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 1 (12c)"⟩,
       ⟨"arad-2005", "Ch. 7 (40a)"⟩
     ] },
-  { id := "arad2005_hifliq_from_fliq", formId := "arad2005_fliq", targetId := "arad2005_hifliq", relation := "denominal", source := [
+  { id := "arad2005_hifliq_from_fliq", form := fliq, target := hifliq, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 7 (40b)"⟩
     ] },
-  { id := "arad2005_hishpritz_from_shpritz", formId := "arad2005_shpritz", targetId := "arad2005_hishpritz", relation := "denominal", source := [
+  { id := "arad2005_hishpritz_from_shpritz", form := shpritz, target := hishpritz, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 7 (40c)"⟩
     ] },
-  { id := "arad2005_xoqeq_from_xoq", formId := "arad2005_xoq", targetId := "arad2005_xoqeq", relation := "denominal", source := [
+  { id := "arad2005_xoqeq_from_xoq", form := xoq, target := xoqeq, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 7 (41a)"⟩
     ] },
-  { id := "arad2005_qoded_from_qod", formId := "arad2005_qod", targetId := "arad2005_qoded", relation := "denominal", source := [
+  { id := "arad2005_qoded_from_qod", form := qod, target := qoded, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 7 (41b)"⟩
     ] },
-  { id := "arad2005_dimem_from_dam", formId := "arad2005_dam", targetId := "arad2005_dimem", relation := "denominal", source := [
+  { id := "arad2005_dimem_from_dam", form := dam, target := dimem, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 7 (41c)"⟩
     ] },
-  { id := "arad2005_chitet_from_chat", formId := "arad2005_chat", targetId := "arad2005_chitet", relation := "denominal", source := [
+  { id := "arad2005_chitet_from_chat", form := chat, target := chitet, relation := "denominal", source := [
       ⟨"arad-2005", "Ch. 7 (41e)"⟩
     ] }
 ]
-
-/-- The form and the target of each relation, in the order of `relations`. -/
-def relationForms : List (Form × Form) := [(taqciv, tiqcev), (telefon, tilfen), (mastul, hitmastel), (xrop, xarap), (maxshev, mixshev), (taxzuqa, tixzeq), (misgeret, misger), (misgeret, musgar), (cenzura, cinzer), (qav, qivqev), (xov, xiyev), (faks, fikses), (transfer, trinsfer), (streptiz, striptez), (sinxroni, sinxren), (qliq, hiqliq), (fliq, hifliq), (shpritz, hishpritz), (xoq, xoqeq), (qod, qoded), (dam, dimem), (chat, chitet)]
 
 end Arad2005.Forms

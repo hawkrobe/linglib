@@ -239,11 +239,11 @@ def spread (c : Segment) : Option Segment :=
   else none
 
 /-- The root nodes on which a base-final consonant and the palataliser of a suffix are pronounced,
-each with the slot of the skeleton it is linked to. The palataliser associates with the consonant. Elements left afloat join a
-floating vowel on the base-final V slot, and so have no root node of their own (31), (33). Before
-a linked vowel they take the base-final V slot (28), unless the consonant spreads to the C slot of
-the suffix and so bars the way, when they associate with that slot if it does not repel them (29)
-and otherwise stay afloat (34). -/
+each with the slot of the skeleton it is linked to. The palataliser associates with the
+consonant. Elements left afloat join a floating vowel on the base-final V slot, and so have no
+root node of their own (31), (33). Before a linked vowel they take the base-final V slot (28),
+unless the consonant spreads to the C slot of the suffix and so bars the way, when they associate
+with that slot if it does not repel them (29) and otherwise stay afloat (34). -/
 def derive (b : Segment) (σ : Suffix) : List (CVSlot × Segment) :=
   let c := associate b σ.palataliser
   (.C, c.1) :: if c.2 = ⊥ ∨ σ.link = .floating then [] else
@@ -322,29 +322,28 @@ def suffixes : List (String × Suffix) :=
    ("passPtcp", passPtcp)]
 
 /-- The row of a relation between a base form and a suffixed form. -/
-def Row.ofRelation (rel : FormRelation) (target : Form) : Option Row := do
+def Row.ofRelation (rel : FormRelation) : Option Row := do
   let suffix ← suffixes.lookup rel.relation
-  let base ← target.columnAs? "Base" consonants
-  pure ⟨base.1, base.2, suffix, target⟩
+  let base ← rel.target.columnAs? "Base" consonants
+  pure ⟨base.1, base.2, suffix, rel.target⟩
 
 /-- Every pair of the tables is a row, save the two possessives that stand in for a participle. -/
-theorem isSome_ofRelation : ∀ a ∈ Forms.relations.zip Forms.relationForms,
-    a.1.relation ≠ "possessive" → (Row.ofRelation a.1 a.2.2).isSome := by
+theorem isSome_ofRelation : ∀ rel ∈ Forms.relations,
+    rel.relation ≠ "possessive" → (Row.ofRelation rel).isSome := by
   decide +kernel
 
 /-- The rows of the tables of small and big palatalisation, of the comparative and of the
 causative. -/
-def rows : List Row :=
-  (Forms.relations.zip Forms.relationForms).filterMap fun a ↦ Row.ofRelation a.1 a.2.2
+def rows : List Row := Forms.relations.filterMap Row.ofRelation
 
 /-- The root nodes that the analysis builds for a row, if it gives the base a melody. -/
 def Row.roots (a : Row) : Option (List (CVSlot × Segment)) := a.melody.map (derive · a.suffix)
 
 /-- A noun or an adjective writes the base-final consonant itself. The base form of a participle
 is an infinitive, whose theme vowel palatalises. -/
-theorem alternant_base : ∀ a ∈ Forms.relations.zip Forms.relationForms,
-    a.1.relation ∈ ["locDatFSg", "comparative", "causative"] →
-      alternant a.2.1 = (a.2.2.columnAs? "Base" consonants).map ([·.1]) := by
+theorem alternant_base : ∀ rel ∈ Forms.relations,
+    rel.relation ∈ ["locDatFSg", "comparative", "causative"] →
+      alternant rel.form = (rel.target.columnAs? "Base" consonants).map ([·.1]) := by
   decide +kernel
 
 /-- Small palatalisation of a velar is the second palatalisation of velars. -/

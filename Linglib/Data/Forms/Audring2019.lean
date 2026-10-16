@@ -23,7 +23,6 @@ def boyish : Form :=
     parameterId := "like_a_boy"
     form := "boyish"
     segments := ["boy", "ish"]
-    comment := "the [N -ish]A family (8)"
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
@@ -34,7 +33,6 @@ def foolish : Form :=
     parameterId := "like_a_fool"
     form := "foolish"
     segments := ["fool", "ish"]
-    comment := "the [N -ish]A family (8)"
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
@@ -45,7 +43,6 @@ def childish : Form :=
     parameterId := "like_a_child"
     form := "childish"
     segments := ["child", "ish"]
-    comment := "the [N -ish]A family (8)"
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
@@ -56,7 +53,6 @@ def trumpish : Form :=
     parameterId := "like_trump"
     form := "Trumpish"
     segments := ["Trump", "ish"]
-    comment := "novel formation showing the base variable is open"
     source := [
       ⟨"audring-2019", "4.1"⟩
     ] }
@@ -67,7 +63,6 @@ def careful : Form :=
     parameterId := "careful"
     form := "careful"
     segments := ["care", "ful"]
-    comment := "the [N -ful]A schema of the second-order schema (14)"
     source := [
       ⟨"audring-2019", "5"⟩
     ] }
@@ -78,7 +73,6 @@ def careless : Form :=
     parameterId := "careless"
     form := "careless"
     segments := ["care", "less"]
-    comment := "the [N -less]A schema of the second-order schema (14)"
     source := [
       ⟨"audring-2019", "5"⟩
     ] }
@@ -89,39 +83,25 @@ def clueless : Form :=
     parameterId := "clueless"
     form := "clueless"
     segments := ["clue", "less"]
-    comment := "an [N -less]A word with no [N -ful]A sister"
     source := [
       ⟨"audring-2019", "4.2.2"⟩
     ] }
 
 def all : List Form := [boyish, foolish, childish, trumpish, careful, careless, clueless]
 
-def parameters : List Parameter := [
-  { id := "like_a_boy", name := "like a boy", description := "" },
-  { id := "like_a_fool", name := "like a fool", description := "" },
-  { id := "like_a_child", name := "like a child", description := "" },
-  { id := "like_trump", name := "like Trump", description := "" },
-  { id := "careful", name := "careful", description := "" },
-  { id := "careless", name := "careless", description := "" },
-  { id := "clueless", name := "clueless", description := "" }
-]
-
 def relations : List FormRelation := [
-  { id := "audring2019_boyish_foolish", formId := "audring2019_boyish", targetId := "audring2019_foolish", relation := "same_affix", source := [
+  { id := "audring2019_boyish_foolish", form := boyish, target := foolish, relation := "same_affix", source := [
       ⟨"audring-2019", "(8)"⟩
     ] },
-  { id := "audring2019_boyish_childish", formId := "audring2019_boyish", targetId := "audring2019_childish", relation := "same_affix", source := [
+  { id := "audring2019_boyish_childish", form := boyish, target := childish, relation := "same_affix", source := [
       ⟨"audring-2019", "(8)"⟩
     ] },
-  { id := "audring2019_foolish_childish", formId := "audring2019_foolish", targetId := "audring2019_childish", relation := "same_affix", source := [
+  { id := "audring2019_foolish_childish", form := foolish, target := childish, relation := "same_affix", source := [
       ⟨"audring-2019", "(8)"⟩
     ] },
-  { id := "audring2019_careful_careless", formId := "audring2019_careful", targetId := "audring2019_careless", relation := "second_order_schema", source := [
+  { id := "audring2019_careful_careless", form := careful, target := careless, relation := "second_order_schema", source := [
       ⟨"audring-2019", "(14)"⟩
     ] }
 ]
-
-/-- The form and the target of each relation, in the order of `relations`. -/
-def relationForms : List (Form × Form) := [(boyish, foolish), (boyish, childish), (foolish, childish), (careful, careless)]
 
 end Audring2019.Forms

@@ -23,7 +23,6 @@ def strung : Form :=
     parameterId := "string_past"
     form := "strung"
     segments := ["str", "ʌ", "ŋ"]
-    comment := "central member of the product-oriented class"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -34,7 +33,6 @@ def stung : Form :=
     parameterId := "sting_past"
     form := "stung"
     segments := ["st", "ʌ", "ŋ"]
-    comment := "member of the product-oriented class"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -45,7 +43,6 @@ def flung : Form :=
     parameterId := "fling_past"
     form := "flung"
     segments := ["fl", "ʌ", "ŋ"]
-    comment := "member of the product-oriented class"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -56,7 +53,6 @@ def hung : Form :=
     parameterId := "hang_past"
     form := "hung"
     segments := ["h", "ʌ", "ŋ"]
-    comment := "member of the product-oriented class"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -67,7 +63,6 @@ def strike : Form :=
     parameterId := "strike"
     form := "strike"
     segments := ["str", "aɪ", "k"]
-    comment := "base of a dialectal new member; its vowel is not /ɪ/"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -78,7 +73,6 @@ def struck : Form :=
     parameterId := "strike_past"
     form := "struck"
     segments := ["str", "ʌ", "k"]
-    comment := "dialectal new member of the class"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -89,7 +83,6 @@ def sneak : Form :=
     parameterId := "sneak"
     form := "sneak"
     segments := ["sn", "i", "k"]
-    comment := "base of a dialectal new member; its vowel is not /ɪ/"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -100,7 +93,6 @@ def snuck : Form :=
     parameterId := "sneak_past"
     form := "snuck"
     segments := ["sn", "ʌ", "k"]
-    comment := "dialectal new member of the class"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -111,7 +103,6 @@ def drag : Form :=
     parameterId := "drag"
     form := "drag"
     segments := ["dr", "æ", "g"]
-    comment := "base of a dialectal new member; its vowel is not /ɪ/"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -122,7 +113,6 @@ def drug : Form :=
     parameterId := "drag_past"
     form := "drug"
     segments := ["dr", "ʌ", "g"]
-    comment := "dialectal new member of the class"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
@@ -133,43 +123,25 @@ def string : Form :=
     parameterId := "string"
     form := "string"
     segments := ["str", "ɪ", "ŋ"]
-    comment := "base of strung"
     source := [
       ⟨"bybee-1995", "2"⟩
     ] }
 
 def all : List Form := [strung, stung, flung, hung, strike, struck, sneak, snuck, drag, drug, string]
 
-def parameters : List Parameter := [
-  { id := "string_past", name := "string (past)", description := "" },
-  { id := "sting_past", name := "sting (past)", description := "" },
-  { id := "fling_past", name := "fling (past)", description := "" },
-  { id := "hang_past", name := "hang (past)", description := "" },
-  { id := "strike", name := "strike", description := "" },
-  { id := "strike_past", name := "strike (past)", description := "" },
-  { id := "sneak", name := "sneak", description := "" },
-  { id := "sneak_past", name := "sneak (past)", description := "" },
-  { id := "drag", name := "drag", description := "" },
-  { id := "drag_past", name := "drag (past)", description := "" },
-  { id := "string", name := "string", description := "" }
-]
-
 def relations : List FormRelation := [
-  { id := "bybee1995_string_strung", formId := "bybee1995_string", targetId := "bybee1995_strung", relation := "past", source := [
+  { id := "bybee1995_string_strung", form := string, target := strung, relation := "past", source := [
       ⟨"bybee-1995", "2"⟩
     ] },
-  { id := "bybee1995_strike_struck", formId := "bybee1995_strike", targetId := "bybee1995_struck", relation := "past", source := [
+  { id := "bybee1995_strike_struck", form := strike, target := struck, relation := "past", source := [
       ⟨"bybee-1995", "2"⟩
     ] },
-  { id := "bybee1995_sneak_snuck", formId := "bybee1995_sneak", targetId := "bybee1995_snuck", relation := "past", source := [
+  { id := "bybee1995_sneak_snuck", form := sneak, target := snuck, relation := "past", source := [
       ⟨"bybee-1995", "2"⟩
     ] },
-  { id := "bybee1995_drag_drug", formId := "bybee1995_drag", targetId := "bybee1995_drug", relation := "past", source := [
+  { id := "bybee1995_drag_drug", form := drag, target := drug, relation := "past", source := [
       ⟨"bybee-1995", "2"⟩
     ] }
 ]
-
-/-- The form and the target of each relation, in the order of `relations`. -/
-def relationForms : List (Form × Form) := [(string, strung), (strike, struck), (sneak, snuck), (drag, drug)]
 
 end Bybee1995.Forms

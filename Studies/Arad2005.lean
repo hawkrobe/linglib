@@ -617,11 +617,12 @@ def candidates (f : Data.Forms.Form) : List (Binyan × Voice) :=
 *qoded* (41a, b), whose {o, e} (25) does not list. None is the verb the root of its base derives in
 its binyan, so *misger* is not *siger*, *musgar* not *sugar* and *mixšev* not *xišev*. -/
 theorem denominals :
-    ((Forms.relationForms.filter fun (base, w) ↦ ¬∃ x ∈ candidates w,
-        IsStemModification isVowel transcribedPx Vowel.transcription x.1 x.2 (baseStem base)
-          w.segments).map (·.2.form) = ["xoqeq", "qoded"]) ∧
-      ∀ p ∈ Forms.relationForms, ∀ r ∈ (p.1.column? "Root").bind root?, ∀ x ∈ candidates p.2,
-        verb transcribedPx Vowel.transcription fricative x.1 x.2 r ≠ some p.2.segments := by
+    ((Forms.relations.filter fun rel : Data.Forms.FormRelation ↦ ¬∃ x ∈ candidates rel.target,
+        IsStemModification isVowel transcribedPx Vowel.transcription x.1 x.2 (baseStem rel.form)
+          rel.target.segments).map (·.target.form) = ["xoqeq", "qoded"]) ∧
+      ∀ rel ∈ Forms.relations, ∀ r ∈ (rel.form.column? "Root").bind root?,
+        ∀ x ∈ candidates rel.target, verb transcribedPx Vowel.transcription fricative x.1 x.2 r ≠
+          some rel.target.segments := by
   decide +kernel
 
 /-- Without its stem boundary the suffix *-et* of *misgeret* would have to be kept, which the

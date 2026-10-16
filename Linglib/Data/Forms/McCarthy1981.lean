@@ -23,7 +23,6 @@ def ktb_I_perf_act : Form :=
     parameterId := "write"
     form := "katab"
     segments := ["k", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -35,7 +34,6 @@ def ktb_I_perf_pas : Form :=
     parameterId := "write"
     form := "kutib"
     segments := ["k", "u", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -47,7 +45,6 @@ def ktb_I_impe_act : Form :=
     parameterId := "write"
     form := "aktub"
     segments := ["a", "k", "t", "u", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -59,7 +56,6 @@ def ktb_I_impe_pas : Form :=
     parameterId := "write"
     form := "uktab"
     segments := ["u", "k", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -71,7 +67,6 @@ def ktb_I_part_act : Form :=
     parameterId := "write"
     form := "kaatib"
     segments := ["k", "a", "a", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -83,7 +78,6 @@ def ktb_I_part_pas : Form :=
     parameterId := "write"
     form := "maktuub"
     segments := ["m", "a", "k", "t", "u", "u", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -95,7 +89,6 @@ def ktb_II_perf_act : Form :=
     parameterId := "write"
     form := "kattab"
     segments := ["k", "a", "t", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -107,7 +100,6 @@ def ktb_II_perf_pas : Form :=
     parameterId := "write"
     form := "kuttib"
     segments := ["k", "u", "t", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -119,7 +111,6 @@ def ktb_II_impe_act : Form :=
     parameterId := "write"
     form := "ukattib"
     segments := ["u", "k", "a", "t", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -131,7 +122,6 @@ def ktb_II_impe_pas : Form :=
     parameterId := "write"
     form := "ukattab"
     segments := ["u", "k", "a", "t", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -143,7 +133,6 @@ def ktb_II_part_act : Form :=
     parameterId := "write"
     form := "mukattib"
     segments := ["m", "u", "k", "a", "t", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -155,7 +144,6 @@ def ktb_II_part_pas : Form :=
     parameterId := "write"
     form := "mukattab"
     segments := ["m", "u", "k", "a", "t", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -167,7 +155,6 @@ def ktb_III_perf_act : Form :=
     parameterId := "write"
     form := "kaatab"
     segments := ["k", "a", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -179,7 +166,6 @@ def ktb_III_perf_pas : Form :=
     parameterId := "write"
     form := "kuutib"
     segments := ["k", "u", "u", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -191,7 +177,6 @@ def ktb_III_impe_act : Form :=
     parameterId := "write"
     form := "ukaatib"
     segments := ["u", "k", "a", "a", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -203,7 +188,6 @@ def ktb_III_impe_pas : Form :=
     parameterId := "write"
     form := "ukaatab"
     segments := ["u", "k", "a", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -215,7 +199,6 @@ def ktb_III_part_act : Form :=
     parameterId := "write"
     form := "mukaatib"
     segments := ["m", "u", "k", "a", "a", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -227,7 +210,6 @@ def ktb_III_part_pas : Form :=
     parameterId := "write"
     form := "mukaatab"
     segments := ["m", "u", "k", "a", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -239,7 +221,6 @@ def ktb_IV_perf_act : Form :=
     parameterId := "write"
     form := "ʔaktab"
     segments := ["ʔ", "a", "k", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -251,7 +232,6 @@ def ktb_IV_perf_pas : Form :=
     parameterId := "write"
     form := "ʔuktib"
     segments := ["ʔ", "u", "k", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -263,7 +243,6 @@ def ktb_IV_impe_act : Form :=
     parameterId := "write"
     form := "uʔaktib"
     segments := ["u", "ʔ", "a", "k", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -275,7 +254,6 @@ def ktb_IV_impe_pas : Form :=
     parameterId := "write"
     form := "uʔaktab"
     segments := ["u", "ʔ", "a", "k", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -287,7 +265,6 @@ def ktb_IV_part_act : Form :=
     parameterId := "write"
     form := "muʔaktib"
     segments := ["m", "u", "ʔ", "a", "k", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -299,7 +276,6 @@ def ktb_IV_part_pas : Form :=
     parameterId := "write"
     form := "muʔaktab"
     segments := ["m", "u", "ʔ", "a", "k", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -311,7 +287,6 @@ def ktb_V_perf_act : Form :=
     parameterId := "write"
     form := "takattab"
     segments := ["t", "a", "k", "a", "t", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -323,7 +298,6 @@ def ktb_V_perf_pas : Form :=
     parameterId := "write"
     form := "tukuttib"
     segments := ["t", "u", "k", "u", "t", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -335,7 +309,6 @@ def ktb_V_impe_act : Form :=
     parameterId := "write"
     form := "atakattab"
     segments := ["a", "t", "a", "k", "a", "t", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -347,7 +320,6 @@ def ktb_V_impe_pas : Form :=
     parameterId := "write"
     form := "utakattab"
     segments := ["u", "t", "a", "k", "a", "t", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -359,7 +331,6 @@ def ktb_V_part_act : Form :=
     parameterId := "write"
     form := "mutakattib"
     segments := ["m", "u", "t", "a", "k", "a", "t", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -371,7 +342,6 @@ def ktb_V_part_pas : Form :=
     parameterId := "write"
     form := "mutakattab"
     segments := ["m", "u", "t", "a", "k", "a", "t", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -383,7 +353,6 @@ def ktb_VI_perf_act : Form :=
     parameterId := "write"
     form := "takaatab"
     segments := ["t", "a", "k", "a", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -395,7 +364,6 @@ def ktb_VI_perf_pas : Form :=
     parameterId := "write"
     form := "tukuutib"
     segments := ["t", "u", "k", "u", "u", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -407,7 +375,6 @@ def ktb_VI_impe_act : Form :=
     parameterId := "write"
     form := "atakaatab"
     segments := ["a", "t", "a", "k", "a", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -419,7 +386,6 @@ def ktb_VI_impe_pas : Form :=
     parameterId := "write"
     form := "utakaatab"
     segments := ["u", "t", "a", "k", "a", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -431,7 +397,6 @@ def ktb_VI_part_act : Form :=
     parameterId := "write"
     form := "mutakaatib"
     segments := ["m", "u", "t", "a", "k", "a", "a", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -443,7 +408,6 @@ def ktb_VI_part_pas : Form :=
     parameterId := "write"
     form := "mutakaatab"
     segments := ["m", "u", "t", "a", "k", "a", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -455,7 +419,6 @@ def ktb_VII_perf_act : Form :=
     parameterId := "write"
     form := "nkatab"
     segments := ["n", "k", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -467,7 +430,6 @@ def ktb_VII_perf_pas : Form :=
     parameterId := "write"
     form := "nkutib"
     segments := ["n", "k", "u", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -479,7 +441,6 @@ def ktb_VII_impe_act : Form :=
     parameterId := "write"
     form := "ankatib"
     segments := ["a", "n", "k", "a", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -491,7 +452,6 @@ def ktb_VII_impe_pas : Form :=
     parameterId := "write"
     form := "unkatab"
     segments := ["u", "n", "k", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -503,7 +463,6 @@ def ktb_VII_part_act : Form :=
     parameterId := "write"
     form := "munkatib"
     segments := ["m", "u", "n", "k", "a", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -515,7 +474,6 @@ def ktb_VII_part_pas : Form :=
     parameterId := "write"
     form := "munkatab"
     segments := ["m", "u", "n", "k", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -527,7 +485,6 @@ def ktb_VIII_perf_act : Form :=
     parameterId := "write"
     form := "ktatab"
     segments := ["k", "t", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -539,7 +496,6 @@ def ktb_VIII_perf_pas : Form :=
     parameterId := "write"
     form := "ktutib"
     segments := ["k", "t", "u", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -551,7 +507,6 @@ def ktb_VIII_impe_act : Form :=
     parameterId := "write"
     form := "aktatib"
     segments := ["a", "k", "t", "a", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -563,7 +518,6 @@ def ktb_VIII_impe_pas : Form :=
     parameterId := "write"
     form := "uktatab"
     segments := ["u", "k", "t", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -575,7 +529,6 @@ def ktb_VIII_part_act : Form :=
     parameterId := "write"
     form := "muktatib"
     segments := ["m", "u", "k", "t", "a", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -587,7 +540,6 @@ def ktb_VIII_part_pas : Form :=
     parameterId := "write"
     form := "muktatab"
     segments := ["m", "u", "k", "t", "a", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -599,7 +551,6 @@ def ktb_IX_perf_act : Form :=
     parameterId := "write"
     form := "ktabab"
     segments := ["k", "t", "a", "b", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -611,7 +562,6 @@ def ktb_IX_impe_act : Form :=
     parameterId := "write"
     form := "aktabib"
     segments := ["a", "k", "t", "a", "b", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -623,7 +573,6 @@ def ktb_IX_part_act : Form :=
     parameterId := "write"
     form := "muktabib"
     segments := ["m", "u", "k", "t", "a", "b", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -635,7 +584,6 @@ def ktb_X_perf_act : Form :=
     parameterId := "write"
     form := "staktab"
     segments := ["s", "t", "a", "k", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -647,7 +595,6 @@ def ktb_X_perf_pas : Form :=
     parameterId := "write"
     form := "stuktib"
     segments := ["s", "t", "u", "k", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -659,7 +606,6 @@ def ktb_X_impe_act : Form :=
     parameterId := "write"
     form := "astaktib"
     segments := ["a", "s", "t", "a", "k", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -671,7 +617,6 @@ def ktb_X_impe_pas : Form :=
     parameterId := "write"
     form := "ustaktab"
     segments := ["u", "s", "t", "a", "k", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -683,7 +628,6 @@ def ktb_X_part_act : Form :=
     parameterId := "write"
     form := "mustaktib"
     segments := ["m", "u", "s", "t", "a", "k", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -695,7 +639,6 @@ def ktb_X_part_pas : Form :=
     parameterId := "write"
     form := "mustaktab"
     segments := ["m", "u", "s", "t", "a", "k", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -707,7 +650,6 @@ def ktb_XI_perf_act : Form :=
     parameterId := "write"
     form := "ktaabab"
     segments := ["k", "t", "a", "a", "b", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -719,7 +661,6 @@ def ktb_XI_impe_act : Form :=
     parameterId := "write"
     form := "aktaabib"
     segments := ["a", "k", "t", "a", "a", "b", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -731,7 +672,6 @@ def ktb_XI_part_act : Form :=
     parameterId := "write"
     form := "muktaabib"
     segments := ["m", "u", "k", "t", "a", "a", "b", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -743,7 +683,6 @@ def ktb_XII_perf_act : Form :=
     parameterId := "write"
     form := "ktawtab"
     segments := ["k", "t", "a", "w", "t", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -755,7 +694,6 @@ def ktb_XII_impe_act : Form :=
     parameterId := "write"
     form := "aktawtib"
     segments := ["a", "k", "t", "a", "w", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -767,7 +705,6 @@ def ktb_XII_part_act : Form :=
     parameterId := "write"
     form := "muktawtib"
     segments := ["m", "u", "k", "t", "a", "w", "t", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -779,7 +716,6 @@ def ktb_XIII_perf_act : Form :=
     parameterId := "write"
     form := "ktawwab"
     segments := ["k", "t", "a", "w", "w", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -791,7 +727,6 @@ def ktb_XIII_impe_act : Form :=
     parameterId := "write"
     form := "aktawwib"
     segments := ["a", "k", "t", "a", "w", "w", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -803,7 +738,6 @@ def ktb_XIII_part_act : Form :=
     parameterId := "write"
     form := "muktawwib"
     segments := ["m", "u", "k", "t", "a", "w", "w", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -815,7 +749,6 @@ def ktb_XIV_perf_act : Form :=
     parameterId := "write"
     form := "ktanbab"
     segments := ["k", "t", "a", "n", "b", "a", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -827,7 +760,6 @@ def ktb_XIV_impe_act : Form :=
     parameterId := "write"
     form := "aktanbib"
     segments := ["a", "k", "t", "a", "n", "b", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -839,7 +771,6 @@ def ktb_XIV_part_act : Form :=
     parameterId := "write"
     form := "muktanbib"
     segments := ["m", "u", "k", "t", "a", "n", "b", "i", "b"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -851,7 +782,6 @@ def ktb_XV_perf_act : Form :=
     parameterId := "write"
     form := "ktanbay"
     segments := ["k", "t", "a", "n", "b", "a", "y"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -863,7 +793,6 @@ def ktb_XV_impe_act : Form :=
     parameterId := "write"
     form := "aktanbiy"
     segments := ["a", "k", "t", "a", "n", "b", "i", "y"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -875,7 +804,6 @@ def ktb_XV_part_act : Form :=
     parameterId := "write"
     form := "muktanbiy"
     segments := ["m", "u", "k", "t", "a", "n", "b", "i", "y"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -887,7 +815,6 @@ def dhrj_QI_perf_act : Form :=
     parameterId := "roll"
     form := "daḥraj"
     segments := ["d", "a", "ḥ", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -899,7 +826,6 @@ def dhrj_QI_perf_pas : Form :=
     parameterId := "roll"
     form := "duḥrij"
     segments := ["d", "u", "ḥ", "r", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -911,7 +837,6 @@ def dhrj_QI_impe_act : Form :=
     parameterId := "roll"
     form := "udaḥrij"
     segments := ["u", "d", "a", "ḥ", "r", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -923,7 +848,6 @@ def dhrj_QI_impe_pas : Form :=
     parameterId := "roll"
     form := "udaḥraj"
     segments := ["u", "d", "a", "ḥ", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -935,7 +859,6 @@ def dhrj_QI_part_act : Form :=
     parameterId := "roll"
     form := "mudaḥrij"
     segments := ["m", "u", "d", "a", "ḥ", "r", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -947,7 +870,6 @@ def dhrj_QI_part_pas : Form :=
     parameterId := "roll"
     form := "mudaḥraj"
     segments := ["m", "u", "d", "a", "ḥ", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -959,7 +881,6 @@ def dhrj_QII_perf_act : Form :=
     parameterId := "roll"
     form := "tadaḥraj"
     segments := ["t", "a", "d", "a", "ḥ", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -971,7 +892,6 @@ def dhrj_QII_perf_pas : Form :=
     parameterId := "roll"
     form := "tuduḥrij"
     segments := ["t", "u", "d", "u", "ḥ", "r", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -983,7 +903,6 @@ def dhrj_QII_impe_act : Form :=
     parameterId := "roll"
     form := "atadaḥraj"
     segments := ["a", "t", "a", "d", "a", "ḥ", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -995,7 +914,6 @@ def dhrj_QII_impe_pas : Form :=
     parameterId := "roll"
     form := "utadaḥraj"
     segments := ["u", "t", "a", "d", "a", "ḥ", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1007,7 +925,6 @@ def dhrj_QII_part_act : Form :=
     parameterId := "roll"
     form := "mutadaḥrij"
     segments := ["m", "u", "t", "a", "d", "a", "ḥ", "r", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1019,7 +936,6 @@ def dhrj_QII_part_pas : Form :=
     parameterId := "roll"
     form := "mutadaḥraj"
     segments := ["m", "u", "t", "a", "d", "a", "ḥ", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1031,7 +947,6 @@ def dhrj_QIII_perf_act : Form :=
     parameterId := "roll"
     form := "dḥanraj"
     segments := ["d", "ḥ", "a", "n", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1043,7 +958,6 @@ def dhrj_QIII_perf_pas : Form :=
     parameterId := "roll"
     form := "dḥunrij"
     segments := ["d", "ḥ", "u", "n", "r", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1055,7 +969,6 @@ def dhrj_QIII_impe_act : Form :=
     parameterId := "roll"
     form := "adḥanrij"
     segments := ["a", "d", "ḥ", "a", "n", "r", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1067,7 +980,6 @@ def dhrj_QIII_impe_pas : Form :=
     parameterId := "roll"
     form := "udḥanraj"
     segments := ["u", "d", "ḥ", "a", "n", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1079,7 +991,6 @@ def dhrj_QIII_part_act : Form :=
     parameterId := "roll"
     form := "mudḥanrij"
     segments := ["m", "u", "d", "ḥ", "a", "n", "r", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1091,7 +1002,6 @@ def dhrj_QIII_part_pas : Form :=
     parameterId := "roll"
     form := "mudḥanraj"
     segments := ["m", "u", "d", "ḥ", "a", "n", "r", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1103,7 +1013,6 @@ def dhrj_QIV_perf_act : Form :=
     parameterId := "roll"
     form := "dḥarjaj"
     segments := ["d", "ḥ", "a", "r", "j", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1115,7 +1024,6 @@ def dhrj_QIV_perf_pas : Form :=
     parameterId := "roll"
     form := "dḥurjij"
     segments := ["d", "ḥ", "u", "r", "j", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1127,7 +1035,6 @@ def dhrj_QIV_impe_act : Form :=
     parameterId := "roll"
     form := "adḥarjij"
     segments := ["a", "d", "ḥ", "a", "r", "j", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1139,7 +1046,6 @@ def dhrj_QIV_impe_pas : Form :=
     parameterId := "roll"
     form := "udḥarjaj"
     segments := ["u", "d", "ḥ", "a", "r", "j", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1151,7 +1057,6 @@ def dhrj_QIV_part_act : Form :=
     parameterId := "roll"
     form := "mudḥarjij"
     segments := ["m", "u", "d", "ḥ", "a", "r", "j", "i", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1163,7 +1068,6 @@ def dhrj_QIV_part_pas : Form :=
     parameterId := "roll"
     form := "mudḥarjaj"
     segments := ["m", "u", "d", "ḥ", "a", "r", "j", "a", "j"]
-    comment := ""
     source := [
       ⟨"mccarthy-1981", "Table 1"⟩
     ]
@@ -1175,7 +1079,6 @@ def poison_I_perf_act : Form :=
     parameterId := "poison"
     form := "samam"
     segments := ["s", "a", "m", "a", "m"]
-    comment := "the biliteral root sm"
     source := [
       ⟨"mccarthy-1981", "(33)"⟩
     ]
@@ -1187,7 +1090,6 @@ def poison_II_perf_act : Form :=
     parameterId := "poison"
     form := "sammam"
     segments := ["s", "a", "m", "m", "a", "m"]
-    comment := "the biliteral root sm"
     source := [
       ⟨"mccarthy-1981", "(34a)"⟩
     ]
@@ -1199,7 +1101,6 @@ def poison_V_perf_act : Form :=
     parameterId := "poison"
     form := "tasammam"
     segments := ["t", "a", "s", "a", "m", "m", "a", "m"]
-    comment := "the biliteral root sm"
     source := [
       ⟨"mccarthy-1981", "(34b)"⟩
     ]
@@ -1211,20 +1112,12 @@ def magnetize_QI_perf_act : Form :=
     parameterId := "magnetize"
     form := "mağnaṭ"
     segments := ["m", "a", "ğ", "n", "a", "ṭ"]
-    comment := "the quinqueliteral root mğnṭš, from mağnaṭiiš 'magnet'"
     source := [
       ⟨"mccarthy-1981", "(38)"⟩
     ]
     columns := [("Binyan", "QI"), ("Aspect", "perfective"), ("Voice", "active")] }
 
 def all : List Form := [ktb_I_perf_act, ktb_I_perf_pas, ktb_I_impe_act, ktb_I_impe_pas, ktb_I_part_act, ktb_I_part_pas, ktb_II_perf_act, ktb_II_perf_pas, ktb_II_impe_act, ktb_II_impe_pas, ktb_II_part_act, ktb_II_part_pas, ktb_III_perf_act, ktb_III_perf_pas, ktb_III_impe_act, ktb_III_impe_pas, ktb_III_part_act, ktb_III_part_pas, ktb_IV_perf_act, ktb_IV_perf_pas, ktb_IV_impe_act, ktb_IV_impe_pas, ktb_IV_part_act, ktb_IV_part_pas, ktb_V_perf_act, ktb_V_perf_pas, ktb_V_impe_act, ktb_V_impe_pas, ktb_V_part_act, ktb_V_part_pas, ktb_VI_perf_act, ktb_VI_perf_pas, ktb_VI_impe_act, ktb_VI_impe_pas, ktb_VI_part_act, ktb_VI_part_pas, ktb_VII_perf_act, ktb_VII_perf_pas, ktb_VII_impe_act, ktb_VII_impe_pas, ktb_VII_part_act, ktb_VII_part_pas, ktb_VIII_perf_act, ktb_VIII_perf_pas, ktb_VIII_impe_act, ktb_VIII_impe_pas, ktb_VIII_part_act, ktb_VIII_part_pas, ktb_IX_perf_act, ktb_IX_impe_act, ktb_IX_part_act, ktb_X_perf_act, ktb_X_perf_pas, ktb_X_impe_act, ktb_X_impe_pas, ktb_X_part_act, ktb_X_part_pas, ktb_XI_perf_act, ktb_XI_impe_act, ktb_XI_part_act, ktb_XII_perf_act, ktb_XII_impe_act, ktb_XII_part_act, ktb_XIII_perf_act, ktb_XIII_impe_act, ktb_XIII_part_act, ktb_XIV_perf_act, ktb_XIV_impe_act, ktb_XIV_part_act, ktb_XV_perf_act, ktb_XV_impe_act, ktb_XV_part_act, dhrj_QI_perf_act, dhrj_QI_perf_pas, dhrj_QI_impe_act, dhrj_QI_impe_pas, dhrj_QI_part_act, dhrj_QI_part_pas, dhrj_QII_perf_act, dhrj_QII_perf_pas, dhrj_QII_impe_act, dhrj_QII_impe_pas, dhrj_QII_part_act, dhrj_QII_part_pas, dhrj_QIII_perf_act, dhrj_QIII_perf_pas, dhrj_QIII_impe_act, dhrj_QIII_impe_pas, dhrj_QIII_part_act, dhrj_QIII_part_pas, dhrj_QIV_perf_act, dhrj_QIV_perf_pas, dhrj_QIV_impe_act, dhrj_QIV_impe_pas, dhrj_QIV_part_act, dhrj_QIV_part_pas, poison_I_perf_act, poison_II_perf_act, poison_V_perf_act, magnetize_QI_perf_act]
-
-def parameters : List Parameter := [
-  { id := "write", name := "write", description := "the root ktb" },
-  { id := "roll", name := "roll", description := "the root dḥrj" },
-  { id := "poison", name := "poison", description := "the root sm" },
-  { id := "magnetize", name := "magnetize", description := "the root mğnṭš" }
-]
 
 def relations : List FormRelation := []
 

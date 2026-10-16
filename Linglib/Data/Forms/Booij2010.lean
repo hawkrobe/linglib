@@ -23,7 +23,6 @@ def carlessness : Form :=
     parameterId := "carlessness"
     form := "carlessness"
     segments := ["carless", "ness"]
-    comment := "the paper's novel coin (Time, October 5, 2009)"
     source := [
       ⟨"booij-2010-compass", ""⟩
     ] }
@@ -34,7 +33,6 @@ def baldness : Form :=
     parameterId := "baldness"
     form := "baldness"
     segments := ["bald", "ness"]
-    comment := "a stored deadjectival noun of the opening word set (1b)"
     source := [
       ⟨"booij-2010-compass", "(1)"⟩
     ] }
@@ -45,7 +43,6 @@ def bigness : Form :=
     parameterId := "bigness"
     form := "bigness"
     segments := ["big", "ness"]
-    comment := "a stored deadjectival noun of the opening word set (1b)"
     source := [
       ⟨"booij-2010-compass", "(1)"⟩
     ] }
@@ -56,7 +53,6 @@ def blackness : Form :=
     parameterId := "blackness"
     form := "blackness"
     segments := ["black", "ness"]
-    comment := "a stored deadjectival noun of the opening word set (1b)"
     source := [
       ⟨"booij-2010-compass", "(1)"⟩
     ] }
@@ -67,7 +63,6 @@ def britishness : Form :=
     parameterId := "britishness"
     form := "Britishness"
     segments := ["British", "ness"]
-    comment := "a stored deadjectival noun of the opening word set (1b)"
     source := [
       ⟨"booij-2010-compass", "(1)"⟩
     ] }
@@ -78,7 +73,6 @@ def awareness : Form :=
     parameterId := "awareness"
     form := "awareness"
     segments := ["aware", "ness"]
-    comment := "the paper's example of an existing deadjectival noun (2)"
     source := [
       ⟨"booij-2010-compass", "(2)"⟩
     ] }
@@ -89,7 +83,6 @@ def leesbaar : Form :=
     parameterId := "readable"
     form := "leesbaar"
     segments := ["lees", "baar"]
-    comment := "a regular -baar adjective on the transitive verb lezen"
     source := [
       ⟨"booij-2010-compass", ""⟩
     ] }
@@ -100,7 +93,6 @@ def werkbaar : Form :=
     parameterId := "workable"
     form := "werkbaar"
     segments := ["werk", "baar"]
-    comment := "a -baar adjective on the intransitive verb werken, overriding the schema's transitive base"
     source := [
       ⟨"booij-2010-compass", ""⟩
     ] }
@@ -111,24 +103,11 @@ def onbedwingbaar : Form :=
     parameterId := "unsuppressable"
     form := "onbedwingbaar"
     segments := ["on", "bedwing", "baar"]
-    comment := "coined directly from the verb bedwingen by the unified schema (16), with no listed bedwingbaar"
     source := [
       ⟨"booij-2010-compass", "(15)"⟩
     ] }
 
 def all : List Form := [carlessness, baldness, bigness, blackness, britishness, awareness, leesbaar, werkbaar, onbedwingbaar]
-
-def parameters : List Parameter := [
-  { id := "carlessness", name := "the state of being without a car", description := "" },
-  { id := "baldness", name := "baldness", description := "" },
-  { id := "bigness", name := "bigness", description := "" },
-  { id := "blackness", name := "blackness", description := "" },
-  { id := "britishness", name := "Britishness", description := "" },
-  { id := "awareness", name := "awareness", description := "" },
-  { id := "readable", name := "readable", description := "" },
-  { id := "workable", name := "workable", description := "" },
-  { id := "unsuppressable", name := "unsuppressable", description := "" }
-]
 
 def relations : List FormRelation := []
 

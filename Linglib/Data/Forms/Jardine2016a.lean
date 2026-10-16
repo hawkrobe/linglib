@@ -23,7 +23,6 @@ def f_8_kikopo : Form :=
     parameterId := "cup"
     form := "kikópo"
     segments := ["k", "i", "k", "ó", "p", "o"]
-    comment := ""
     source := [
       ⟨"jardine-2016a", "(8)"⟩
     ]
@@ -35,7 +34,6 @@ def f_8_kisiki : Form :=
     parameterId := "log"
     form := "kisikî"
     segments := ["k", "i", "s", "i", "k", "î"]
-    comment := ""
     source := [
       ⟨"jardine-2016a", "(8)"⟩
     ]
@@ -47,7 +45,6 @@ def f_8_kitabo : Form :=
     parameterId := "book"
     form := "kitabo"
     segments := ["k", "i", "t", "a", "b", "o"]
-    comment := ""
     source := [
       ⟨"jardine-2016a", "(8)"⟩
     ]
@@ -59,7 +56,6 @@ def f_8_mutunda : Form :=
     parameterId := "seller"
     form := "mutunda"
     segments := ["m", "u", "t", "u", "n", "d", "a"]
-    comment := ""
     source := [
       ⟨"jardine-2016a", "(8)"⟩
     ]
@@ -71,7 +67,6 @@ def f_8_mutema : Form :=
     parameterId := "chopper"
     form := "mutéma"
     segments := ["m", "u", "t", "é", "m", "a"]
-    comment := ""
     source := [
       ⟨"jardine-2016a", "(8)"⟩
     ]
@@ -83,7 +78,6 @@ def f_9a : Form :=
     parameterId := "cup_seller"
     form := "mutunda-bikópo"
     segments := ["m", "u", "t", "u", "n", "d", "a", "+", "b", "i", "k", "ó", "p", "o"]
-    comment := "A toneless noun and a H-toned noun are pronounced as in isolation."
     source := [
       ⟨"jardine-2016a", "(9a)"⟩
     ]
@@ -95,7 +89,6 @@ def f_9b : Form :=
     parameterId := "log_chopper"
     form := "mutémá-bísíkî"
     segments := ["m", "u", "t", "é", "m", "á", "+", "b", "í", "s", "í", "k", "î"]
-    comment := "A plateau over three unspecified TBUs."
     source := [
       ⟨"jardine-2016a", "(9b)"⟩
     ]
@@ -107,7 +100,6 @@ def f_10b : Form :=
     parameterId := "we_were_seen_by_walusimbi"
     form := "tw-áá-láb-wá wálúsimbi"
     segments := ["t", "w", "+", "á", "á", "+", "l", "á", "b", "+", "w", "á", "_", "w", "á", "l", "ú", "s", "i", "m", "b", "i"]
-    comment := "The noun and the verb form a phonological phrase, criterion (6c)."
     source := [
       ⟨"jardine-2016a", "(10b)"⟩
     ]
@@ -119,7 +111,6 @@ def f_12a : Form :=
     parameterId := "we_saw_those_of_walusimbi"
     form := "tw-áá-láb-á byáá-wálúsimbi"
     segments := ["t", "w", "+", "á", "á", "+", "l", "á", "b", "+", "á", "_", "b", "y", "á", "á", "+", "w", "á", "l", "ú", "s", "i", "m", "b", "i"]
-    comment := ""
     source := [
       ⟨"jardine-2016a", "(12a)"⟩
     ]
@@ -131,7 +122,6 @@ def f_12b : Form :=
     parameterId := "we_went_with_those_of_walusimbi"
     form := "tw-áá-génd-á ná=byáá=bá=wálúsimbi"
     segments := ["t", "w", "+", "á", "á", "+", "g", "é", "n", "d", "+", "á", "_", "n", "á", "+", "b", "y", "á", "á", "+", "b", "á", "+", "w", "á", "l", "ú", "s", "i", "m", "b", "i"]
-    comment := "A six-TBU span of toneless TBUs, triggers five TBUs from their targets on each side."
     source := [
       ⟨"jardine-2016a", "(12b)"⟩
     ]
@@ -143,7 +133,6 @@ def f_18b : Form :=
     parameterId := "no_gloss_18b"
     form := "ámákhósꜜánà"
     segments := ["á", "m", "á", "k", "h", "ó", "s", "ꜜ", "á", "n", "à"]
-    comment := "The two Hs do not fuse; the second is downstepped."
     source := [
       ⟨"jardine-2016a", "(18b)"⟩
     ]
@@ -155,7 +144,6 @@ def f_21a : Form :=
     parameterId := "the_handsome_person"
     form := "dí hánsò sëmbë"
     segments := ["d", "í", "_", "h", "á", "n", "s", "ò", "_", "s", "ë", "m", "b", "ë"]
-    comment := "No second H: the final /o/ of /hánso/ stays low."
     source := [
       ⟨"jardine-2016a", "(21a)"⟩
     ]
@@ -167,7 +155,6 @@ def f_21b : Form :=
     parameterId := "the_handsome_man"
     form := "dí hánsó wómì"
     segments := ["d", "í", "_", "h", "á", "n", "s", "ó", "_", "w", "ó", "m", "ì"]
-    comment := ""
     source := [
       ⟨"jardine-2016a", "(21b)"⟩
     ]
@@ -179,7 +166,6 @@ def f_21c : Form :=
     parameterId := "the_handsome_woman"
     form := "dí hánsó mújêë"
     segments := ["d", "í", "_", "h", "á", "n", "s", "ó", "_", "m", "ú", "j", "ê", "ë"]
-    comment := "Plateauing over two TBUs."
     source := [
       ⟨"jardine-2016a", "(21c)"⟩
     ]
@@ -191,7 +177,6 @@ def f_21d : Form :=
     parameterId := "the_iguana_there_has_eggs"
     form := "dí wájámáká=dé á óbo"
     segments := ["d", "í", "_", "w", "á", "j", "á", "m", "á", "k", "á", "+", "d", "é", "_", "á", "_", "ó", "b", "o"]
-    comment := ""
     source := [
       ⟨"jardine-2016a", "(21d)"⟩
     ]
@@ -203,32 +188,12 @@ def f_21e : Form :=
     parameterId := "the_strong_american_man"
     form := "tàángá ámêêká wómì"
     segments := ["t", "à", "á", "n", "g", "á", "_", "á", "m", "ê", "ê", "k", "á", "_", "w", "ó", "m", "ì"]
-    comment := "The domain from /taánga/: a plateau over four TBUs, the final /a/ of /taánga/ and the first three vowels of /amEEká/; the determiner /dí/ precedes it outside the domain."
     source := [
       ⟨"jardine-2016a", "(21e)"⟩
     ]
     columns := [("Underlying", "/taánga amEEká wómi/"), ("UnderlyingTones", "OHOOOOHHO"), ("SurfaceTones", "OHHHHHHHO")] }
 
 def all : List Form := [f_8_kikopo, f_8_kisiki, f_8_kitabo, f_8_mutunda, f_8_mutema, f_9a, f_9b, f_10b, f_12a, f_12b, f_18b, f_21a, f_21b, f_21c, f_21d, f_21e]
-
-def parameters : List Parameter := [
-  { id := "cup", name := "cup", description := "" },
-  { id := "log", name := "log", description := "" },
-  { id := "book", name := "book", description := "" },
-  { id := "seller", name := "seller", description := "" },
-  { id := "chopper", name := "chopper", description := "" },
-  { id := "cup_seller", name := "cup-seller", description := "" },
-  { id := "log_chopper", name := "log-chopper", description := "" },
-  { id := "we_were_seen_by_walusimbi", name := "we were seen by Walusimbi", description := "" },
-  { id := "we_saw_those_of_walusimbi", name := "we saw those of Walusimbi", description := "" },
-  { id := "we_went_with_those_of_walusimbi", name := "we went with those of Walusimbi", description := "" },
-  { id := "no_gloss_18b", name := "(no gloss)", description := "The paper prints no gloss." },
-  { id := "the_handsome_person", name := "the handsome person", description := "" },
-  { id := "the_handsome_man", name := "the handsome man", description := "" },
-  { id := "the_handsome_woman", name := "the handsome woman", description := "" },
-  { id := "the_iguana_there_has_eggs", name := "the iguana there has eggs", description := "" },
-  { id := "the_strong_american_man", name := "(the) strong American man", description := "" }
-]
 
 def relations : List FormRelation := []
 

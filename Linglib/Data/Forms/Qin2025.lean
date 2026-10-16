@@ -23,7 +23,6 @@ def bu : Form :=
     parameterId := "bu"
     form := "部"
     segments := ["bù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -35,7 +34,6 @@ def chang : Form :=
     parameterId := "chang"
     form := "厂"
     segments := ["chǎng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -47,7 +45,6 @@ def dai : Form :=
     parameterId := "dai"
     form := "代"
     segments := ["dài"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -59,7 +56,6 @@ def duo : Form :=
     parameterId := "duo"
     form := "多"
     segments := ["duō"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -71,7 +67,6 @@ def fan : Form :=
     parameterId := "fan"
     form := "反"
     segments := ["fǎn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -83,7 +78,6 @@ def fang : Form :=
     parameterId := "fang"
     form := "房"
     segments := ["fáng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -95,7 +89,6 @@ def fen : Form :=
     parameterId := "fen"
     form := "分"
     segments := ["fēn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -107,7 +100,6 @@ def ge : Form :=
     parameterId := "ge"
     form := "哥"
     segments := ["gē"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -119,7 +111,6 @@ def guo : Form :=
     parameterId := "guo"
     form := "国"
     segments := ["guó"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -131,7 +122,6 @@ def hu : Form :=
     parameterId := "hu"
     form := "户"
     segments := ["hù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -143,7 +133,6 @@ def jie : Form :=
     parameterId := "jie"
     form := "姐"
     segments := ["jiě"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -155,7 +144,6 @@ def pai : Form :=
     parameterId := "pai"
     form := "派"
     segments := ["pài"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -167,7 +155,6 @@ def qian : Form :=
     parameterId := "qian"
     form := "钱"
     segments := ["qián"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -179,7 +166,6 @@ def qun : Form :=
     parameterId := "qun"
     form := "群"
     segments := ["qún"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -191,7 +177,6 @@ def ren : Form :=
     parameterId := "ren"
     form := "人"
     segments := ["rén"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -203,7 +188,6 @@ def shi : Form :=
     parameterId := "shi"
     form := "事"
     segments := ["shì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -215,7 +199,6 @@ def shui : Form :=
     parameterId := "shui"
     form := "税"
     segments := ["shuì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -227,7 +210,6 @@ def suo : Form :=
     parameterId := "suo"
     form := "所"
     segments := ["suǒ"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -239,7 +221,6 @@ def wu : Form :=
     parameterId := "wu"
     form := "无"
     segments := ["wú"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -251,7 +232,6 @@ def xing : Form :=
     parameterId := "xing"
     form := "形"
     segments := ["xíng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -263,7 +243,6 @@ def xiu : Form :=
     parameterId := "xiu"
     form := "秀"
     segments := ["xiù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -275,7 +254,6 @@ def you : Form :=
     parameterId := "you"
     form := "有"
     segments := ["yǒu"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -287,7 +265,6 @@ def ba : Form :=
     parameterId := "ba"
     form := "吧"
     segments := ["bā"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -299,7 +276,6 @@ def ban : Form :=
     parameterId := "ban"
     form := "版"
     segments := ["bǎn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -311,7 +287,6 @@ def bu_2 : Form :=
     parameterId := "bu_2"
     form := "不"
     segments := ["bù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -323,7 +298,6 @@ def ce : Form :=
     parameterId := "ce"
     form := "册"
     segments := ["cè"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -335,7 +309,6 @@ def chang_2 : Form :=
     parameterId := "chang_2"
     form := "场"
     segments := ["chǎng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -347,7 +320,6 @@ def dan : Form :=
     parameterId := "dan"
     form := "单"
     segments := ["dān"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -359,7 +331,6 @@ def fan_2 : Form :=
     parameterId := "fan_2"
     form := "泛"
     segments := ["fàn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -371,7 +342,6 @@ def fang_2 : Form :=
     parameterId := "fang_2"
     form := "方"
     segments := ["fāng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -383,7 +353,6 @@ def gan : Form :=
     parameterId := "gan"
     form := "感"
     segments := ["gǎn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -395,7 +364,6 @@ def gong : Form :=
     parameterId := "gong"
     form := "工"
     segments := ["gōng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -407,7 +375,6 @@ def hao : Form :=
     parameterId := "hao"
     form := "好"
     segments := ["hǎo"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -419,7 +386,6 @@ def ji : Form :=
     parameterId := "ji"
     form := "机"
     segments := ["jī"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -431,7 +397,6 @@ def ke : Form :=
     parameterId := "ke"
     form := "可"
     segments := ["kě"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -443,7 +408,6 @@ def ke_2 : Form :=
     parameterId := "ke_2"
     form := "客"
     segments := ["kè"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -455,7 +419,6 @@ def li : Form :=
     parameterId := "li"
     form := "力"
     segments := ["lì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -467,7 +430,6 @@ def pin : Form :=
     parameterId := "pin"
     form := "品"
     segments := ["pǐn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -479,7 +441,6 @@ def qi : Form :=
     parameterId := "qi"
     form := "气"
     segments := ["qì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -491,7 +452,6 @@ def qi_2 : Form :=
     parameterId := "qi_2"
     form := "器"
     segments := ["qì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -503,7 +463,6 @@ def qin : Form :=
     parameterId := "qin"
     form := "亲"
     segments := ["qīn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -515,7 +474,6 @@ def sheng : Form :=
     parameterId := "sheng"
     form := "生"
     segments := ["shēng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -527,7 +485,6 @@ def ti : Form :=
     parameterId := "ti"
     form := "体"
     segments := ["tǐ"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -539,7 +496,6 @@ def wei : Form :=
     parameterId := "wei"
     form := "伪"
     segments := ["wěi"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -551,7 +507,6 @@ def wu_2 : Form :=
     parameterId := "wu_2"
     form := "物"
     segments := ["wù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -563,7 +518,6 @@ def xiang : Form :=
     parameterId := "xiang"
     form := "相"
     segments := ["xiāng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -575,7 +529,6 @@ def xiao : Form :=
     parameterId := "xiao"
     form := "小"
     segments := ["xiǎo"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -587,7 +540,6 @@ def xin : Form :=
     parameterId := "xin"
     form := "心"
     segments := ["xīn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -599,7 +551,6 @@ def xing_2 : Form :=
     parameterId := "xing_2"
     form := "星"
     segments := ["xīng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -611,7 +562,6 @@ def ye : Form :=
     parameterId := "ye"
     form := "业"
     segments := ["yè"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -623,7 +573,6 @@ def ying : Form :=
     parameterId := "ying"
     form := "影"
     segments := ["yǐng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -635,7 +584,6 @@ def yuan : Form :=
     parameterId := "yuan"
     form := "园"
     segments := ["yuán"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -647,7 +595,6 @@ def zheng : Form :=
     parameterId := "zheng"
     form := "症"
     segments := ["zhèng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -659,7 +606,6 @@ def zhong : Form :=
     parameterId := "zhong"
     form := "种"
     segments := ["zhǒng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -671,7 +617,6 @@ def zi : Form :=
     parameterId := "zi"
     form := "子"
     segments := ["zǐ"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -683,7 +628,6 @@ def zi_2 : Form :=
     parameterId := "zi_2"
     form := "自"
     segments := ["zì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -695,7 +639,6 @@ def zong : Form :=
     parameterId := "zong"
     form := "总"
     segments := ["zǒng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -707,7 +650,6 @@ def ba_2 : Form :=
     parameterId := "ba_2"
     form := "霸"
     segments := ["bà"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -719,7 +661,6 @@ def ban_2 : Form :=
     parameterId := "ban_2"
     form := "半"
     segments := ["bàn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -731,7 +672,6 @@ def bie : Form :=
     parameterId := "bie"
     form := "别"
     segments := ["bié"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -743,7 +683,6 @@ def chu : Form :=
     parameterId := "chu"
     form := "处"
     segments := ["chù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -755,7 +694,6 @@ def dao : Form :=
     parameterId := "dao"
     form := "道"
     segments := ["dào"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -767,7 +705,6 @@ def ding : Form :=
     parameterId := "ding"
     form := "丁"
     segments := ["dīng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -779,7 +716,6 @@ def du : Form :=
     parameterId := "du"
     form := "度"
     segments := ["dù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -791,7 +727,6 @@ def fa : Form :=
     parameterId := "fa"
     form := "法"
     segments := ["fǎ"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -803,7 +738,6 @@ def fan_3 : Form :=
     parameterId := "fan_3"
     form := "犯"
     segments := ["fàn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -815,7 +749,6 @@ def fei : Form :=
     parameterId := "fei"
     form := "非"
     segments := ["fēi"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -827,7 +760,6 @@ def fei_2 : Form :=
     parameterId := "fei_2"
     form := "费"
     segments := ["fèi"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -839,7 +771,6 @@ def feng : Form :=
     parameterId := "feng"
     form := "风"
     segments := ["fēng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -851,7 +782,6 @@ def fu : Form :=
     parameterId := "fu"
     form := "夫"
     segments := ["fū"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -863,7 +793,6 @@ def fu_2 : Form :=
     parameterId := "fu_2"
     form := "副"
     segments := ["fù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -875,7 +804,6 @@ def guan : Form :=
     parameterId := "guan"
     form := "观"
     segments := ["guān"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -887,7 +815,6 @@ def gui : Form :=
     parameterId := "gui"
     form := "鬼"
     segments := ["guǐ"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -899,7 +826,6 @@ def gun : Form :=
     parameterId := "gun"
     form := "棍"
     segments := ["gùn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -911,7 +837,6 @@ def han : Form :=
     parameterId := "han"
     form := "汉"
     segments := ["hàn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -923,7 +848,6 @@ def hao_2 : Form :=
     parameterId := "hao_2"
     form := "豪"
     segments := ["háo"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -935,7 +859,6 @@ def jia : Form :=
     parameterId := "jia"
     form := "家"
     segments := ["jiā"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -947,7 +870,6 @@ def jian : Form :=
     parameterId := "jian"
     form := "件"
     segments := ["jiàn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -959,7 +881,6 @@ def jiang : Form :=
     parameterId := "jiang"
     form := "匠"
     segments := ["jiàng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -971,7 +892,6 @@ def jie_2 : Form :=
     parameterId := "jie_2"
     form := "界"
     segments := ["jiè"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -983,7 +903,6 @@ def ju : Form :=
     parameterId := "ju"
     form := "具"
     segments := ["jù"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -995,7 +914,6 @@ def lei : Form :=
     parameterId := "lei"
     form := "类"
     segments := ["lèi"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1007,7 +925,6 @@ def ling : Form :=
     parameterId := "ling"
     form := "零"
     segments := ["líng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1019,7 +936,6 @@ def lun : Form :=
     parameterId := "lun"
     form := "论"
     segments := ["lùn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1031,7 +947,6 @@ def lu : Form :=
     parameterId := "lu"
     form := "率"
     segments := ["lǜ"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1043,7 +958,6 @@ def mang : Form :=
     parameterId := "mang"
     form := "盲"
     segments := ["máng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1055,7 +969,6 @@ def mi : Form :=
     parameterId := "mi"
     form := "迷"
     segments := ["mí"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1067,7 +980,6 @@ def min : Form :=
     parameterId := "min"
     form := "民"
     segments := ["mín"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1079,7 +991,6 @@ def re : Form :=
     parameterId := "re"
     form := "热"
     segments := ["rè"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1091,7 +1002,6 @@ def ruan : Form :=
     parameterId := "ruan"
     form := "软"
     segments := ["ruǎn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1103,7 +1013,6 @@ def shi_2 : Form :=
     parameterId := "shi_2"
     form := "师"
     segments := ["shī"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1115,7 +1024,6 @@ def shi_3 : Form :=
     parameterId := "shi_3"
     form := "士"
     segments := ["shì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1127,7 +1035,6 @@ def shi_4 : Form :=
     parameterId := "shi_4"
     form := "式"
     segments := ["shì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1139,7 +1046,6 @@ def shou : Form :=
     parameterId := "shou"
     form := "手"
     segments := ["shǒu"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1151,7 +1057,6 @@ def tan : Form :=
     parameterId := "tan"
     form := "坛"
     segments := ["tán"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1163,7 +1068,6 @@ def tu : Form :=
     parameterId := "tu"
     form := "徒"
     segments := ["tú"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1175,7 +1079,6 @@ def xing_3 : Form :=
     parameterId := "xing_3"
     form := "型"
     segments := ["xíng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1187,7 +1090,6 @@ def xue : Form :=
     parameterId := "xue"
     form := "学"
     segments := ["xué"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1199,7 +1101,6 @@ def ya : Form :=
     parameterId := "ya"
     form := "亚"
     segments := ["yà"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1211,7 +1112,6 @@ def yan : Form :=
     parameterId := "yan"
     form := "炎"
     segments := ["yán"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1223,7 +1123,6 @@ def yi : Form :=
     parameterId := "yi"
     form := "仪"
     segments := ["yí"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1235,7 +1134,6 @@ def you_2 : Form :=
     parameterId := "you_2"
     form := "友"
     segments := ["yǒu"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1247,7 +1145,6 @@ def yuan_2 : Form :=
     parameterId := "yuan_2"
     form := "员"
     segments := ["yuán"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1259,7 +1156,6 @@ def zhang : Form :=
     parameterId := "zhang"
     form := "张"
     segments := ["zhāng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1271,7 +1167,6 @@ def zhang_2 : Form :=
     parameterId := "zhang_2"
     form := "长"
     segments := ["zhǎng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1283,7 +1178,6 @@ def zhe : Form :=
     parameterId := "zhe"
     form := "者"
     segments := ["zhě"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1295,7 +1189,6 @@ def zhi : Form :=
     parameterId := "zhi"
     form := "制"
     segments := ["zhì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1307,7 +1200,6 @@ def zhi_2 : Form :=
     parameterId := "zhi_2"
     form := "质"
     segments := ["zhì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1319,7 +1211,6 @@ def zu : Form :=
     parameterId := "zu"
     form := "族"
     segments := ["zú"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1331,7 +1222,6 @@ def chao : Form :=
     parameterId := "chao"
     form := "超"
     segments := ["chāo"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1343,7 +1233,6 @@ def ci : Form :=
     parameterId := "ci"
     form := "次"
     segments := ["cì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1355,7 +1244,6 @@ def hua : Form :=
     parameterId := "hua"
     form := "化"
     segments := ["huà"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1367,7 +1255,6 @@ def lai : Form :=
     parameterId := "lai"
     form := "来"
     segments := ["lái"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1379,7 +1266,6 @@ def mian : Form :=
     parameterId := "mian"
     form := "面"
     segments := ["miàn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1391,7 +1277,6 @@ def nan : Form :=
     parameterId := "nan"
     form := "难"
     segments := ["nán"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1403,7 +1288,6 @@ def ran : Form :=
     parameterId := "ran"
     form := "然"
     segments := ["rán"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1415,7 +1299,6 @@ def shi_5 : Form :=
     parameterId := "shi_5"
     form := "是"
     segments := ["shì"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1427,7 +1310,6 @@ def xing_4 : Form :=
     parameterId := "xing_4"
     form := "性"
     segments := ["xìng"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1439,7 +1321,6 @@ def yi_2 : Form :=
     parameterId := "yi_2"
     form := "一"
     segments := ["yī"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1451,7 +1332,6 @@ def zhun : Form :=
     parameterId := "zhun"
     form := "准"
     segments := ["zhǔn"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1463,7 +1343,6 @@ def bian : Form :=
     parameterId := "bian"
     form := "边"
     segments := ["bian"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
@@ -1475,138 +1354,12 @@ def ge_2 : Form :=
     parameterId := "ge_2"
     form := "个"
     segments := ["ge"]
-    comment := ""
     source := [
       ⟨"qin-2025", "Appendix A"⟩
     ]
     columns := [("Boundness", "B"), ("Positional_Flexibility", "SR"), ("Phonological_Richness", "TL"), ("Meaning_Lexicality", "NL"), ("Group", "5")] }
 
 def all : List Form := [bu, chang, dai, duo, fan, fang, fen, ge, guo, hu, jie, pai, qian, qun, ren, shi, shui, suo, wu, xing, xiu, you, ba, ban, bu_2, ce, chang_2, dan, fan_2, fang_2, gan, gong, hao, ji, ke, ke_2, li, pin, qi, qi_2, qin, sheng, ti, wei, wu_2, xiang, xiao, xin, xing_2, ye, ying, yuan, zheng, zhong, zi, zi_2, zong, ba_2, ban_2, bie, chu, dao, ding, du, fa, fan_3, fei, fei_2, feng, fu, fu_2, guan, gui, gun, han, hao_2, jia, jian, jiang, jie_2, ju, lei, ling, lun, lu, mang, mi, min, re, ruan, shi_2, shi_3, shi_4, shou, tan, tu, xing_3, xue, ya, yan, yi, you_2, yuan_2, zhang, zhang_2, zhe, zhi, zhi_2, zu, chao, ci, hua, lai, mian, nan, ran, shi_5, xing_4, yi_2, zhun, bian, ge_2]
-
-def parameters : List Parameter := [
-  { id := "bu", name := "a department", description := "" },
-  { id := "chang", name := "a factory", description := "" },
-  { id := "dai", name := "to act for", description := "" },
-  { id := "duo", name := "many; multiple", description := "" },
-  { id := "fan", name := "reverse, opposite", description := "" },
-  { id := "fang", name := "a house; a room", description := "" },
-  { id := "fen", name := "to divide", description := "" },
-  { id := "ge", name := "a friendly way of addressing males of approximately one's age", description := "" },
-  { id := "guo", name := "a nation", description := "" },
-  { id := "hu", name := "a household", description := "" },
-  { id := "jie", name := "a general term for young women", description := "" },
-  { id := "pai", name := "a group of people sharing identical views, style or taste", description := "" },
-  { id := "qian", name := "cost; fee", description := "" },
-  { id := "qun", name := "crowd; group", description := "" },
-  { id := "ren", name := "people; a person", description := "" },
-  { id := "shi", name := "a matter; a thing", description := "" },
-  { id := "shui", name := "a tax", description := "" },
-  { id := "suo", name := "an institution", description := "" },
-  { id := "wu", name := "without", description := "" },
-  { id := "xing", name := "a shape", description := "" },
-  { id := "xiu", name := "a show", description := "" },
-  { id := "you", name := "to possess, to have", description := "" },
-  { id := "ba", name := "a place for recreation", description := "" },
-  { id := "ban", name := "a version", description := "" },
-  { id := "bu_2", name := "to express negative meaning", description := "" },
-  { id := "ce", name := "a volume", description := "" },
-  { id := "chang_2", name := "a venue where people gather for a specific purpose", description := "" },
-  { id := "dan", name := "single", description := "" },
-  { id := "fan_2", name := "general; extensive; nonspecific", description := "" },
-  { id := "fang_2", name := "a direction, a locality", description := "" },
-  { id := "gan", name := "feeling; sense", description := "" },
-  { id := "gong", name := "a worker", description := "" },
-  { id := "hao", name := "to express a general feeling of positivity or contentment", description := "" },
-  { id := "ji", name := "a machine", description := "" },
-  { id := "ke", name := "to express a general feeling of possibility or worthiness", description := "" },
-  { id := "ke_2", name := "a person who is traveling for certain purposes", description := "" },
-  { id := "li", name := "an ability; strength", description := "" },
-  { id := "pin", name := "a product; an article", description := "" },
-  { id := "qi", name := "a mental state", description := "" },
-  { id := "qi_2", name := "a utensil", description := "" },
-  { id := "qin", name := "of blood or marital relationship", description := "" },
-  { id := "sheng", name := "indicating a certain type of people", description := "" },
-  { id := "ti", name := "a shape or state of a substance", description := "" },
-  { id := "wei", name := "false; fake", description := "" },
-  { id := "wu_2", name := "a thing", description := "" },
-  { id := "xiang", name := "mutually", description := "" },
-  { id := "xiao", name := "a certain degree of diminutiveness in different aspects", description := "" },
-  { id := "xin", name := "a feeling", description := "" },
-  { id := "xing_2", name := "a celebrity", description := "" },
-  { id := "ye", name := "line of business", description := "" },
-  { id := "ying", name := "a picture, a motion picture", description := "" },
-  { id := "yuan", name := "a place of recreation; a park", description := "" },
-  { id := "zheng", name := "a disease", description := "" },
-  { id := "zhong", name := "a category; a sort", description := "" },
-  { id := "zi", name := "something that is small and hard", description := "" },
-  { id := "zi_2", name := "self", description := "" },
-  { id := "zong", name := "overall; general", description := "" },
-  { id := "ba_2", name := "a person who stands out in a specific field for good or bad reasons", description := "" },
-  { id := "ban_2", name := "partly; incompletely", description := "" },
-  { id := "bie", name := "a classification; distinction", description := "" },
-  { id := "chu", name := "a part; a point", description := "" },
-  { id := "dao", name := "a doctrine; a principle", description := "" },
-  { id := "ding", name := "a person engaged in certain types of manual work", description := "" },
-  { id := "du", name := "extent", description := "" },
-  { id := "fa", name := "a method", description := "" },
-  { id := "fan_3", name := "a criminal", description := "" },
-  { id := "fei", name := "indicating the negative side of something", description := "" },
-  { id := "fei_2", name := "a fee; expense", description := "" },
-  { id := "feng", name := "a tendency; an atmosphere", description := "" },
-  { id := "fu", name := "a person engaged in a manual labor", description := "" },
-  { id := "fu_2", name := "auxiliary; assistant", description := "" },
-  { id := "guan", name := "a view; an outlook", description := "" },
-  { id := "gui", name := "a derogatory term for a person with a certain problem", description := "" },
-  { id := "gun", name := "a scoundrel", description := "" },
-  { id := "han", name := "a man", description := "" },
-  { id := "hao_2", name := "a person of extraordinary powers or endowment", description := "" },
-  { id := "jia", name := "a person specialized in a certain field", description := "" },
-  { id := "jian", name := "a document", description := "" },
-  { id := "jiang", name := "a craftsman", description := "" },
-  { id := "jie_2", name := "walks of life; circles", description := "" },
-  { id := "ju", name := "a tool", description := "" },
-  { id := "lei", name := "to resemble; be similar to", description := "" },
-  { id := "ling", name := "zero; nought", description := "" },
-  { id := "lun", name := "a view; a theory", description := "" },
-  { id := "lu", name := "a rate", description := "" },
-  { id := "mang", name := "a person who is ignorant about something", description := "" },
-  { id := "mi", name := "an enthusiast", description := "" },
-  { id := "min", name := "a person of a certain occupation", description := "" },
-  { id := "re", name := "a craze", description := "" },
-  { id := "ruan", name := "being not necessarily required", description := "" },
-  { id := "shi_2", name := "a person skilled in a certain profession", description := "" },
-  { id := "shi_3", name := "a person trained in a specified field", description := "" },
-  { id := "shi_4", name := "a type; a style", description := "" },
-  { id := "shou", name := "a person good at something or engaged in a certain activity", description := "" },
-  { id := "tan", name := "circles", description := "" },
-  { id := "tu", name := "a member or follower", description := "" },
-  { id := "xing_3", name := "a model; a form", description := "" },
-  { id := "xue", name := "a subject of study; science", description := "" },
-  { id := "ya", name := "inferior; sub-", description := "" },
-  { id := "yan", name := "inflammation", description := "" },
-  { id := "yi", name := "an apparatus", description := "" },
-  { id := "you_2", name := "a friend", description := "" },
-  { id := "yuan_2", name := "a person holding a post in a certain field", description := "" },
-  { id := "zhang", name := "something can be rolled up, unfolded, or closed", description := "" },
-  { id := "zhang_2", name := "a director of an institute", description := "" },
-  { id := "zhe", name := "someone has a certain type of quality", description := "" },
-  { id := "zhi", name := "system; regulation", description := "" },
-  { id := "zhi_2", name := "matter; substance", description := "" },
-  { id := "zu", name := "a group of people with common features", description := "" },
-  { id := "chao", name := "super; extra", description := "" },
-  { id := "ci", name := "inferior in quality", description := "" },
-  { id := "hua", name := "indicating a changing process", description := "" },
-  { id := "lai", name := "used after a time expression, indicating a period that extends from past to this moment", description := "" },
-  { id := "mian", name := "to form nouns of locality", description := "" },
-  { id := "nan", name := "to form adjectives expressing an unpleasant feeling", description := "" },
-  { id := "ran", name := "to form adjectives or adverbs indicating a state", description := "" },
-  { id := "shi_5", name := "introducing a condition for doing something", description := "" },
-  { id := "xing_4", name := "to form nouns or adjectives indicating a property", description := "" },
-  { id := "yi_2", name := "suddenness or thoroughness of an action or a change in the situation", description := "" },
-  { id := "zhun", name := "quasi; partly", description := "" },
-  { id := "bian", name := "indicating locality", description := "" },
-  { id := "ge_2", name := "used after a demonstrative pronoun", description := "" }
-]
 
 def relations : List FormRelation := []
 

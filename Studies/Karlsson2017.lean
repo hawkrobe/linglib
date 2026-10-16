@@ -202,7 +202,7 @@ def Word.ofForm (f : Form) : Option Word := do
   let stem ← f.segments.head?.bind spell
   let inf ← optionalColumn f "Infinitive" infinitiveLabels
   let num ← optionalColumn f "Number" numberLabels
-  let c ← (f.column? "Case").bind (List.lookup · caseLabels)
+  let c ← f.columnAs? "Case" caseLabels
   let p ← optionalColumn f "Possessor" possessorLabels
   let k ← optionalColumn f "Clitic" cliticLabels
   some ⟨stem, (inf.map (⟨_, .infinitive ·⟩)).toList ++ (num.map (⟨_, ·⟩)).toList ++

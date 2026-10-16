@@ -23,7 +23,6 @@ def auto : Form :=
     parameterId := "car"
     form := "auto"
     segments := ["auto"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -35,7 +34,6 @@ def auton : Form :=
     parameterId := "car"
     form := "auton"
     segments := ["auto", "n"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -47,7 +45,6 @@ def hanet : Form :=
     parameterId := "him_her"
     form := "hänet"
     segments := ["häne", "t"]
-    comment := "The accusative ending is confined to the personal pronouns."
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -59,7 +56,6 @@ def maitoa : Form :=
     parameterId := "milk"
     form := "maitoa"
     segments := ["maito", "a"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -71,7 +67,6 @@ def vetta : Form :=
     parameterId := "water"
     form := "vettä"
     segments := ["vet", "tä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -83,7 +78,6 @@ def perhetta : Form :=
     parameterId := "family"
     form := "perhettä"
     segments := ["perhe", "ttä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -95,7 +89,6 @@ def autossa : Form :=
     parameterId := "car"
     form := "autossa"
     segments := ["auto", "ssa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -107,7 +100,6 @@ def autosta : Form :=
     parameterId := "car"
     form := "autosta"
     segments := ["auto", "sta"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -119,7 +111,6 @@ def autoon : Form :=
     parameterId := "car"
     form := "autoon"
     segments := ["auto", "on"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -131,7 +122,6 @@ def maahan : Form :=
     parameterId := "country"
     form := "maahan"
     segments := ["maa", "han"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -143,7 +133,6 @@ def porvooseen : Form :=
     parameterId := "porvoo"
     form := "Porvooseen"
     segments := ["Porvoo", "seen"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -155,7 +144,6 @@ def poydalla : Form :=
     parameterId := "table"
     form := "pöydällä"
     segments := ["pöydä", "llä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -167,7 +155,6 @@ def poydalta : Form :=
     parameterId := "table"
     form := "pöydältä"
     segments := ["pöydä", "ltä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -179,7 +166,6 @@ def poydalle : Form :=
     parameterId := "table"
     form := "pöydälle"
     segments := ["pöydä", "lle"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -191,7 +177,6 @@ def opettajana : Form :=
     parameterId := "teacher"
     form := "opettajana"
     segments := ["opettaja", "na"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -203,7 +188,6 @@ def opettajaksi : Form :=
     parameterId := "teacher"
     form := "opettajaksi"
     segments := ["opettaja", "ksi"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -215,7 +199,6 @@ def vaimoineni : Form :=
     parameterId := "wife"
     form := "vaimoineni"
     segments := ["vaimo", "ine", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -227,7 +210,6 @@ def passitta : Form :=
     parameterId := "passport"
     form := "passitta"
     segments := ["passi", "tta"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -239,7 +221,6 @@ def jalan : Form :=
     parameterId := "foot"
     form := "jalan"
     segments := ["jala", "n"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -251,7 +232,6 @@ def kirjani : Form :=
     parameterId := "book"
     form := "kirjani"
     segments := ["kirja", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -263,7 +243,6 @@ def kirjasi : Form :=
     parameterId := "book"
     form := "kirjasi"
     segments := ["kirja", "si"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -275,7 +254,6 @@ def kirjansa : Form :=
     parameterId := "book"
     form := "kirjansa"
     segments := ["kirja", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -287,7 +265,6 @@ def pullo : Form :=
     parameterId := "bottle"
     form := "pullo"
     segments := ["pullo"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -299,7 +276,6 @@ def pullossa : Form :=
     parameterId := "bottle"
     form := "pullossa"
     segments := ["pullo", "ssa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -311,7 +287,6 @@ def pulloni : Form :=
     parameterId := "bottle"
     form := "pulloni"
     segments := ["pullo", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -323,7 +298,6 @@ def pullostani : Form :=
     parameterId := "bottle"
     form := "pullostani"
     segments := ["pullo", "sta", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -335,7 +309,6 @@ def hyllyssa : Form :=
     parameterId := "shelf"
     form := "hyllyssä"
     segments := ["hylly", "ssä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -347,7 +320,6 @@ def hyllylla : Form :=
     parameterId := "shelf"
     form := "hyllyllä"
     segments := ["hylly", "llä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -359,7 +331,6 @@ def hyllysi : Form :=
     parameterId := "shelf"
     form := "hyllysi"
     segments := ["hylly", "si"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -371,7 +342,6 @@ def hyllyllesi : Form :=
     parameterId := "shelf"
     form := "hyllyllesi"
     segments := ["hylly", "lle", "si"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -383,7 +353,6 @@ def taloon : Form :=
     parameterId := "house"
     form := "taloon"
     segments := ["talo", "on"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -395,7 +364,6 @@ def hyllynsa : Form :=
     parameterId := "shelf"
     form := "hyllynsä"
     segments := ["hylly", "nsä"]
-    comment := "Also 'their shelf'."
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -407,7 +375,6 @@ def kadessani : Form :=
     parameterId := "hand"
     form := "kädessäni"
     segments := ["käde", "ssä", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -419,7 +386,6 @@ def kateen : Form :=
     parameterId := "hand"
     form := "käteen"
     segments := ["käte", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -431,7 +397,6 @@ def kateesi : Form :=
     parameterId := "hand"
     form := "käteesi"
     segments := ["käte", "e", "si"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -443,7 +408,6 @@ def katta : Form :=
     parameterId := "hand"
     form := "kättä"
     segments := ["kät", "tä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -455,7 +419,6 @@ def sanoa : Form :=
     parameterId := "say"
     form := "sanoa"
     segments := ["sano", "a"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -467,7 +430,6 @@ def syoda : Form :=
     parameterId := "eat"
     form := "syödä"
     segments := ["syö", "dä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -479,7 +441,6 @@ def juosta : Form :=
     parameterId := "run"
     form := "juosta"
     segments := ["juos", "ta"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -491,7 +452,6 @@ def juostaksemme : Form :=
     parameterId := "run"
     form := "juostaksemme"
     segments := ["juos", "ta", "kse", "mme"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -503,7 +463,6 @@ def sanoessani : Form :=
     parameterId := "say"
     form := "sanoessani"
     segments := ["sano", "e", "ssa", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -515,7 +474,6 @@ def syodessamme : Form :=
     parameterId := "eat"
     form := "syödessämme"
     segments := ["syö", "de", "ssä", "mme"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -527,7 +485,6 @@ def juosten : Form :=
     parameterId := "run"
     form := "juosten"
     segments := ["juos", "te", "n"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -539,7 +496,6 @@ def syomalla : Form :=
     parameterId := "eat"
     form := "syömällä"
     segments := ["syö", "mä", "llä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -551,7 +507,6 @@ def sanomatta : Form :=
     parameterId := "say"
     form := "sanomatta"
     segments := ["sano", "ma", "tta"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -563,7 +518,6 @@ def sanomaan : Form :=
     parameterId := "say"
     form := "sanomaan"
     segments := ["sano", "ma", "an"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -575,7 +529,6 @@ def puhuaksesi : Form :=
     parameterId := "speak"
     form := "puhuaksesi"
     segments := ["puhu", "a", "kse", "si"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -587,7 +540,6 @@ def puhumalla : Form :=
     parameterId := "speak"
     form := "puhumalla"
     segments := ["puhu", "ma", "lla"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.3"⟩
     ]
@@ -599,7 +551,6 @@ def autollani : Form :=
     parameterId := "car"
     form := "autollani"
     segments := ["auto", "lla", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -611,7 +562,6 @@ def autostasi : Form :=
     parameterId := "car"
     form := "autostasi"
     segments := ["auto", "sta", "si"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -623,7 +573,6 @@ def autooni : Form :=
     parameterId := "car"
     form := "autooni"
     segments := ["auto", "o", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -635,7 +584,6 @@ def laukkuni : Form :=
     parameterId := "bag"
     form := "laukkuni"
     segments := ["laukku", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -647,7 +595,6 @@ def laukkusi : Form :=
     parameterId := "bag"
     form := "laukkusi"
     segments := ["laukku", "si"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -659,7 +606,6 @@ def laukkunsa_3sg : Form :=
     parameterId := "bag"
     form := "laukkunsa"
     segments := ["laukku", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -671,7 +617,6 @@ def laukkumme : Form :=
     parameterId := "bag"
     form := "laukkumme"
     segments := ["laukku", "mme"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -683,7 +628,6 @@ def laukkunne : Form :=
     parameterId := "bag"
     form := "laukkunne"
     segments := ["laukku", "nne"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -695,7 +639,6 @@ def laukkunsa_3pl : Form :=
     parameterId := "bag"
     form := "laukkunsa"
     segments := ["laukku", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -707,7 +650,6 @@ def taloaan : Form :=
     parameterId := "house"
     form := "taloaan"
     segments := ["talo", "a", "an"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -719,7 +661,6 @@ def vieraanaan : Form :=
     parameterId := "guest"
     form := "vieraanaan"
     segments := ["vieraa", "na", "an"]
-    comment := "'as their guest'"
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -731,7 +672,6 @@ def saadakseen : Form :=
     parameterId := "get"
     form := "saadakseen"
     segments := ["saa", "da", "kse", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -743,7 +683,6 @@ def talossaan : Form :=
     parameterId := "house"
     form := "talossaan"
     segments := ["talo", "ssa", "an"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -755,7 +694,6 @@ def autollaan : Form :=
     parameterId := "car"
     form := "autollaan"
     segments := ["auto", "lla", "an"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -767,7 +705,6 @@ def isalleen : Form :=
     parameterId := "father"
     form := "isälleen"
     segments := ["isä", "lle", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -779,7 +716,6 @@ def aidiltaan : Form :=
     parameterId := "mother"
     form := "äidiltään"
     segments := ["äidi", "ltä", "än"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -791,7 +727,6 @@ def aitiaan : Form :=
     parameterId := "mother"
     form := "äitiään"
     segments := ["äiti", "ä", "än"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -803,7 +738,6 @@ def talonsa : Form :=
     parameterId := "house"
     form := "taloonsa"
     segments := ["talo", "o", "nsa"]
-    comment := "'into their house'"
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -815,7 +749,6 @@ def autonsa : Form :=
     parameterId := "car"
     form := "autonsa"
     segments := ["auto", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -827,7 +760,6 @@ def isaansa : Form :=
     parameterId := "father"
     form := "isäänsä"
     segments := ["isä", "ä", "nsä"]
-    comment := "Also the partitive singular."
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -839,7 +771,6 @@ def aitinsa : Form :=
     parameterId := "mother"
     form := "äitinsä"
     segments := ["äiti", "nsä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -851,7 +782,6 @@ def sanoakseni : Form :=
     parameterId := "say"
     form := "sanoakseni"
     segments := ["sano", "a", "kse", "ni"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
@@ -863,7 +793,6 @@ def elaaksemme : Form :=
     parameterId := "live"
     form := "elääksemme"
     segments := ["elä", "ä", "kse", "mme"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
@@ -875,7 +804,6 @@ def tavataksesi : Form :=
     parameterId := "meet"
     form := "tavataksesi"
     segments := ["tavat", "a", "kse", "si"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
@@ -887,7 +815,6 @@ def juodakseen : Form :=
     parameterId := "drink"
     form := "juodakseen"
     segments := ["juo", "da", "kse", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
@@ -899,7 +826,6 @@ def ollaksenne : Form :=
     parameterId := "be"
     form := "ollaksenne"
     segments := ["ol", "la", "kse", "nne"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
@@ -911,7 +837,6 @@ def lepaamassa : Form :=
     parameterId := "rest"
     form := "lepäämässä"
     segments := ["lepää", "mä", "ssä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -923,7 +848,6 @@ def lepaamaan : Form :=
     parameterId := "rest"
     form := "lepäämään"
     segments := ["lepää", "mä", "än"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -935,7 +859,6 @@ def vetamalla : Form :=
     parameterId := "pull"
     form := "vetämällä"
     segments := ["vetä", "mä", "llä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -947,7 +870,6 @@ def mainitsematta : Form :=
     parameterId := "mention"
     form := "mainitsematta"
     segments := ["mainitse", "ma", "tta"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -959,7 +881,6 @@ def tekemasta : Form :=
     parameterId := "do"
     form := "tekemästä"
     segments := ["teke", "mä", "stä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -971,7 +892,6 @@ def tuleman : Form :=
     parameterId := "come"
     form := "tuleman"
     segments := ["tule", "ma", "n"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -983,7 +903,6 @@ def pullot : Form :=
     parameterId := "bottle"
     form := "pullot"
     segments := ["pullo", "t"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -995,7 +914,6 @@ def pullokin : Form :=
     parameterId := "bottle"
     form := "pullokin"
     segments := ["pullo", "kin"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1007,7 +925,6 @@ def pulloista : Form :=
     parameterId := "bottle"
     form := "pulloista"
     segments := ["pullo", "i", "sta"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1019,7 +936,6 @@ def pullossahan : Form :=
     parameterId := "bottle"
     form := "pullossahan"
     segments := ["pullo", "ssa", "han"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1031,7 +947,6 @@ def pullotkin : Form :=
     parameterId := "bottle"
     form := "pullotkin"
     segments := ["pullo", "t", "kin"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1043,7 +958,6 @@ def pullossasiko : Form :=
     parameterId := "bottle"
     form := "pullossasiko"
     segments := ["pullo", "ssa", "si", "ko"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1055,7 +969,6 @@ def pulloissamme : Form :=
     parameterId := "bottle"
     form := "pulloissamme"
     segments := ["pullo", "i", "ssa", "mme"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1067,7 +980,6 @@ def pulloistakaan : Form :=
     parameterId := "bottle"
     form := "pulloistakaan"
     segments := ["pullo", "i", "sta", "kaan"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1079,7 +991,6 @@ def pulloissannekin : Form :=
     parameterId := "bottle"
     form := "pulloissannekin"
     segments := ["pullo", "i", "ssa", "nne", "kin"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1091,7 +1002,6 @@ def hyllyltako : Form :=
     parameterId := "shelf"
     form := "hyllyltäkö"
     segments := ["hylly", "ltä", "kö"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1103,7 +1013,6 @@ def hyllytko : Form :=
     parameterId := "shelf"
     form := "hyllytkö"
     segments := ["hylly", "t", "kö"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1115,7 +1024,6 @@ def hyllynhan : Form :=
     parameterId := "shelf"
     form := "hyllynhän"
     segments := ["hylly", "n", "hän"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1127,7 +1035,6 @@ def talonsako : Form :=
     parameterId := "house"
     form := "talonsako"
     segments := ["talo", "nsa", "ko"]
-    comment := "Also 'their house?'."
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1139,7 +1046,6 @@ def hyllyillamme : Form :=
     parameterId := "shelf"
     form := "hyllyillämme"
     segments := ["hylly", "i", "llä", "mme"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1151,7 +1057,6 @@ def kasi : Form :=
     parameterId := "hand"
     form := "käsi"
     segments := ["käsi"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1163,7 +1068,6 @@ def kadet : Form :=
     parameterId := "hand"
     form := "kädet"
     segments := ["käde", "t"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1175,7 +1079,6 @@ def kasissammehan : Form :=
     parameterId := "hand"
     form := "käsissämmehän"
     segments := ["käs", "i", "ssä", "mme", "hän"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
     ]
@@ -1187,7 +1090,6 @@ def lepaamaanko : Form :=
     parameterId := "rest"
     form := "lepäämäänkö"
     segments := ["lepää", "mä", "än", "kö"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -1199,7 +1101,6 @@ def vetamallakin : Form :=
     parameterId := "pull"
     form := "vetämälläkin"
     segments := ["vetä", "mä", "llä", "kin"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -1211,7 +1112,6 @@ def mainitsemattakaan : Form :=
     parameterId := "mention"
     form := "mainitsemattakaan"
     segments := ["mainitse", "ma", "tta", "kaan"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§22.4.1"⟩
     ]
@@ -1223,7 +1123,6 @@ def oppiakseenhan : Form :=
     parameterId := "learn"
     form := "oppiakseenhan"
     segments := ["oppi", "a", "kse", "en", "han"]
-    comment := "Also 'in order for them to learn'."
     source := [
       ⟨"karlsson-2017", "§22.2.2"⟩
     ]
@@ -1235,7 +1134,6 @@ def maatamme : Form :=
     parameterId := "country"
     form := "maatamme"
     segments := ["maa", "ta", "mme"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1247,7 +1145,6 @@ def poikannekin : Form :=
     parameterId := "son"
     form := "poikannekin"
     segments := ["poika", "nne", "kin"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1259,7 +1156,6 @@ def aidiltanihan : Form :=
     parameterId := "mother"
     form := "äidiltänihän"
     segments := ["äidi", "ltä", "ni", "hän"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1271,7 +1167,6 @@ def isallesiko : Form :=
     parameterId := "father"
     form := "isällesikö"
     segments := ["isä", "lle", "si", "kö"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1283,7 +1178,6 @@ def maahamme : Form :=
     parameterId := "country"
     form := "maahamme"
     segments := ["maa", "ha", "mme"]
-    comment := "The source glosses the form 'into her/his/their country'."
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1295,7 +1189,6 @@ def perhettaan : Form :=
     parameterId := "family"
     form := "perhettään"
     segments := ["perhe", "ttä", "än"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1307,7 +1200,6 @@ def talojaan : Form :=
     parameterId := "house"
     form := "talojaan"
     segments := ["talo", "j", "a", "an"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1319,7 +1211,6 @@ def renkaitaan : Form :=
     parameterId := "ring"
     form := "renkaitaan"
     segments := ["renka", "i", "ta", "an"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1331,7 +1222,6 @@ def paataan : Form :=
     parameterId := "head"
     form := "päätään"
     segments := ["pää", "tä", "än"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1343,7 +1233,6 @@ def taloansa : Form :=
     parameterId := "house"
     form := "taloansa"
     segments := ["talo", "a", "nsa"]
-    comment := "The archaic alternative to talo-a-an."
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1355,7 +1244,6 @@ def kalansa : Form :=
     parameterId := "fish"
     form := "kalansa"
     segments := ["kala", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1367,7 +1255,6 @@ def kalaansa_ill : Form :=
     parameterId := "fish"
     form := "kalaansa"
     segments := ["kala", "a", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1379,7 +1266,6 @@ def kalaansa_part : Form :=
     parameterId := "fish"
     form := "kalaansa"
     segments := ["kala", "a", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1391,7 +1277,6 @@ def kaloihinsa : Form :=
     parameterId := "fish"
     form := "kaloihinsa"
     segments := ["kalo", "i", "hi", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
@@ -1403,7 +1288,6 @@ def taloissa : Form :=
     parameterId := "house"
     form := "taloissa"
     segments := ["talo", "i", "ssa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1415,7 +1299,6 @@ def taloihin : Form :=
     parameterId := "house"
     form := "taloihin"
     segments := ["talo", "i", "hin"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1427,7 +1310,6 @@ def taloina : Form :=
     parameterId := "house"
     form := "taloina"
     segments := ["talo", "i", "na"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1439,7 +1321,6 @@ def taloille : Form :=
     parameterId := "house"
     form := "taloille"
     segments := ["talo", "i", "lle"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1451,7 +1332,6 @@ def taloiksi : Form :=
     parameterId := "house"
     form := "taloiksi"
     segments := ["talo", "i", "ksi"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1463,7 +1343,6 @@ def hyllyja : Form :=
     parameterId := "shelf"
     form := "hyllyjä"
     segments := ["hylly", "j", "ä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1475,7 +1354,6 @@ def hyllyjen : Form :=
     parameterId := "shelf"
     form := "hyllyjen"
     segments := ["hylly", "j", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1487,7 +1365,6 @@ def pulloja : Form :=
     parameterId := "bottle"
     form := "pulloja"
     segments := ["pullo", "j", "a"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1499,7 +1376,6 @@ def pullojen : Form :=
     parameterId := "bottle"
     form := "pullojen"
     segments := ["pullo", "j", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1511,7 +1387,6 @@ def tyttoja : Form :=
     parameterId := "girl"
     form := "tyttöjä"
     segments := ["tyttö", "j", "ä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1523,7 +1398,6 @@ def tyttojen : Form :=
     parameterId := "girl"
     form := "tyttöjen"
     segments := ["tyttö", "j", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1535,7 +1409,6 @@ def pulloissa : Form :=
     parameterId := "bottle"
     form := "pulloissa"
     segments := ["pullo", "i", "ssa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1547,7 +1420,6 @@ def maissa : Form :=
     parameterId := "country"
     form := "maissa"
     segments := ["ma", "i", "ssa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1559,7 +1431,6 @@ def risteissa : Form :=
     parameterId := "cross"
     form := "risteissä"
     segments := ["riste", "i", "ssä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1571,7 +1442,6 @@ def kivissa : Form :=
     parameterId := "stone"
     form := "kivissä"
     segments := ["kiv", "i", "ssä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§5.4"⟩
     ]
@@ -1583,7 +1453,6 @@ def lapsia : Form :=
     parameterId := "child"
     form := "lapsia"
     segments := ["laps", "i", "a"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§8.4"⟩
     ]
@@ -1595,7 +1464,6 @@ def talojen : Form :=
     parameterId := "house"
     form := "talojen"
     segments := ["talo", "j", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1607,7 +1475,6 @@ def poikia : Form :=
     parameterId := "boy"
     form := "poikia"
     segments := ["poik", "i", "a"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1619,7 +1486,6 @@ def poikien : Form :=
     parameterId := "boy"
     form := "poikien"
     segments := ["poik", "i", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1631,7 +1497,6 @@ def kirjoja : Form :=
     parameterId := "book"
     form := "kirjoja"
     segments := ["kirjo", "j", "a"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1643,7 +1508,6 @@ def kirjojen : Form :=
     parameterId := "book"
     form := "kirjojen"
     segments := ["kirjo", "j", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1655,7 +1519,6 @@ def paivia : Form :=
     parameterId := "day"
     form := "päiviä"
     segments := ["päiv", "i", "ä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1667,7 +1530,6 @@ def paivien : Form :=
     parameterId := "day"
     form := "päivien"
     segments := ["päiv", "i", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1679,7 +1541,6 @@ def kasien : Form :=
     parameterId := "hand"
     form := "käsien"
     segments := ["käs", "i", "en"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1691,7 +1552,6 @@ def maita : Form :=
     parameterId := "country"
     form := "maita"
     segments := ["ma", "i", "ta"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1703,7 +1563,6 @@ def maiden : Form :=
     parameterId := "country"
     form := "maiden"
     segments := ["ma", "i", "den"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1715,7 +1574,6 @@ def maitten : Form :=
     parameterId := "country"
     form := "maitten"
     segments := ["ma", "i", "tten"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1727,7 +1585,6 @@ def teita : Form :=
     parameterId := "road"
     form := "teitä"
     segments := ["te", "i", "tä"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1739,7 +1596,6 @@ def teiden : Form :=
     parameterId := "road"
     form := "teiden"
     segments := ["te", "i", "den"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1751,7 +1607,6 @@ def esteitten : Form :=
     parameterId := "obstacle"
     form := "esteitten"
     segments := ["este", "i", "tten"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1763,7 +1618,6 @@ def valtioiden : Form :=
     parameterId := "state"
     form := "valtioiden"
     segments := ["valtio", "i", "den"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§13.1.2"⟩
     ]
@@ -1775,65 +1629,12 @@ def kalojensa : Form :=
     parameterId := "fish"
     form := "kalojensa"
     segments := ["kalo", "je", "nsa"]
-    comment := ""
     source := [
       ⟨"karlsson-2017", "§14.1"⟩
     ]
     columns := [("Case", "gen"), ("Possessor", "3sg"), ("Infinitive", ""), ("Number", "i"), ("Clitic", "")] }
 
 def all : List Form := [auto, auton, hanet, maitoa, vetta, perhetta, autossa, autosta, autoon, maahan, porvooseen, poydalla, poydalta, poydalle, opettajana, opettajaksi, vaimoineni, passitta, jalan, kirjani, kirjasi, kirjansa, pullo, pullossa, pulloni, pullostani, hyllyssa, hyllylla, hyllysi, hyllyllesi, taloon, hyllynsa, kadessani, kateen, kateesi, katta, sanoa, syoda, juosta, juostaksemme, sanoessani, syodessamme, juosten, syomalla, sanomatta, sanomaan, puhuaksesi, puhumalla, autollani, autostasi, autooni, laukkuni, laukkusi, laukkunsa_3sg, laukkumme, laukkunne, laukkunsa_3pl, taloaan, vieraanaan, saadakseen, talossaan, autollaan, isalleen, aidiltaan, aitiaan, talonsa, autonsa, isaansa, aitinsa, sanoakseni, elaaksemme, tavataksesi, juodakseen, ollaksenne, lepaamassa, lepaamaan, vetamalla, mainitsematta, tekemasta, tuleman, pullot, pullokin, pulloista, pullossahan, pullotkin, pullossasiko, pulloissamme, pulloistakaan, pulloissannekin, hyllyltako, hyllytko, hyllynhan, talonsako, hyllyillamme, kasi, kadet, kasissammehan, lepaamaanko, vetamallakin, mainitsemattakaan, oppiakseenhan, maatamme, poikannekin, aidiltanihan, isallesiko, maahamme, perhettaan, talojaan, renkaitaan, paataan, taloansa, kalansa, kalaansa_ill, kalaansa_part, kaloihinsa, taloissa, taloihin, taloina, taloille, taloiksi, hyllyja, hyllyjen, pulloja, pullojen, tyttoja, tyttojen, pulloissa, maissa, risteissa, kivissa, lapsia, talojen, poikia, poikien, kirjoja, kirjojen, paivia, paivien, kasien, maita, maiden, maitten, teita, teiden, esteitten, valtioiden, kalojensa]
-
-def parameters : List Parameter := [
-  { id := "car", name := "car", description := "" },
-  { id := "him_her", name := "him, her", description := "" },
-  { id := "milk", name := "milk", description := "" },
-  { id := "water", name := "water", description := "" },
-  { id := "family", name := "family", description := "" },
-  { id := "country", name := "country", description := "" },
-  { id := "porvoo", name := "Porvoo (place name)", description := "" },
-  { id := "table", name := "table", description := "" },
-  { id := "teacher", name := "teacher", description := "" },
-  { id := "wife", name := "wife", description := "" },
-  { id := "passport", name := "passport", description := "" },
-  { id := "foot", name := "foot", description := "" },
-  { id := "book", name := "book", description := "" },
-  { id := "bottle", name := "bottle", description := "" },
-  { id := "shelf", name := "shelf", description := "" },
-  { id := "house", name := "house", description := "" },
-  { id := "hand", name := "hand", description := "" },
-  { id := "say", name := "say", description := "" },
-  { id := "eat", name := "eat", description := "" },
-  { id := "run", name := "run", description := "" },
-  { id := "speak", name := "speak", description := "" },
-  { id := "bag", name := "bag", description := "" },
-  { id := "guest", name := "guest", description := "" },
-  { id := "get", name := "get", description := "" },
-  { id := "father", name := "father", description := "" },
-  { id := "mother", name := "mother", description := "" },
-  { id := "live", name := "live", description := "" },
-  { id := "meet", name := "meet", description := "" },
-  { id := "drink", name := "drink", description := "" },
-  { id := "be", name := "be", description := "" },
-  { id := "rest", name := "rest", description := "" },
-  { id := "pull", name := "pull", description := "" },
-  { id := "mention", name := "mention", description := "" },
-  { id := "do", name := "do", description := "" },
-  { id := "come", name := "come", description := "" },
-  { id := "son", name := "son", description := "" },
-  { id := "ring", name := "ring", description := "" },
-  { id := "head", name := "head", description := "" },
-  { id := "fish", name := "fish", description := "" },
-  { id := "learn", name := "learn", description := "" },
-  { id := "girl", name := "girl", description := "" },
-  { id := "cross", name := "cross", description := "" },
-  { id := "stone", name := "stone", description := "" },
-  { id := "child", name := "child", description := "" },
-  { id := "boy", name := "boy, son", description := "" },
-  { id := "day", name := "day", description := "" },
-  { id := "road", name := "road", description := "" },
-  { id := "obstacle", name := "obstacle", description := "" },
-  { id := "state", name := "state", description := "" }
-]
 
 def relations : List FormRelation := []
 

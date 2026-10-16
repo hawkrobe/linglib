@@ -23,7 +23,6 @@ def f_1a : Form :=
     parameterId := "3sg_neg_fut_come"
     form := "atɪ́babá"
     segments := ["a", "t", "ɪ́", "b", "a", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(1a)"⟩,
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5a)"⟩,
@@ -37,7 +36,6 @@ def f_1b : Form :=
     parameterId := "3sg_neg_fut_grow"
     form := "etíbeʃē"
     segments := ["e", "t", "í", "b", "e", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(1b)"⟩,
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5d)"⟩,
@@ -51,7 +49,6 @@ def f_1c : Form :=
     parameterId := "1sg_neg_fut_come"
     form := "ɪtɪ́babá"
     segments := ["ɪ", "t", "ɪ́", "b", "a", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(1c)"⟩
     ]
@@ -63,7 +60,6 @@ def f_1d : Form :=
     parameterId := "1sg_neg_fut_grow"
     form := "ɪtɪ́baʃē"
     segments := ["ɪ", "t", "ɪ́", "b", "a", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(1d)"⟩
     ]
@@ -75,7 +71,6 @@ def f_2a_man : Form :=
     parameterId := "cl1_man"
     form := "aɲɪ"
     segments := ["a", "ɲ", "ɪ"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(2a)"⟩
     ]
@@ -87,7 +82,6 @@ def f_2a_dog : Form :=
     parameterId := "cl1_dog"
     form := "ebú"
     segments := ["e", "b", "ú"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(2a)"⟩
     ]
@@ -99,7 +93,6 @@ def f_2b_copper : Form :=
     parameterId := "cl3_copper"
     form := "ɔda"
     segments := ["ɔ", "d", "a"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(2b)"⟩
     ]
@@ -111,7 +104,6 @@ def f_2b_vulture : Form :=
     parameterId := "cl3_vulture"
     form := "opétē"
     segments := ["o", "p", "é", "t", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(2b)"⟩
     ]
@@ -123,7 +115,6 @@ def f_2c_copper : Form :=
     parameterId := "cl4_copper"
     form := "ɪda"
     segments := ["ɪ", "d", "a"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(2c)"⟩
     ]
@@ -135,7 +126,6 @@ def f_2c_vulture : Form :=
     parameterId := "cl4_vulture"
     form := "ipétē"
     segments := ["i", "p", "é", "t", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(2c)"⟩
     ]
@@ -147,7 +137,6 @@ def f_2d_axe : Form :=
     parameterId := "cl8_axe"
     form := "bʊwɪ"
     segments := ["b", "ʊ", "w", "ɪ"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(2d)"⟩
     ]
@@ -159,7 +148,6 @@ def f_2d_war : Form :=
     parameterId := "cl8_war"
     form := "buju"
     segments := ["b", "u", "j", "u"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(2d)"⟩
     ]
@@ -171,7 +159,6 @@ def f_3a : Form :=
     parameterId := "1sg_neg_come"
     form := "ɪtɪ́bá"
     segments := ["ɪ", "t", "ɪ́", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3a)"⟩
     ]
@@ -183,7 +170,6 @@ def f_3b : Form :=
     parameterId := "1pl_neg_come"
     form := "bʊtɪ́bá"
     segments := ["b", "ʊ", "t", "ɪ́", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3b)"⟩,
       ⟨"yolyan-2025", "Example 2.12 (b)"⟩
@@ -196,7 +182,6 @@ def f_3c : Form :=
     parameterId := "cl5_neg_come"
     form := "kɪtɪ́bá"
     segments := ["k", "ɪ", "t", "ɪ́", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3c)"⟩
     ]
@@ -208,7 +193,6 @@ def f_3d : Form :=
     parameterId := "1sg_neg_grow"
     form := "itíʃē"
     segments := ["i", "t", "í", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3d)"⟩
     ]
@@ -220,7 +204,6 @@ def f_3e : Form :=
     parameterId := "1pl_neg_grow"
     form := "butíʃē"
     segments := ["b", "u", "t", "í", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3e)"⟩,
       ⟨"yolyan-2025", "Example 2.12 (a)"⟩
@@ -233,7 +216,6 @@ def f_3f : Form :=
     parameterId := "cl5_neg_grow"
     form := "kitíʃē"
     segments := ["k", "i", "t", "í", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3f)"⟩
     ]
@@ -245,7 +227,6 @@ def f_4a : Form :=
     parameterId := "3sg_fut_come"
     form := "ababá"
     segments := ["a", "b", "a", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(4a)"⟩
     ]
@@ -257,7 +238,6 @@ def f_4b : Form :=
     parameterId := "cl7_fut_come"
     form := "kababá"
     segments := ["k", "a", "b", "a", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(4b)"⟩
     ]
@@ -269,7 +249,6 @@ def f_4c : Form :=
     parameterId := "2sg_fut_come"
     form := "ɔbɔbá"
     segments := ["ɔ", "b", "ɔ", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(4c)"⟩
     ]
@@ -281,7 +260,6 @@ def f_4d : Form :=
     parameterId := "3sg_fut_grow"
     form := "ebeʃē"
     segments := ["e", "b", "e", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(4d)"⟩
     ]
@@ -293,7 +271,6 @@ def f_4e : Form :=
     parameterId := "cl7_fut_grow"
     form := "kebeʃē"
     segments := ["k", "e", "b", "e", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(4e)"⟩
     ]
@@ -305,7 +282,6 @@ def f_4f : Form :=
     parameterId := "2sg_fut_grow"
     form := "oboʃē"
     segments := ["o", "b", "o", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(4f)"⟩
     ]
@@ -317,7 +293,6 @@ def f_5b : Form :=
     parameterId := "cl7_neg_fut_come"
     form := "katɪ́babá"
     segments := ["k", "a", "t", "ɪ́", "b", "a", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5b)"⟩
     ]
@@ -329,7 +304,6 @@ def f_5c : Form :=
     parameterId := "2sg_neg_fut_come"
     form := "ɔtɪ́bɔbá"
     segments := ["ɔ", "t", "ɪ́", "b", "ɔ", "b", "á"]
-    comment := "The gloss is printed 2SG-Z-NEG-FUT-come."
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5c)"⟩
     ]
@@ -341,7 +315,6 @@ def f_5e : Form :=
     parameterId := "cl7_neg_fut_grow"
     form := "ketíbeʃē"
     segments := ["k", "e", "t", "í", "b", "e", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5e)"⟩
     ]
@@ -353,7 +326,6 @@ def f_5f : Form :=
     parameterId := "2sg_neg_fut_grow"
     form := "otíboʃē"
     segments := ["o", "t", "í", "b", "o", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5f)"⟩
     ]
@@ -365,7 +337,6 @@ def f_6a : Form :=
     parameterId := "1sg_fut_come"
     form := "ɪbabá"
     segments := ["ɪ", "b", "a", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(6a)"⟩
     ]
@@ -377,7 +348,6 @@ def f_6b : Form :=
     parameterId := "1pl_fut_come"
     form := "bʊbabá"
     segments := ["b", "ʊ", "b", "a", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(6b)"⟩
     ]
@@ -389,7 +359,6 @@ def f_6c : Form :=
     parameterId := "cl5_fut_come"
     form := "kɪbabá"
     segments := ["k", "ɪ", "b", "a", "b", "á"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(6c)"⟩
     ]
@@ -401,7 +370,6 @@ def f_6d : Form :=
     parameterId := "1sg_fut_grow"
     form := "ɪbaʃē"
     segments := ["ɪ", "b", "a", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(6d)"⟩
     ]
@@ -413,7 +381,6 @@ def f_6e : Form :=
     parameterId := "1pl_fut_grow"
     form := "bʊbaʃē"
     segments := ["b", "ʊ", "b", "a", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(6e)"⟩
     ]
@@ -425,7 +392,6 @@ def f_6f : Form :=
     parameterId := "cl5_fut_grow"
     form := "kɪbaʃē"
     segments := ["k", "ɪ", "b", "a", "ʃ", "ē"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(6f)"⟩
     ]
@@ -437,7 +403,6 @@ def f_7a : Form :=
     parameterId := "1sg_itv_cook"
     form := "ɪdɪtɔ́"
     segments := ["ɪ", "d", "ɪ", "t", "ɔ́"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(7a)"⟩
     ]
@@ -449,7 +414,6 @@ def f_7b : Form :=
     parameterId := "1sg_itv_climb"
     form := "idiwu"
     segments := ["i", "d", "i", "w", "u"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(7b)"⟩
     ]
@@ -461,7 +425,6 @@ def f_7c : Form :=
     parameterId := "1sg_fut_itv_climb"
     form := "ɪbadiwu"
     segments := ["ɪ", "b", "a", "d", "i", "w", "u"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(7c)"⟩
     ]
@@ -473,7 +436,6 @@ def f_7d : Form :=
     parameterId := "1pl_fut_itv_climb"
     form := "bʊbadiwu"
     segments := ["b", "ʊ", "b", "a", "d", "i", "w", "u"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(7d)"⟩
     ]
@@ -485,7 +447,6 @@ def f_8a : Form :=
     parameterId := "3sg_neg_climb"
     form := "etíwu"
     segments := ["e", "t", "í", "w", "u"]
-    comment := "The underlying form is printed /a-atɪ́-wu/."
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8a)"⟩
     ]
@@ -497,7 +458,6 @@ def f_8b : Form :=
     parameterId := "1sg_neg_climb"
     form := "itíwu"
     segments := ["i", "t", "í", "w", "u"]
-    comment := "The underlying form is printed /i-tɪ́-wu/; the tape (26) runs the word as /ɪ-tɪ́-wu/."
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8b)"⟩,
       ⟨"yolyan-2025", "Example 2.12 (c)"⟩
@@ -510,7 +470,6 @@ def f_8c : Form :=
     parameterId := "1sg_fut_climb"
     form := "ɪbawu"
     segments := ["ɪ", "b", "a", "w", "u"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8c)"⟩,
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(27b)"⟩,
@@ -524,7 +483,6 @@ def f_8d : Form :=
     parameterId := "1sg_neg_pfv_climb"
     form := "ɪtɪ́kawu"
     segments := ["ɪ", "t", "ɪ́", "k", "a", "w", "u"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8d)"⟩
     ]
@@ -536,7 +494,6 @@ def f_8e : Form :=
     parameterId := "1sg_neg_pfv_prog_climb"
     form := "ɪtɪ́kaáwū"
     segments := ["ɪ", "t", "ɪ́", "k", "a", "á", "w", "ū"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8e)"⟩
     ]
@@ -548,7 +505,6 @@ def f_8f : Form :=
     parameterId := "1sg_neg_pfv_prog_vent_climb"
     form := "ɪtɪ́kaábāwū"
     segments := ["ɪ", "t", "ɪ́", "k", "a", "á", "b", "ā", "w", "ū"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8f)"⟩
     ]
@@ -560,7 +516,6 @@ def f_8g : Form :=
     parameterId := "1sg_neg_pfv_prog_vent_vent_climb"
     form := "ɪtɪ́kaábābāwū"
     segments := ["ɪ", "t", "ɪ́", "k", "a", "á", "b", "ā", "b", "ā", "w", "ū"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8g)"⟩,
       ⟨"yolyan-2025", "Example 2.12 (c)"⟩
@@ -573,7 +528,6 @@ def f_8h : Form :=
     parameterId := "3sg_neg_pfv_prog_vent_vent_climb"
     form := "etíkeébēbēwū"
     segments := ["e", "t", "í", "k", "e", "é", "b", "ē", "b", "ē", "w", "ū"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8h)"⟩,
       ⟨"yolyan-2025", "Example 2.12 (c)"⟩
@@ -586,63 +540,12 @@ def f_27a : Form :=
     parameterId := "3sg_fut_climb"
     form := "ebewu"
     segments := ["e", "b", "e", "w", "u"]
-    comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(27a)"⟩
     ]
     columns := [("Underlying", "/a-ba-wu/")] }
 
 def all : List Form := [f_1a, f_1b, f_1c, f_1d, f_2a_man, f_2a_dog, f_2b_copper, f_2b_vulture, f_2c_copper, f_2c_vulture, f_2d_axe, f_2d_war, f_3a, f_3b, f_3c, f_3d, f_3e, f_3f, f_4a, f_4b, f_4c, f_4d, f_4e, f_4f, f_5b, f_5c, f_5e, f_5f, f_6a, f_6b, f_6c, f_6d, f_6e, f_6f, f_7a, f_7b, f_7c, f_7d, f_8a, f_8b, f_8c, f_8d, f_8e, f_8f, f_8g, f_8h, f_27a]
-
-def parameters : List Parameter := [
-  { id := "3sg_neg_fut_come", name := "3SG-NEG-FUT-come", description := "" },
-  { id := "3sg_neg_fut_grow", name := "3SG-NEG-FUT-grow", description := "" },
-  { id := "1sg_neg_fut_come", name := "1SG-NEG-FUT-come", description := "" },
-  { id := "1sg_neg_fut_grow", name := "1SG-NEG-FUT-grow", description := "" },
-  { id := "cl1_man", name := "CL1-man", description := "" },
-  { id := "cl1_dog", name := "CL1-dog", description := "" },
-  { id := "cl3_copper", name := "CL3-copper", description := "" },
-  { id := "cl3_vulture", name := "CL3-vulture", description := "" },
-  { id := "cl4_copper", name := "CL4-copper", description := "" },
-  { id := "cl4_vulture", name := "CL4-vulture", description := "" },
-  { id := "cl8_axe", name := "CL8-axe", description := "" },
-  { id := "cl8_war", name := "CL8-war", description := "" },
-  { id := "1sg_neg_come", name := "1SG-NEG-come", description := "" },
-  { id := "1pl_neg_come", name := "1PL-NEG-come", description := "" },
-  { id := "cl5_neg_come", name := "CL5-NEG-come", description := "" },
-  { id := "1sg_neg_grow", name := "1SG-NEG-grow", description := "" },
-  { id := "1pl_neg_grow", name := "1PL-NEG-grow", description := "" },
-  { id := "cl5_neg_grow", name := "CL5-NEG-grow", description := "" },
-  { id := "3sg_fut_come", name := "3SG-FUT-come", description := "" },
-  { id := "cl7_fut_come", name := "CL7-FUT-come", description := "" },
-  { id := "2sg_fut_come", name := "2SG-FUT-come", description := "" },
-  { id := "3sg_fut_grow", name := "3SG-FUT-grow", description := "" },
-  { id := "cl7_fut_grow", name := "CL7-FUT-grow", description := "" },
-  { id := "2sg_fut_grow", name := "2SG-FUT-grow", description := "" },
-  { id := "cl7_neg_fut_come", name := "CL7-NEG-FUT-come", description := "" },
-  { id := "2sg_neg_fut_come", name := "2SG-NEG-FUT-come", description := "" },
-  { id := "cl7_neg_fut_grow", name := "CL7-NEG-FUT-grow", description := "" },
-  { id := "2sg_neg_fut_grow", name := "2SG-NEG-FUT-grow", description := "" },
-  { id := "1sg_fut_come", name := "1SG-FUT-come", description := "" },
-  { id := "1pl_fut_come", name := "1PL-FUT-come", description := "" },
-  { id := "cl5_fut_come", name := "CL5-FUT-come", description := "" },
-  { id := "1sg_fut_grow", name := "1SG-FUT-grow", description := "" },
-  { id := "1pl_fut_grow", name := "1PL-FUT-grow", description := "" },
-  { id := "cl5_fut_grow", name := "CL5-FUT-grow", description := "" },
-  { id := "1sg_itv_cook", name := "1SG-ITV-cook", description := "" },
-  { id := "1sg_itv_climb", name := "1SG-ITV-climb", description := "" },
-  { id := "1sg_fut_itv_climb", name := "1SG-FUT-ITV-climb", description := "" },
-  { id := "1pl_fut_itv_climb", name := "1PL-FUT-ITV-climb", description := "" },
-  { id := "3sg_neg_climb", name := "3SG-NEG-climb", description := "" },
-  { id := "1sg_neg_climb", name := "1SG-NEG-climb", description := "" },
-  { id := "1sg_fut_climb", name := "1SG-FUT-climb", description := "" },
-  { id := "1sg_neg_pfv_climb", name := "1SG-NEG-PFV-climb", description := "" },
-  { id := "1sg_neg_pfv_prog_climb", name := "1SG-NEG-PFV-PROG-climb", description := "" },
-  { id := "1sg_neg_pfv_prog_vent_climb", name := "1SG-NEG-PFV-PROG-VENT-climb", description := "" },
-  { id := "1sg_neg_pfv_prog_vent_vent_climb", name := "1SG-NEG-PFV-PROG-VENT-VENT-climb", description := "" },
-  { id := "3sg_neg_pfv_prog_vent_vent_climb", name := "3SG-NEG-PFV-PROG-VENT-VENT-climb", description := "" },
-  { id := "3sg_fut_climb", name := "3SG-FUT-climb", description := "" }
-]
 
 def relations : List FormRelation := []
 

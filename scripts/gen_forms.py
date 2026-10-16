@@ -36,6 +36,10 @@ array of rows keyed by the CLDF column names:
 row is a CLDF custom column and is emitted, with its string value, into the
 form's `columns` list in the order given.
 
+The `Comment` column and the `ParameterTable` are validated but not emitted:
+no theorem reads them. A relation is emitted with its two forms, the `Form_ID`
+and `Target_ID` foreign keys resolved to the forms' declarations.
+
 Behavior mirrors scripts/gen_examples.py: errors out on malformed input,
 idempotent, `--check` exits 1 on drift, `--fmt` rewrites JSON canonically
 and refuses to write if the data would change. The `Linglib.lean` root
@@ -88,9 +92,11 @@ def req_id(row: dict, key: str, where: str) -> str:
     return v
 
 
-def opt(row: dict, key: str) -> str:
-    v = row.get(key)
-    return v if isinstance(v, str) else ""
+def opt(row: dict, key: str, where: str) -> str:
+    v = row.get(key, "")
+    if not isinstance(v, str):
+        raise ValueError(f"{where}: {key} must be a string")
+    return v
 
 
 def emit_sources(xs, where: str, indent: str) -> str:
@@ -134,29 +140,30 @@ def emit_form(row: dict, ay: str) -> tuple[str, str]:
     rid = req_id(row, "ID", "FormTable row")
     where = f"form {rid!r}"
     local = lean_identifier(rid, ay)
+    opt(row, "Comment", where)
     text = f"""def {local} : Form :=
   {{ id := {lean_string(rid)}
     languageId := {lean_string(req(row, "Language_ID", where))}
     parameterId := {lean_string(req(row, "Parameter_ID", where))}
     form := {lean_string(req(row, "Form", where))}
     segments := {emit_segments(row.get("Segments"), where)}
-    comment := {lean_string(opt(row, "Comment"))}
     source := {emit_sources(row.get("Source"), where, "    ")}{emit_columns(row, where)} }}"""
     return local, text
 
 
-def emit_parameter(row: dict) -> str:
+def check_parameter(row: dict) -> str:
     rid = req_id(row, "ID", "ParameterTable row")
     where = f"parameter {rid!r}"
-    return (f"  {{ id := {lean_string(rid)}, name := {lean_string(req(row, 'Name', where))}, "
-            f"description := {lean_string(opt(row, 'Description'))} }}")
+    req(row, "Name", where)
+    opt(row, "Description", where)
+    return rid
 
 
-def emit_relation(row: dict) -> str:
+def emit_relation(row: dict, local_of: dict[str, str]) -> str:
     rid = req_id(row, "ID", "FormRelationTable row")
     where = f"relation {rid!r}"
-    return (f"  {{ id := {lean_string(rid)}, formId := {lean_string(req(row, 'Form_ID', where))}, "
-            f"targetId := {lean_string(req(row, 'Target_ID', where))}, "
+    form, target = (local_of[req(row, k, where)] for k in ("Form_ID", "Target_ID"))
+    return (f"  {{ id := {lean_string(rid)}, form := {form}, target := {target}, "
             f"relation := {lean_string(req(row, 'Relation', where))}, "
             f"source := {emit_sources(row.get('Source'), where, '    ')} }}")
 
@@ -175,28 +182,21 @@ def emit_module(author_year: str, data: dict) -> str:
     for t in data:
         if t not in TABLES:
             raise ValueError(f"unknown table {t!r}; expected one of {TABLES}")
-    form_ids = {req_id(r, "ID", "FormTable row") for r in forms}
-    param_ids = {req_id(r, "ID", "ParameterTable row") for r in params}
+    param_ids = {check_parameter(r) for r in params}
     for r in forms:
         if r.get("Parameter_ID") not in param_ids:
             raise ValueError(f"form {r.get('ID')!r}: Parameter_ID not in ParameterTable")
+    locals_and_defs = [emit_form(r, ay) for r in forms]
+    local_of = {r["ID"]: l for r, (l, _) in zip(forms, locals_and_defs)}
     for r in rels:
         for k in ("Form_ID", "Target_ID"):
-            if r.get(k) not in form_ids:
+            if r.get(k) not in local_of:
                 raise ValueError(f"relation {r.get('ID')!r}: {k} not in FormTable")
-    locals_and_defs = [emit_form(r, ay) for r in forms]
     body = "\n\n".join(t for _, t in locals_and_defs)
     all_def = "def all : List Form := [" + ", ".join(l for l, _ in locals_and_defs) + "]"
-    params_def = emit_list("parameters", "Parameter", [emit_parameter(r) for r in params])
-    rels_def = emit_list("relations", "FormRelation", [emit_relation(r) for r in rels])
-    if params:
-        params_def = params_def.replace(":=\n", ":= [\n", 1)
+    rels_def = emit_list("relations", "FormRelation", [emit_relation(r, local_of) for r in rels])
     if rels:
         rels_def = rels_def.replace(":=\n", ":= [\n", 1)
-        local_of = {req_id(r, "ID", "FormTable row"): l for r, (l, _) in zip(forms, locals_and_defs)}
-        pairs = ", ".join(f"({local_of[r['Form_ID']]}, {local_of[r['Target_ID']]})" for r in rels)
-        rels_def += ("\n\n/-- The form and the target of each relation, in the order of `relations`. -/"
-                     f"\ndef relationForms : List (Form × Form) := [{pairs}]")
     return f"""import Linglib.Data.Forms.Schema
 
 /-!
@@ -215,8 +215,6 @@ open Data.Forms
 {body}
 
 {all_def}
-
-{params_def}
 
 {rels_def}
 

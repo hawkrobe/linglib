@@ -63,8 +63,7 @@ open Morphology Data.Forms
 /-- `attested pid cols` is the segmentation of the first attested form with parameter `pid` and
 column values `cols`, or the empty list when there is none. -/
 def attested (pid : String) (cols : List (String × String)) : List String :=
-  ((Forms.all.find? λ f => f.parameterId == pid &&
-    cols.all λ c => f.column? c.1 == some c.2).map Form.segments).getD []
+  ((matching Forms.all pid cols).head?.map Form.segments).getD []
 
 /-- `Agr` lists the six person-number agreement values that the Latin verb paradigms share. -/
 inductive Agr
@@ -133,7 +132,8 @@ structure SysCell where
   deriving DecidableEq, Repr
 
 instance : Fintype SysCell :=
-  Fintype.ofEquiv (System × Agr) ⟨λ p => ⟨p.1, p.2⟩, λ c => (c.sys, c.agr), λ _ => rfl, λ _ => rfl⟩
+  Fintype.ofEquiv (System × Agr)
+    ⟨fun p ↦ ⟨p.1, p.2⟩, fun c ↦ (c.sys, c.agr), fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 /-- COEPISSE's linkage follows the stem specification (18), which gives the perfect-system
 cells the stem `coep` and the present-system cells no stem. -/
@@ -215,7 +215,8 @@ structure BellumCell where
   deriving DecidableEq, Repr
 
 instance : Fintype BellumCell :=
-  Fintype.ofEquiv (Case × Num) ⟨λ p => ⟨p.1, p.2⟩, λ c => (c.case, c.num), λ _ => rfl, λ _ => rfl⟩
+  Fintype.ofEquiv (Case × Num)
+    ⟨fun p ↦ ⟨p.1, p.2⟩, fun c ↦ (c.case, c.num), fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 /-- The property mapping sends the nominative to the accusative, the directional neuter
 syncretism of rule (24), and the ablative to the dative, which represents the merged
@@ -296,7 +297,7 @@ structure VCell where
 
 instance : Fintype VCell :=
   Fintype.ofEquiv (Voice × Agr)
-    ⟨λ p => ⟨p.1, p.2⟩, λ c => (c.voice, c.agr), λ _ => rfl, λ _ => rfl⟩
+    ⟨fun p ↦ ⟨p.1, p.2⟩, fun c ↦ (c.voice, c.agr), fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 /-- In the linkage of the two verbs, deponent HORTĀRĪ has a stem on its active cells only and
 the voice-flipping property mapping of rule (29), the stem specification (30a), while regular
@@ -518,7 +519,7 @@ structure TCell where
 
 instance : Fintype TCell :=
   Fintype.ofEquiv (Tense × Agr)
-    ⟨λ p => ⟨p.1, p.2⟩, λ c => (c.tense, c.agr), λ _ => rfl, λ _ => rfl⟩
+    ⟨fun p ↦ ⟨p.1, p.2⟩, fun c ↦ (c.tense, c.agr), fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 /-- ÞURFA's linkage, the paper's (45) and (46), gives the present the strong stem and the past
 the weak stem, a suppletion, and its property mapping sends every cell to the past, the
