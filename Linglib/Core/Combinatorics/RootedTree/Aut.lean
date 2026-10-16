@@ -14,10 +14,6 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Tactic.Ring
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
 # Automorphism cardinality for rooted nonplanar trees
 
@@ -40,99 +36,23 @@ automorphisms of a forest.
   forestAutCard G)`, the combinatorial core of the pairing's product-coproduct adjunction.
 -/
 
+@[expose] public section
 
 namespace UnorderedTree
 
 variable {α : Type*} [DecidableEq α]
 
-/-! ### RoseTree-representative substrate
-
-`treeAutCard` computes `|Aut(mk t)|` on a planar `RoseTree` representative
-`t`; `Perm`-invariance (below) lets it descend to `UnorderedTree.autCard`
-through the quotient. -/
-
 /-- Symmetry-factor at one node: `∏_{distinct c ∈ M} (M.count c)!`. -/
 def multinomialFactor (M : Multiset (UnorderedTree α)) : ℕ :=
   M.toFinset.prod fun t => (M.count t).factorial
 
-/-- The automorphism count `|Aut(mk t)|` of the nonplanar tree represented by a planar
-    `RoseTree` `t`; substrate for `UnorderedTree.autCard`. -/
-def treeAutCard : RoseTree α → ℕ
-  | .node _ cs =>
-      (cs.map treeAutCard).prod * multinomialFactor (Multiset.ofList (cs.map mk))
-
-theorem treeAutCard_node (a : α) (cs : List (RoseTree α)) :
-    treeAutCard (RoseTree.node a cs) =
-      (cs.map treeAutCard).prod * multinomialFactor (Multiset.ofList (cs.map mk)) := by
-  rw [treeAutCard]
-
-/-! #### `treeAutCard` is `Perm`-invariant -/
-
-mutual
-/-- `treeAutCard` is invariant under `RoseTree.Perm`. -/
-theorem treeAutCard_perm : ∀ {t s : RoseTree α}, RoseTree.Perm t s →
-    treeAutCard t = treeAutCard s
-  | _, _, .node h => by
-    rw [treeAutCard_node, treeAutCard_node]
-    obtain ⟨hprod, hmk⟩ := treeAutCard_permList h
-    rw [hprod, hmk]
-  | _, _, .trans h₁ h₂ => (treeAutCard_perm h₁).trans (treeAutCard_perm h₂)
-
-/-- The child-`treeAutCard` product and the `mk`-multiset are `PermList`-invariant. -/
-theorem treeAutCard_permList : ∀ {cs ds : List (RoseTree α)}, RoseTree.PermList cs ds →
-    (cs.map treeAutCard).prod = (ds.map treeAutCard).prod ∧
-      (Multiset.ofList (cs.map mk) : Multiset (UnorderedTree α)) = Multiset.ofList (ds.map mk)
-  | _, _, .nil => ⟨rfl, rfl⟩
-  | _, _, .cons h hs => by
-    obtain ⟨hprod, hmk⟩ := treeAutCard_permList hs
-    refine ⟨by simp only [List.map_cons, List.prod_cons, treeAutCard_perm h, hprod], ?_⟩
-    simp only [List.map_cons, ← Multiset.cons_coe]
-    rw [mk_eq_mk_iff.mpr h, hmk]
-  | _, _, .swap c d cs =>
-    ⟨by simp only [List.map_cons, List.prod_cons]; exact mul_left_comm _ _ _,
-     by simp only [List.map_cons, ← Multiset.cons_coe]; exact Multiset.cons_swap _ _ _⟩
-  | _, _, .trans h₁ h₂ =>
-    match treeAutCard_permList h₁, treeAutCard_permList h₂ with
-    | ⟨p₁, m₁⟩, ⟨p₂, m₂⟩ => ⟨p₁.trans p₂, m₁.trans m₂⟩
-end
-
-/-! #### Positivity of `treeAutCard` -/
-
-/-- `multinomialFactor` is positive. -/
-private theorem multinomialFactor_pos (M : Multiset (UnorderedTree α)) :
-    0 < multinomialFactor M :=
-  Finset.prod_pos fun _ _ => Nat.factorial_pos _
-
-/-- `treeAutCard` is positive. -/
-theorem treeAutCard_pos (t : RoseTree α) : 0 < treeAutCard t := by
-  induction t with
-  | node a cs ih =>
-    rw [treeAutCard_node]
-    refine Nat.mul_pos ?_ (multinomialFactor_pos _)
-    exact List.prod_pos_iff_forall_pos_nat.mpr (by simpa using ih)
-
-/-! ### UnorderedTree automorphism count via lift -/
-
-/-- The cardinality `|Aut(t)|` of the automorphism group of a rooted nonplanar tree:
-    `∏_{distinct c ∈ M} (M.count c)! · autCard c ^ M.count c` at `node a M`
-    (`autCard_node`), `1` at a leaf (`autCard_leaf`). -/
+/-- The cardinality `|Aut(t)|` of the automorphism group of a rooted nonplanar tree: the product of
+the children's counts times the symmetry factor of the children (`autCard_node`). -/
 def autCard : UnorderedTree α → ℕ :=
-  Quotient.lift treeAutCard (fun _ _ h => treeAutCard_perm h)
+  para fun _ ps ↦ (ps.map Prod.snd).prod * multinomialFactor (ps.map Prod.fst)
 
-@[simp] theorem autCard_mk (t : RoseTree α) : autCard (mk t) = treeAutCard t := rfl
-
-/-- A leaf has trivial aut group. -/
-@[simp] theorem autCard_leaf (a : α) : autCard (UnorderedTree.leaf a : UnorderedTree α) = 1 := by
-  show treeAutCard (RoseTree.leaf a) = 1
-  rw [treeAutCard_node]
-  simp [multinomialFactor]
-
-/-- `autCard` is positive: the automorphism group contains the identity. -/
-theorem autCard_pos (t : UnorderedTree α) : 0 < autCard t :=
-  Quotient.inductionOn t treeAutCard_pos
-
-/-- The automorphism count `|Aut(F)|` of a forest of nonplanar trees:
-    `∏_{distinct T ∈ F} (F.count T)! · autCard T ^ F.count T`. -/
+/-- The automorphism count `|Aut(F)|` of a forest of nonplanar trees,
+`∏_{distinct T ∈ F} (F.count T)! · autCard T ^ F.count T`. -/
 def forestAutCard (F : Multiset (UnorderedTree α)) : ℕ :=
   F.toFinset.prod fun t => (F.count t).factorial * autCard t ^ F.count t
 
@@ -146,14 +66,7 @@ def forestAutCard (F : Multiset (UnorderedTree α)) : ℕ :=
     forestAutCard ({T} : Multiset (UnorderedTree α)) = autCard T := by
   simp [forestAutCard]
 
-/-- `forestAutCard` is positive. -/
-theorem forestAutCard_pos (F : Multiset (UnorderedTree α)) : 0 < forestAutCard F := by
-  unfold forestAutCard
-  exact Finset.prod_pos fun t _ =>
-    Nat.mul_pos (Nat.factorial_pos _) (pow_pos (autCard_pos t) _)
-
-/-- `forestAutCard` as the `autCard`-product over all members times the symmetry factor:
-    the forest analogue of `treeAutCard_node`'s shape. -/
+/-- `forestAutCard` as the `autCard`-product over all members times the symmetry factor. -/
 theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (UnorderedTree α)) :
     forestAutCard F = (F.map autCard).prod * multinomialFactor F := by
   unfold forestAutCard multinomialFactor
@@ -163,11 +76,23 @@ theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (UnorderedTree
 /-- `autCard` at a node is `forestAutCard` of the children: the recursive formula. -/
 @[simp] theorem autCard_node (a : α) (F : Multiset (UnorderedTree α)) :
     autCard (UnorderedTree.node a F) = forestAutCard F := by
-  induction F using forest_inductionOn with
-  | h ps =>
-    rw [node_mk_tree_list, autCard_mk, treeAutCard_node,
-      forestAutCard_eq_prod_mul_multinomialFactor, Multiset.map_coe, List.map_map]
-    rfl
+  simp [autCard, forestAutCard_eq_prod_mul_multinomialFactor]
+
+/-- A leaf has trivial aut group. -/
+@[simp] theorem autCard_leaf (a : α) : autCard (UnorderedTree.leaf a : UnorderedTree α) = 1 := by
+  rw [← node_zero, autCard_node, forestAutCard_zero]
+
+/-- `autCard` is positive: the automorphism group contains the identity. -/
+theorem autCard_pos (t : UnorderedTree α) : 0 < autCard t := by
+  induction t with
+  | node a F ih =>
+    rw [autCard_node]
+    exact Finset.prod_pos fun t ht ↦
+      Nat.mul_pos (Nat.factorial_pos _) (pow_pos (ih t (Multiset.mem_toFinset.1 ht)) _)
+
+/-- `forestAutCard` is positive. -/
+theorem forestAutCard_pos (F : Multiset (UnorderedTree α)) : 0 < forestAutCard F :=
+  Finset.prod_pos fun t _ ↦ Nat.mul_pos (Nat.factorial_pos _) (pow_pos (autCard_pos t) _)
 
 /-! ### Multinomial split identity
 

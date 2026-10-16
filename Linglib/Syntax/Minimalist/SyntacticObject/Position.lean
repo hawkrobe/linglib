@@ -75,8 +75,10 @@ variable {t : PlanarSyntacticObject} {p : t.val.Positions} {y : SyntacticObject}
 
 theorem isSyntacticObject_subtree (p : t.val.Positions) :
     IsSyntacticObject (UnorderedTree.mk p.subtree) :=
-  isSyntacticObject_of_mem_subtrees t.toSyntacticObject _
-    (mem_unorderedSubtrees.2 ⟨_, _, p.subtreeAt_eq, rfl⟩)
+  isSyntacticObject_of_mem_subtrees t.toSyntacticObject _ <| by
+    change _ ∈ (UnorderedTree.mk t.val).subtrees
+    rw [UnorderedTree.subtrees_mk]
+    exact mem_unorderedSubtrees.2 ⟨_, _, p.subtreeAt_eq, rfl⟩
 
 variable (t) in
 /-- The term of `t` at a position. -/
@@ -99,9 +101,9 @@ theorem immediatelyContains_termAt :
 /-- The term at a position contains or equals the terms at the positions below it. -/
 theorem containsOrEq_termAt : ContainsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧ t.termAt q = y := by
   rw [← mem_terms, ← Multiset.mem_map_of_injective Subtype.val_injective, map_val_terms]
-  show y.val ∈ unorderedSubtrees p.subtree ↔ _
-  simp only [unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map, mem_subtrees,
-    Positions.isSubtree_subtree]
+  change y.val ∈ (UnorderedTree.mk p.subtree).subtrees ↔ _
+  simp only [UnorderedTree.subtrees_mk, unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map,
+    mem_subtrees, Positions.isSubtree_subtree]
   constructor
   · rintro ⟨s, ⟨q, hpq, rfl⟩, hsy⟩
     exact ⟨q, hpq, Subtype.ext hsy⟩
