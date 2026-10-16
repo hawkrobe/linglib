@@ -1,7 +1,7 @@
 [
   {
     "id": "tonhauseretal2013_1a",
-    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "p. 28"},
+    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "(28a)"},
     "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1a)"},
     "language": "stan1293",
     "primaryText": "The present queen of France lives in Ithaca.",
@@ -22,7 +22,7 @@
   },
   {
     "id": "tonhauseretal2013_1b",
-    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "p. 28"},
+    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "(28b)"},
     "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1b)"},
     "language": "stan1293",
     "primaryText": "It is not the case that the present queen of France lives in Ithaca.",
@@ -43,7 +43,7 @@
   },
   {
     "id": "tonhauseretal2013_1c",
-    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "p. 28"},
+    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "(28c)"},
     "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1c)"},
     "language": "stan1293",
     "primaryText": "Does the present queen of France live in Ithaca?",
@@ -64,7 +64,7 @@
   },
   {
     "id": "tonhauseretal2013_1d",
-    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "p. 28"},
+    "source": {"bibkey": "chierchia-mcconnell-ginet-1990", "paperLabel": "(28d)"},
     "reportedIn": {"bibkey": "tonhauser-beaver-roberts-simons-2013", "paperLabel": "(1d)"},
     "language": "stan1293",
     "primaryText": "If the present queen of France lives in Ithaca, she has probably met Nelly.",

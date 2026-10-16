@@ -77,7 +77,7 @@ semantics into a dynamic account of accommodation.
 * [D. Beaver, *The Kinematics of Presupposition* (1992)][beaver-1992]
 * [S. C. Kleene, *Introduction to Metamathematics* (1952)][kleene-1952]
 * [S. Peters, *A Truth-Conditional Formulation of Karttunen's Account of Presupposition*
-  (1975)][peters-1975]
+  (1979)][peters-1979]
 * [E. Krahmer, *Partiality and Dynamics* (1994)][krahmer-1994]
 * [D. T. Langendoen, H. B. Savin, *The Projection Problem for Presuppositions*
   (1971)][langendoen-savin-1971]
@@ -134,7 +134,7 @@ theorem presupVal_ne_indet (a : Trivalent) : presupVal a ≠ .indet := by cases 
 
 Strong Kleene is the lattice structure of `Trivalent`; the middle (Peters) and weak
 (Bochvar-internal) connectives are `Trivalent.meetMiddle` and `Trivalent.meetWeak` with
-their joins ([peters-1975]; the name *middle Kleene* is [krahmer-1994]'s). The conditional
+their joins ([peters-1979]; the name *middle Kleene* is [krahmer-1994]'s). The conditional
 of each logic is the derived form `¬a ∨ b`. -/
 
 inductive Kleene | strong | middle | weak

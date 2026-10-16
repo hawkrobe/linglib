@@ -64,7 +64,7 @@ three perfects of the older account by Iatridou, Anagnostopoulou and Izvorski.
 
 * [pancheva-2003]
 * [iatridou-anagnostopoulou-izvorski-2001]
-* [smith-1991]
+* [smith-1997]
 -/
 
 @[expose] public section
