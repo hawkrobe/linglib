@@ -29,9 +29,10 @@ inference from all five quantifiers, and so no difference between the groups, an
 accommodated after the numerical quantifiers. A parser can stipulate this sentence by sentence, at
 the cost of three stipulations (`stipulated`). The section and Appendix F suggest a rule instead:
 keep the presupposition in the context where transparency derives it in one step (`oneStep`). The
-rule parses every sentence as the stipulations do, without any of them (`parse_oneStep`), and by
-it such a theory is right (`verdict_oneStep_of`). A theory silent on quantified clauses is silent
-here (`verdict_eq_silent`).
+rule parses every sentence as the stipulations do, without any of them (`parse_oneStep`), so the
+two give every theory the same verdict (`verdict_stipulated_eq`), and by the rule such a theory is
+right (`verdict_oneStep_of`). A theory silent on quantified clauses is silent here
+(`verdict_eq_silent`).
 
 ## Implementation notes
 
@@ -185,9 +186,13 @@ theorem parse_oneStep : oneStep.parse clause = stipulated.parse clause := by
   · cases d <;> simp_all [stipulated, clause, Parser.stipulations, Finmap.mem_keys,
       Finmap.mem_list_toFinmap, oneStep_tree_iff, experiment1Groups]
 
+theorem stipulations_global : global.stipulations = ∅ := Parser.stipulations_ofRule _
+
 theorem stipulations_stipulated :
     stipulated.stipulations = {.lessThan3, .moreThan3, .exactly3} := by
   decide
+
+theorem stipulations_oneStep : oneStep.stipulations = ∅ := Parser.stipulations_ofRule _
 
 /-! ### Predictions -/
 
@@ -272,7 +277,7 @@ theorem verdict_eq_silent (h : T.acceptsClause = none) (π : ClauseParser) :
   rfl
 
 /-- §4.1.2's stipulations give every theory the verdict that Appendix F's rule gives it. -/
-theorem verdict_stipulated (T : Theory) : verdict T stipulated = verdict T oneStep := by
+theorem verdict_stipulated_eq (T : Theory) : verdict T stipulated = verdict T oneStep := by
   rw [verdict, verdict, parse_oneStep]
 
 /-! ### The registered accounts -/
@@ -303,5 +308,11 @@ theorem verdict_oneStep (a : Account) :
   cases h : a.AcceptsClause with
   | none => exact verdict_eq_silent h _
   | some acc => exact verdict_oneStep_of h (acceptsClause_spec h).1 (acceptsClause_spec h).2
+
+/-- By §4.1.2's stipulations, each registered account that covers quantified clauses is right, and
+the others are silent. -/
+theorem verdict_stipulated (a : Account) :
+    verdict a.theory stipulated = if a.AcceptsClause.isSome then .correct else .silent :=
+  (verdict_stipulated_eq _).trans (verdict_oneStep a)
 
 end Eval.Projection.Chemla2009a
