@@ -371,11 +371,12 @@ gender is the referent's and part where it is not. -/
 neuter as mismatched humans, and the ewe and the lamb, which contribute CLASS alone as the
 paper's inanimates do, resolve neuter through it. -/
 theorem corbett_rows :
-    Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [drengur, telpa] =
+    Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [drengur.gender, telpa.gender] =
         some .neuter ∧
       system.converted (system.nominal drengur .man) (system.nominal telpa .woman) =
         some .neuter ∧
-      Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [aer, lamb] = some .neuter ∧
+      Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [aer.gender, lamb.gender] =
+        some .neuter ∧
       system.converted (system.nominal aer .thing) (system.nominal lamb .thing) =
         some .neuter := by
   decide
@@ -383,7 +384,8 @@ theorem corbett_rows :
 /-- In *skáldið og Jón eru frægir* the rule resolves the neuter *skáld* and the masculine *Jón*
 to the neuter, and the geometry to the masculine of the two men. -/
 theorem corbett_skald_jon :
-    Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [skald, jon] = some .neuter ∧
+    Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [skald.gender, jon.gender] =
+        some .neuter ∧
       system.converted (system.nominal skald .man) (system.nominal jon .man) =
         some .masculine := by
   decide

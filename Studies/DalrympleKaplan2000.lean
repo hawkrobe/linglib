@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.DalrympleKaplan2000
+public import Linglib.Syntax.Agreement.Resolution
 public import Linglib.Syntax.Person.System
 public import Linglib.Fragments.Chichewa.Gender
 public import Linglib.Fragments.English.Verbs.Inventory
@@ -9,59 +10,58 @@ public import Linglib.Fragments.German.Verbs
 public import Linglib.Fragments.Slavic.Polish.Pronouns
 public import Linglib.Fragments.Xhosa.Basic
 public import Linglib.Morphology.Paradigm.Morphome
+public import Studies.Corbett1991
 public import Studies.Shieber1986
-public import Mathlib.Data.Finset.Basic
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Order.Bounds.Basic
 
 /-!
 # Dalrymple and Kaplan, feature indeterminacy and feature resolution (2000)
 
-A syncretic form such as German *was* satisfies conflicting case requirements at once, and
-a coordinate noun phrase has a person or gender of its own computed from those of its
-conjuncts. Dalrymple and Kaplan represent both with set-valued features. An indeterminate
-value is the set of atomic values the form can realize and a contextual requirement is
-membership in it, so one value meets two requirements where equality against an atomic
-value, whether disjoined or left unspecified, cannot; the same sets serve on the verb side,
-where a syncretic agreement form imposes an indeterminate requirement that distributes to
-the conjuncts of a coordinate subject. A resolving value is a set of markers, and the
-person or gender of a coordination is the union of its conjuncts' sets, the least set the
-two subset annotations of the coordination rule allow. Person values are subsets of {S, H},
-which predicts the Fula inclusive/exclusive table and the collapsed English one and bounds
-resolution at four persons; gender marker sets do the same for Hindi and Icelandic and, on
-one of the paper's two accounts, for Slovene with the conjunction contributing a marker.
-Resolving features are never indeterminate: they are checked by constraining equality
-against a designated set, and an indeterminate one would have to be a set of sets.
+A syncretic form such as German *was* satisfies conflicting case requirements at once, and a
+coordinate noun phrase has a person or gender of its own computed from those of its conjuncts.
+Dalrymple and Kaplan represent both with set-valued features. An indeterminate value is the set
+of atomic values the form can realize and a contextual requirement is membership in it, so one
+value meets two requirements where equality against an atomic value, whether disjoined or left
+unspecified, cannot; a syncretic agreement form imposes an indeterminate requirement that
+distributes to the conjuncts of a coordinate subject. A resolving value is a set of markers, and
+the person or gender of a coordination is the union of its conjuncts' sets, the least set the
+subset annotations of the coordination rule allow. Resolving features are never indeterminate.
 
-We prove that an indeterminate value is a syncretism class of a paradigm, read off the
-fragments for *was*, *kogo*, *set*, *kaufen* and the Xhosa and Chichewa subject prefixes;
-that the two rejected alternatives fail as order theory, two atoms having no join in the
-flat order, so that unification of the two verbs' requirements fails, while their join in
-the set order is the union and the underspecified value is the universal set that
-overgenerates; that union on marker sets is the substrate's person resolution, the person of
-a participant set, with the person hierarchy as the inclusion order of marker sets; and that
-the gender generalizations follow from union, same-gender congruence from idempotence and
-the need for a third gender from incomparability, with Slovene's violation located in the
-conjunction's marker. Each construction is then checked against the paper's judgment.
+We prove that an indeterminate value is a syncretism class of a paradigm, read off the fragments
+for *was*, *kogo*, *set*, *kaufen* and the Xhosa and Chichewa subject prefixes, that unification
+of the two verbs' atomic requirements fails, and that underspecification, the universal set,
+overgenerates. The marker set of a person value is its largest participant set, and union on
+marker sets is the substrate's join of persons (`markers_sup`), so the Spanish, Slovak and Fula
+judgments follow from the conjuncts' persons; two markers bound the persons at four, and the
+intersection analysis of Sag, Gazdar, Wasow and Weisler is the complement dual, which loses
+Fula's clusivity with their first person. For gender, union reproduces Corbett's resolution
+rules on every coordination, not only on the paper's tables of pairs: Hindi's, Icelandic's
+(`Corbett1991.Icelandic.rules`), and Slovene's (`Corbett1991.Slovene.rules`) once the
+conjunction contributes a marker, which is where Slovene departs from same-gender congruence.
+
+## Main statements
+
+* `markers_sup`: union on person marker sets is the join of persons.
+* `Icelandic.map_resolve`: union of the marker sets (119) reproduces Corbett's Icelandic rules on
+  every coordination.
+* `Slovene.map_resolve`: with the conjunction's marker, union reproduces Corbett's Slovene rules.
 
 ## Implementation notes
 
 * The syncretism class is the maximal indeterminate value a form can bear; §4.5 leaves it to
-  the speaker's lexicon whether a form bears it or the disjunction of its singletons, and
-  the file analyses the grammars that accept the paper's examples.
-* The person of a marker set is the substrate's `Person.ofParticipants`, the markers the two
-  discourse roles, so resolution as union is the substrate's `Person.ofParticipants_union`,
-  the join of the participant sets the values cover rather than a checked table.
-* The English encoding (91) is derived as the largest participant set a value covers; the
-  paper reaches `{S,H}` from the requirement that *Bill and I* and *you and I* share a value.
-* The collapsed English system is stated as the tripartition's coarsened resolution, the
-  study's bridge to the substrate; the paper frames §6.2 as a choice between two marker
-  assignments.
-* Each language's gender rules are a table over its own gender carrier, and Slovene's
-  same-gender clause is the failure of the table's congruence (`Congruent`).
+  the speaker's lexicon whether a form bears it or the disjunction of its singletons, and the
+  file analyses the grammars that accept the paper's examples.
+* The resolved value of a coordination `cs` is `cs.toFinset.sup mark`. That it is the minimal
+  model of the subset annotations (93) is `Finset.isLUB_sup`, and the intersection dual of
+  §6.5 is `Finset.compl_sup`.
+* Fula's first singular *min* has the exclusive's marker set (87), so it is the quadripartition's
+  `firstExclusive`; the first person unmarked for clusivity has `{S,H}` (91).
+* A union claim reads only which genders occur, as Corbett's rules do
+  (`Agreement.ResolutionRule.resolve_congr`), so it is checked on the sublists of a language's
+  genders. Icelandic's genders are three of the comparative labels the fragment uses; the
+  marker assignment sends the other three to `∅` and the claims are restricted to the three.
 
 ## TODO
 
@@ -100,7 +100,7 @@ conjunction's marker. Each construction is then checked against the paper's judg
 
 namespace DalrympleKaplan2000
 
-open Morphology
+open Morphology Agreement.ResolutionRule
 
 /-- The paper's judgment on `e` is the prediction `P`. -/
 abbrev AcceptableIff (e : Datum) (P : Prop) : Prop := e.judgment = .acceptable ↔ P
@@ -108,53 +108,22 @@ abbrev AcceptableIff (e : Datum) (P : Prop) : Prop := e.judgment = .acceptable �
 /-- A distributive requirement on a coordinate structure holds of each conjunct ((44), (73)). -/
 abbrev Distributes {α : Type*} (P : α → Prop) (s : Finset α) : Prop := ∀ f ∈ s, P f
 
-/-- The union is the smallest set containing both, which is how the minimal model turns the
-    two subset annotations of a coordination rule into union ((93), (94)). -/
-theorem union_isLeast {α : Type*} [DecidableEq α] (x y : Finset α) :
-    IsLeast {z | x ⊆ z ∧ y ⊆ z} (x ∪ y) :=
-  ⟨⟨Finset.subset_union_left, Finset.subset_union_right⟩,
-    fun _ ⟨hx, hy⟩ ↦ Finset.union_subset hx hy⟩
-
-/-- The intersection is the largest set contained in both, which is why an intersection
-    analysis cannot be stated by minimal models (§6.5). -/
-theorem inter_isGreatest {α : Type*} [DecidableEq α] (x y : Finset α) :
-    IsGreatest {z | z ⊆ x ∧ z ⊆ y} (x ∩ y) :=
-  ⟨⟨Finset.inter_subset_left, Finset.inter_subset_right⟩,
-    fun _ ⟨hx, hy⟩ ↦ Finset.subset_inter hx hy⟩
-
 /-! ### Indeterminacy: set values and membership (§§3–4) -/
 
-/-- Under equality checking no value meets two distinct requirements, whichever disjunct of
-    (18) is chosen ((19)–(21)) and whatever the variable of (23) stands for ((24)). -/
-theorem not_eq_and_eq_of_ne {α : Type*} {x a b : α} (h : a ≠ b) : ¬ (x = a ∧ x = b) :=
-  fun ⟨ha, hb⟩ ↦ h (ha ▸ hb)
-
-/-- In the flat order two distinct atoms have no join, so the unification of an underspecified
-    value with the two verbs' requirements fails, the transitivity argument of (24) as order
-    theory. -/
-theorem flat_no_join {α : Type*} [DecidableEq α] {a b : α} (h : a ≠ b) :
-    Flat.unify (↑a : Flat α) ↑b = ⊤ :=
-  Flat.unify_eq_top_of_ne h
-
 /-- On the token bundle, the accusative and nominative requirements of the two verbs of (17)
-    are not bounded above in the subsumption order, so Shieber's unification of them fails. -/
+are not bounded above in the subsumption order, so Shieber's unification of them fails. -/
 theorem requirements_not_compatible :
     ¬ Compat (Morphology.Features.of (case_ := some .acc))
       (Morphology.Features.of (case_ := some .nom)) := by
   decide
-
-/-- Membership in a set designator is disjunction over its elements, and excludes every other
-    atom ((35)). -/
-theorem mem_pair_iff {α : Type*} [DecidableEq α] (x a b : α) :
-    x ∈ ({a, b} : Finset α) ↔ x = a ∨ x = b := by simp
 
 section Indeterminacy
 
 variable {C : Type*} [Fintype C]
 
 /-- A flat slot as a set value, a determinate commitment its singleton and no commitment, the
-    underspecification of (22), the universal set; subsumption becomes reverse inclusion, so
-    the flat order is the determinate fragment of the set order. -/
+underspecification of (22), the universal set; subsumption becomes reverse inclusion, so
+the flat order is the determinate fragment of the set order. -/
 def toIndet : Flat C → Finset C
   | ⊥ => Finset.univ
   | (x : C) => {x}
@@ -179,7 +148,7 @@ end Indeterminacy
 
 open German.Pronouns in
 /-- The case values of the German relative pronouns are the cells their forms realize, *wer*
-    the nominative, *wem* the dative, *was* the nominative and the accusative ((26), (32)). -/
+the nominative, *wem* the dative, *was* the nominative and the accusative ((26), (32)). -/
 theorem german_cases :
     formCells wer (some "wer") = {German.Case.nom} ∧ formCells wer (some "wem") = {.dat} ∧
       formCells was (some "was") = {.nom, .acc} := by
@@ -187,16 +156,15 @@ theorem german_cases :
 
 open German.Pronouns in
 /-- In the set order the two requirements do have a join, and it is the value of *was*, the
-    minimal model of `ACC ∈ v` and `NOM ∈ v` ((28)–(31), (36)). -/
+minimal model of `ACC ∈ v` and `NOM ∈ v` ((28)–(31), (36)). -/
 theorem was_isLeast :
-    IsLeast {v | ({.acc} : Finset German.Case) ⊆ v ∧ {.nom} ⊆ v} (formCells was (some "was")) := by
-  rw [german_cases.2.2,
-    show ({.nom, .acc} : Finset German.Case) = {.acc} ∪ {.nom} by decide]
-  exact union_isLeast _ _
+    IsLeast {v | German.Case.acc ∈ v ∧ German.Case.nom ∈ v} (formCells was (some "was")) := by
+  rw [german_cases.2.2]
+  exact ⟨by simp, fun v ⟨ha, hn⟩ ↦ by simp [Finset.insert_subset_iff, ha, hn]⟩
 
 open German.Pronouns in
 /-- Underspecification overgenerates where the set value does not, *was* admitting no dative or
-    genitive context and the universal set admitting every one (§3.2). -/
+genitive context and the universal set admitting every one (§3.2). -/
 theorem underspecification_overgenerates :
     German.Case.dat ∈ toIndet ⊥ ∧ German.Case.dat ∉ formCells was (some "was") ∧
       German.Case.gen ∉ formCells was (some "was") := by
@@ -204,7 +172,7 @@ theorem underspecification_overgenerates :
 
 open German.Pronouns in
 /-- *was* meets the accusative requirement of *gegessen* and the nominative one of *übrig war*
-    ((28), (30)), and *wem* meets *vertraust* but not *muss* ((32), (33)). -/
+((28), (30)), and *wem* meets *vertraust* but not *muss* ((32), (33)). -/
 theorem free_relatives :
     AcceptableIff Examples.ex_17
         (German.Case.acc ∈ formCells was (some "was") ∧
@@ -216,7 +184,7 @@ theorem free_relatives :
 
 open Polish.Pronouns in
 /-- Fronted *kogo* meets the accusative of *lubi* and the genitive of *nienawidzi* in both
-    conjuncts ((40), (46)), and *co* does not ((41)). -/
+conjuncts ((40), (46)), and *co* does not ((41)). -/
 theorem polish_coordination :
     AcceptableIff Examples.ex_40
         (Polish.Case.acc ∈ formCells kto (some "kogo") ∧
@@ -229,8 +197,8 @@ theorem polish_coordination :
 open English
 open English.Verbs hiding Verb
 /-- The cells *set* realizes are the base with its present plural, the past and the past
-    participle; the paper's VFORM value lists the two nonfinite ones, the past being a TENSE
-    value ((50)). -/
+participle; the paper's VFORM value lists the two nonfinite ones, the past being a TENSE
+value ((50)). -/
 theorem set_cells :
     formCells set_.realize "set" =
       {English.Verbs.Verb.Cell.base, .presentPlural, .past, .pastParticiple} := by
@@ -239,7 +207,7 @@ theorem set_cells :
 open English
 open English.Verbs hiding Verb
 /-- *will* requires the base form and *have* the past participle of the shared verb; *set*
-    realizes both cells ((49), (50)) and neither form of *clarify* does ((47), (48)). -/
+realizes both cells ((49), (50)) and neither form of *clarify* does ((47), (48)). -/
 theorem will_and_have :
     AcceptableIff Examples.ex_49 (English.Verbs.Verb.Cell.base ∈ formCells set_.realize "set" ∧
         English.Verbs.Verb.Cell.pastParticiple ∈ formCells set_.realize "set") ∧
@@ -252,15 +220,15 @@ theorem will_and_have :
   decide
 
 /-- The subject genders an indeterminate Xhosa verb such as *zibomvu* 'are red' agrees with are
-    those whose plural class takes the prefix *zi-*, 7/8 and 9/10 ((54), (56)); the fragment's
-    own account of *zi-* with non-human conjuncts is default agreement, a rival reading. -/
+those whose plural class takes the prefix *zi-*, 7/8 and 9/10 ((54), (56)); the fragment's
+own account of *zi-* with non-human conjuncts is default agreement, a rival reading. -/
 theorem zibomvu_genders :
     formCells Xhosa.Gender.plSubjPrefix "zi" = {Xhosa.Gender.genderD, .genderE} := by
   decide
 
 /-- Distributed to the conjuncts, *zibomvu*'s requirement is met by *izandla* (7/8) and
-    *iindlebe* (9/10) ((54)–(56)), while a determinate class-6 or class-8 requirement is not
-    met by both *igqira* (5/6) and *isanuse* (7/8) ((53)). -/
+*iindlebe* (9/10) ((54)–(56)), while a determinate class-6 or class-8 requirement is not
+met by both *igqira* (5/6) and *isanuse* (7/8) ((53)). -/
 theorem xhosa_coordination :
     AcceptableIff Examples.ex_54
         (Distributes (· ∈ formCells Xhosa.Gender.plSubjPrefix "zi")
@@ -273,8 +241,8 @@ theorem xhosa_coordination :
 
 open Chichewa.Gender in
 /-- The Chichewa plural prefix *a-* serves genders 1/2 and 5/6, so *a-kubvunda* and *a-li* agree
-    with *ma-lalanje* and *ma-samba*, with *a-mphaka* and *a-galu*, and with their mixture
-    ((57)–(59)). -/
+with *ma-lalanje* and *ma-samba*, with *a-mphaka* and *a-galu*, and with their mixture
+((57)–(59)). -/
 theorem chichewa_coordination :
     AcceptableIff Examples.ex_57
         (Distributes (· ∈ formCells Value.plSubjPrefix .a) {lalanje.gender, samba.gender}) ∧
@@ -286,8 +254,8 @@ theorem chichewa_coordination :
 
 open German.Verbs in
 /-- *kaufen* is the first and the third plural and *kauft* the second plural and the third
-    singular, so the persons *kaufen* agrees with are 1 and 3 ((62)) and *kauft* imposes the
-    correlated requirement of (65). -/
+singular, so the persons *kaufen* agrees with are 1 and 3 ((62)) and *kauft* imposes the
+correlated requirement of (65). -/
 theorem kaufen_cells :
     formCells kaufen (some "kaufen") = {(Person.first, Number.plural), (.third, .plural)} ∧
       formCells kaufen (some "kauft") = {(Person.second, Number.plural), (.third, .singular)} := by
@@ -295,8 +263,8 @@ theorem kaufen_cells :
 
 open German.Verbs in
 /-- Right-node-raised *kaufen* is satisfied by first-plural *wir* and third-plural *die Müllers*
-    ((61), (63)), and *kauft* by second-plural *ihr* and third-singular *Franz* ((64)), the
-    correlated features distributing as one cell each. -/
+((61), (63)), and *kauft* by second-plural *ihr* and third-singular *Franz* ((64)), the
+correlated features distributing as one cell each. -/
 theorem right_node_raising :
     AcceptableIff Examples.ex_61 (Distributes (· ∈ formCells kaufen (some "kaufen"))
         {(Person.first, Number.plural), (.third, .plural)}) ∧
@@ -306,88 +274,87 @@ theorem right_node_raising :
 
 /-! ### Person resolution (§6) -/
 
-/-- A person value as a set of markers, the paper's S and H the two discourse roles ((77),
-    §6.1). Its person ((87)) is the substrate's `Person.ofParticipants`, resolution as union
-    ((77)) is `Person.ofParticipants_union`, and the Fula table is its instance ((78), (88)). -/
+/-- A person value as a set of markers, the paper's S and H the two discourse roles (§6.1). -/
 abbrev PersonSet := Finset Discourse.Role
 
 /-- Two markers give exactly the four persons of the quadripartition, so no language resolves
-    more than four (§6.3). -/
+more than four (§6.3). -/
 theorem card_personSet : Fintype.card PersonSet = 4 := by
   rw [Fintype.card_finset, Discourse.Role.card]; rfl
 
-/-- The Fula examples, *you and Bill* second, *Bill and George* third, *you and I* and *you and
-    Bill and I* first inclusive, *Bill and I* and *Bill and us* first exclusive ((81)–(86)). -/
-theorem fula :
-    AcceptableIff Examples.ex_81 (Person.ofParticipants ({.addressee} ∪ ∅) = .second) ∧
-      AcceptableIff Examples.ex_82 (Person.ofParticipants (∅ ∪ ∅) = .third) ∧
-      AcceptableIff Examples.ex_83
-        (Person.ofParticipants ({.addressee} ∪ {.speaker}) = .firstInclusive) ∧
-      AcceptableIff Examples.ex_84
-        (Person.ofParticipants ({.addressee} ∪ ∅ ∪ {.speaker}) = .firstInclusive) ∧
-      AcceptableIff Examples.ex_85 (Person.ofParticipants (∅ ∪ {.speaker}) = .firstExclusive) ∧
-      AcceptableIff Examples.ex_86 (Person.ofParticipants (∅ ∪ {.speaker}) = .firstExclusive) := by
+/-- The marker set of a person value is the largest participant set it covers: the single set
+of a quadripartition value (87), and the inclusive's `{S,H}` for the first person unmarked for
+clusivity, which makes only the attested distinctions (91). -/
+def markers (p : Person) : PersonSet := p.participantSets.sup id
+
+@[simp] theorem markers_bot : markers ⊥ = ∅ := rfl
+
+/-- Union of marker sets is the join of persons, the resolution of Zwicky's hierarchy (§6). -/
+@[simp] theorem markers_sup (p q : Person) : markers (p ⊔ q) = markers p ∪ markers q := by
+  revert p q; decide
+
+/-- The marker set of a coordination, the union of its conjuncts', is the marker set of the join
+of their persons. -/
+theorem markers_finset_sup (s : Finset Person) : markers (s.sup id) = s.sup markers :=
+  Finset.apply_sup_eq_sup_comp markers markers_sup markers_bot
+
+/-- The conjuncts of the paper's coordinations by person. -/
+def personConjuncts : List (String × List Person) :=
+  [("3SG and 1SG", [.third, .first]), ("1SG and 2SG", [.first, .second]),
+    ("3SG and 2SG", [.third, .second]), ("2 and 3", [.second, .third]),
+    ("3 and 3", [.third, .third]), ("2 and 1", [.second, .firstExclusive]),
+    ("2, 3 and 1", [.second, .third, .firstExclusive]), ("3 and 1", [.third, .firstExclusive]),
+    ("3 and 1EXCL", [.third, .firstExclusive])]
+
+/-- The agreement forms of the paper's coordinations by person. -/
+def personAgreement : List (String × Person) :=
+  [("1PL", .first), ("2PL", .second), ("2", .second), ("3", .third),
+    ("1INCL.PL", .firstInclusive), ("1EXCL.PL", .firstExclusive)]
+
+/-- The Spanish, Slovak and Fula coordinations take the agreement form whose constraining
+equation names the union of their conjuncts' marker sets ((71), (76), (81)–(86), (88), (92),
+(95)–(99)). -/
+theorem person_rows : ∀ row ∈ Examples.all, ∀ cs ∈ row.parse? "conjuncts" personConjuncts,
+    ∀ p ∈ row.parse? "agreement" personAgreement,
+      (row.judgment = .acceptable ↔ cs.toFinset.sup markers = markers p) := by
+  decide +kernel
+
+/-- *José y tú* has `{H}`, which fails the constraining equation `{S,H}` of first-plural
+*hablamos* ((95)–(98)). -/
+theorem jose_y_tu : [Person.third, .second].toFinset.sup markers ≠ markers .first := by
   decide
 
-/-- The encoding of languages without the inclusive/exclusive contrast assigns each person the
-    largest participant set it covers, so every first person gets the inclusive's set, the
-    second the hearer, and the third the empty set ((91)). -/
-def english (p : Person) : PersonSet := p.participantSets.sup id
-
-/-- Union under this encoding is resolution in the tripartition ((92)). -/
-theorem english_table : ∀ s t : PersonSet,
-    english (Person.tripartitionOf (s ∪ t)) =
-      english (Person.tripartitionOf s) ∪ english (Person.tripartitionOf t) := by
-  decide
-
-/-- Under this encoding the person hierarchy is the inclusion of marker sets, so union picks
-    the most prominent conjunct, the hierarchy of Zwicky and Corbett (fn. 12) as a corollary of
-    union. -/
-theorem english_subset_iff_prominence : ∀ s t : PersonSet,
-    english (Person.tripartitionOf t) ⊆ english (Person.tripartitionOf s) ↔
+/-- On the tripartition the person hierarchy is the inclusion of marker sets, so union picks the
+most prominent conjunct, the hierarchy of Zwicky and Corbett (fn. 12) as a corollary of
+union. -/
+theorem markers_subset_iff_prominence : ∀ s t : PersonSet,
+    markers (Person.tripartitionOf t) ⊆ markers (Person.tripartitionOf s) ↔
       (Person.tripartitionOf t).prominence ≤ (Person.tripartitionOf s).prominence := by
   decide
 
-/-- *José y yo* and *ja a ty* take first-plural agreement and *José y tú* second-plural, the
-    minimal set above `{}` and `{H}` being `{H}`, so the second-plural verb's constraining
-    equation holds and the first-plural one fails ((71), (76), (95)–(99)). -/
-theorem spanish_slovak :
-    AcceptableIff Examples.ex_71 (english .third ∪ english .first = {.speaker, .addressee}) ∧
-      AcceptableIff Examples.ex_76 (english .first ∪ english .second = {.speaker, .addressee}) ∧
-      AcceptableIff Examples.ex_95 (english .third ∪ english .second = {.addressee}) ∧
-      english .third ∪ english .second ≠ {.speaker, .addressee} := by
+/-- The dual assignment, each marker set's complement, its markers read as absences ((102)). -/
+def dual (p : Person) : PersonSet := (markers p)ᶜ
+
+/-- On the tripartition the dual is the assignment of Sag, Gazdar, Wasow and Weisler ((100)). -/
+theorem dual_tripartition :
+    dual .first = ∅ ∧ dual .second = {.speaker} ∧ dual .third = {.speaker, .addressee} := by
   decide
 
-/-- Sag, Gazdar, Wasow and Weisler's marker sets, combined by intersection ((100)). -/
-def sag : Person → PersonSet
-  | .first => ∅
-  | .second => {.speaker}
-  | .third => {.speaker, .addressee}
-  | _ => ∅
+/-- Intersection of the duals is the complement of the union, so the two analyses cover the
+same facts ((101), (103)). -/
+theorem inf_dual (s : Finset Person) : s.inf dual = (s.sup markers)ᶜ :=
+  (Finset.compl_sup s markers).symm
 
-/-- Their assignment is the De Morgan dual of (91), each set the complement of the union
-    analysis's, so it succeeds on English exactly where union does ((101)–(103)). -/
-theorem sag_eq_compl :
-    ∀ s : PersonSet, sag (Person.tripartitionOf s) = (english (Person.tripartitionOf s))ᶜ := by
+/-- With their first person `{}` intersection cannot tell *you and I* from *Bill and I*, while
+the dual of Fula's first singular can ((101) against (103)). -/
+theorem dual_first_absorbs :
+    dual .first ∩ dual .second = dual .first ∩ dual .third ∧
+      dual .firstExclusive ∩ dual .second ≠ dual .firstExclusive ∩ dual .third := by
   decide
-
-/-- Intersection with the empty first-person set cannot tell *you and I* from *Bill and I*, so
-    Fula's inclusive/exclusive contrast is underivable, where union keeps them apart ((101)
-    against (88)). -/
-theorem sag_intersection :
-    sag .first ∩ sag .second = sag .first ∩ sag .third ∧
-      Person.ofParticipants ({.speaker} ∪ {.addressee}) ≠
-        Person.ofParticipants ({.speaker} ∪ ∅) := by
-  decide
-
-/-- Any union analysis has an intersection dual over complements, markers read as absences
-    ((102), (103)). -/
-theorem compl_union (p q : PersonSet) : (p ∪ q)ᶜ = pᶜ ∩ qᶜ :=
-  Finset.compl_union p q
 
 /-! ### Gender resolution (§7) -/
 
-/-- Gender markers; each language assigns its genders subsets of them. -/
+/-- Gender markers; each language assigns its genders sets of them. -/
 inductive GenderMarker where
   | masc
   | fem
@@ -397,166 +364,170 @@ inductive GenderMarker where
 /-- A gender value as a set of markers. -/
 abbrev GenderSet := Finset GenderMarker
 
-/-- A resolution table is congruent when a shared gender resolves to itself, the
-    generalization (105b). -/
-def Congruent {G : Type*} (rules : G → G → Option G) : Prop := ∀ g, rules g g = some g
+section Union
 
-/-- Whenever an injective marker assignment reproduces a language's resolution rules by union,
-    same-gender coordination resolves to that gender, the generalization (105b), because union
-    is idempotent. -/
-theorem congruent_of_union {G : Type*} {mark : G → GenderSet} (hinj : Function.Injective mark)
-    {rules : G → G → Option G} (h : ∀ a b, (rules a b).map mark = some (mark a ∪ mark b)) :
-    Congruent rules := by
-  intro g
-  have hg := h g g
-  rw [Finset.union_self] at hg
-  cases hr : rules g g with
-  | none => simp [hr] at hg
-  | some g' =>
-    simp only [hr, Option.map_some, Option.some.injEq] at hg
-    exact congrArg some (hinj hg)
+variable {G : Type*} [DecidableEq G] {rs : List (Agreement.ResolutionRule G G)}
 
-/-- A mixed coordination resolves to one of its conjuncts' genders exactly when their marker
-    sets are nested ((105c)); otherwise their join is a third gender's set. -/
-theorem union_mem_pair_iff {α : Type*} [DecidableEq α] (s t : Finset α) :
-    (s ∪ t = s ∨ s ∪ t = t) ↔ (t ⊆ s ∨ s ⊆ t) := by
-  rw [← Finset.sup_eq_union, sup_eq_left, sup_eq_right]
+/-- A claim reading only a coordination's resolved gender and which genders occur in it holds
+of every coordination of a language's genders once it holds of the sublists of an
+enumeration of them. -/
+private theorem of_sublists {univ : List G} {P : Option G → Finset G → Prop}
+    (h : ∀ l ∈ univ.sublists, l ≠ [] → P (resolve rs l) l.toFinset) {cs : List G}
+    (hcs : cs ≠ []) (hu : ∀ c ∈ cs, c ∈ univ) : P (resolve rs cs) cs.toFinset := by
+  have hmem : ∀ c, c ∈ univ.filter (· ∈ cs) ↔ c ∈ cs := fun c ↦ by
+    simpa using fun hc ↦ hu c hc
+  have hne : univ.filter (· ∈ cs) ≠ [] := by
+    obtain ⟨c, hc⟩ := List.exists_mem_of_ne_nil cs hcs
+    exact List.ne_nil_of_mem ((hmem c).2 hc)
+  have := h _ (List.mem_sublists.2 List.filter_sublist) hne
+  rwa [resolve_congr rs hmem,
+    show (univ.filter (· ∈ cs)).toFinset = cs.toFinset from
+      Finset.ext fun c ↦ by simp only [List.mem_toFinset, hmem]]
+    at this
+
+/-- Rules that union represents keep a shared gender whose marker set no other form of theirs
+has, the generalization (105b): union is idempotent. -/
+private theorem pair_self_of_union {mark : G → GenderSet} {g : G}
+    (h : (resolve rs [g, g]).map mark = some ([g, g].toFinset.sup mark))
+    (hinj : ∀ g' ∈ rs.map out, mark g' = mark g → g' = g) : resolve rs [g, g] = some g := by
+  obtain ⟨g', hg', hm⟩ := Option.map_eq_some_iff.mp h
+  rw [hg', hinj g' (mem_map_out_of_resolve_eq_some hg') (by simpa using hm)]
+
+end Union
+
+namespace Hindi
 
 /-- The Hindi genders. -/
-inductive HindiGender where
-  | masculine
-  | feminine
+inductive Value where
+  | masc
+  | fem
   deriving DecidableEq, Repr, Fintype
 
-/-- Corbett's Hindi resolution, masculine if any conjunct is and feminine otherwise
-    ((109), (110)). -/
-def hindiRules : HindiGender → HindiGender → Option HindiGender
-  | .feminine, .feminine => some .feminine
-  | _, _ => some .masculine
+/-- Corbett's Hindi rules (109): masculine if a conjunct is, feminine otherwise. -/
+def rules : List (Agreement.ResolutionRule Value Value) := [.any (· = .masc) .masc, otherwise .fem]
 
-/-- The marker assignment for Hindi ((111)). -/
-def hindi : HindiGender → GenderSet
-  | .masculine => {.masc}
-  | .feminine => ∅
+/-- The marker assignment (111). -/
+def markers : Value → GenderSet
+  | .masc => {.masc}
+  | .fem => ∅
 
-theorem hindi_injective : Function.Injective hindi := by decide
+theorem markers_injective : Function.Injective markers := by decide
 
-/-- Union of the assigned sets reproduces the Hindi rules ((112)). -/
-theorem hindi_union : ∀ a b, (hindiRules a b).map hindi = some (hindi a ∪ hindi b) := by
-  decide
+/-- Union of the marker sets reproduces Corbett's rules on every coordination ((112)). -/
+theorem map_resolve {cs : List Value} (hcs : cs ≠ []) :
+    (resolve rules cs).map markers = some (cs.toFinset.sup markers) :=
+  of_sublists (univ := [.masc, .fem]) (P := fun r s ↦ r.map markers = some (s.sup markers))
+    (by decide) hcs fun c _ ↦ by cases c <;> simp
 
-theorem hindi_congruent : Congruent hindiRules :=
-  congruent_of_union hindi_injective hindi_union
+/-- A same-gender coordination keeps its gender ((105b), (110)). -/
+theorem resolve_pair_self (g : Value) : resolve rules [g, g] = some g :=
+  pair_self_of_union (map_resolve (by simp)) fun _ _ h ↦ markers_injective h
 
 /-- The feminine set is nested in the masculine, so the mixed coordination is masculine and
-    Hindi needs no third gender ((105c), (110)). -/
-theorem hindi_nested : hindi .feminine ⊆ hindi .masculine := by decide
+Hindi needs no third gender ((105c), (110)). -/
+theorem markers_fem_subset : markers .fem ⊆ markers .masc := by decide
 
-/-- The Hindi examples, dog and cat masculine, girl and mother feminine ((107), (108),
-    (113)). -/
-theorem hindi_examples :
-    AcceptableIff Examples.ex_107 (hindi .masculine ∪ hindi .feminine = hindi .masculine) ∧
-      AcceptableIff Examples.ex_108 (hindi .feminine ∪ hindi .feminine = hindi .feminine) := by
-  decide
+end Hindi
 
-/-- The Icelandic genders. -/
-inductive IcelandicGender where
-  | masculine
-  | feminine
-  | neuter
-  deriving DecidableEq, Repr, Fintype
+namespace Icelandic
 
-/-- Corbett's Icelandic resolution, like genders preserved and any mixture neuter
-    ((114), (118)). -/
-def icelandicRules (a b : IcelandicGender) : Option IcelandicGender :=
-  some (if a = b then a else .neuter)
+/-- Icelandic's genders, three of the comparative labels. -/
+def genders : List _root_.Gender := [.masculine, .feminine, .neuter]
 
-/-- The marker assignment for Icelandic ((119)). -/
-def icelandic : IcelandicGender → GenderSet
+/-- The marker assignment (119); the labels Icelandic lacks get none. -/
+def markers : _root_.Gender → GenderSet
   | .masculine => {.masc}
   | .feminine => {.fem}
   | .neuter => {.masc, .fem}
+  | .common | .animate | .inanimate => ∅
 
-theorem icelandic_injective : Function.Injective icelandic := by decide
+/-- Union of the marker sets reproduces Corbett's rules on every coordination of Icelandic
+genders ((120)). -/
+theorem map_resolve {cs : List _root_.Gender} (hcs : cs ≠ []) (hg : ∀ c ∈ cs, c ∈ genders) :
+    (resolve Corbett1991.Icelandic.rules cs).map markers = some (cs.toFinset.sup markers) :=
+  of_sublists (P := fun r s ↦ r.map markers = some (s.sup markers)) (by decide) hcs hg
 
-/-- Union of the assigned sets reproduces the Icelandic rules ((120)). -/
-theorem icelandic_union :
-    ∀ a b, (icelandicRules a b).map icelandic = some (icelandic a ∪ icelandic b) := by
+/-- A same-gender coordination keeps its gender ((105b), (118)). -/
+theorem resolve_pair_self {g : _root_.Gender} (hg : g ∈ genders) :
+    resolve Corbett1991.Icelandic.rules [g, g] = some g := by
+  refine pair_self_of_union (map_resolve (by simp) (by simpa using hg)) ?_
+  revert g; decide
+
+/-- Masculine and feminine are incomparable, so their union is neither and a third gender must
+carry it, the neuter's set ((105c), (119)). -/
+theorem needs_neuter :
+    ¬ markers .masculine ⊆ markers .feminine ∧ ¬ markers .feminine ⊆ markers .masculine ∧
+      markers .masculine ∪ markers .feminine = markers .neuter := by
   decide
 
-/-- Same-gender coordination resolves to that gender in Icelandic ((105b)). -/
-theorem icelandic_congruent : Congruent icelandicRules :=
-  congruent_of_union icelandic_injective icelandic_union
+end Icelandic
 
-/-- Masculine and feminine are incomparable, so their join is neither and a third gender must
-    carry it, the neuter's set being that join ((105c), (119)). -/
-theorem icelandic_needs_neuter :
-    ¬ icelandic .masculine ⊆ icelandic .feminine ∧ ¬ icelandic .feminine ⊆ icelandic .masculine ∧
-      icelandic .masculine ∪ icelandic .feminine = icelandic .neuter := by
+namespace Slovene
+
+/-- The marker assignment (122). -/
+def markers : Corbett1991.Slovene.Value → GenderSet
+  | .masc => {.fem, .neut}
+  | .fem => {.fem}
+  | .neut => {.neut}
+
+/-- With the conjunction contributing the feminine marker (126), union of the marker sets
+reproduces Corbett's rules on every coordination ((127)). -/
+theorem map_resolve {cs : List Corbett1991.Slovene.Value} (hcs : cs ≠ []) :
+    (resolve Corbett1991.Slovene.rules cs).map markers = some (cs.toFinset.sup markers ∪ {.fem}) :=
+  of_sublists (univ := [.masc, .fem, .neut])
+    (P := fun r s ↦ r.map markers = some (s.sup markers ∪ {.fem})) (by decide) hcs
+    fun c _ ↦ by cases c <;> simp
+
+/-- Two neuters resolve masculine against the generalization (105b) ((123)), and the violation
+is the conjunction's marker: without it the neuters' union is the neuter's own set. -/
+theorem neuters :
+    resolve Corbett1991.Slovene.rules [.neut, .neut] = some .masc ∧
+      [Corbett1991.Slovene.Value.neut, .neut].toFinset.sup markers = markers .neut := by
   decide
 
-/-- The Icelandic examples, boy and girl, man and baby, ewe and lamb all neuter
-    ((115)–(117)). -/
-theorem icelandic_examples :
-    AcceptableIff Examples.ex_115 (icelandic .masculine ∪ icelandic .feminine = icelandic .neuter) ∧
-      AcceptableIff Examples.ex_116 (icelandic .masculine ∪ icelandic .neuter = icelandic .neuter) ∧
-      AcceptableIff Examples.ex_117
-        (icelandic .feminine ∪ icelandic .neuter = icelandic .neuter) := by
-  decide
+end Slovene
 
-/-- The Slovene genders. -/
-inductive SloveneGender where
-  | masculine
-  | feminine
-  | neuter
-  deriving DecidableEq, Repr, Fintype
+/-- In the Hindi rows the predicate's gender is the one whose marker set is the union of the
+conjuncts' ((107), (108), (113)). -/
+theorem hindi_rows : ∀ row ∈ Examples.all, row.language = "hind1269" →
+    ∀ cs ∈ row.parse? "conjuncts"
+      [("MASC and FEM", [Hindi.Value.masc, .fem]), ("FEM and FEM", [.fem, .fem])],
+    ∀ g ∈ row.parse? "agreement" [("MASC", Hindi.Value.masc), ("FEM", .fem)],
+      (row.judgment = .acceptable ↔ cs.toFinset.sup Hindi.markers = Hindi.markers g) := by
+  decide +kernel
 
-/-- Corbett's Slovene agreement pattern, feminine if all conjuncts are and masculine otherwise,
-    two neuters included ((121), (124)). -/
-def sloveneRules : SloveneGender → SloveneGender → Option SloveneGender
-  | .feminine, .feminine => some .feminine
-  | _, _ => some .masculine
+/-- In the Icelandic rows, the boy and the girl, the man and the baby, the ewe and the lamb, the
+predicate is neuter, the union of the conjuncts' marker sets ((115)–(117)). -/
+theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
+    ∀ cs ∈ row.parse? "conjuncts" [("MASC and FEM", [Gender.masculine, .feminine]),
+      ("MASC and NEUT", [.masculine, .neuter]), ("FEM and NEUT", [.feminine, .neuter])],
+    ∀ g ∈ row.parse? "agreement" [("NEUT", Gender.neuter)],
+      (row.judgment = .acceptable ↔ cs.toFinset.sup Icelandic.markers = Icelandic.markers g) := by
+  decide +kernel
 
-/-- The marker assignment for Slovene ((122)). -/
-def slovene : SloveneGender → GenderSet
-  | .masculine => {.fem, .neut}
-  | .feminine => {.fem}
-  | .neuter => {.neut}
-
-/-- With the conjunction contributing the feminine marker ((126)), union of the assigned sets
-    reproduces the Slovene pattern ((127)). -/
-theorem slovene_union :
-    ∀ a b, (sloveneRules a b).map slovene = some (slovene a ∪ slovene b ∪ {.fem}) := by
-  decide
-
-/-- The Slovene pattern violates the generalization (105b), two neuters resolving masculine
-    ((123)), and the violation is the conjunction's marker, since without it the neuter's set
-    is idempotent. -/
-theorem slovene_not_congruent :
-    ¬ Congruent sloveneRules ∧
-      slovene .neuter ∪ slovene .neuter ∪ {.fem} ≠ slovene .neuter ∧
-      slovene .neuter ∪ slovene .neuter = slovene .neuter := by
-  unfold Congruent; decide
-
-/-- The tree and the nest take masculine agreement ((123)). -/
-theorem slovene_example :
-    AcceptableIff Examples.ex_123
-      (slovene .neuter ∪ slovene .neuter ∪ {.fem} = slovene .masculine) := by
-  decide
+/-- In the Slovene row the tree and the nest take the masculine, the union of the conjuncts' and
+the conjunction's marker sets ((123), (127)). -/
+theorem slovene_rows : ∀ row ∈ Examples.all, row.language = "slov1268" →
+    ∀ cs ∈ row.parse? "conjuncts" [("NEUT and NEUT", [Corbett1991.Slovene.Value.neut, .neut])],
+    ∀ g ∈ row.parse? "agreement" [("MASC", Corbett1991.Slovene.Value.masc)],
+      (row.judgment = .acceptable ↔
+        cs.toFinset.sup Slovene.markers ∪ {.fem} = Slovene.markers g) := by
+  decide +kernel
 
 /-! ### Resolving features are not indeterminate (§8) -/
 
-/-- Hindi *wah* is masculine or feminine by a wide-scope disjunction of two determinate
-    specifications ((140)); an indeterminate gender would instead be this set of sets, on
-    which union does not resolve. -/
-def wah : Finset GenderSet := {{.masc}, ∅}
+/-- Hindi *wah* is masculine or feminine by a wide-scope disjunction of the two genders' marker
+sets ((140)); an indeterminate gender would instead be this set of sets, on which union does
+not resolve. -/
+def wah : Finset GenderSet := {Hindi.markers .masc, Hindi.markers .fem}
 
 /-- One disjunct serves each single agreement ((141)) and no disjunct serves both constraining
-    equations at once ((128)), the equations checking the whole set ((113)). -/
+equations at once ((128)), the equations checking the whole set ((113)). -/
 theorem wah_examples :
-    AcceptableIff Examples.ex_141a (∃ v ∈ wah, v = {GenderMarker.masc}) ∧
-      AcceptableIff Examples.ex_141b (∃ v ∈ wah, v = ∅) ∧
-      AcceptableIff Examples.ex_128 (∃ v ∈ wah, v = {GenderMarker.masc} ∧ v = ∅) := by
+    AcceptableIff Examples.ex_141a (∃ v ∈ wah, v = Hindi.markers .masc) ∧
+      AcceptableIff Examples.ex_141b (∃ v ∈ wah, v = Hindi.markers .fem) ∧
+      AcceptableIff Examples.ex_128
+        (∃ v ∈ wah, v = Hindi.markers .masc ∧ v = Hindi.markers .fem) := by
   decide
 
 end DalrympleKaplan2000
