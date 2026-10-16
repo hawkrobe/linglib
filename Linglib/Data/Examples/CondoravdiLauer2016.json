@@ -307,7 +307,7 @@
       ["interpretation", "nearAnankastic"],
       ["implication", "strengthenedGoal"]
     ],
-    "comment": "An implicit strengthened goal; the vaccine need not be a precondition for travelling.",
+    "comment": "An implicit strengthened goal; the vaccine need not be a precondition for travelling. True with safety a second maximal preference, `VaccineScenario.should_vaccine`, false on the singleton construal, `VaccineScenario.not_should_vaccine_strong`.",
     "verified": "page-image"
   },
   {
@@ -973,7 +973,7 @@
       ["construction", "sobel"],
       ["member", "first"]
     ],
-    "comment": "An anankastic Sobel sequence; both true if the speaker is unwilling to drive when the trains run on time.",
+    "comment": "An anankastic Sobel sequence; both true if the speaker is unwilling to drive when the trains run on time, `AirportScenario.should_train` and `AirportScenario.should_ride`, which no single modal ordered by the addressee's goals allows, `AirportScenario.not_single_modal`.",
     "verified": "page-image"
   },
   {
@@ -1110,7 +1110,7 @@
       ["interpretation", "anankastic"],
       ["implication", "means"]
     ],
-    "comment": "Von Stechow et al.'s case of a compatible salient preference: comfort stays in the ordering, so the conditional is true; judged false if cost outranks comfort.",
+    "comment": "Von Stechow et al.'s case of a compatible salient preference: comfort stays in the ordering, so the conditional is true, `VladivostokScenario.haveTo_chinese_comfortFirst`; judged false if cost outranks comfort, `VladivostokScenario.not_haveTo_chinese_costFirst`.",
     "verified": "page-image"
   },
   {

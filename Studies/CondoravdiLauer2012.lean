@@ -75,8 +75,8 @@ effective preference only when holding it, condition (iii) of §3.4, `Commitment
 
 /-! ### The conventions -/
 
-/-- Uttering a declarative, whose propositional denotation falls under the convention (30): the
-doxastic context set narrows by the content and the preferential one stays. -/
+/-- Uttering a declarative, whose propositional denotation falls under the convention (30),
+narrows the doxastic context set by the content and leaves the preferential one as it was. -/
 theorem declarative_contextSets (a : A) (p : Set W) (K : State A W) :
     contextSet (ofForce (insert (commit a p) K) .doxastic) =
         p ∩ contextSet (ofForce K .doxastic) ∧
@@ -84,9 +84,9 @@ theorem declarative_contextSets (a : A) (p : Set W) (K : State A W) :
         contextSet (ofForce K .preferential) :=
   ⟨contextSet_ofForce_insert_of_eq_of_commit rfl rfl, contextSet_ofForce_insert_of_ne nofun⟩
 
-/-- Uttering an imperative under the imperative convention (47): the preferential context set
-narrows by the content and the doxastic one stays, so an imperative never claims its content,
-(10). -/
+/-- Uttering an imperative under the imperative convention (47) narrows the preferential context
+set by the content and leaves the doxastic one as it was, so an imperative never claims its
+content, (10). -/
 theorem imperative_contextSets (a : A) (p : Set W) (K : State A W) :
     contextSet (ofForce (insert (commit a p .preferential) K) .preferential) =
         p ∩ contextSet (ofForce K .preferential) ∧
@@ -96,12 +96,12 @@ theorem imperative_contextSets (a : A) (p : Set W) (K : State A W) :
 
 /-! ### Self-verification -/
 
-/-- The denotation of `IMP(p)` over a world-indexed commitment state, (34): the worlds at which
-the speaker is publicly committed to an effective preference for `p`. -/
+/-- The denotation (34) of `IMP(p)` over a world-indexed commitment state is the set of worlds at
+which the speaker is publicly committed to an effective preference for `p`. -/
 def imp (K : W → State A W) (a : A) (p : Set W) : Set W := {w | commit a p .preferential ∈ K w}
 
-/-- Doxastic reduction for preference commitment ([condoravdi-lauer-2011]): a doxastic
-commitment to one's own preferential commitment is that preferential commitment. -/
+/-- Doxastic reduction for preference commitment, after [condoravdi-lauer-2011], identifies a
+doxastic commitment to one's own preferential commitment with that preferential commitment. -/
 def DoxasticReduction (K : W → State A W) : Prop :=
   ∀ w (c : Commitment A W), c.force = .preferential →
     commit c.committer {v | c ∈ K v} ∈ K w → c ∈ K w
@@ -116,10 +116,10 @@ theorem imp_self_verifying {K : W → State A W} (hK : DoxasticReduction K)
 
 /-! ### Directive uses -/
 
-/-- The final semantics (34) in a directive context, §3.4: with the speaker committing sincerely,
-(iii), and believing the addressee's effective preference for `p` a precondition of `p`, (ii)
-under (i), a preferential commitment to `p` is an effective preference satisfied only if the
-addressee effectively prefers `p`. The paper reaches the exact-match effective preference for
+/-- In a directive context the final semantics (34) makes a preferential commitment to `p` an
+effective preference satisfied only if the addressee effectively prefers `p`, §3.4, given that the
+speaker commits sincerely, (iii), and believes the addressee's effective preference for `p` a
+precondition of `p`, (ii) under (i). The paper reaches the exact-match effective preference for
 the addressee's preference, the private counterpart of the preliminary (32), by a step of
 practical reasoning it leaves informal; without it, the only-if reading is what follows. -/
 theorem directive_want_addressee {K : State A W} {ad : A} (hs : Sincere P K w)
@@ -144,45 +144,45 @@ the second revises the speaker's effective preferences, (12) to (14). -/
 theorem imperatives_revise {K : State A W} {B : Set W} (hC : (P a w).Consistent B)
     (hp : commit a p .preferential ∈ K) (hq : commit a q .preferential ∈ K)
     (h : B ∩ (p ∩ q) = ∅) : ¬ Sincere P K w :=
-  λ hs => (hC.inter_inter_nonempty_of_mem_maxElts (hs.want hp) (hs.want hq)).ne_empty h
+  fun hs ↦ (hC.inter_inter_nonempty_of_mem_maxElts (hs.want hp) (hs.want hq)).ne_empty h
 
 /-! ### Endorsement: advice, permission, concession -/
 
-/-- Disinterested advice, (39) and (40): a goal adopted by cooperation by default, with nothing
-ranked below it in the effective structure, is an effective preference only if no preference of
-the agent, effective or not, conflicts with it; the follow-ups *but I don't want you to* and
-*but I wish you would not* are both out. -/
+/-- In disinterested advice, (39) and (40), a goal adopted by cooperation by default, with
+nothing ranked below it in the effective structure, is an effective preference only if no
+preference of the agent, effective or not, conflicts with it, so the follow-ups *but I don't want
+you to* and *but I wish you would not* are both out. -/
 theorem advice_compatible {S : PreferenceStructure W} {B g : Set W} (hC : S.Consistent B)
     (hb : ∀ r ∈ S.prefs, ¬ S.prec r g) (hg : g ∈ S.maxElts) (hq : q ∈ S.prefs) :
     (B ∩ (g ∩ q)).Nonempty :=
-  Set.nonempty_iff_ne_empty.2 λ h => hb q hq (hC.prec_of_mem_maxElts hg hq h)
+  Set.nonempty_iff_ne_empty.2 fun h ↦ hb q hq (hC.prec_of_mem_maxElts hg hq h)
 
-/-- A concession, (21) and (22): a retained preference against an effective one is ranked
+/-- In a concession, (21) and (22), a retained preference against an effective one is ranked
 strictly below it, so it survives as a wish but not as an effective preference. The follow-up
 *but I don't want you to* is out and *but I wish you would not* is fine. -/
 theorem concession_not_want {S : PreferenceStructure W} {B : Set W} (hC : S.Consistent B)
     (hp : p ∈ S.maxElts) (hq : q ∈ S.prefs) (h : B ∩ (p ∩ q) = ∅) : q ∉ S.maxElts :=
-  λ hq' => hq'.2 p hp.1 (hC.prec_of_mem_maxElts hp hq h)
+  fun hq' ↦ hq'.2 p hp.1 (hC.prec_of_mem_maxElts hp hq h)
 
 /-- The utterances whose follow-ups the paper contrasts. -/
 inductive Use
   | assertion | directive | advice | concession
   deriving DecidableEq
 
-/-- What the utterance requires of the speaker's effective preference structure: an effective
+/-- An utterance requires of the speaker's effective preference structure an effective
 preference for the content unless it is an assertion, which incurs no preferential commitment,
-`declarative_contextSets`, and nothing below the content for advice, (39). -/
+`declarative_contextSets`, and for advice also nothing ranked below the content, (39). -/
 def Use.Holds (u : Use) (S : PreferenceStructure W) (p : Set W) : Prop :=
   (u ≠ .assertion → p ∈ S.maxElts) ∧ (u = .advice → ∀ r ∈ S.prefs, ¬ S.prec r p)
 
-/-- A follow-up's present preference against the content: effective for *I don't want you to*,
-mere for *I wish you would not*, and none for a deontic statement or a past desire. -/
+/-- A follow-up's present preference against the content is effective for *I don't want you
+to*, mere for *I wish you would not*, and absent for a deontic statement or a past desire. -/
 inductive Denial
   | want | wish | none
   deriving DecidableEq
 
-/-- The denial's preference against the content: a preference unless there is none, an
-effective one for a want. -/
+/-- A denial carries a preference against the content unless it has none, and an effective one
+for a want. -/
 def Denial.Against (d : Denial) (S : PreferenceStructure W) (q : Set W) : Prop :=
   (d ≠ .none → q ∈ S.prefs) ∧ (d = .want → q ∈ S.maxElts)
 
@@ -193,23 +193,6 @@ def Coherent (u : Use) (d : Denial) : Prop :=
   ∃ (S : PreferenceStructure W) (p q : Set W),
     S.Consistent Set.univ ∧ u.Holds S p ∧ p ∩ q = ∅ ∧ d.Against S q
 
-/-- Two preferences, the first ranked strictly above the second. -/
-private def pair {p q : Set W} (h : p ≠ q) : PreferenceStructure W where
-  prefs := {p, q}
-  prec r s := r = q ∧ s = p
-  isStrictOrder :=
-    { irrefl := λ _ hr => h (hr.2.symm.trans hr.1)
-      trans := λ _ _ _ hr hs => absurd (hr.2.symm.trans hs.1) h }
-
-private theorem pair_consistent {p q : Set W} (hp : p.Nonempty) (hq : q.Nonempty) (h : p ≠ q) :
-    (pair h).Consistent Set.univ := by
-  refine PreferenceStructure.consistent_of_realistic_of_isChain ?_ ?_ (hp.mono (Set.subset_univ p))
-  · rintro _ (rfl | rfl)
-    · rw [Set.inter_univ]; exact hp.ne_empty
-    · rw [Set.inter_univ]; exact hq.ne_empty
-  · rintro _ (rfl | rfl) _ (rfl | rfl) hne
-    exacts [absurd rfl hne, Or.inr ⟨rfl, rfl⟩, Or.inl ⟨rfl, rfl⟩, absurd rfl hne]
-
 /-- A follow-up is coherent unless it denies an effective preference the utterance incurred,
 `concession_not_want`, or denies the content of disinterested advice at all,
 `advice_compatible`. A directive followed by a wish against its content is thereby predicted
@@ -217,9 +200,9 @@ coherent, a case the paper does not discuss. -/
 theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
     Coherent W u d ↔ d = .none ∨ u = .assertion ∨ d ≠ .want ∧ u ≠ .advice := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne W
-  have hne : ({x} : Set W) ≠ {y} := λ h => hxy (Set.singleton_eq_singleton_iff.1 h)
+  have hne : ({x} : Set W) ≠ {y} := fun h ↦ hxy (Set.singleton_eq_singleton_iff.1 h)
   have hxy' : ({x} : Set W) ∩ {y} = ∅ :=
-    Set.singleton_inter_eq_empty.2 λ h => hxy (Set.mem_singleton_iff.1 h)
+    Set.singleton_inter_eq_empty.2 fun h ↦ hxy (Set.mem_singleton_iff.1 h)
   constructor
   · rintro ⟨S, p, q, hC, ⟨hp, hb⟩, hpq, hq, hqm⟩
     by_cases hd : d = .none
@@ -227,20 +210,23 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
     by_cases ha : u = .assertion
     · exact Or.inr (Or.inl ha)
     have hpq' : Set.univ ∩ (p ∩ q) = ∅ := by rw [Set.univ_inter]; exact hpq
-    exact Or.inr (Or.inr ⟨λ hw => concession_not_want hC (hp ha) (hq hd) hpq' (hqm hw),
-      λ hu => (advice_compatible hC (hb hu) (hp ha) (hq hd)).ne_empty hpq'⟩)
+    exact Or.inr (Or.inr ⟨fun hw ↦ concession_not_want hC (hp ha) (hq hd) hpq' (hqm hw),
+      fun hu ↦ (advice_compatible hC (hb hu) (hp ha) (hq hd)).ne_empty hpq'⟩)
   · rintro (rfl | rfl | ⟨hw, hu⟩)
     · exact ⟨PreferenceStructure.single {x}, {x}, {y},
         PreferenceStructure.consistent_single ⟨x, Set.mem_singleton x, Set.mem_univ x⟩,
-        ⟨λ _ => ⟨Set.mem_singleton _, λ _ _ h => h⟩, λ _ _ _ h => h⟩, hxy', λ h => absurd rfl h,
+        ⟨fun _ ↦ ⟨Set.mem_singleton _, fun _ _ h ↦ h⟩, fun _ _ _ h ↦ h⟩, hxy', fun h ↦ absurd rfl h,
         nofun⟩
     · exact ⟨PreferenceStructure.single {y}, {x}, {y},
         PreferenceStructure.consistent_single ⟨y, Set.mem_singleton y, Set.mem_univ y⟩,
-        ⟨λ h => absurd rfl h, nofun⟩, hxy', λ _ => Set.mem_singleton _,
-        λ _ => ⟨Set.mem_singleton _, λ _ _ h => h⟩⟩
-    · exact ⟨pair hne, {x}, {y}, pair_consistent ⟨x, Set.mem_singleton x⟩
-        ⟨y, Set.mem_singleton y⟩ hne, ⟨λ _ => ⟨Or.inl rfl, λ _ _ h => hne h.1⟩, λ h => absurd h hu⟩,
-        hxy', λ _ => Or.inr rfl, λ h => absurd h hw⟩
+        ⟨fun h ↦ absurd rfl h, nofun⟩, hxy', fun _ ↦ Set.mem_singleton _,
+        fun _ ↦ ⟨Set.mem_singleton _, fun _ _ h ↦ h⟩⟩
+    · exact ⟨.rankBelow {{x}, {y}} hne.symm, {x}, {y},
+        PreferenceStructure.consistent_rankBelow hne.symm
+          ⟨x, trivial, fun _ ⟨ht, hty⟩ ↦ (ht.resolve_right hty).symm ▸ rfl⟩
+          ⟨y, trivial, fun _ ⟨ht, htx⟩ ↦ (ht.resolve_left htx).symm ▸ rfl⟩,
+        ⟨fun _ ↦ ⟨Or.inl rfl, fun _ _ h ↦ hne h.1⟩, fun h ↦ absurd h hu⟩,
+        hxy', fun _ ↦ Or.inr rfl, fun h ↦ absurd h hw⟩
 
 /-! ### Ordering-source affirmation -/
 
@@ -267,7 +253,7 @@ source already holds a proposition incompatible with the content, a best world v
 stays best, so the common ground does not come to entail *must p*, §5.2. -/
 theorem todo_not_must {f g : Background W} {φ ψ : W → Prop} {u : W}
     (hψ : ψ ∈ g w) (hφψ : ∀ v, ψ v → ¬ φ v) (hu : u ∈ bestWorlds f g w) (huψ : ψ u) :
-    ¬ necessity f (λ v => insert φ (g v)) φ w :=
+    ¬ necessity f (fun v ↦ insert φ (g v)) φ w :=
   not_necessity_insert hψ hφψ hu huψ (hφψ u huψ)
 
 /-! ### The rows
@@ -285,7 +271,7 @@ inductive Continuation
   | revising | conflicting
   deriving DecidableEq
 
-/-- A sequence row: two utterances with incompatible contents. -/
+/-- A sequence row of two utterances with incompatible contents. -/
 structure Sequence where
   /-- The second utterance. -/
   second : Second
@@ -299,7 +285,7 @@ def Sequence.ofRow (row : Datum) : Option Sequence := do
     ← row.parse? "continuation"
       [("revising", Continuation.revising), ("conflicting", .conflicting)]⟩
 
-/-- The sequences of (11) to (16): incompatible imperatives are coherent only as a revision,
+/-- In the sequences of (11) to (16) incompatible imperatives are coherent only as a revision,
 `imperatives_revise`, while an assertion of incompatible desires reports underlying preferences,
 which need not be consistent. -/
 theorem sequence_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "sequence" →
@@ -307,7 +293,7 @@ theorem sequence_rows : ∀ row ∈ Examples.all, row.feature? "construction" = 
       (row.JudgedFelicitous ↔ s.second = .assertion ∨ s.continuation = .revising) := by
   decide
 
-/-- A follow-up row: the utterance and the denial. -/
+/-- A follow-up row of an utterance and a denial. -/
 structure FollowUp where
   /-- The utterance. -/
   use : Use
@@ -322,7 +308,7 @@ def FollowUp.ofRow (row : Datum) : Option FollowUp := do
     ← row.parse? "denial"
       [("want", Denial.want), ("wish", .wish), ("deontic", .none), ("pastWant", .none)]⟩
 
-/-- The follow-ups of (17), (18), (21), (22) and (40): acceptable exactly when coherent,
+/-- The follow-ups of (17), (18), (21), (22) and (40) are acceptable exactly when coherent,
 `coherent_iff`. -/
 theorem followUp_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "followUp" →
     ∃ c ∈ FollowUp.ofRow row, (row.judgment = .acceptable ↔ Coherent Bool c.use c.denial) := by
@@ -340,7 +326,7 @@ def Form.ofRow (row : Datum) : Option Form := do
   return ← row.parse? "form"
     [("imperative", Form.imperative), ("performative", .performative), ("assertion", .assertion)]
 
-/-- The challenges of (23) to (25): only the assertion of a desire can be called a lie or
+/-- Of the challenges of (23) to (25), only the assertion of a desire can be called a lie or
 disbelieved; imperatives and explicit performatives are self-verifying, `imp_self_verifying`. -/
 theorem challenge_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "challenge" →
     ∃ f ∈ Form.ofRow row, (row.judgment = .acceptable ↔ f = .assertion) := by
