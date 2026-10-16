@@ -40,16 +40,22 @@ positive, is ABA without any homophony.
 * `positiveEmbedding`: the word extents of a superlative embedding the positive.
 * `latinBonusNS`: the Latin entries in nanosyntax form.
 * `Synthetic`, `Periphrastic`: a grade form of one word, and one of several.
-* `rootPattern`: the root classes of a triple of Table 4.1 over the grades.
+* `rootPattern`, `Quantifier`: the root classes of a triple over the grades,
+  and the triples of quantifiers.
 * `BearsOnCSG`: a language of the broad sample with suppletion and a
   morphological superlative.
 
 ## Main results
 
-* `isContiguous_iff_ne_basque`, `ne_aab`, `abc_iff`: of the 73 cognate
-  triples of Table 4.1, read from `Data/Paradigms/Bobaljik2012`, every one
-  is contiguous but the Basque doublet (143b), none is AAB, and the ABC ones
-  are the triples (31) and p. 112 name.
+* `isContiguous_iff_ne_basque`, `ne_aab`, `abc_iff`: of the 73 adjectival
+  cognate triples of Table 4.1, read from `Data/Paradigms/Bobaljik2012`,
+  every one is contiguous but the Basque doublet (143b), no triple is AAB,
+  and the ABC ones are the triples (31) and p. 112 name.
+* `quantifier_isContiguous_iff`, `bulgarian_armenian_eq_abb_comp`,
+  `karelian_sources`: of the quantifier triples of Table 4.2, all but the
+  three of (165) are contiguous; the Bulgarian and Armenian ones are ABB
+  through a superlative embedding the positive, and the Karelian one is
+  contradicted by the triple (170).
 * `csg1_of_ne_basque`, `basque_not_realized`: CSG1 holds of every other
   triple, and no antihomophonous vocabulary realizes the Basque one.
 * `bearsOnCSG_names`, `eurasia_of_suppletion`,
@@ -320,20 +326,26 @@ theorem csg1 {F : Type*} {p : Paradigm 3 F} (hc : IsContiguous p) (h : p 1 ≠ p
     p 2 ≠ p 0 :=
   fun h2 ↦ h (hc (i := 0) (j := 1) (k := 2) (by decide) (by decide) h2.symm).symm
 
-/-! ### The suppletive triples (Table 4.1)
+/-! ### The suppletive triples (Tables 4.1 and 4.2)
 
-The 73 cognate triples of Table 4.1, each with the root classes the book assigns its grades: ABC
-for the triples (31) names and the Greek pair counted on p. 112, ABA for the Basque doublet (143),
-and ABB for the rest, by the summary on p. 109. A triple counts once however many languages share
-it (section 1.3). -/
+The 73 adjectival cognate triples of Table 4.1, each with the root classes the book assigns its
+grades: ABC for the triples (31) names and the Greek pair counted on p. 112, ABA for the Basque
+doublet (143), and ABB for the rest, by the summary on p. 109. The quantifier triples of Table 4.2
+follow in their own section. A triple counts once however many languages share it (section 1.3). -/
 
 open Data.Paradigms in
 /-- The root pattern of a triple over the positive, the comparative and the superlative. -/
 def rootPattern (r : RootClasses) : Paradigm 3 ℕ := fun g ↦
   (r.classOf (![Paradigms.positive, Paradigms.comparative, Paradigms.superlative] g)).getD 0
 
-/-- Of the more than 300 languages considered, 73 cognate triples (p. 105). -/
-theorem rootClasses_length : Paradigms.rootClasses.length = 73 := by
+/-- A triple of quantifiers, which the book treats apart from adjectives since they may not be
+adjectives in every language (p. 105). -/
+def Quantifier (r : Data.Paradigms.RootClasses) : Prop := r.lexeme.meaning ∈ ["many, much", "few"]
+
+instance : DecidablePred Quantifier := fun r ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+/-- Of the more than 300 languages considered, 73 adjectival cognate triples (p. 105). -/
+theorem adjectival_length : (Paradigms.rootClasses.filter (¬ Quantifier ·)).length = 73 := by
   decide
 
 /-- Every triple has a suppletive comparative. -/
@@ -341,28 +353,33 @@ theorem suppletive_comparative :
     ∀ r ∈ Paradigms.rootClasses, rootPattern r 1 ≠ rootPattern r 0 := by
   decide +kernel
 
-/-- Every triple but the Basque doublet (143b) is contiguous. -/
+/-- Every adjectival triple but the Basque doublet (143b) is contiguous. -/
 theorem isContiguous_iff_ne_basque :
-    ∀ r ∈ Paradigms.rootClasses,
-      IsContiguous (rootPattern r) ↔ r ≠ Paradigms.eus_good_on.roots := by
+    ∀ r ∈ Paradigms.rootClasses, ¬ Quantifier r →
+      (IsContiguous (rootPattern r) ↔ r.id ≠ Paradigms.eus_good_on.roots.id) := by
+  simp only [isContiguous_fin_three_iff]
   decide +kernel
 
-/-- No triple is AAB. -/
+/-- No triple, adjectival or quantifier, is AAB. -/
 theorem ne_aab : ∀ r ∈ Paradigms.rootClasses,
     Setoid.ker (rootPattern r) ≠ Setoid.ker Paradigm.aab := by
+  simp only [ne_eq, ker_eq_ker_aab_iff]
   decide +kernel
 
-/-- The ABC triples are the four of (31) and the Greek pair counted on p. 112. -/
+/-- The ABC triples are the four of (31) and the Greek pair counted on p. 112; no quantifier triple
+is ABC. -/
 theorem abc_iff : ∀ r ∈ Paradigms.rootClasses,
     Setoid.ker (rootPattern r) = Setoid.ker Paradigm.abc ↔
-      r ∈ [Paradigms.lat_good.roots, Paradigms.cym_good.roots, Paradigms.sga_good.roots,
-        Paradigms.pal_good.roots, Paradigms.grc_good_amein.roots] := by
+      r.id ∈ [Paradigms.lat_good.roots.id, Paradigms.cym_good.roots.id, Paradigms.sga_good.roots.id,
+        Paradigms.pal_good.roots.id, Paradigms.grc_good_amein.roots.id] := by
+  simp only [ker_eq_ker_abc_iff]
   decide +kernel
 
-/-- CSG1 holds of every triple but the Basque doublet. -/
+/-- CSG1 holds of every adjectival triple but the Basque doublet. -/
 theorem csg1_of_ne_basque {r : Data.Paradigms.RootClasses} (hr : r ∈ Paradigms.rootClasses)
-    (h : r ≠ Paradigms.eus_good_on.roots) : rootPattern r 2 ≠ rootPattern r 0 :=
-  csg1 ((isContiguous_iff_ne_basque r hr).2 h) (suppletive_comparative r hr)
+    (hq : ¬ Quantifier r) (h : r.id ≠ Paradigms.eus_good_on.roots.id) :
+    rootPattern r 2 ≠ rootPattern r 0 :=
+  csg1 ((isContiguous_iff_ne_basque r hr hq).2 h) (suppletive_comparative r hr)
 
 /-- No antihomophonous vocabulary realizes the Basque triple *on – hobe – on-en* (143b), which
 needs the accidental homophony that Antihomophony (44) excludes: the problem section 4.1.2 leaves
@@ -400,7 +417,8 @@ theorem eurasia_of_suppletion : ∀ r ∈ Structures.rows, (∃ v ∈ r.suppl, v
 
 /-- Each language of the sample that bears on the CSG has a cognate triple in Table 4.1. -/
 theorem exists_rootClasses_of_bearsOnCSG : ∀ r ∈ Structures.rows, BearsOnCSG r →
-    ∃ t ∈ Paradigms.rootClasses, some t.lexeme.languageId = r.language.glottocode := by
+    ∃ t ∈ Paradigms.rootClasses,
+      ¬ Quantifier t ∧ some t.lexeme.languageId = r.language.glottocode := by
   decide +kernel
 
 /-- *Best* does not return to the root of *good*, as CSG1 requires. -/
@@ -618,6 +636,36 @@ theorem periphrastic_of_aba :
         Periphrastic e.comparison.superlative ∧ .root e.form ∈ e.comparison.superlative := by
   simp only [List.mem_append, or_imp, forall_and, List.forall_mem_map]
   exact ⟨⟨by decide, by decide⟩, by decide⟩
+
+/-! ### The quantifier triples (Table 4.2)
+
+Of the quantifier triples, all but three are ABB; the three apparent ABA triples are Karelian,
+Armenian and Bulgarian (165). Bulgarian *naj* is a freestanding particle (pp. 127-128) and Armenian
+*amena-* a compound with *amen* 'all' (pp. 128-129), so their superlatives embed the positive, as
+Russian *samyj plox-oj* does. The Karelian ABA comes from Zajkov's dictionary; the online
+dictionary gives the ABB triple (170), which a questionnaire of seven speakers bears out
+(pp. 129-131). -/
+
+/-- Every quantifier triple but the three of (165) is contiguous. -/
+theorem quantifier_isContiguous_iff : ∀ r ∈ Paradigms.rootClasses, Quantifier r →
+    (IsContiguous (rootPattern r) ↔
+      r.id ∉ [Paradigms.krl_many.roots.id, Paradigms.hye_many.roots.id,
+        Paradigms.bul_many.roots.id]) := by
+  simp only [isContiguous_fin_three_iff]
+  decide +kernel
+
+/-- The Bulgarian and Armenian triples are ABB seen through a superlative that embeds the
+positive, as (168) and (169) analyse them. -/
+theorem bulgarian_armenian_eq_abb_comp :
+    ∀ r ∈ [Paradigms.bul_many.roots, Paradigms.hye_many.roots],
+      Setoid.ker (rootPattern r) = Setoid.ker (Paradigm.abb ∘ positiveEmbedding) := by
+  decide
+
+/-- The two Karelian sources disagree: Zajkov's triple (165a) is ABA, the triple (170) ABB. -/
+theorem karelian_sources :
+    Setoid.ker (rootPattern Paradigms.krl_many.roots) = Setoid.ker Paradigm.aba ∧
+      Setoid.ker (rootPattern Paradigms.krl_many_onego.roots) = Setoid.ker Paradigm.abb := by
+  decide
 
 /-! ### The nanosyntax reading
 

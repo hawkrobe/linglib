@@ -162,7 +162,7 @@ def lingala : Language :=
   { id := "lingala", name := "Lingala", glottocode := some "ling1263" }
 
 def nandi : Language :=
-  { id := "nandi", name := "Nandi", glottocode := none }
+  { id := "nandi", name := "Nandi", glottocode := some "nand1266" }
 
 def sotho_northern : Language :=
   { id := "sotho_northern", name := "Sotho (Northern)", glottocode := some "pedi1238" }
@@ -180,7 +180,7 @@ def koroboro_seno : Language :=
   { id := "koroboro_seno", name := "Koroboro Seno", glottocode := some "koyr1242" }
 
 def kanuri : Language :=
-  { id := "kanuri", name := "Kanuri", glottocode := none }
+  { id := "kanuri", name := "Kanuri", glottocode := some "cent2050" }
 
 def irish : Language :=
   { id := "irish", name := "Irish", glottocode := some "iris1253" }
@@ -255,7 +255,7 @@ def burushaski : Language :=
   { id := "burushaski", name := "Burushaski", glottocode := some "buru1296" }
 
 def yukagir : Language :=
-  { id := "yukagir", name := "Yukagir", glottocode := none }
+  { id := "yukagir", name := "Yukagir", glottocode := some "sout2750" }
 
 def basque : Language :=
   { id := "basque", name := "Basque", glottocode := some "basq1248" }
@@ -468,7 +468,7 @@ def wappo : Language :=
   { id := "wappo", name := "Wappo", glottocode := some "wapp1239" }
 
 def nahuatl : Language :=
-  { id := "nahuatl", name := "Nahuatl", glottocode := none }
+  { id := "nahuatl", name := "Nahuatl", glottocode := some "clas1250" }
 
 def comanche : Language :=
   { id := "comanche", name := "Comanche", glottocode := some "coma1245" }
@@ -489,13 +489,13 @@ def tarascan : Language :=
   { id := "tarascan", name := "Tarascan", glottocode := some "pure1242" }
 
 def totonac : Language :=
-  { id := "totonac", name := "Totonac", glottocode := none }
+  { id := "totonac", name := "Totonac", glottocode := some "yecu1235" }
 
 def miskitu : Language :=
   { id := "miskitu", name := "Miskitu", glottocode := some "misk1235" }
 
 def mixtec : Language :=
-  { id := "mixtec", name := "Mixtec", glottocode := none }
+  { id := "mixtec", name := "Mixtec", glottocode := some "sanm1296" }
 
 def wari : Language :=
   { id := "wari", name := "Wari’", glottocode := some "wari1268" }
