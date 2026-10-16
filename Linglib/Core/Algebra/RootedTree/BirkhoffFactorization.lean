@@ -11,10 +11,6 @@ public import Mathlib.RingTheory.Coalgebra.Convolution
 public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RingTheory.HopfAlgebra.Convolution
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
 # Birkhoff factorization on the Connes–Kreimer Hopf algebra
 
@@ -53,6 +49,10 @@ target carries no coproduct, so this is not mathlib's `AlgHom.convGroup`; the co
 * [connes-kreimer-2000]
 * [ebrahimi-fard-guo-kreimer-2004]
 -/
+
+@[expose] public section
+
+open RoseTree UnorderedTree
 
 namespace ConnesKreimer
 
@@ -183,18 +183,12 @@ theorem birkhoffMinusTree_id_eq_antipodeTreeN (T : UnorderedTree α) :
 termination_by T.numNodes
 decreasing_by exact cutSummandsN_crown_numNodes_lt hp hT_i
 
-/-- At `R = id` and `φ = id`, the negative part is the antipode. The forest-level Bogolyubov
-    negative part `φ₋` of the identity character under `RotaBaxter.id` is the Hopf antipode
-    `antipodeAlgHomN`. Lifts `birkhoffMinusTree_id_eq_antipodeTreeN` through the shared
-    `ConnesKreimer.lift`. -/
+/-- At `R = id` and `φ = id` the Bogolyubov negative part is the Hopf antipode. Both are
+    `aeval` of a function on trees, so this is `birkhoffMinusTree_id_eq_antipodeTreeN`. -/
 theorem birkhoffMinus_id_eq_antipodeAlgHomN :
     birkhoffMinus (LinearMap.id : ConnesKreimer R (UnorderedTree α) →ₗ[R] _) RotaBaxter.id
-      = antipodeAlgHomN := by
-  refine ConnesKreimer.algHom_ext (fun F => ?_)
-  show birkhoffMinus _ _ (of' F) = antipodeAlgHomN (of' F)
-  rw [birkhoffMinus_apply_of', antipodeAlgHomN_apply_of']
-  exact congrArg Multiset.prod (Multiset.map_congr rfl
-    (fun T _ => birkhoffMinusTree_id_eq_antipodeTreeN T))
+      = antipodeAlgHomN :=
+  congrArg aeval (funext birkhoffMinusTree_id_eq_antipodeTreeN)
 
 /-! ### The full Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊`
 
@@ -243,17 +237,9 @@ theorem birkhoffPlus_eq_convMul (φ : ConnesKreimer R (UnorderedTree α) →ₐ[
     WithConv.toConv (birkhoffMinus φ.toLinearMap RB) * WithConv.toConv φ
       = WithConv.toConv (birkhoffPlus φ.toLinearMap RB) := by
   apply WithConv.ofConv_injective
-  refine ConnesKreimer.algHom_ext (fun F => ?_)
-  show (WithConv.toConv (birkhoffMinus φ.toLinearMap RB) * WithConv.toConv φ).ofConv (of' F)
-     = birkhoffPlus φ.toLinearMap RB (of' F)
-  induction F using Multiset.induction with
-  | empty => rw [of'_zero, map_one, map_one]
-  | cons T F' ih =>
-    have hcons : (of' (T ::ₘ F') : ConnesKreimer R (UnorderedTree α)) = ofTree T * of' F' := by
-      rw [← Multiset.singleton_add, of'_add]; rfl
-    rw [hcons, map_mul, map_mul, ih, birkhoffPlus_apply_ofTree]
-    exact congrArg (· * birkhoffPlus φ.toLinearMap RB (of' F'))
-      (convMul_birkhoffMinus_apply_ofTree RB φ T)
+  refine ConnesKreimer.algHom_ext_ofTree fun T ↦ ?_
+  rw [birkhoffPlus_apply_ofTree]
+  exact convMul_birkhoffMinus_apply_ofTree RB φ T
 
 /-- The Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊`. Every character `φ : H →ₐ[R] R` factors
     through its Bogolyubov counterterm `φ₋` (via the antipode `S`) and its renormalized part

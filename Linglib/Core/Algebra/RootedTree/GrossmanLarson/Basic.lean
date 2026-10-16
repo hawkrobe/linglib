@@ -158,7 +158,7 @@ theorem product_of' (x : ConnesKreimer R (UnorderedTree α)) (G : Forest (Unorde
   | zero => simp
   | add x y hx hy => simp [hx, hy, add_mul, Multiset.sum_map_add]
   | single F r =>
-    rw [smul_single_one, map_smul, LinearMap.smul_apply]
+    rw [← smul_of', map_smul, LinearMap.smul_apply]
     change r • product (of' (R := R) F) (of' G) =
       (G.antidiagonal.map fun p ↦ insertion (r • of' (R := R) F) (of' p.2) * of' p.1).sum
     rw [product_of'_of', productMultiset,

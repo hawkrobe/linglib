@@ -80,7 +80,7 @@ theorem isDualPrimitive_iff :
   · induction F using Multiset.induction with
     | empty => simpa using hf.map_one_eq_zero
     | cons T F _ =>
-      rw [← Multiset.singleton_add, of'_add, of'_singleton]
+      rw [of'_cons]
       exact hf.map_mul_eq_zero (counit_ofTree T)
         (by simp [coalgebra_counit_apply, show F ≠ 0 by simpa using hF])
   · have h₁ : f 1 = 0 := by simpa using h 0

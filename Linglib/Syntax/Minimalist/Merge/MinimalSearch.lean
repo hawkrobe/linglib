@@ -186,7 +186,7 @@ private theorem aeval_smul_ofTree_eq_add_smul (ε : R) (x : ConnesKreimer R (Uno
     obtain ⟨y, hy⟩ := ha; obtain ⟨z, hz⟩ := hb
     exact ⟨y + z, by rw [map_add, map_add, hy, hz, smul_add]; abel⟩
   | single A r =>
-    rw [smul_single_one A r, show single A (1 : R) = of' A from rfl, map_smul, map_smul,
+    rw [← smul_of', map_smul, map_smul,
       aeval_of', aeval_of']
     obtain ⟨y, hy⟩ := prod_map_eq_add_smul ε A (fun t ↦ ε • ofTree (R := R) t)
       (fun t ↦ (0 : R) • ofTree (R := R) t) fun t _ ↦ ⟨ofTree t, by simp⟩
@@ -227,7 +227,7 @@ theorem comulEps_eq_add_smul (ε : R) (x : ConnesKreimer R (UnorderedTree α)) :
     obtain ⟨y, hy⟩ := ha; obtain ⟨z, hz⟩ := hb
     exact ⟨y + z, by rw [map_add, map_add, hy, hz, smul_add]; abel⟩
   | single A r =>
-    rw [smul_single_one A r, show single A (1 : R) = of' A from rfl, map_smul, map_smul]
+    rw [← smul_of', map_smul, map_smul]
     simp only [comulEps, aeval_of']
     obtain ⟨y, hy⟩ := prod_map_eq_add_smul ε A (comulTreeEps ε) (comulTreeEps 0)
       fun t _ ↦ comulTreeEps_eq_add_smul ε t
@@ -282,7 +282,7 @@ private theorem aeval_smul_of' (ε : R) (A : Forest (UnorderedTree α)) :
   | cons t A ih =>
     obtain ⟨r, hr⟩ := ih
     refine ⟨ε * r, ?_⟩
-    rw [← Multiset.singleton_add, of'_add, map_mul, hr, of'_singleton, aeval_ofTree,
+    rw [of'_cons, map_mul, hr, aeval_ofTree,
       smul_mul_smul_comm ε (ofTree (R := R) t) r (of' (R := R) A)]
 
 private theorem map_mem_leftSpan (ε : R)
@@ -370,7 +370,7 @@ theorem mergeOpEps_zero_of'_mul (lbl : α) {S S' : UnorderedTree α} {F : Forest
   | empty => rw [of'_zero, one_mul, one_mul]
   | cons U F ih =>
     rw [Multiset.mem_cons, not_or] at hS hS'
-    rw [← Multiset.singleton_add, of'_add, mul_assoc, of'_singleton,
+    rw [of'_cons, mul_assoc,
       mergeOpEps_zero_ofTree_mul lbl (Ne.symm hS.1) (Ne.symm hS'.1), ih hS.2 hS'.2, ← mul_assoc]
 
 /-- External Merge survives at `ε = 0` ([marcolli-chomsky-berwick-2025] Proposition 1.5.1), beside

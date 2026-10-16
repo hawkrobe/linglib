@@ -68,7 +68,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 /-- A cut enumeration admits Merge when its crowns are subtrees with fewer edges in total than
     their tree, and its only empty cut is the tree itself. The edge bound makes External Merge of
     a pair exact (`mergeOpG_pair`); the other two let a spectator component pass through
-    (`mergeOpG_factor_out_singleton`). -/
+    (`mergeOpG_ofTree_mul`). -/
 class IsMergeCuts
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)) : Prop where
   crown_numEdges_lt {T : UnorderedTree α} {p : Forest (UnorderedTree α) × UnorderedTree α} :
@@ -107,10 +107,7 @@ end IsMergeCuts
 
 private theorem of'_mul_single (F G : Forest (UnorderedTree α)) (r : R) :
     of' (R := R) F * single G r = single (F + G) r := by
-  rw [smul_single_one G r, mul_smul_comm]
-  change r • (of' (R := R) F * of' G) = single (F + G) r
-  rw [← of'_add]
-  exact (smul_single_one (F + G) r).symm
+  rw [← smul_of', mul_smul_comm, ← of'_add, smul_of']
 
 /-- A chain `⊔ ∘ (f ⊗ id)` kills every term whose left channel is a product with `x` that `f`
     kills. -/

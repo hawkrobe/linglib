@@ -84,7 +84,7 @@ private theorem prod_map_tmul_one (A : Forest T) :
   | empty => rw [Multiset.map_zero, Multiset.prod_zero, of'_zero, Algebra.TensorProduct.one_def]
   | cons t A ih =>
     rw [Multiset.map_cons, Multiset.prod_cons, ih, Algebra.TensorProduct.tmul_mul_tmul,
-      ← Multiset.singleton_add, of'_add, of'_singleton, one_mul]
+      of'_cons, one_mul]
 
 private theorem prod_map_one_tmul (B : Forest T) :
     (B.map fun t ↦ (1 : ConnesKreimer R T) ⊗ₜ[R] (ofTree t : ConnesKreimer R T)).prod =
@@ -93,7 +93,7 @@ private theorem prod_map_one_tmul (B : Forest T) :
   | empty => rw [Multiset.map_zero, Multiset.prod_zero, of'_zero, Algebra.TensorProduct.one_def]
   | cons t B ih =>
     rw [Multiset.map_cons, Multiset.prod_cons, ih, Algebra.TensorProduct.tmul_mul_tmul,
-      ← Multiset.singleton_add, of'_add, of'_singleton, one_mul]
+      of'_cons, one_mul]
 
 /-- `Δ_P` sums `A ⊗ B` over the splittings `F = A + B`, counted with multiplicity. -/
 theorem comulPrim_of' (F : Forest T) :

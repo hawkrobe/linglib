@@ -189,7 +189,7 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
   | zero => simp
   | add Y₁ Y₂ ih₁ ih₂ => rw [map_add, add_mul, map_add, ih₁, ih₂]; split_ifs <;> simp
   | single F r =>
-    rw [smul_single_one, map_smul, smul_mul_assoc, map_smul]
+    rw [← smul_of', map_smul, smul_mul_assoc, map_smul]
     change r • bMinusLin a (bPlusLin a (of' F) * of' G) = if G = 0 then r • of' F else 0
     rw [bPlusLin_of', ← of'_singleton, ← of'_add, bMinusLin_of', bMinusBasis_singleton_node_add]
     split_ifs <;> simp
