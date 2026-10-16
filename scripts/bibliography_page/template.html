@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bibliography · linglib</title>
+<meta name="description" content="Every work in linglib's bibliography, with the files of the library that use it.">
+<link rel="icon" href="../docs/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,560;1,6..72,400&display=swap">
+<style>
+/*SITE_CSS*/
+
+/* Toolbar */
+.toolbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--bg);
+  padding-block: 12px 10px; display: grid; gap: 10px; border-bottom: 1px solid var(--rule);
+}
+.toolbar input[type="search"] {
+  width: 100%; font: 400 16px/1.3 var(--sans); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px;
+}
+.toolbar input[type="search"]:focus-visible, .toolbar select:focus-visible, .toolbar input[type="checkbox"]:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 1px;
+}
+.filters { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 13px; color: var(--muted); }
+.filters label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.filters select {
+  font: 400 13px var(--sans); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 6px; padding: 4px 6px;
+}
+.status { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Entries */
+ol.entries { list-style: none; margin: 0; padding: 0; }
+.entry { padding: 16px 0; border-bottom: 1px solid var(--rule); display: grid; gap: 6px; scroll-margin-top: 140px; }
+.entry:target { background: var(--surface); box-shadow: 0 0 0 8px var(--surface); border-radius: 2px; }
+.entry .ref { font: 400 17px/1.4 var(--serif); }
+.entry .ref .title { font-weight: 560; }
+.entry .ref .venue { color: var(--muted); }
+.entry .line { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; font-size: 13px; color: var(--muted); }
+.entry .key { font-family: var(--mono); font-size: 12px; color: var(--ink); background: var(--bg); padding: 1px 5px; border-radius: 4px; text-decoration: none; }
+.badge { display: inline-block; font: 500 11px/1 var(--sans); padding: 3px 6px; border-radius: 4px; }
+.badge.checked { background: var(--right-bg); color: var(--right); }
+.badge.unchecked { background: var(--silent-bg); color: var(--muted); }
+.places { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 2px 10px; }
+.places a { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+.places .lib { font: 500 11px/1.6 var(--sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.places button, #more {
+  font: 500 13px var(--sans); color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer;
+}
+#more { justify-self: start; padding: 10px 0; }
+.empty { padding: 24px 0; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <nav class="site" aria-label="linglib.io"><a class="home" href="../docs/">linglib</a><a href="../docs/">Docs</a><a href="../eval/">Scoreboard</a><a href="../bibliography/" aria-current="page">Bibliography</a></nav>
+    <h1>Bibliography</h1>
+    <p class="lede prose">Every work in linglib's bibliography, <code>references.bib</code>, with the files that use it.
+      Where a work is used is read from the repository when this page is built: the <code>[key]</code> citations
+      in the Lean sources, and the data files that record a paper's examples and results. A work marked
+      <i>unchecked</i> has metadata that has not yet been checked against the publication.</p>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <section aria-label="Works">
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Search by author, title, year, venue or key" aria-label="Search the bibliography" autocomplete="off">
+      <div class="filters">
+        <label for="area">Area <select id="area"></select></label>
+        <label><input type="checkbox" id="used"> Used in linglib</label>
+        <label><input type="checkbox" id="checked"> Metadata checked</label>
+        <label for="sort">Order <select id="sort"><option value="author">By author</option><option value="year">Newest first</option></select></label>
+      </div>
+      <div class="status" id="status" aria-live="polite"></div>
+    </div>
+    <ol class="entries" id="list"></ol>
+    <button id="more" type="button" hidden>Show more</button>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script type="application/json" id="bib-data">/*BIB_DATA*/{}</script>
+<script>
+(function () {
+  "use strict";
+  const data = JSON.parse(document.getElementById("bib-data").textContent);
+  const all = data.entries;
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const PAGE = 150;
+  const LIBS = { Studies: "Studies", Eval: "Eval", Lab: "Lab", Linglib: "Linglib" };
+  const byYear = [...all].sort((a, b) => (b.year || "").localeCompare(a.year || "") || a.key.localeCompare(b.key));
+
+  const used = all.filter((e) => e.places.length).length;
+  const checked = all.filter((e) => e.checked).length;
+  document.getElementById("meta").innerHTML =
+    `<span>${all.length} works · ${used} used in linglib · ${checked} with checked metadata</span>` +
+    (data.commit.sha ? `<span>built from <a href="${esc(data.commit.href)}"><code>${esc(data.commit.short)}</code></a> on ${esc(data.built)}</span>` : "");
+
+  // Areas, by how many works they hold.
+  const counts = {};
+  for (const e of all) if (e.area) counts[e.area] = (counts[e.area] || 0) + 1;
+  document.getElementById("area").innerHTML = `<option value="">All</option>` +
+    Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([a, n]) => `<option value="${esc(a)}">${esc(a)} (${n})</option>`).join("");
+
+  const q = document.getElementById("q"), area = document.getElementById("area");
+  const onlyUsed = document.getElementById("used"), onlyChecked = document.getElementById("checked");
+  const sort = document.getElementById("sort"), list = document.getElementById("list");
+  const more = document.getElementById("more"), status = document.getElementById("status");
+  let shown = 0, matches = [];
+
+  function places(e) {
+    if (!e.places.length) return "";
+    const groups = {};
+    for (const p of e.places) (groups[p.library] = groups[p.library] || []).push(p);
+    const first = 6;
+    let n = 0, h = "", rest = "";
+    for (const [lib, ps] of Object.entries(groups)) {
+      for (const p of ps) {
+        const link = `${n === 0 || ps[0] === p ? `<span class="lib">${esc(LIBS[lib] || lib)}</span>` : ""}<a href="${esc(p.href)}">${esc(p.path.replace(/^(Linglib|Studies|Eval|Lab)\//, "").replace(/\.lean$/, ""))}</a>`;
+        if (n < first) h += link; else rest += link;
+        n++;
+      }
+    }
+    if (rest) h += `<button type="button" data-more>and ${n - first} more</button><span hidden>${rest}</span>`;
+    return `<div class="places">${h}</div>`;
+  }
+  function entry(e) {
+    const links = (e.doi ? `<a href="https://doi.org/${esc(e.doi)}">doi</a>` : "") + (e.url ? `<a href="${esc(e.url)}">link</a>` : "");
+    return `<li class="entry" id="${esc(e.key)}"><div class="ref">` +
+      (e.authors ? `${esc(e.authors)} ` : "") + (e.year ? `(${esc(e.year)}). ` : "") +
+      `<span class="title">${e.title}</span>.` + (e.venue ? ` <span class="venue">${e.venue}.</span>` : "") + `</div>` +
+      `<div class="line"><a class="key" href="#${esc(e.key)}">${esc(e.key)}</a>` +
+      `<span class="badge ${e.checked ? "checked" : "unchecked"}">${e.checked ? "metadata checked" : "unchecked"}</span>` +
+      (e.subfield ? `<span>${esc(e.subfield)}</span>` : "") + links + `</div>` + places(e) + `</li>`;
+  }
+  function filter() {
+    const terms = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+    const a = area.value;
+    matches = (sort.value === "year" ? byYear : all).filter((e) =>
+      (!a || e.area === a) && (!onlyUsed.checked || e.places.length) && (!onlyChecked.checked || e.checked) &&
+      terms.every((t) => e.search.includes(t)));
+    shown = 0;
+    list.innerHTML = "";
+    show();
+  }
+  function show() {
+    const next = matches.slice(shown, shown + PAGE);
+    list.insertAdjacentHTML("beforeend", next.map(entry).join(""));
+    shown += next.length;
+    if (!matches.length) list.innerHTML = `<li class="empty">No work matches. Clear the search or the filters to see more.</li>`;
+    more.hidden = shown >= matches.length;
+    status.textContent = matches.length === all.length ? `Showing ${shown} of ${all.length}` : `${matches.length} of ${all.length} match · showing ${shown}`;
+  }
+  let timer;
+  q.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(filter, 120); });
+  for (const el of [area, onlyUsed, onlyChecked, sort]) el.addEventListener("change", filter);
+  more.addEventListener("click", show);
+  list.addEventListener("click", (ev) => {
+    const b = ev.target.closest("button[data-more]");
+    if (!b) return;
+    b.nextElementSibling.hidden = false;
+    b.nextElementSibling.style.display = "contents";
+    b.remove();
+  });
+
+  // A link to an entry shows it.
+  const hash = decodeURIComponent(location.hash.slice(1));
+  if (hash && all.some((e) => e.key === hash)) {
+    q.value = hash;
+    filter();
+    requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView());
+  } else filter();
+
+  document.getElementById("footer").innerHTML =
+    `<p>Generated by <code>scripts/gen_bibliography_page.py</code> from <code>references.bib</code> and the citations in the repository.</p>` +
+    `<p>Regenerate: <code>python3 scripts/gen_bibliography_page.py</code>.</p>`;
+})();
+</script>
+</body>
+</html>

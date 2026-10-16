@@ -16,6 +16,13 @@ cell of its design, and its linking hypothesis says what outcome a theory predic
 verdict on a theory in a cell compares the two (`Experiment.verdict`). Whatever a theory brings to
 the comparison, such as how it parses the experiment's sentences, is part of what is scored, so
 that the cells are the facts alone.
+
+The library is linglib's part of the Co-Linguistics project of Chemla, Spector, Kalomoiros and
+Schlenker, which compares formalized theories against data.
+
+## References
+
+* [chemla-spector-kalomoiros-schlenker-2026]
 -/
 
 @[expose] public section
