@@ -14,17 +14,17 @@ Dargwa is among the few Nakh-Dagestanian languages with both. There are three ge
 masculine for men, feminine for women and neuter for animals and things, and the gender marker
 a target shows distinguishes them only in the singular. In the plural it distinguishes humans
 from non-humans, and humans again by whether they include the speaker or the addressee, which
-is why [sumbatova-2021] counts three different plural genders. Gender agreement is controlled by
-the absolutive argument, by the predicate in a copular clause with two absolutives, and in Tanti
+is why Sumbatova counts three different plural genders. Gender agreement is controlled by the
+absolutive argument, by the predicate in a copular clause with two absolutives, and in Tanti
 a copula or essive in a transitive clause may agree with the ergative or dative instead.
 
 Person agreement has three sets of markers and leaves the third person unmarked. In the clitic
 and optative sets the second person singular stands against the first person and the second
-person plural, the configuration [sumbatova-2021] calls the Dargic type after the literary Dargi
-paradigm of [cysouw-2003]. A transitive verb agrees in person with the speech-act participant
-when only one of its arguments is one, and otherwise with the absolutive P. The thematic suffix
-of a transitive verb is *-i* when A outranks P on the person hierarchy 1, 2 > 3 and *-u*
-otherwise, so it marks exactly the clauses in which the verb agrees with A.
+person plural, the configuration Sumbatova calls the Dargic type after the literary Dargi
+paradigm in Cysouw's typology. A transitive verb agrees in person with the speech-act
+participant when only one of its arguments is one, and otherwise with the absolutive P. The
+thematic suffix of a transitive verb is *-i* when A outranks P on the person hierarchy 1, 2 > 3
+and *-u* otherwise, so it marks exactly the clauses in which the verb agrees with A.
 
 ## Main declarations
 
@@ -48,7 +48,7 @@ otherwise, so it marks exactly the clauses in which the verb agrees with A.
 ## Implementation notes
 
 * A transitive clause is a `Clause.Scenario` of the persons of A and P. The thematic suffix is
-  read off its kind on the binary scale `Person.Class`, as [sumbatova-2021] states it; the
+  read off its kind on the binary scale `Person.Class`, as Sumbatova states it; the
   controller is the two-hierarchy rule as she states it.
 * The masculine marker ‹w› is dropped or realized *-j* in some positions. Some nouns for liquids
   and granular substances take plural agreement, and a few nouns contain a gender marker of
@@ -199,7 +199,7 @@ def personController (s : Scenario Person) : ArgumentRole :=
 /-- The thematic suffix of a transitive verb is *-i* when A is higher than P on the person
 hierarchy 1, 2 > 3, and *-u* when the two are equal or P is higher. -/
 def thematic (s : Scenario Person) : Morph :=
-  if s.kindBy Person.toClass = .downstream then .suff "i" else .suff "u"
+  if (s.map Person.toClass).kind = .downstream then .suff "i" else .suff "u"
 
 /-- An intransitive verb takes the thematic suffix *-u* with a speech-act participant, and *-ar*
 or *-an* otherwise. -/
@@ -209,7 +209,7 @@ def intransitiveThematic (p : Person) : List Morph :=
 /-- The thematic suffix is *-i* exactly when A controls person agreement. -/
 theorem thematic_eq_i_iff (s : Scenario Person) :
     thematic s = .suff "i" ↔ personController s = .A := by
-  simp only [thematic, personController, Person.kindBy_toClass_eq_downstream_iff]
+  simp only [thematic, personController, Person.kind_map_toClass_eq_downstream_iff]
   split_ifs <;> decide
 
 /-- A transitive verb whose A and P are the given person–number cells takes the clitic of the

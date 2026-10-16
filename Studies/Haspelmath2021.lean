@@ -35,15 +35,18 @@ with the anti-efficient language of §11.3 that the universals exclude.
 ## Implementation notes
 
 * The scales are the binary versions of (8), which are the two-element bounded orders
-  (`IsSimpleOrder`); `ScenarioUniversal.top_bot_le` and `scenarioUniversal_comp_high` are
-  the facts about them that the paper uses tacitly. The binary scales are load-bearing: on
-  a scale with three levels a monadic scenario split (fn. 18) obeys Universal 5 only if it
-  is constant (`ScenarioUniversal.comp_high_le`), since a balanced scenario of two low
-  values is coded no longer than an upstream one and no shorter than a downstream one. The
-  ternary scales appear only where the paper's rule refers to them: `PersonRank` for
-  Kashmiri, `Animacy` for Sardinian, Spanish, Fore and Awtuw, `Nominality` for Baule;
-  Kolyma Yukaghir's and Greek's rules on the ternary person scale violate Universal 5
-  (`yukaghirP_ternary_violates`, `greekT_ternary_violates`).
+  (`IsSimpleOrder`). On them Universal 5 says exactly that coding is antitone in the order of
+  `Clause.Scenario`, never shorter as the higher-ranked argument's prominence falls or the
+  lower-ranked one's rises (`scenarioUniversal_iff_antitone`), which is what the paper uses
+  tacitly for the monadic splits of fn. 18. The binary scales are load-bearing: on a scale with
+  three levels a monadic scenario split obeys Universal 5 only if it is constant
+  (`ScenarioUniversal.comp_high_le`), since a balanced scenario of two low values is coded no
+  longer than an upstream one and no shorter than a downstream one. Kolyma Yukaghir's and
+  Greek's rules on the ternary person scale are antitone and still violate Universal 5
+  (`yukaghirP_greekT_ternary_antitone`, `yukaghirP_ternary_violates`,
+  `greekT_ternary_violates`). The ternary scales appear only where the paper's rule refers to
+  them: `PersonRank` for Kashmiri, `Animacy` for Sardinian, Spanish, Fore and Awtuw,
+  `Nominality` for Baule.
 * Universal 1's qualification to asymmetric coding is dropped: with coding lengths as the
   coding, a symmetric split has equal lengths and satisfies the universal vacuously, as
   Samoan's equal-length ergative alternants do (fn. 14). Its "tends to" is read as
@@ -73,9 +76,6 @@ with the anti-efficient language of §11.3 that the universals exclude.
 * `lummiPassive`'s availability whenever A is a full nominal is inferred from (64c) and
   (65b); the paper states only that the passive is obligatory in upstream scenarios and
   optional in `N > N`. UNVERIFIED against the source grammar.
-* The product-order alternative to Universal 5, antitone in the higher-ranked argument's
-  prominence and monotone in the lower-ranked one's, admits monadic splits on ternary
-  scales; which cited systems separate it from Universal 5 is open.
 
 ## References
 
@@ -225,6 +225,35 @@ open Clause (Scenario)
 def Scenario.MoreUsual {α : Type*} [LinearOrder α] (s t : Scenario α) : Prop :=
   t.kind < s.kind
 
+section Splits
+
+variable {α L : Type*} [LinearOrder α]
+
+/-- A scenario split is monadic (fn. 18) when only the prominence `coargument s` of the coargument
+decides the coding; a dyadic split is one that is monadic in neither argument. -/
+abbrev Monadic (coargument : Scenario α → α) (c : Scenario α → L) : Prop :=
+  c.FactorsThrough coargument
+
+instance (coargument : Scenario α → α) (c : Scenario α → L)
+    [i : Decidable (∀ s t, coargument s = coargument t → c s = c t)] :
+    Decidable (Monadic coargument c) := i
+
+/-- A scenario split is relative (§8) when the relation between the prominence levels of the two
+arguments determines the coding. On a binary scale this admits the dyadic splits of Yurok's type,
+which fn. 20 allows are "just like" Kashmiri's. -/
+abbrev Relative (c : Scenario α → L) : Prop :=
+  c.FactorsThrough Scenario.kind
+
+instance (c : Scenario α → L) [i : Decidable (∀ s t, s.kind = t.kind → c s = c t)] :
+    Decidable (Relative c) := i
+
+/-- A split that is a function of the kind is relative. -/
+theorem relative_comp_kind (g : Scenario.Kind → L) :
+    Relative (g ∘ Scenario.kind : Scenario α → L) :=
+  fun _ _ h ↦ congrArg g h
+
+end Splits
+
 /-! ### Universal 1 and its instances -/
 
 section Universals
@@ -301,34 +330,19 @@ theorem ScenarioUniversal.downstream_le {c : Scenario α → L} (h : ScenarioUni
     c s ≤ c t :=
   h (show t.kind < s.kind by rw [hs]; exact lt_top_iff_ne_top.2 ht)
 
-/-- On a binary scale, under Universal 5 the scenario `⟨⊤, ⊥⟩`, the only downstream one, is
-coded no longer than any other. -/
-theorem ScenarioUniversal.top_bot_le [BoundedOrder α] [IsSimpleOrder α] {c : Scenario α → L}
-    (h : ScenarioUniversal c) (s : Scenario α) : c ⟨⊤, ⊥⟩ ≤ c s := by
-  by_cases hs : s.kind = .downstream
-  · rw [Scenario.kind_eq_downstream_iff_eq.1 hs]
-  · exact h.downstream_le (Scenario.kind_eq_downstream_iff_eq.2 rfl) hs
-
-/-- A scenario split is monadic (fn. 18) when only the prominence `coargument s` of the coargument
-decides the coding; a dyadic split is one that is monadic in neither argument. -/
-abbrev Monadic (coargument : Scenario α → α) (c : Scenario α → L) : Prop :=
-  c.FactorsThrough coargument
-
-instance (coargument : Scenario α → α) (c : Scenario α → L)
-    [i : Decidable (∀ s t, coargument s = coargument t → c s = c t)] :
-    Decidable (Monadic coargument c) := i
+/-- On a binary scale Universal 5 says that coding is antitone in the order of scenarios, since
+there one scenario is of a more usual kind than another exactly when it lies above it. -/
+theorem scenarioUniversal_iff_antitone [BoundedOrder α] [IsSimpleOrder α]
+    {c : Scenario α → L} : ScenarioUniversal c ↔ Antitone c :=
+  ⟨fun h ↦ antitone_iff_forall_lt.2 fun _ _ hst ↦ h (Scenario.kind_lt_kind_iff.2 hst),
+    fun h _ _ hst ↦ h (Scenario.kind_lt_kind_iff.1 hst).le⟩
 
 /-- On a binary scale, a split monadic in the higher-ranked argument and antitone in its prominence
 obeys Universal 5, so it is coded longest at the upstream `⟨⊥, ⊤⟩` and shortest at the downstream
 `⟨⊤, ⊥⟩`. -/
 theorem scenarioUniversal_comp_high [BoundedOrder α] [IsSimpleOrder α] {f : α → L}
-    (hf : Antitone f) : ScenarioUniversal (f ∘ Scenario.high) := by
-  intro s t hst
-  rcases eq_bot_or_eq_top s.high with hs | hs
-  · rcases eq_bot_or_eq_top t.high with ht | ht
-    · exact (congr_arg f (hs.trans ht.symm)).le
-    · exact absurd hst (Scenario.not_kind_lt_kind (.inl hs) (.inl ht))
-  · exact hf (hs ▸ le_top)
+    (hf : Antitone f) : ScenarioUniversal (f ∘ Scenario.high) :=
+  scenarioUniversal_iff_antitone.2 (hf.comp_monotone Scenario.high_mono)
 
 /-- On a scale with three levels, a split monadic in the higher-ranked argument obeys Universal 5
 only if it is constant, since a balanced scenario is coded no longer than an upstream one at the
@@ -352,22 +366,8 @@ theorem ScenarioUniversal.comp_low_le {g : α → L} (h : ScenarioUniversal (g �
 /-- On a binary scale, a split monadic in the lower-ranked argument and monotone in its
 prominence obeys Universal 5. -/
 theorem scenarioUniversal_comp_low [BoundedOrder α] [IsSimpleOrder α] {g : α → L}
-    (hg : Monotone g) : ScenarioUniversal (g ∘ Scenario.low) := by
-  intro s t hst
-  rcases eq_bot_or_eq_top s.low with hs | hs
-  · exact hg (hs ▸ bot_le)
-  · rcases eq_bot_or_eq_top t.low with ht | ht
-    · exact absurd hst (Scenario.not_kind_lt_kind (.inr hs) (.inr ht))
-    · exact (congr_arg g (hs.trans ht.symm)).le
-
-/-- A scenario split is relative (§8) when the relation between the prominence levels of the two
-arguments determines the coding. On a binary scale this admits the dyadic splits of Yurok's type,
-which fn. 20 allows are "just like" Kashmiri's. -/
-abbrev Relative (c : Scenario α → L) : Prop :=
-  c.FactorsThrough Scenario.kind
-
-instance (c : Scenario α → L) [i : Decidable (∀ s t, s.kind = t.kind → c s = c t)] :
-    Decidable (Relative c) := i
+    (hg : Monotone g) : ScenarioUniversal (g ∘ Scenario.low) :=
+  scenarioUniversal_iff_antitone.2 (hg.comp_antitone Scenario.low_anti)
 
 /-- Universal 9b (42), the ditransitive person-role universal, says that the scenario with a
 locuphoric R and an aliophoric T is coded no longer than any other. -/
@@ -377,7 +377,7 @@ def PersonRoleUniversal (c : Scenario Person.Class → L) : Prop :=
 /-- Universal 9b is a special case of Universal 5 (§7.1). -/
 theorem personRoleUniversal_of_scenarioUniversal {c : Scenario Person.Class → L}
     (h : ScenarioUniversal c) : PersonRoleUniversal c :=
-  h.top_bot_le
+  fun _ ↦ scenarioUniversal_iff_antitone.1 h le_top
 
 /-- Universal 11 (57), the inverse universal, says that under the verb coding `v` the inverse form
 of an upstream scenario is no shorter than the direct form of a downstream one. -/
@@ -400,7 +400,7 @@ the usage rate of the longer alternant as its coding (§10.1). -/
 theorem givennessAlternationUniversal_of_scenarioUniversal
     {rate : Scenario BinaryGivenness → F} (h : ScenarioUniversal rate) :
     GivennessAlternationUniversal rate :=
-  h.top_bot_le
+  fun _ ↦ scenarioUniversal_iff_antitone.1 h le_top
 
 /-- A shorter and a longer construction form a splitting alternation (§10.2) when they alternate in
 some scenarios and are in complementary distribution in others. -/
@@ -430,12 +430,6 @@ theorem singleArgumentUniversal_atLeast {r : ArgumentRole} (h : r.IsLowDefault) 
 theorem singleArgumentUniversal_below {r : ArgumentRole} (h : r.IsHighDefault) (x : α) :
     SingleArgumentUniversal r (below x) :=
   (singleArgumentUniversal_iff_antitone h).2 (below_antitone x)
-
-omit [Preorder L] in
-/-- A split that is a function of the kind is relative. -/
-theorem relative_comp_kind (g : Scenario.Kind → L) :
-    Relative (g ∘ Scenario.kind : Scenario α → L) :=
-  fun _ _ h ↦ congrArg g h
 
 /-- A relative split antitone in usualness obeys Universal 5, hence Universal 10. -/
 theorem scenarioUniversal_comp_kind {g : Scenario.Kind → L} (hg : Antitone g) :
@@ -602,6 +596,14 @@ theorem yukaghir_monadic_yurok_dyadic :
     Monadic Scenario.high yukaghirP ∧
       ¬ Monadic Scenario.high yurokP ∧ ¬ Monadic Scenario.low yurokP :=
   ⟨fun _ _ h ↦ congrArg (below _) h, by decide, by decide⟩
+
+/-- Kolyma Yukaghir's and Greek's rules on the ternary person scale are antitone in the order of
+scenarios, as the binary rules are. -/
+theorem yukaghirP_greekT_ternary_antitone :
+    Antitone (below PersonRank.second ∘ Scenario.high) ∧
+      Antitone (atLeast PersonRank.second ∘ Scenario.low) :=
+  ⟨(below_antitone _).comp_monotone Scenario.high_mono,
+    (atLeast_monotone _).comp_antitone Scenario.low_anti⟩
 
 /-- Kolyma Yukaghir's rule on the ternary person scale, P flagged whenever A is third
 person, violates Universal 5, as every non-constant monadic split on a ternary scale does

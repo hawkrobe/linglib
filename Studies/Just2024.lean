@@ -11,28 +11,27 @@ public import Linglib.Syntax.Person.Basic
 /-!
 # Just (2024): A structural and functional comparison of differential A and P indexing
 
-This file formalizes [just-2024]'s claim that differential A indexing and differential P
-indexing, the variable occurrence of a verbal index for reasons other than the referent's
-argument role, are one phenomenon: a referent is indexed when it reaches a language-specific
-level of referential prominence ([haspelmath-2021]), whatever its role. The two look like
-mirror images because the roles differ in default prominence: A referents are typically
-prominent, so a non-prominent or focused A loses an otherwise present index, while P referents
-typically are not, so a topical, definite, or animate P gains one. The principle is
-`Indexed`, prominence at or above the threshold, whose coding length is the cutoff split
-`Haspelmath2021.atLeast`, and `deviation_coding` derives the mirror
-image and its consequence for coding asymmetries: a referent that deviates from its role's
-default receives longer coding exactly when the default is unindexed, so the generalization
-of [haspelmath-2021] that deviations from role-reference associations are coded by longer
-forms holds of differential P indexing and fails of differential A indexing, where the
-deviating configuration loses the index. The examples of the paper's survey are rows, and
-`indexed_iff_prominent` reads each as the paper does, the index present exactly where the
-referent has the prominence the language demands, for A and P alike.
+This file formalizes Just's claim that differential A indexing and differential P indexing,
+the variable occurrence of a verbal index for reasons other than the referent's argument role,
+are one phenomenon: a referent is indexed when it reaches a language-specific level of
+referential prominence in Haspelmath's sense, whatever its role. The two look like mirror
+images because the roles differ in default prominence: A referents are typically prominent, so
+a non-prominent or focused A loses an otherwise present index, while P referents typically are
+not, so a topical, definite, or animate P gains one. The principle is `Indexed`, prominence at
+or above the threshold, whose coding length is the cutoff split `Haspelmath2021.atLeast`, and
+`deviation_coding` derives the mirror image and its consequence for coding asymmetries: a
+referent that deviates from its role's default receives longer coding exactly when the default
+is unindexed, so Haspelmath's generalization that deviations from role-reference associations
+are coded by longer forms holds of differential P indexing and fails of differential A
+indexing, where the deviating configuration loses the index. The examples of the paper's
+survey are rows, and `indexed_iff_prominent` reads each as the paper does, the index present
+exactly where the referent has the prominence the language demands, for A and P alike.
 
 Co-argument sensitivity is the paper's other case: in Reyesano which of A and P is indexed
 depends on the persons of both, its table being rows of `Clause.Scenario Person`, and
 `no_ranking_fits` shows that no ranking of the persons predicts the table by indexing the
 argument the scenario's kind under that ranking favours, as the paper argues after
-[witzlack-makarevich-etal-2016] that hierarchies are not needed to describe such systems.
+Witzlack-Makarevich and colleagues that hierarchies are not needed to describe such systems.
 
 ## Implementation notes
 
@@ -101,8 +100,8 @@ theorem deviation_shorter {r : ρ} {p : Prominence} (h : Deviates θ dflt r p)
 
 end Principle
 
-/-- The default prominence of the transitive roles, the role-reference associations of
-[haspelmath-2021]: A above the threshold, P below it. -/
+/-- The default prominence of the transitive roles puts A above the threshold and P below it,
+the role-reference associations of [haspelmath-2021]. -/
 def transitiveDefault (r : ArgumentRole) : Bool := decide r.IsHighDefault
 
 /-- A non-prominent A and a prominent P both deviate from their defaults; the A is coded
@@ -193,7 +192,7 @@ def reyesano : List (Scenario Person × IndexedArgs) := Examples.all.filterMap s
 /-- Indexing by a ranking of persons indexes the higher-ranked argument, the A in a downstream
 scenario and the P in an upstream one, and both when balanced. -/
 def byRanking (rank : Person → Fin 3) (s : Scenario Person) : IndexedArgs :=
-  match s.kindBy rank with
+  match (s.map rank).kind with
   | .downstream => .a
   | .upstream => .p
   | .balanced => .both
@@ -204,7 +203,7 @@ theorem coargument_sensitive :
   decide +kernel
 
 /-- No ranking of the tripartition predicts the table by indexing the higher-ranked
-argument: a first-person A outranks a third-person P, but a third-person A ties with a
+argument, since a first-person A outranks a third-person P but a third-person A ties with a
 first-person P. -/
 theorem no_ranking_fits :
     ¬ ∃ rank : Person → Fin 3, ∀ s ∈ reyesano, s.2 = byRanking rank s.1 := by
