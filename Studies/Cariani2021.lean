@@ -6,10 +6,12 @@ Authors: Robert Hawkins
 module
 
 public import Studies.CarianiSantorio2018
+public import Studies.Condoravdi2002
+public import Linglib.Semantics.Modality.BranchingTime
 public import Linglib.Logic.Modal.Basic
 
 /-!
-# Cariani (2021): *The Modal Future*, chapters 5 and 6
+# Cariani (2021): *The Modal Future*, chapters 5 to 8 and 11
 
 Cariani develops the selection semantics of Cariani and Santorio, on which *will* selects a
 world from its modal domain, from the perspective of the world of evaluation, and evaluates its
@@ -19,7 +21,11 @@ existential quantification over later times, keeps excluded middle and loses non
 Chapter 6 replaces the fixed domain with a modal base, the historical partition, which repairs
 *will* under epistemic possibility and makes *will* the identity on contents over a realistic
 base. *Will B* and historical *might not B* are then consistent at a world but accepted together
-by no information state that respects the partition.
+by no information state that respects the partition. Chapter 7 states *will* in Condoravdi's
+terms, selecting a world and extending the interval forward, and chapter 8 lets *if* restrict
+the modal base, which gives will-conditionals Stalnaker's truth conditions and import–export.
+Chapter 11 keeps contexts classical and locates the open future in indeterminacy over which
+context an utterance has, and rejects the convergent thin red line of Belnap and Green.
 
 ## Main results
 
@@ -33,6 +39,16 @@ by no information state that respects the partition.
   future-might contradiction, which `fmc_point_consistent` shows consistent at a world.
 * `not_will_and_might_not_will`, `not_not_will_and_might_will`, `fork_not_will_and_might_will`:
   Kissine's inconsistencies over transitive and Euclidean bases, and the fork model.
+* `pres_woll_neg_iff`, `not_pres_WOLL_and_neg`: selectional WOLL commutes with negation and
+  Condoravdi's universal WOLL does not.
+* `pres_woll_iff_of_mem`, `pres_woll_of_pres_WOLL`: over a realistic base selectional WOLL is the
+  prejacent at the world itself, which Condoravdi's WOLL entails.
+* `willIf_willIf`, `willIf_univ_eq_selectionConditional`: import–export for will-conditionals,
+  and over the universal base they are Stalnaker's conditional.
+* `not_accepts_willIf_and_mightIf_not`: Fact 8.3, the conditional future-might contradiction.
+* `indeterminate_sat`: the lifting argument, Fact 11.1, which needs only the K logic of `D`.
+* `not_exists_convergent_centered_trl`: convergence and centering of a thin red line are
+  inconsistent on a branching moment (Figure 11.4).
 
 ## Implementation notes
 
@@ -41,12 +57,20 @@ by no information state that respects the partition.
   `SelectionFunction.modal_eq_id`. The fixed domain `H` of chapter 5 is the constant relation to
   `H`, which is Cariani and Santorio's `will`.
 * An information state is a set of worlds, accepting the propositions that include it.
+* Cariani's `ext(I)`, the interval `I` extended to the future, is the forward interval from the
+  start of `I`, and the modal base is indexed by that start, as in `Condoravdi2002`.
+
+## TODO
+
+* The counterhistorical restriction of §8.6 and the identity collapse of §8.8 (Fact 8.4).
 
 ## References
 
 * [cariani-2021]
 * [cariani-santorio-2018]
 * [kissine-2008]
+* [condoravdi-2002]
+* [belnap-green-1994]
 -/
 
 @[expose] public section
@@ -239,5 +263,172 @@ theorem fork_not_will_and_might_will :
     ⟨1, by decide, by decide⟩⟩
 
 end Kissine
+
+/-! ### Selection semantics, Condoravdi style
+
+Chapter 7 states *will* in Condoravdi's framework: WOLL selects a world out of the historical
+modal base and extends the interval of evaluation forward to the end of time, and the present
+locates the interval at *now* (p. 126). Neither contribution quantifies, so *will* and *not*
+commute (p. 127), where Condoravdi's universal WOLL does not. Over a realistic base selectional
+WOLL is the prejacent at the world itself, the limited collapse Condoravdi's diversity condition
+is designed to avoid (p. 128). -/
+
+section Condoravdi
+
+open Aspect
+open Condoravdi2002 (PRES WOLL)
+
+variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E T] (s : SelectionFunction W)
+  (MB : W → T → Set W) (Q : SortedProperty W E T) {w : W} {now : T}
+
+/-- Selectional WOLL instantiates the property throughout the forward interval from the start of
+the reference interval at the world selected from the modal base there (p. 126). -/
+def woll : SortedProperty W E T :=
+  .temporal fun w t ↦ ∃ t₀ : T, IsLeast (t : Set (WithTop T)) ↑t₀ ∧
+    At (Interval.Ici ↑t₀) (s.sel w (MB w t₀)) Q
+
+/-- Negation of a sorted property, true at an interval where the property is not instantiated
+(p. 126). -/
+def neg : SortedProperty W E T := .temporal fun w t ↦ ¬ At t w Q
+
+variable {s MB Q}
+
+/-- At the present, selectional WOLL holds when the world selected from the base at the present
+has the property throughout the forward interval. -/
+@[simp] theorem pres_woll_iff :
+    PRES now (woll s MB Q) w ↔ At (Interval.Ici ↑now) (s.sel w (MB w now)) Q := by
+  rw [PRES, Interval.pure]
+  refine ⟨fun ⟨t₀, ht₀, h⟩ ↦ ?_, fun h ↦ ⟨now, Interval.isLeast_coe_fst, h⟩⟩
+  obtain rfl : t₀ = now := WithTop.coe_eq_coe.1 (ht₀.unique Interval.isLeast_coe_fst)
+  exact h
+
+/-- *Will not A* and *not will A* have complementary truth conditions (p. 127). -/
+theorem pres_woll_neg_iff : PRES now (woll s MB (neg Q)) w ↔ ¬ PRES now (woll s MB Q) w := by
+  rw [pres_woll_iff, pres_woll_iff]
+  rfl
+
+/-- Condoravdi's universal WOLL does not commute with negation, since over a base whose worlds
+disagree on the property neither *will A* nor *will not A* holds. -/
+theorem not_pres_WOLL_and_neg {w₁ w₂ : W} (h₁ : w₁ ∈ MB w now) (h₂ : w₂ ∈ MB w now)
+    (hQ₁ : At (Interval.Ici ↑now) w₁ Q) (hQ₂ : ¬ At (Interval.Ici ↑now) w₂ Q) :
+    ¬ PRES now (WOLL MB Q) w ∧ ¬ PRES now (WOLL MB (neg Q)) w := by
+  rw [Condoravdi2002.pres_woll_iff, Condoravdi2002.pres_woll_iff]
+  exact ⟨fun h ↦ hQ₂ (h w₂ h₂), fun h ↦ h w₁ h₁ hQ₁⟩
+
+/-- Over a realistic base selectional WOLL at the present is the prejacent at the world itself
+throughout the forward interval (p. 128). -/
+theorem pres_woll_iff_of_mem (h : w ∈ MB w now) :
+    PRES now (woll s MB Q) w ↔ At (Interval.Ici ↑now) w Q := by
+  rw [pres_woll_iff, s.centering w _ h]
+
+/-- Over a realistic base Condoravdi's universal WOLL entails selectional WOLL. -/
+theorem pres_woll_of_pres_WOLL (h : w ∈ MB w now) (hW : PRES now (WOLL MB Q) w) :
+    PRES now (woll s MB Q) w :=
+  (pres_woll_iff_of_mem h).2 (Condoravdi2002.pres_woll_iff.1 hW w h)
+
+end Condoravdi
+
+/-! ### Will-conditionals
+
+An *if*-clause restricts the modal base of the modal in its scope to the antecedent-worlds,
+`f + A` (Definition 8.1, p. 137), and *will* contributes the selection, so *if A, will B* holds
+where the world selected from the base restricted to `A` is a `B`-world, Stalnaker's
+conditional with a modal base (p. 133). Restricting twice is restricting once by the
+conjunction, so will-conditionals validate import–export (p. 140), and over a realistic base
+the conditional future-might contradiction is accepted by no eligible state, Fact 8.3 (p. 142,
+proof p. 152). -/
+
+section Conditionals
+
+variable {W : Type*} (s : SelectionFunction W) (R : SetRel W W) (A B : Set W)
+
+/-- *If A, will B*, selectional *will* along the base restricted to the `A`-worlds. -/
+def willIf : CompleteLatticeHom (Set W) (Set W) := s.modal (R ∩ Set.univ ×ˢ A)
+
+variable {s R A B}
+
+/-- Import–export for will-conditionals, *if A, if B, will C* is *if A and B, will C* (p. 140). -/
+theorem willIf_willIf (C : Set W) :
+    willIf s (R ∩ Set.univ ×ˢ A) B C = willIf s R (A ∩ B) C := by
+  rw [willIf, willIf, Set.inter_assoc, Set.prod_inter_prod, Set.inter_self]
+
+/-- Over the universal base, a will-conditional with a possible antecedent is Stalnaker's
+conditional (p. 133). -/
+theorem willIf_univ_eq_selectionConditional (hA : A.Nonempty) (B : Set W) :
+    willIf s .univ A B = selectionConditional s A B := by
+  rw [selectionConditional_eq_modal hA, willIf]
+  congr 2
+  ext ⟨_, _⟩
+  simp
+
+/-- *If A, might B* alone entails *might (A and B)*, so semi-closure, Fact 8.2 (p. 142), holds
+for the restrictor analysis of *if*. -/
+theorem diamond_of_diamond_inter {w : W} {p : W → Prop}
+    (h : ◇[R ∩ Set.univ ×ˢ A] p w) : ◇[R] (fun v ↦ v ∈ A ∧ p v) w :=
+  let ⟨v, ⟨hwv, _, hv⟩, hp⟩ := h
+  ⟨v, hwv, hv, hp⟩
+
+/-- No nonempty eligible state accepts both *if A, will B* and *if A, might not B*, Fact 8.3. -/
+theorem not_accepts_willIf_and_mightIf_not [R.IsRefl] {S : Set W} (hS : IsEligible R S)
+    (hne : S.Nonempty) : ¬ (S ⊆ willIf s R A B ∧ S ⊆ (R ∩ Set.univ ×ˢ A).preimage Bᶜ) := by
+  rintro ⟨hwill, hmight⟩
+  obtain ⟨z, hz⟩ := hne
+  obtain ⟨v, hv, hzv, -, hvA⟩ := hmight hz
+  have := hwill (hS z hz v hzv)
+  rw [willIf, mem_modal,
+    along_eq_self (R := R ∩ Set.univ ×ˢ A) (w := v) ⟨R.rfl, trivial, hvA⟩] at this
+  exact hv this
+
+end Conditionals
+
+/-! ### Indeterminacy and the thin red line
+
+Chapter 11 keeps every context classical, fixing a world, and reads the open future as
+indeterminacy over which of the contexts of a cloud an utterance has. A bare prediction has one
+content across the cloud, generalized transparency, and its truth there is indeterminate, so the
+normative status of asserting it is indeterminate too, the lifting argument of Fact 11.1 (p. 211,
+proof pp. 222-223). The determinacy operator `D` is necessity along a relation between contexts,
+and its indeterminacy `I φ` is `¬ D φ ∧ ¬ D ¬φ` (p. 211). Against a flexible thin red line,
+convergence, that moments on one history share a thin red line, and centering, that the thin
+red line at a moment passes through it, are inconsistent once two branches leave a moment
+(Figure 11.4, p. 217). -/
+
+section ThinRedLine
+
+variable {C : Type*} (R : SetRel C C)
+
+/-- Indeterminacy along the determinacy relation `R`, `¬ D φ ∧ ¬ D ¬φ` (p. 211). -/
+def Indeterminate (φ : C → Prop) (c : C) : Prop := ¬ □[R] φ c ∧ ¬ □[R] (fun c' ↦ ¬ φ c') c
+
+variable {R}
+
+/-- The lifting argument, Fact 11.1. If the truth of `A` in the context of the utterance is
+indeterminate, every context of the cloud has the speaker assert `A`, this is then determinate,
+and the truth norm determinately ties satisfaction of the norm to the truth of what is asserted,
+then whether the norm is satisfied is indeterminate. The argument uses only the K logic of `D`,
+though the book assumes S5 (p. 210). -/
+theorem indeterminate_sat (cloud : Set C) {cu : C} {holds asserts sat : C → Prop}
+    (hind : Indeterminate R holds cu)
+    (hbridge : (∀ c ∈ cloud, asserts c) → □[R] asserts cu)
+    (hcontent : ∀ c ∈ cloud, asserts c)
+    (hnorm : □[R] (fun c ↦ sat c ↔ (asserts c → holds c)) cu) :
+    Indeterminate R sat cu :=
+  have ha := hbridge hcontent
+  ⟨fun h ↦ hind.1 fun c hc ↦ (hnorm c hc).1 (h c hc) (ha c hc),
+    fun h ↦ hind.2 fun c hc ht ↦ h c hc ((hnorm c hc).2 fun _ ↦ ht)⟩
+
+/-- A thin red line assigning each moment a history cannot be both convergent and centered once
+two incomparable moments follow a common one (Figure 11.4). -/
+theorem not_exists_convergent_centered_trl {M : Type*} [PartialOrder M] [IsLeftLinear M]
+    {m₁ m₂ m₃ : M} (h₂ : m₁ ≤ m₂) (h₃ : m₁ ≤ m₃) (h₂₃ : ¬ (m₂ ≤ m₃ ∨ m₃ ≤ m₂)) :
+    ¬ ∃ trl : M → Flag M, (∀ m, m ∈ trl m) ∧
+      ∀ m m' (h : Flag M), m ∈ h → m' ∈ h → trl m = trl m' := by
+  rintro ⟨trl, hcen, hconv⟩
+  obtain ⟨h, hm₁, hm₂⟩ := BranchingTime.histories_inter_nonempty_iff.2 (.inl h₂)
+  obtain ⟨h', hm₁', hm₃⟩ := BranchingTime.histories_inter_nonempty_iff.2 (.inl h₃)
+  have htrl : trl m₂ = trl m₃ := (hconv _ _ h hm₁ hm₂).symm.trans (hconv _ _ h' hm₁' hm₃)
+  exact h₂₃ ((trl m₂).le_or_le (hcen m₂) (htrl ▸ hcen m₃))
+
+end ThinRedLine
 
 end Cariani2021
