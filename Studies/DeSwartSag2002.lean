@@ -22,6 +22,7 @@ resumption, so *pas* with an n-word reads only as a double negation.
   is *every*·*some* and the concord reading is *no*·*some*.
 * `reading_resumption_and_not_iteration`: the two readings differ.
 * `isAntiAdditive_no`, `not_isAntiAdditive_few`: *no* is anti-additive and *few* is not.
+* `mem_aucun_and_isAntiAdditive_iff`: of the readings of *aucun*, the anti-additive one is *no*.
 * `negReading_iteration_iff`: negation iterated over an n-word gives the existential.
 
 ## Implementation notes
@@ -81,14 +82,6 @@ theorem reading_resumption_and_not_iteration :
   rw [reading_resumption_iff, reading_iteration_iff]
   simp [iterate, no, every, GQ.some]
 
-/-- *Aucun* reads as de Swart and Sag's negative quantifier, so two *aucun* phrases read by
-resumption deny every pair. -/
-theorem resume_iff_of_mem_aucun {d : GQ.Family.{u}}
-    (hd : d ∈ ⟦French.Determiners.QuantityWord.aucun⟧) :
-    resume d A B R ↔ iterate no GQ.some A B R := by
-  obtain rfl : d = GQ.Family.no := hd
-  exact resume_no_iff
-
 end Readings
 
 /-! ### Anti-additivity
@@ -115,6 +108,20 @@ theorem not_isAntiAdditive_few : ¬ IsAntiAdditive (few fun _ : Fin 3 ↦ True) 
       few (fun _ : Fin 3 ↦ True) (· = 0) ∧ few (fun _ : Fin 3 ↦ True) (· = 1) :=
     eq_iff_iff.mp (h (· = 0) (· = 1))
   revert this; decide
+
+/-- *Some* is not anti-additive: of one individual, some is in `⊤ ∪ ⊥` but none is in `⊥`. -/
+theorem not_isAntiAdditive_some : ¬ IsAntiAdditive (GQ.some fun _ : PUnit.{u + 1} ↦ True) :=
+  fun h ↦ by simpa [GQ.some] using eq_iff_iff.mp (h ⊤ ⊥)
+
+/-- Of the readings of *aucun*, the one that is anti-additive on every finite domain, as a
+concord item must be, is the negative quantifier. -/
+theorem mem_aucun_and_isAntiAdditive_iff {d : GQ.Family.{u}} :
+    (d ∈ ⟦French.Determiners.QuantityWord.aucun⟧ ∧
+      ∀ (β : Type u) [Fintype β] (A : β → Prop), IsAntiAdditive (d β A)) ↔
+      d = GQ.Family.no := by
+  refine ⟨fun ⟨hd, h⟩ ↦ hd.resolve_right fun hs ↦ ?_,
+    fun h ↦ h ▸ ⟨.inl rfl, fun _ _ ↦ isAntiAdditive_no⟩⟩
+  subst hs; exact not_isAntiAdditive_some (h PUnit _)
 
 end AntiAdditive
 

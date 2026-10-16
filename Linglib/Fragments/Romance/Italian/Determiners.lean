@@ -13,7 +13,7 @@ carrier `QuantityWord`, whose masculine and feminine forms are `QuantityWord.for
 project to a `Quantifier` record and denote the readings the literature makes available for
 them, so `⟦QuantityWord.tutti⟧` is `{every}` and *molti*, like English *many*, denotes
 `∅`. The definite article *il*, *lo*, *la* and plural *i*, *gli*, *le* is one syncretic definite
-over the [schwarz-2009] use types, the indefinite is *un*, *uno*, *una*, and the partitive *del*,
+over Schwarz's use types, the indefinite is *un*, *uno*, *una*, and the partitive *del*,
 *dello*, *della* and plural *dei*, *degli*, *delle* is the indefinite of mass nouns and plurals.
 
 ## References
@@ -21,6 +21,8 @@ over the [schwarz-2009] use types, the indefinite is *un*, *uno*, *una*, and the
 * [schwarz-2009]
 * [moroney-2021]
 * [chierchia-1998]
+* [de-swart-sag-2002]
+* [zeijlstra-2004]
 -/
 
 @[expose] public section
@@ -115,13 +117,15 @@ theorem feminine_eq_form_iff (w : QuantityWord) :
 universe u
 
 /-- The readings available for a word. *Ogni* and *tutti* read as `every`, *qualche* and
-*alcuni* as `Quantifier.GQ.some`, *nessuno* as `no` and *pochi* as `few`; *molti* has no reading,
-its standard being contextual like that of English *many*. -/
+*alcuni* as `Quantifier.GQ.some`, and *pochi* as `few`; *molti* has no reading, its standard being
+contextual like that of English *many*. The n-word *nessuno* reads as `no`, a negative
+quantifier ([de-swart-sag-2002]), or as `Quantifier.GQ.some`, an indefinite whose negation the
+clause supplies ([zeijlstra-2004]). -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .ogni | .tutti => {Quantifier.GQ.Family.every}
     | .qualche | .alcuni => {Quantifier.GQ.Family.some}
-    | .nessuno => {Quantifier.GQ.Family.no}
+    | .nessuno => {Quantifier.GQ.Family.no, Quantifier.GQ.Family.some}
     | .pochi => {Quantifier.GQ.Family.few}
     | .molti => ∅
 

@@ -10,16 +10,17 @@ public import Linglib.Semantics.Denotation
 This file records the French determiners the studies consume. The quantificational determiners
 are the carrier `QuantityWord`, whose members project to a `Quantifier` record by
 `QuantityWord.toQuantifier` and denote the readings the literature makes available for them,
-so `⟦QuantityWord.tous⟧` is `{every}`. French has no lexical dual universal, and *les deux*
-is the expression that serves as its indirect alternative
-([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]), marked with the dual number it
-realizes; *toujours* is the adverbial universal the same paper sets beside English *always*, and
-has no determiner reading. The articles *un* and *les* are `Article`s.
+so `⟦QuantityWord.tous⟧` is `{every}`. French has no lexical dual universal, and Jeretic and
+colleagues take *les deux* to serve as its indirect alternative, marked with the dual number it
+realizes; *toujours* is the adverbial universal they set beside English *always*, and has no
+determiner reading. The articles *un* and *les* are `Article`s.
 
 ## References
 
 * [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 * [chemla-2007]
+* [de-swart-sag-2002]
+* [zeijlstra-2004]
 -/
 
 @[expose] public section
@@ -67,12 +68,14 @@ def toList : List QuantityWord := [.tous, .chaque, .aucun, .les_deux, .quelques,
 universe u
 
 /-- The readings the literature makes available for a word. *Tous* and *chaque* read as
-`every`, *aucun* as `no`, *quelques* as `Quantifier.GQ.some` and *les deux* as `both`;
-*toujours* has no determiner reading. -/
+`every`, *quelques* as `Quantifier.GQ.some` and *les deux* as `both`; *toujours* has no
+determiner reading. The n-word *aucun* reads as `no`, a negative quantifier
+([de-swart-sag-2002]), or as `Quantifier.GQ.some`, an indefinite whose negation the clause
+supplies ([zeijlstra-2004]). -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .tous | .chaque => {Quantifier.GQ.Family.every}
-    | .aucun => {Quantifier.GQ.Family.no}
+    | .aucun => {Quantifier.GQ.Family.no, Quantifier.GQ.Family.some}
     | .quelques => {Quantifier.GQ.Family.some}
     | .les_deux => {Quantifier.GQ.Family.both}
     | .toujours => ∅
