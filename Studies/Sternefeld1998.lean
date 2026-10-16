@@ -43,7 +43,7 @@ jointly.
 
 namespace Sternefeld1998
 
-open Mereology Plurality.Algebra Plurality.Cumulativity Reciprocal
+open Mereology Plurality.Cumulativity Reciprocal
 
 variable {α β : Type*}
 

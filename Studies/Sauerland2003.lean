@@ -48,7 +48,7 @@ unmarked values, plural and third person (`politeness_unmarked`).
 namespace Sauerland2003
 
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
-open Plurality.Algebra (D)
+open Mereology (D)
 open Alternatives Presupposition
 
 variable {E : Type*}
