@@ -363,13 +363,13 @@ inductive Syll
 left. -/
 inductive LHead
   | noHL | stressL
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- The forward stress program has two heads, `noHR` being (5.9), no heavy anywhere to the
 right. -/
 inductive RHead
   | noHR | stressR
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- The backward program, (5.8) and (5.12), stresses a heavy with no heavy to its left. -/
 def lholL : Program Syll LHead
@@ -382,20 +382,16 @@ def lholR : Program Syll RHead
   | .noHR => .ite (.final x) .tru (.ite (.label {.H} x.succ) .fls (.call .noHR x.succ))
   | .stressR => (Expr.label {.L} x).and ((Expr.initial x).and (.call .noHR x))
 
-theorem lholL_backward : lholL.Backward := by
-  intro f
-  cases f <;> decide
+theorem lholL_backward : lholL.Backward := by decide
 
-theorem lholR_forward : lholR.Forward := by
-  intro f
-  cases f <;> decide
+theorem lholR_forward : lholR.Forward := by decide
 
 /-- The stress pattern the ⊙ of the two programs assigns to a word, position by position, is
 the disjunction (5.15), there being no underlying stress. -/
 def lholStress (w : List Syll) : List (Option Bool) :=
   (List.range w.length).map fun i ↦
-    (evalFuel lholL w 32 i (.call .stressL x)).bind fun bL ↦
-      (evalFuel lholR w 32 i (.call .stressR x)).map fun bR ↦ combine false bL bR
+    (lholL.eval w i (.call .stressL x)).bind fun bL ↦
+      (lholR.eval w i (.call .stressR x)).map fun bR ↦ combine false bL bR
 
 /-- In Example 2.9 (a), *LH́LHL*, the backward program alone stresses the leftmost heavy. -/
 theorem lholStress_LHLHL :
