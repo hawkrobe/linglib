@@ -34,6 +34,8 @@ its atoms.
 * `Plurality.FeatureAction.Ioc_sups_Ioc`,
   `Plurality.FeatureAction.Ioc_sups_containing`: along an entailment chain, adding a
   feature's lattice gives the groups containing one of its atoms.
+* `Plurality.FeatureAction.containing_subset_containing_iff`: such denotations are ordered as
+  the features' atoms are.
 * `Plurality.FeatureAction.mem_containing_sdiff_containing_iff`: Lexical Complementarity
   between two such denotations.
 
@@ -90,6 +92,16 @@ theorem containing_mono {X X' Y : Finset α} (h : X ⊆ X') :
   mem_containing_iff.2 ⟨(mem_containing_iff.1 hs).1,
     (mem_containing_iff.1 hs).2.mono (inter_subset_inter (Subset.refl _) h)⟩
 
+/-- For `X ⊆ Y`, the groups of `Y` containing an atom of `X` lie among those containing an atom of
+`X'` exactly when `X ⊆ X'`. -/
+theorem containing_subset_containing_iff {X X' Y : Finset α} (h : X ⊆ Y) :
+    containing X Y ⊆ containing X' Y ↔ X ⊆ X' := by
+  refine ⟨fun hc x hx ↦ ?_, containing_mono⟩
+  obtain ⟨y, hy⟩ := (mem_containing_iff.1 <| hc <|
+    mem_containing_iff.2 ⟨singleton_subset_iff.2 (h hx), x, by simp [hx]⟩).2
+  rw [mem_inter, mem_singleton] at hy
+  exact hy.1 ▸ hy.2
+
 /-- Adding the lattice of `X` to the lattice of `Y ⊇ X` gives the groups of `Y` containing an
 atom of `X`. -/
 theorem Ioc_sups_Ioc {X Y : Finset α} (h : X ⊆ Y) :
@@ -102,7 +114,8 @@ theorem Ioc_sups_Ioc {X Y : Finset α} (h : X ⊆ Y) :
     exact ⟨union_subset (hx.2.trans h) hy.2, hx.1.mono (subset_inter subset_union_left hx.2)⟩
   · rintro ⟨hs, hX⟩
     exact ⟨s ∩ X, mem_Ioc.2 ⟨empty_ssubset.2 hX, inter_subset_right⟩, s,
-      mem_Ioc.2 ⟨empty_ssubset.2 (hX.mono inter_subset_left), hs⟩, union_eq_right.2 inter_subset_left⟩
+      mem_Ioc.2 ⟨empty_ssubset.2 (hX.mono inter_subset_left), hs⟩,
+      union_eq_right.2 inter_subset_left⟩
 
 /-- Along an entailment chain `X ⊆ Y ⊆ Z`, adding the lattice of `X` to the groups of `Z`
 containing a `Y`-atom gives the groups containing an `X`-atom. -/
