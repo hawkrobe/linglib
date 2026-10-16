@@ -17,7 +17,7 @@ namespace StankovaSimik2025.Examples
 
 def ex13_v1_nci : Datum :=
   { id := "stankovasimik2025_ex13_v1_nci"
-    source := ⟨"stankova-2025", "(13) B"⟩
+    source := ⟨"stankova-simik-2025", "(13) B"⟩
     reportedIn := none
     language := "czec1258"
     primaryText := "Nezasadila tam Dana žádné květiny?"
@@ -30,7 +30,7 @@ def ex13_v1_nci : Datum :=
 
 def ex13_v1_ppi : Datum :=
   { id := "stankovasimik2025_ex13_v1_ppi"
-    source := ⟨"stankova-2025", "(13) B"⟩
+    source := ⟨"stankova-simik-2025", "(13) B"⟩
     reportedIn := none
     language := "czec1258"
     primaryText := "Nezasadila tam Dana nějaké květiny?"
@@ -43,7 +43,7 @@ def ex13_v1_ppi : Datum :=
 
 def ex13_nonv1_nci : Datum :=
   { id := "stankovasimik2025_ex13_nonv1_nci"
-    source := ⟨"stankova-2025", "(13) B′"⟩
+    source := ⟨"stankova-simik-2025", "(13) B′"⟩
     reportedIn := none
     language := "czec1258"
     primaryText := "Dana tam nezasadila žádné květiny?"
@@ -56,7 +56,7 @@ def ex13_nonv1_nci : Datum :=
 
 def ex13_nonv1_ppi : Datum :=
   { id := "stankovasimik2025_ex13_nonv1_ppi"
-    source := ⟨"stankova-2025", "(13) B′"⟩
+    source := ⟨"stankova-simik-2025", "(13) B′"⟩
     reportedIn := none
     language := "czec1258"
     primaryText := "Dana tam nezasadila nějaké květiny?"
@@ -69,7 +69,7 @@ def ex13_nonv1_ppi : Datum :=
 
 def ex14 : Datum :=
   { id := "stankovasimik2025_ex14"
-    source := ⟨"stankova-2025", "(14) B"⟩
+    source := ⟨"stankova-simik-2025", "(14) B"⟩
     reportedIn := none
     language := "czec1258"
     primaryText := "Nevyhrála Eva nějakou cenu?"
@@ -82,7 +82,7 @@ def ex14 : Datum :=
 
 def ex17_ppi : Datum :=
   { id := "stankovasimik2025_ex17_ppi"
-    source := ⟨"stankova-2025", "(17) B"⟩
+    source := ⟨"stankova-simik-2025", "(17) B"⟩
     reportedIn := none
     language := "czec1258"
     primaryText := "Nezarezervoval si Mikuláš náhodou nějaké sedadlo?"
@@ -95,7 +95,7 @@ def ex17_ppi : Datum :=
 
 def ex17_nci : Datum :=
   { id := "stankovasimik2025_ex17_nci"
-    source := ⟨"stankova-2025", "(17) B"⟩
+    source := ⟨"stankova-simik-2025", "(17) B"⟩
     reportedIn := none
     language := "czec1258"
     primaryText := "Nezarezervoval si Mikuláš náhodou žádné sedadlo?"
@@ -108,7 +108,7 @@ def ex17_nci : Datum :=
 
 def ex18 : Datum :=
   { id := "stankovasimik2025_ex18"
-    source := ⟨"stankova-2025", "(18) B"⟩
+    source := ⟨"stankova-simik-2025", "(18) B"⟩
     reportedIn := none
     language := "czec1258"
     primaryText := "A Petr si náhodou nekoupil nějakou knihu?"

@@ -7,26 +7,41 @@ public import Linglib.Semantics.Denotation
 /-!
 # Czech determiner inventory
 
-Czech has no articles, so definiteness goes unmarked, and the demonstrative *ten* is not the
-obligatory exponent of any definite use. The inventory holds the demonstrative and the
-quantificational determiners, the carrier `QuantityWord`, whose members project to a
-`Quantifier` record and denote the readings available for them. Among them are the concord
-item *žádný* 'no' and the positive polarity item *nějaký* 'some', whose polarity behaviour is
-recorded on their `PolarityItem` entries in `PolarityItems.lean` and used by [stankova-2025]
-to diagnose the position of negation in polar questions.
+Czech has neither a definite nor an indefinite article, so its inventory holds only the
+demonstrative *ten* and the quantificational determiners, and it falls in the unmarked cell of
+Moroney's typology of definiteness marking. The quantificational determiners are the carrier
+`QuantityWord`, whose words project to `Quantifier` records and denote the readings the
+literature makes available for them. Two of them are polarity sensitive, the concord item
+*žádný* 'no' and the positive polarity item *nějaký* 'some', and their entries in
+`PolarityItems.lean` take their forms from here.
+
+## Implementation notes
+
+* *Žádný* has two readings. On de Swart's analysis of n-words as negative quantifiers, negative
+  concord being their resumptive interpretation, it reads as `no`. On Zeijlstra's, which
+  Staňková and Šimík adopt for Czech, it is a non-negative indefinite whose negation the
+  clause's negative operator contributes, and it reads as `some`.
+* WALS codes Czech with a two-way distance contrast, *ten* 'neutral / proximal' against
+  *onen* 'contrastive'. Only *ten* is entered, as distance-neutral; the contrastive deixis of
+  *onen* has no counterpart among participant sets.
 
 ## References
 
-* [stankova-2025]
 * [diessel-2013b]
+* [moroney-2021]
+* [de-swart-2010]
+* [zeijlstra-2004]
+* [stankova-simik-2025]
 -/
 
 @[expose] public section
 
+universe u
+
 namespace Czech.Determiners
 
-/-- *ten* 'that, the' is the distance-neutral demonstrative, against contrastive *onen*, so it
-covers every participant set. -/
+/-- *ten* 'that, the' is the distance-neutral demonstrative, so it covers every participant
+set. -/
 def ten : DemonstrativeDeterminer := { form := "ten", deixis := Finset.univ }
 
 /-- The quantificational determiners are *každý* 'every', *žádný* 'no', *nějaký* 'some' and
@@ -61,15 +76,13 @@ def toQuantifier (w : QuantityWord) : Quantifier :=
 /-- All the words. -/
 def toList : List QuantityWord := [.kazdy, .zadny, .nejaky, .nektery]
 
-universe u
-
-/-- The readings available for a word. *Každý* reads as `every`, *žádný* as `no`, and *nějaký*
-and *některý* as `Quantifier.GQ.some`, the partitive specificity of *některý* being no part of
-its truth conditions. -/
+/-- The readings available for a word. *Každý* reads as `every`, *žádný* as `no` or as
+`Quantifier.GQ.some`, and *nějaký* and *některý* as `Quantifier.GQ.some`, the partitive
+specificity of *některý* being no part of its truth conditions. -/
 instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .kazdy => {Quantifier.GQ.Family.every}
-    | .zadny => {Quantifier.GQ.Family.no}
+    | .zadny => {Quantifier.GQ.Family.no, Quantifier.GQ.Family.some}
     | .nejaky | .nektery => {Quantifier.GQ.Family.some}
 
 end QuantityWord

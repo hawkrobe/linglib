@@ -460,6 +460,20 @@ theorem some_ne_every : some.{u} ≠ every.{u} := fun h ↦ by
   have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ False) fun _ ↦ False) h
   simp [some, every, GQ.some, GQ.every] at this
 
+/-- `some` and `no` are different families, since on a one-element domain `some ⊤ ⊤` holds and
+`no ⊤ ⊤` fails. -/
+theorem some_ne_no : some.{u} ≠ no.{u} := fun h ↦ by
+  have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ True) fun _ ↦ True) h
+  simp [some, no, GQ.some, GQ.no] at this
+
+@[simp]
+theorem compl_some : some.{u}ᶜ = no.{u} := by
+  funext _ _; exact GQ.compl_some
+
+@[simp]
+theorem compl_no : no.{u}ᶜ = some.{u} := by
+  rw [← compl_some, compl_compl]
+
 end Family
 
 end GQ

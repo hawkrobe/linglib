@@ -5,15 +5,16 @@ public import Linglib.Syntax.Category.Particle.Basic
 /-!
 # Czech particles
 
-This file gives the Czech discourse particles of polar questions as `Particle` values: *náhodou*,
-*ještě*, *fakt* and *vůbec*, which [stankova-2026] uses to diagnose the position of negation, and
-the question particles *snad* and *copak* ([nekula-1996], [simik-2024]). The diagnostics are in
-`Studies/Stankova2026.lean` and the bias experiments in `Studies/StankovaSimik2025.lean`.
+The Czech discourse particles of polar questions are `Particle` values. Staňková uses *náhodou*,
+*ještě*, *fakt* and *vůbec* to diagnose the position of negation, and *snad* and *copak* are
+question particles. The diagnostics are in `Studies/Stankova2026.lean` and the bias experiments
+in `Studies/StankovaSimik2025.lean`.
 
 ## References
 
-* [stankova-2025]
+* [stankova-simik-2025]
 * [stankova-2026]
+* [stankova-2023]
 * [simik-2024]
 * [nekula-1996]
 -/
@@ -22,61 +23,57 @@ the question particles *snad* and *copak* ([nekula-1996], [simik-2024]). The dia
 
 namespace Czech.Particles
 
-/-- *náhodou* 'by (any) chance' — in its particle use restricted to
-negative polar questions ([stankova-2026] §2.2.1; the adverbial reading
-'accidentally' is a separate item, her fn. 3). Diagnoses outer negation
-(`Stankova2026`); FALSUM experiments in `StankovaSimik2025`. -/
+/-- *náhodou* 'by (any) chance' is, in its particle use, restricted to negative polar questions
+([stankova-2026] §2.2.1; the adverbial reading 'accidentally' is a separate item, her fn. 3).
+It diagnoses outer negation. -/
 def nahodou : Particle where
   form := "náhodou"
-  distribution := fun c e => match c, e with
+  distribution := fun c e ↦ match c, e with
     | .declarative, .matrix => some .excluded
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- *ještě* 'yet, still' — aspectual particle of declaratives and polar
-questions ([stankova-2026] (13)-(14)); inner-negation diagnostic in
-`Stankova2026`. -/
+/-- *ještě* 'yet, still' is an aspectual particle of declaratives and polar questions
+([stankova-2026] (13)-(14)), and diagnoses inner negation. -/
 def jeste : Particle where
   form := "ještě"
-  distribution := fun c e => match c, e with
+  distribution := fun c e ↦ match c, e with
     | .declarative, .matrix => some .optional
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- *fakt* 'really' — emphatic particle of declaratives and polar
-questions ([stankova-2026] (15)); inner/medial-negation diagnostic in
-`Stankova2026`. -/
+/-- *fakt* 'really' is an emphatic particle of declaratives and polar questions
+([stankova-2026] (15)), and diagnoses inner or medial negation. -/
 def fakt : Particle where
   form := "fakt"
-  distribution := fun c e => match c, e with
+  distribution := fun c e ↦ match c, e with
     | .declarative, .matrix => some .optional
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- *vůbec* 'at all' — NPI particle of assertions and polar questions
-([stankova-2026] (9)); parallels English *at all*. -/
+/-- *vůbec* 'at all' is a negative polarity particle of assertions and polar questions
+([stankova-2026] (9)), like English *at all*. -/
 def vubec : Particle where
   form := "vůbec"
-  distribution := fun c e => match c, e with
+  distribution := fun c e ↦ match c, e with
     | .declarative, .matrix => some .optional
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- *snad* 'perhaps, surely not' — adversative/mirative PQ particle
-([nekula-1996], [stankova-2023]); optionally supports rhetorical
-readings of polar questions ([simik-2024] ex. 8). -/
+/-- *snad* 'perhaps, surely not' is an adversative and mirative particle of polar questions
+([nekula-1996], [stankova-2023]), which optionally supports their rhetorical readings
+([simik-2024] ex. 8). -/
 def snad : Particle where
   form := "snad"
-  distribution := fun c e => match c, e with
+  distribution := fun c e ↦ match c, e with
     | .polar, .matrix => some .optional
     | _, _ => none
 
-/-- *copak* 'what then' — RAZVE-family particle ([simik-2024] §4.2.4) of positive and
-negative polar questions ([stankova-2025] exs. 19a-b, [nekula-1996]);
-evidential-bias experiments in `StankovaSimik2025`. -/
+/-- *copak* 'what then' is a particle of the Russian *razve* family ([simik-2024] §4.2.4) in
+positive and negative polar questions ([stankova-simik-2025] exs. 19a-b, [nekula-1996]). -/
 def copak : Particle where
   form := "copak"
-  distribution := fun c e => match c, e with
+  distribution := fun c e ↦ match c, e with
     | .polar, .matrix => some .optional
     | _, _ => none
 

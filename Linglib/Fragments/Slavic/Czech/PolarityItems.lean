@@ -1,26 +1,26 @@
 module
 
+public import Linglib.Fragments.Slavic.Czech.Determiners
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
 # Czech polarity items
 
-Czech indefinites come in two polarity-sensitive series, typed by `PolarityItem`. The
-*ni-* series (*nikdo*, *nic*, *nikdy*, *nikam*) and the determiner *žádný* are negative concord
-items: "any negative subject or object pronoun or pronoun-adverb is reinforced by ne- in the
-verb", as in *Nikdo to nekoupil* 'No one bought it' and *Petr nekoupil nic* 'Peter didn't buy
-anything' ([short-1993-czech], p. 511), so that the concord holds whether the item precedes the
-verb or follows it. The *ně-* series (*někdo*, the determiner *nějaký*), built on the prefix
-*ně-* ([haspelmath-1997]), are positive polarity items, which escape the immediate scope of
-clausemate negation; the two determiners therefore diagnose the position of negation in polar
-questions ([stankova-2025], [stankova-2026]). The *ne-* prefix lives in the sibling
-`Negation.lean`.
+Czech indefinites come in two polarity-sensitive series, typed by `PolarityItem`. The *ni-*
+series (*nikdo*, *nic*, *nikdy*, *nikam*) and the determiner *žádný* are negative concord items.
+In Short's words, "any negative subject or object pronoun or pronoun-adverb is reinforced by ne-
+in the verb", as in *Nikdo to nekoupil* 'No one bought it' and *Petr nekoupil nic* 'Peter didn't
+buy anything' (p. 511), so the concord holds whether the item precedes the verb or follows it.
+The *ně-* series (*někdo*, the determiner *nějaký*), built on the prefix *ně-*, are positive
+polarity items, which escape the immediate scope of clausemate negation; the two determiners
+therefore diagnose the position of negation in polar questions. The determiners take their
+forms from `Czech.Determiners.QuantityWord`, and the *ne-* prefix lives in `Negation.lean`.
 
 ## References
 
 * [short-1993-czech]
 * [haspelmath-1997]
-* [stankova-2025]
+* [stankova-simik-2025]
 * [stankova-2026]
 -/
 
@@ -57,9 +57,9 @@ def nikam : PolarityItem :=
   , licensingContexts := [.negation] }
 
 /-- *žádný* 'no', the determiner concord item, licensed by inner negation alone in polar
-    questions ([stankova-2026]). -/
+questions ([stankova-2026]). -/
 def zadny : PolarityItem :=
-  { form := "žádný"
+  { form := Determiners.QuantityWord.zadny.form
   , licensor := some .antiMorphic
   , licensingContexts := [.negation] }
 
@@ -69,13 +69,13 @@ def niSeries : List PolarityItem := [nikdo, nic, nikdy, nikam, zadny]
 /-! ### The *ně-* series -/
 
 /-- *nějaký* 'some', the determiner positive polarity item, admitted by outer and medial
-    negation in polar questions ([stankova-2025], [stankova-2026]). -/
+negation in polar questions ([stankova-simik-2025], [stankova-2026]). -/
 def nejaky : PolarityItem :=
-  { form := "nějaký"
+  { form := Determiners.QuantityWord.nejaky.form
   , antiLicensor := some .antiMorphic }
 
 /-- *někdo* 'someone', the human positive polarity item, which replaces *nikdo* under the
-    non-propositional negation of a fear-predicate complement ([stankova-2025]). -/
+non-propositional negation of a fear-predicate complement ([stankova-simik-2025]). -/
 def nekdo : PolarityItem :=
   { form := "někdo"
   , antiLicensor := some .antiMorphic }
