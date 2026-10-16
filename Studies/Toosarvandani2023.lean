@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Plurality.FeatureAction
+public import Linglib.Syntax.Clause.Scenario
 public import Linglib.Data.Examples.Toosarvandani2023
 
 /-!
@@ -25,23 +26,28 @@ condition on Agree behind the person-case constraint (86) compares them together
   person and animacy and cannot precede them (57), (63).
 * `gender_incomparable`: disjoint feature denotations give pronouns neither of which is the more
   specified (71).
-* `agrees_iff`, `AgreesUnder.mono`: Agree holds iff the subject is at least as high on the
-  hierarchy (77)–(81), and a probe relativized to fewer animacy features, as in Laxopa and
-  Zoogocho, collapses the distinctions it does not see.
+* `Feature.le_iff_atoms_subset`, `Pronoun.le_iff_denotation_subset`: the feature chain is
+  semantic entailment and the hierarchy of pronouns is the inclusion of their denotations (58),
+  (60)–(62).
+* `agrees_iff`, `yalalag_rows`: Agree (86) fails exactly in the upstream scenarios, where the
+  object outranks the subject, as the Yalálag examples (77)–(81) show.
+* `AgreesUnder.mono`: a probe relativized to fewer animacy features, as in Laxopa and Zoogocho,
+  collapses the distinctions it does not see.
 
 ## Implementation notes
 
-Individuals are a finite type and a group a nonempty finite set of atoms, the join being
-union, as in `Semantics/Plurality/FeatureAction.lean`, where the composition and complementarity
-lemmas live; a feature's atoms are a `Finset`, with the speaker and addressee among the
-elders, (58a). Context-dependence, (54), is not modelled: the associate relation is left to
-the context. The person-based constraint is absolute in Zapotec while (86) derives a relative
-one, a difference the paper attributes to the probe's relativization, and the same-category
-pairings that (86) licenses are not in the data. The Agree-based theory generalizes
-Deal's, with the probe's features sequenced after Coon and Keine so that only the
-features of the highest head, person and animacy, enter the comparison. The Yalálag clitic
-data of (77)–(81) and the English context-dependence examples of (16)–(18) are the rows of
-`Data.Examples.Toosarvandani2023`.
+Individuals are a finite type and a group a nonempty finite set of atoms, the join being union,
+as in `Semantics/Plurality/FeatureAction.lean`, where the composition and complementarity lemmas
+live; a feature's atoms are a `Finset`, with the speaker and addressee among the elders, (58a).
+In section 4 a concrete model has one atom per class of the schematic extensions (59), so that
+the feature chain of (60) is entailment rather than stipulation, and a subject and an object
+pronoun form a scenario (`Clause.Scenario`) of the subject over the object. Context-dependence,
+(54), is not modelled: the associate relation is left to the context, so the English examples
+(16)–(18) are rows without a theorem. The person-based constraint is absolute in Zapotec while
+(86) derives a relative one, a difference the paper attributes to the probe's relativization
+(fn. 22), and the same-category pairings that (86) licenses are not in the data. The Agree-based
+theory generalizes Deal's, with the probe's features sequenced after Coon and Keine so that only
+the features of the highest head, person and animacy, enter the comparison.
 
 ## References
 
@@ -154,8 +160,20 @@ theorem gender_incomparable {F M : Finset Ind} (hd : Disjoint F M) (hF : F.Nonem
 
 /-! ### The person-case constraint (section 4) -/
 
-/-- The features of the highest nominal head in Zapotec form a chain, each entailing the next
-(60). -/
+open Clause (Scenario)
+
+/-- The atoms of the schematic extensions (59) and (62) are the speaker `i`, the addressee `u`, an
+elder `e`, a nonelder human `h`, an animal `a`, and an inanimate `o`. -/
+inductive Atom where
+  | i
+  | u
+  | e
+  | h
+  | a
+  | o
+  deriving DecidableEq, Fintype
+
+/-- The person and animacy features of the highest nominal head in Zapotec (60). -/
 inductive Feature where
   | speaker
   | participant
@@ -165,16 +183,23 @@ inductive Feature where
   | pi
   deriving DecidableEq, Fintype, Repr
 
-/-- Position in the chain, from the most specific. -/
-def Feature.rank : Feature → ℕ
-  | .speaker => 0
-  | .participant => 1
-  | .elder => 2
-  | .human => 3
-  | .animate => 4
-  | .pi => 5
+/-- The atoms a feature holds of (48), (58). The elder feature holds of the conversational
+participants as well, the human one of every human, and the animate one of every animate. -/
+def Feature.atoms : Feature → Finset Atom
+  | .speaker => {.i}
+  | .participant => {.i, .u}
+  | .elder => {.i, .u, .e}
+  | .human => {.i, .u, .e, .h}
+  | .animate => {.i, .u, .e, .h, .a}
+  | .pi => univ
 
-instance : LinearOrder Feature := LinearOrder.lift' Feature.rank (by decide)
+/-- The features are a chain, from the most specific. -/
+instance : LinearOrder Feature := LinearOrder.lift' (·.ctorIdx) (by decide)
+
+/-- The chain is entailment, one feature below another exactly when it holds of no atom the
+other does not (58). -/
+theorem Feature.le_iff_atoms_subset {f g : Feature} : f ≤ g ↔ f.atoms ⊆ g.atoms := by
+  decide +revert
 
 /-- The pronoun categories of Table 1, clusivity set aside. -/
 inductive Pronoun where
@@ -195,54 +220,92 @@ def Pronoun.top : Pronoun → Feature
   | .thirdAnimal => .animate
   | .thirdInanimate => .pi
 
-/-- A category's feature specification is its most specific feature and all it entails. -/
-def Pronoun.features (p : Pronoun) : Finset Feature := univ.filter (p.top ≤ ·)
+/-- A category's feature specification is its most specific feature and every feature it
+entails, closed under entailment as Béjar's mapping principle requires (60), (61). -/
+def Pronoun.features (p : Pronoun) : Finset Feature := {f | p.top ≤ f}
 
-/-- Specifications are nested as the hierarchy orders the categories. -/
-theorem features_subset_iff {p q : Pronoun} : p.features ⊆ q.features ↔ q.top ≤ p.top :=
-  ⟨fun h ↦ (mem_filter.1 (h (mem_filter.2 ⟨mem_univ _, le_refl _⟩))).2,
-    fun h _ hf ↦ mem_filter.2 ⟨mem_univ _, h.trans (mem_filter.1 hf).2⟩⟩
+/-- Pronouns are ordered by specification, one at least as high as another when its most specific
+feature entails the other's. -/
+instance : LinearOrder Pronoun := LinearOrder.lift' (fun p ↦ OrderDual.toDual p.top) (by decide)
 
-/-- A head Agrees with a subject and an object pronoun, and both cliticize, iff the subject has
-all of the object's features (86). -/
-def Agrees (subj obj : Pronoun) : Prop := obj.features ⊆ subj.features
+theorem Pronoun.le_iff_top_le {p q : Pronoun} : p ≤ q ↔ q.top ≤ p.top := Iff.rfl
 
-instance (subj obj : Pronoun) : Decidable (Agrees subj obj) :=
-  inferInstanceAs (Decidable (obj.features ⊆ subj.features))
+/-- A pronoun is at least as high as another exactly when it has all of the other's features. -/
+theorem Pronoun.le_iff_features_subset {p q : Pronoun} : p ≤ q ↔ p.features ⊆ q.features :=
+  ⟨fun h _ hf ↦ mem_filter.2 ⟨mem_univ _, (le_iff_top_le.1 h).trans (mem_filter.1 hf).2⟩,
+    fun h ↦ le_iff_top_le.2 (mem_filter.1 (h (mem_filter.2 ⟨mem_univ _, le_refl _⟩))).2⟩
 
-/-- The specifications form a chain, so Agree holds iff the subject is at least as high on the
-hierarchy: the object clitic is blocked exactly when the object outranks the subject,
-(77)–(81). -/
-theorem agrees_iff {subj obj : Pronoun} : Agrees subj obj ↔ subj.top ≤ obj.top :=
-  features_subset_iff
+/-- A pronoun denotes, before lexical complementarity, the groups containing an atom of its most
+specific feature (62), its specification by `specification_eq_containing`. -/
+def Pronoun.denotation (p : Pronoun) : Finset (Finset Atom) := containing p.top.atoms univ
+
+/-- A pronoun is at least as high as another exactly when its denotation lies inside the other's,
+so the hierarchy of featural specification is one of semantic specificity. -/
+theorem Pronoun.le_iff_denotation_subset {p q : Pronoun} :
+    p ≤ q ↔ q.denotation ⊆ p.denotation := by
+  rw [le_iff_top_le, Feature.le_iff_atoms_subset, denotation, denotation,
+    containing_subset_containing_iff (subset_univ _)]
+
+/-- A head Agrees with the subject and the object pronoun of a scenario, and both cliticize, iff
+the subject has all of the object's features (86). -/
+def Agrees (s : Scenario Pronoun) : Prop := s.low.features ⊆ s.high.features
+
+instance : DecidablePred Agrees := fun s ↦
+  inferInstanceAs (Decidable (s.low.features ⊆ s.high.features))
+
+/-- Agree fails, and the object clitic is blocked, exactly in the upstream scenarios, where the
+object outranks the subject on the hierarchy (77)–(81). -/
+theorem agrees_iff {s : Scenario Pronoun} : Agrees s ↔ s.kind ≠ .upstream := by
+  rw [← Scenario.Kind.balanced_le_iff, Scenario.balanced_le_kind_iff,
+    Pronoun.le_iff_features_subset, Agrees]
 
 /-- A probe relativized to the features `R` compares only those. -/
-def AgreesUnder (R : Finset Feature) (subj obj : Pronoun) : Prop :=
-  obj.features ∩ R ⊆ subj.features ∩ R
+def AgreesUnder (R : Finset Feature) (s : Scenario Pronoun) : Prop :=
+  s.low.features ∩ R ⊆ s.high.features ∩ R
 
-instance (R : Finset Feature) (subj obj : Pronoun) : Decidable (AgreesUnder R subj obj) :=
-  inferInstanceAs (Decidable (obj.features ∩ R ⊆ subj.features ∩ R))
+instance (R : Finset Feature) : DecidablePred (AgreesUnder R) := fun s ↦
+  inferInstanceAs (Decidable (s.low.features ∩ R ⊆ s.high.features ∩ R))
 
-theorem agreesUnder_univ {subj obj : Pronoun} : AgreesUnder univ subj obj ↔ Agrees subj obj := by
+theorem agreesUnder_univ {s : Scenario Pronoun} : AgreesUnder univ s ↔ Agrees s := by
   simp [AgreesUnder, Agrees]
 
 /-- The fewer features a probe sees, the weaker the constraint. -/
-theorem AgreesUnder.mono {R R' : Finset Feature} {subj obj : Pronoun} (h : R ⊆ R')
-    (ha : AgreesUnder R' subj obj) : AgreesUnder R subj obj := fun _ hf ↦
+theorem AgreesUnder.mono {R R' : Finset Feature} {s : Scenario Pronoun} (h : R ⊆ R')
+    (ha : AgreesUnder R' s) : AgreesUnder R s := fun _ hf ↦
   mem_inter.2 ⟨(mem_inter.1 (ha (mem_inter.2 ⟨(mem_inter.1 hf).1, h (mem_inter.1 hf).2⟩))).1,
     (mem_inter.1 hf).2⟩
 
 /-- The Laxopa probe does not see *elder*, so elder and nonelder human clitics combine
 freely, where Yalálag's full relativization blocks (79b). -/
 theorem laxopa_human_elder :
-    AgreesUnder {.speaker, .participant, .human, .animate, .pi} .thirdHuman .thirdElder ∧
-      ¬ Agrees .thirdHuman .thirdElder := by
+    AgreesUnder {.speaker, .participant, .human, .animate, .pi} ⟨.thirdHuman, .thirdElder⟩ ∧
+      ¬ Agrees ⟨.thirdHuman, .thirdElder⟩ := by
   decide
 
 /-- The Zoogocho probe sees only *animate* among the animacy features, so any animate
 clitics combine. -/
 theorem zoogocho_animal_elder :
-    AgreesUnder {.speaker, .participant, .animate, .pi} .thirdAnimal .thirdElder := by
+    AgreesUnder {.speaker, .participant, .animate, .pi} ⟨.thirdAnimal, .thirdElder⟩ := by
   decide
+
+/-! ### The Yalálag examples (77)–(81) -/
+
+/-- The pronoun category a row's tag names. -/
+def pronoun? (e : Datum) (key : String) : Option Pronoun :=
+  e.parse? key [("1sg", .first), ("2sg", .second), ("3.el", .thirdElder), ("3.hu", .thirdHuman),
+    ("3.an", .thirdAnimal), ("3.in", .thirdInanimate)]
+
+/-- The scenario of a row's subject over its object. -/
+def scenario? (e : Datum) : Option (Scenario Pronoun) := do
+  return ⟨← pronoun? e "subject", ← pronoun? e "object"⟩
+
+/-- The Yalálag rows. -/
+def yalalag : List Datum := Examples.all.filter (·.language = "yala1267")
+
+/-- Every Yalálag example is grammatical exactly when its head Agrees with both pronouns, so
+the object clitic is blocked in the upstream scenarios and only there. -/
+theorem yalalag_rows :
+    yalalag ≠ [] ∧ ∀ e ∈ yalalag, ∃ s ∈ scenario? e, (e.judgment = .acceptable ↔ Agrees s) := by
+  decide +kernel
 
 end Toosarvandani2023
