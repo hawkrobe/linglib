@@ -38,6 +38,9 @@ presupposition that defeats the classical property.
   Strawson notions are the classical ones.
 * `isStrawsonAntiAdditive_only`, `not_antitone_truthSet_only`: *only* over a name is Strawson
   anti-additive and not classically downward entailing.
+* `not_isStrawsonUE_only`, `not_isStrawsonUE_since`, `Desire.BestWorlds.not_isStrawsonUE_regret`,
+  `Degree.not_isStrawsonUE_superlative`, `Conditional.not_isStrawsonUE_horizonCounterfactual`:
+  none of the Strawson downward entailing operators is Strawson upward entailing as well.
 * `Degree.isStrawsonAntiAdditive_superlative`,
   `Conditional.isStrawsonAntiAdditive_horizonCounterfactual`: the superlative in its class and the
   modal-horizon counterfactual in its antecedent are Strawson anti-additive, and neither is
@@ -160,6 +163,12 @@ theorem not_antitone_truthSet {p q : α} {w : W} (hpq : p ≤ q) (hq : (f q).hol
     (hp : ¬ (f p).presup w) : ¬ Antitone fun p ↦ (f p).truthSet :=
   fun h ↦ hp (h hpq hq).1
 
+/-- A larger argument defined and false at a world where a smaller one holds defeats Strawson
+upward entailingness. -/
+theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : (f p).holds w)
+    (hq : (f q).presup w) (hq' : ¬ (f q).assertion w) : ¬ IsStrawsonUE f :=
+  fun h ↦ hq' (h hpq w hp.1 hq hp.2)
+
 end Preorder
 
 /-! ### Strawson anti-additivity -/
@@ -229,6 +238,12 @@ theorem not_antitone_truthSet_only :
   not_antitone_truthSet (p := ⊥) (q := fun y ↦ {_u | y = true}) (w := ()) bot_le
     ⟨rfl, fun _ hy h ↦ hy h⟩ id
 
+/-- *Only John smokes* does not Strawson-entail *only John smokes or drinks*, which is defined and
+false when someone else drinks, so *only* is not upward entailing. -/
+theorem not_isStrawsonUE_only : ¬ IsStrawsonUE (only (W := Unit) true) :=
+  not_isStrawsonUE (p := fun y ↦ {_u | y = true}) (q := ⊤) (w := ()) le_top
+    ⟨rfl, fun _ hy h ↦ hy h⟩ (Set.mem_univ _) fun h ↦ h false Bool.false_ne_true (Set.mem_univ _)
+
 /-- When distinct individuals yield alternatives none of which the prejacent entails, the
 name-based *only* is the propositional exclusive `Focus.Particles.only` applied to the
 predication of `x`, over the alternatives the name generates ([coppock-beaver-2014]'s (93)). -/
@@ -287,6 +302,14 @@ theorem not_antitone_truthSet_since :
   not_antitone_truthSet (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
     ⟨show (0 : ℤ) - 5 ∈ ({-5} : Set ℤ) from Set.mem_singleton_iff.2 (by decide),
       show Disjoint (Set.Ioc ((0 : ℤ) - 5) 0) {-5} by simp⟩ fun h ↦ h
+
+/-- *It's been five years since I saw an eagle* does not Strawson-entail *it's been five years
+since I saw a bird*, defined and false when a sparrow was seen since. -/
+theorem not_isStrawsonUE_since : ¬ IsStrawsonUE (since (T := ℤ) (· - 5)) :=
+  not_isStrawsonUE (p := {-5}) (q := .univ) (w := 0) (Set.subset_univ _)
+    ⟨show (0 : ℤ) - 5 ∈ ({-5} : Set ℤ) from Set.mem_singleton_iff.2 (by decide),
+      show Disjoint (Set.Ioc ((0 : ℤ) - 5) 0) {-5} by simp⟩ (Set.mem_univ _)
+    fun h ↦ Set.disjoint_left.1 h (show (0 : ℤ) ∈ Set.Ioc (0 - 5) 0 by simp) (Set.mem_univ _)
 
 end Since
 
@@ -402,6 +425,21 @@ theorem not_antitone_truthSet_regret :
   intro x hx
   simp_all
 
+/-- *Sorry that Robin bought a Civic* does not Strawson-entail *sorry that Robin bought a Civic or
+a Golf*, defined and false when the subject prefers the Golf. The subject believes world `0` and
+prefers world `1`. -/
+theorem not_isStrawsonUE_regret :
+    ¬ IsStrawsonUE (regret (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {(· = 1)})) := by
+  have hb : (premisePreorder {(· = 1)}).minimals (Set.univ : Set (Fin 3)) = {1} := by
+    rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
+    ext
+    simp
+  refine not_isStrawsonUE (p := {0}) (q := {0, 1}) (w := 0) (by simp)
+    ⟨⟨subset_rfl, Set.subset_univ _, ⟨0, by simp⟩, ⟨1, by simp⟩⟩, ?_⟩
+    ⟨by simp, Set.subset_univ _, ⟨0, by simp⟩, ⟨2, by simp⟩⟩ ?_
+  · simp [regret, want, Want, hb]
+  · simp [regret, want, Want, hb]
+
 end Desire.BestWorlds
 
 /-! ### Superlatives -/
@@ -427,6 +465,14 @@ theorem not_antitone_truthSet_superlative :
     ¬ Antitone fun C : Unit → Set Unit ↦ (superlative (fun _ : Unit ↦ (0 : ℕ)) C ()).truthSet :=
   not_antitone_truthSet (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le
     ⟨trivial, fun _ _ h ↦ absurd rfl h⟩ id
+
+/-- *Emma is the tallest girl to have learned the alphabet* does not Strawson-entail *Emma is the
+tallest girl*, defined and false when a taller girl has not learned it. -/
+theorem not_isStrawsonUE_superlative :
+    ¬ IsStrawsonUE (superlative (W := Unit) (fun _ : Bool ↦ (0 : ℕ)) · true) :=
+  not_isStrawsonUE (p := fun _ ↦ {true}) (q := fun _ ↦ .univ) (w := ())
+    (fun _ ↦ Set.subset_univ _) ⟨rfl, fun _ hy hne ↦ absurd hy hne⟩ (Set.mem_univ _)
+    fun h ↦ lt_irrefl 0 (h false (Set.mem_univ _) Bool.false_ne_true)
 
 end Degree
 
@@ -459,5 +505,14 @@ theorem not_antitone_truthSet_horizonCounterfactual :
       (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ).truthSet :=
   not_antitone_truthSet (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _)
     ⟨⟨(), trivial, trivial⟩, Set.subset_univ _⟩ fun h ↦ h.ne_empty (Set.inter_empty _)
+
+/-- Weakening the antecedent is not Strawson valid either, since the weaker antecedent can admit
+worlds the consequent excludes. -/
+theorem not_isStrawsonUE_horizonCounterfactual :
+    ¬ IsStrawsonUE fun p : Set Bool ↦
+      horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Bool)) p {true} :=
+  not_isStrawsonUE (p := {true}) (q := .univ) (w := ()) (Set.subset_univ _)
+    ⟨⟨true, trivial, rfl⟩, fun _ h ↦ h.2⟩ ⟨true, trivial, trivial⟩
+    fun h ↦ Bool.false_ne_true (h ⟨trivial, trivial⟩)
 
 end Conditional

@@ -37,10 +37,11 @@ items that *zero* does not, while with `MAX` apart from the numeral *zero* is a 
 
 ## Main results
 
-* `exh_poss_iff_highScope`: the exhaustified possibility reading of Spector is Kennedy's (46).
+* `exhAgainst_poss_iff_highScope`: the exhaustified possibility reading of Spector is
+  Kennedy's (46).
 * `lowScope_some_not_highScope`: over *some students* the high reading (39) is strictly stronger.
 * `MAX_individual_iff_exhAgainst`: `MAX` of the lifted number is exhaustification at its site.
-* `not_licenses_MAX_zero`: with `MAX`, *zero* licenses no negative polarity item.
+* `not_licenses_zeroWithMAX`: with `MAX`, *zero* licenses no negative polarity item.
 
 ## Implementation notes
 
@@ -118,7 +119,7 @@ variable {n : ℕ}
 
 /-- Spector's wide-scope exhaustification over a possibility modal, the reading (36-b), is
 Kennedy's numeral raised over the modal ((46)). -/
-theorem exh_poss_iff_highScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
+theorem exhAgainst_poss_iff_highScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
     exhAgainst (· < ·) (fun m ↦ Spector2013.poss (count '' {w | R w})
       (Comparison.ge.interval m)) n ↔ HighScope (MaxIn {n}) (GQ.some R) count := by
   simp only [Spector2013.poss, exists_mem_image, Comparison.interval_ge, mem_Ici, mem_ofPred_eq]
@@ -197,13 +198,29 @@ theorem MAX_individual_zero_iff {A B : Set α} :
     MAX (individual 0) (countDegrees A (plural B)) ↔ GQ.no A B := by
   rw [MAX_individual]; exact maxIn_zero_countDegrees_iff
 
-/-- With `MAX` apart from the numeral, *zero* keeps the split of [bylinina-nouwen-2018]: below
-`MAX` it is a tautology and above it *no*, so it licenses no polarity item, where Kennedy's *zero*
-licenses both (`BylininaNouwen2018.kennedy_zero_licenses`). -/
-theorem not_licenses_MAX_zero {E : Type*} (A : E → Prop) (s : Gajewski2011.Strength) :
-    ¬ Licenses (fun B ↦ individual 0 (countDegrees A (plural B)))
-      (fun B ↦ MAX (individual 0) (countDegrees A (plural B))) s := by
-  cases s
-  exacts [not_nonTriviallyAntitone_plain_zero A, fun h ↦ not_nonTriviallyAntitone_plain_zero A h.1]
+section Polarity
+
+open PolarityItem (LicensingContext NonemptyPredicate)
+
+/-- With `MAX` apart from the numeral, *zero* is a scalar licenser: the lower-bound numeral below
+`MAX` and its `MAX` above it. -/
+def zeroWithMAX : LicensingContext :=
+  ⟨.scalar ⟨⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
+      fun p B ↦ individual 0 (countDegrees p.A (plural B))⟩,
+    fun p B ↦ MAX (individual 0) (countDegrees p.A (plural B))⟩, none⟩
+
+/-- It is the *zero* of [bylinina-nouwen-2018], since `MAX` is exhaustification at its site. -/
+theorem zeroWithMAX_eq_zero : zeroWithMAX = BylininaNouwen2018.zero := by
+  simp only [zeroWithMAX, BylininaNouwen2018.zero]
+  congr
+  funext p B
+  exact propext MAX_individual_iff_exhAgainst
+
+/-- So it licenses no negative polarity item, where Kennedy's *zero* is *no* and licenses both
+(`BylininaNouwen2018.kennedyZero_eq_nobody`). -/
+theorem not_licenses_zeroWithMAX (e : PolarityItem) : ¬ zeroWithMAX.Licenses e :=
+  zeroWithMAX_eq_zero ▸ not_licenses_zero e
+
+end Polarity
 
 end BylininaNouwen2020
