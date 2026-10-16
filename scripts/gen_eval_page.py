@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Generate the projection scoreboard, the page of `Eval` verdicts published at linglib.io/eval/.
 
-Every verdict on the page comes from `scripts/eval_page/Export.lean`, which instantiates the
-verdict theorems of `Eval` and `Lab` at each theory and each cell and reduces their right-hand
-sides with Lean. This script adds what the page shows around them: the experiments' printed
-numbers and locators from `Linglib/Data/Experiments/<Paper>.json`, author-year citations from
-`references.bib`, and links to each theorem's documentation. It types no verdict by hand.
+Every verdict on the page comes from `scripts/eval_page/Export.lean`, which reads the theorems of
+`Eval` and `Lab` about an `Eval.Experiment`, instantiates them at each theory and each cell, and
+reduces their right-hand sides with Lean. The page lays out whatever experiments those theorems
+are about, so a new experiment needs no change here. This script adds what the page shows around
+the verdicts: labels and printed numbers from `Linglib/Data/Experiments/<Paper>.json`, author-year
+citations from `references.bib`, and links to each theorem's documentation. It types no verdict by
+hand.
 
-Usage, from the repository root, once `Lab` is built:
+Usage, from the repository root, once `Eval` and `Lab` are built:
 
     python3 scripts/gen_eval_page.py --export        # run the Lean export first
     python3 scripts/gen_eval_page.py --out DIR        # write DIR/index.html
@@ -31,22 +33,7 @@ TEMPLATE = ROOT / "scripts" / "eval_page" / "template.html"
 DEFAULT_JSON = ROOT / ".lake" / "build" / "eval-page" / "verdicts.json"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "eval-page"
 DATA = ROOT / "Linglib" / "Data" / "Experiments"
-
-# The datasets the page shows, in order, with the task each experiment set its subjects.
-DATASETS = {
-    "chemla-schlenker-2012": {
-        "paper": "ChemlaSchlenker2012",
-        "task": "Which inference subjects endorse more from a sentence with a trigger: the "
-                "conditional presupposition or the unconditional one.",
-        "tables": ["experiment1Inferences", "experiment4Inferences"],
-    },
-    "chemla-2009a": {
-        "paper": "Chemla2009a",
-        "task": "How often subjects endorse the universal inference from a trigger in the scope "
-                "of a quantifier over ten students.",
-        "tables": ["experiment1Universal"],
-    },
-}
+LIBRARIES = ["Eval", "Lab"]
 
 
 # ---------------------------------------------------------------- bibliography
@@ -74,13 +61,10 @@ def bib_entries(keys):
 
         surnames = [a.split(",")[0].strip().strip("{}")
                     for a in field("author").split(" and ") if a.strip()]
-        if len(surnames) > 2:
-            who = surnames[0] + " et al."
-        else:
-            who = " & ".join(surnames)
-        title = re.sub(r"[{}]", "", field("title"))
-        title = re.sub(r"\\emph\s*", "", title)
-        out[key] = {"who": who, "year": field("year"), "title": title, "doi": field("doi")}
+        who = surnames[0] + " et al." if len(surnames) > 2 else " & ".join(surnames)
+        title = re.sub(r"\\emph\s*|[{}]", "", field("title"))
+        out[key] = {"key": key, "who": who, "year": field("year"), "title": title,
+                    "doi": field("doi")}
     return out
 
 
@@ -89,19 +73,21 @@ CITE = re.compile(r"\[([a-z0-9][a-z0-9-]*-\d{4}[a-z]?)\]('s)?")
 
 def doc_html(doc, bib, base):
     """A docstring as HTML: `[key]` links become author-year citations linked to the
-    bibliography, backticks code."""
+    bibliography, backticks code, asterisks emphasis."""
     doc = " ".join(doc.split())
     parts = []
     pos = 0
-    for m in re.finditer(r"`([^`]*)`|" + CITE.pattern, doc):
+    for m in re.finditer(r"`([^`]*)`|\*([^*]+)\*|" + CITE.pattern, doc):
         parts.append(html.escape(doc[pos:m.start()]))
         if m.group(1) is not None:
             parts.append("<code>" + html.escape(m.group(1)) + "</code>")
+        elif m.group(2) is not None:
+            parts.append("<i>" + html.escape(m.group(2)) + "</i>")
         else:
-            entry = bib.get(m.group(2))
+            entry = bib.get(m.group(3))
             if entry:
-                poss = "'s" if m.group(3) else ""
-                href = html.escape(f"{base}references.html#ref_{m.group(2)}")
+                poss = "'s" if m.group(4) else ""
+                href = html.escape(f"{base}references.html#ref_{m.group(3)}")
                 parts.append(f'<a href="{href}">{html.escape(entry["who"])}{poss} '
                              f'({html.escape(entry["year"])})</a>')
             else:
@@ -118,23 +104,47 @@ def words(ident):
     return re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?![a-z])|\d+", ident)
 
 
+def short(name):
+    return name.split(".")[-1]
+
+
 def theory_label(ident):
     """`transparencyIncremental` -> "Transparency, incremental"; `limitedSymmetry` -> "Limited
     Symmetry"."""
-    ws = words(ident.split(".")[-1])
+    ws = words(short(ident))
     if len(ws) > 1 and ws[-1].lower() in ("incremental", "symmetric"):
         return " ".join(w.capitalize() for w in ws[:-1]) + ", " + ws[-1].lower()
     return " ".join(w.capitalize() for w in ws)
 
 
-def parser_label(ident):
-    """`oneStep` -> "One step"."""
-    label = " ".join(words(ident)).lower()
+def sentence_label(ident):
+    """`oneStep` -> "One step"; `experiment1` -> "Experiment 1"."""
+    label = " ".join(words(short(ident))).lower()
     return label[:1].upper() + label[1:]
 
 
-def short(name):
-    return name.split(".")[-1]
+_specs = {}
+
+
+def spec(paper):
+    """The data file of a paper, if there is one."""
+    if paper not in _specs:
+        f = DATA / f"{paper}.json"
+        _specs[paper] = json.loads(f.read_text(encoding="utf-8")) if f.exists() else None
+    return _specs[paper]
+
+
+def level_label(ctor):
+    """The printed label of a constructor of a data type, `Paper.Type.level`, as the paper's data
+    file gives it, and otherwise its words."""
+    parts = ctor.split(".")
+    if len(parts) >= 3 and spec(parts[-3]):
+        for t in spec(parts[-3])["types"]:
+            if t["name"] == parts[-2]:
+                for lv in t["levels"]:
+                    if lv["name"] == parts[-1]:
+                        return lv["label"]
+    return " ".join(words(parts[-1])).lower()
 
 
 def doc_href(decl, base):
@@ -144,99 +154,113 @@ def doc_href(decl, base):
 # ---------------------------------------------------------------- page data
 
 
-def level_labels(spec):
-    return {t["name"]: {lv["name"]: lv["label"] for lv in t["levels"]} for t in spec["types"]}
+def tree_label(t):
+    """An outcome as a reduced constructor tree: `none` is no observation."""
+    if t == "none":
+        return None
+    if isinstance(t, dict):
+        return " ".join(str(tree_label(a)) for a in t["args"])
+    return str(t)
 
 
 def build(export, base):
-    rows = export["rows"]
-    specs = {k: json.loads((DATA / (v["paper"] + ".json")).read_text(encoding="utf-8"))
-             for k, v in DATASETS.items()}
-    docs = [t["decl"]["doc"] for t in export["theories"]]
-    docs += [r[k]["doc"] for r in rows for k in ("theorem", "parser", "graduation") if k in r]
-    keys = set(DATASETS) | {m.group(1) for d in docs for m in CITE.finditer(d)}
+    names = export["names"]
+    keys = {m.group(1) for n in names.values() for m in CITE.finditer(n["doc"])}
     bib = bib_entries(sorted(keys))
 
-    def decl(d):
-        return {"name": d["name"], "short": short(d["name"]), "href": doc_href(d, base),
+    def decl(n):
+        d = names.get(n, {"name": n, "module": "", "doc": "", "rank": 1000})
+        return {"name": d["name"], "short": short(d["name"]),
+                "href": doc_href(d, base) if d["module"] else "",
                 "doc": doc_html(d["doc"], bib, base)}
 
-    theories = [{"id": t["id"], "label": theory_label(t["id"]), "source": t["source"],
-                 "decl": decl(t["decl"])} for t in export["theories"]]
+    def rank(n):
+        return names.get(n, {}).get("rank", 1000)
 
+    def source(n):
+        return "lab" if names.get(n, {}).get("module", "").startswith("Lab.") else "registered"
+
+    # Theories: the registered accounts in their order, then theories under development.
+    ids = {r["theory"] for r in export["verdicts"]}
+    theories = [{"id": t, "label": theory_label(t), "source": source(t), "decl": decl(t)}
+                for t in sorted(ids, key=lambda t: (source(t) != "registered", rank(t), t))]
+
+    stipulations = {r["variant"]: r for r in export["stipulations"]}
+    same_parse = {r["variant"]: r for r in export["sameParse"]}
+    observed = {(r["experiment"], tuple(r["cell"])): r for r in export["observed"]}
+
+    experiments = []
     cells = {}
+    for X in sorted({r["experiment"] for r in export["verdicts"]}):
+        rows = [r for r in export["verdicts"] if r["experiment"] == X]
+        doc = names[X]["doc"]
+        key = next((m.group(1) for m in CITE.finditer(doc)), None)
+        paper = names[X]["module"].split(".")[-1]
+        cell_list = sorted({tuple(r["cell"]) for r in rows}, key=lambda c: [rank(x) for x in c])
+        variant_list = sorted({r["variant"] for r in rows if r["variant"]}, key=rank)
+        columns = []
+        for c in cell_list:
+            obs = observed.get((X, c))
+            for v in variant_list or [None]:
+                col = {"key": "|".join(c) + "#" + (v or ""), "cell": [level_label(x) for x in c],
+                       "observed": tree_label(obs["observed"]) if obs else None,
+                       "observedTheorem": decl(obs["theorem"]) if obs else None}
+                if v:
+                    st = stipulations.get(v)
+                    sp = same_parse.get(v)
+                    col["variant"] = {
+                        "id": v, "label": sentence_label(v), "decl": decl(v),
+                        "stipulations": [level_label(s) for s in st["sentences"]] if st else None,
+                        "stipulationsTheorem": decl(st["theorem"]) if st else None,
+                        "sameAs": sentence_label(sp["as"]) if sp else None,
+                        "sameAsTheorem": decl(sp["theorem"]) if sp else None}
+                columns.append(col)
+        for r in rows:
+            k = "|".join(r["cell"]) + "#" + (r["variant"] or "")
+            cells[f"{X}|{r['theory']}|{k}"] = {"verdict": r["verdict"],
+                                               "theorem": decl(r["theorem"])}
+        experiments.append({
+            "id": X, "label": sentence_label(X), "decl": decl(X), "paper": paper,
+            "cite": bib.get(key), "columns": columns, "variants": bool(variant_list)})
+    experiments.sort(key=lambda e: ((e["cite"] or {}).get("year", ""), e["id"]))
+
+    # The printed numbers behind the observations, from the papers' data files.
+    papers = {}
+    for e in experiments:
+        s = spec(e["paper"])
+        if s and e["paper"] not in papers:
+            papers[e["paper"]] = {
+                "cite": e["cite"], "description": s["meta"]["description"],
+                "tables": [{"name": t["name"], "doc": t["doc"], "locator": t.get("locator", ""),
+                            "verified": t.get("verified", ""), "rows": t["rows"]}
+                           for t in s["tables"]],
+                "experiments": [x["decl"] for x in experiments if x["paper"] == e["paper"]]}
+
     theorems = {}
-    for r in rows:
-        if "verdict" in r:
-            cells[f"{r['dataset']}|{r['theory']}|{r['cell']}"] = {
-                "verdict": r["verdict"], "theorem": decl(r["theorem"])}
-            theorems.setdefault(r["theorem"]["name"], decl(r["theorem"]))
+    for r in export["verdicts"] + export["observed"] + export["stipulations"] + export["sameParse"]:
+        theorems.setdefault(r["theorem"], decl(r["theorem"]))
+    return {"theories": theories, "experiments": experiments, "cells": cells, "papers": papers,
+            "theorems": sorted(theorems.values(), key=lambda t: t["name"])}
 
-    datasets = []
 
-    # Chemla & Schlenker 2012: one column per tested construction and order.
-    cs = specs["chemla-schlenker-2012"]
-    lab = level_labels(cs)
-    tables = {t["name"]: t for t in cs["tables"]}
-    means = {}
-    for exp, name in (("1", "experiment1Inferences"), ("4", "experiment4Inferences")):
-        for row in tables[name]["rows"]:
-            means.setdefault((row["construction"], row["order"]), {}).setdefault(exp, {})[
-                row["inference"]] = row["mean"]
-    groups = []
-    for k, klabel in lab["Construction"].items():
-        cols = []
-        for o, olabel in lab["Order"].items():
-            obs = next(r for r in rows if r["dataset"] == "chemla-schlenker-2012"
-                       and r.get("cell") == f"{k}.{o}" and "observed" in r)
-            m = means.get((klabel, olabel), {})
-            cols.append({
-                "id": f"{k}.{o}", "label": olabel,
-                "observed": (obs["observed"]["args"][0]
-                             if isinstance(obs["observed"], dict) else None),
-                "means": [{"experiment": e, "conditional": v["conditional"],
-                           "unconditional": v["unconditional"]} for e, v in sorted(m.items())],
-            })
-        groups.append({"label": klabel, "cols": cols})
-    obs_thm = next(r["theorem"] for r in rows
-                   if r["dataset"] == "chemla-schlenker-2012" and "observed" in r)
-    datasets.append({
-        "id": "chemla-schlenker-2012", "kind": "cells",
-        "cite": bib["chemla-schlenker-2012"], "task": DATASETS["chemla-schlenker-2012"]["task"],
-        "locators": [f"Experiment {e}, {tables[n]['locator']}" for e, n in
-                     (("1", "experiment1Inferences"), ("4", "experiment4Inferences"))],
-        "verified": tables["experiment1Inferences"]["verified"],
-        "observedTheorem": decl(obs_thm), "groups": groups,
-    })
+# ---------------------------------------------------------------- running
 
-    # Chemla 2009: one column per parser of the same observation.
-    ch = specs["chemla-2009a"]
-    det = level_labels(ch)["Determiner"]
-    tables = {t["name"]: t for t in ch["tables"]}
-    parsers = []
-    for r in rows:
-        if r["dataset"] == "chemla-2009a" and "parser" in r:
-            parsers.append({
-                "id": short(r["parser"]["name"]), "label": parser_label(short(r["parser"]["name"])),
-                "decl": decl(r["parser"]),
-                "stipulations": [det.get(s, s) for s in r["stipulations"]],
-                "stipulationsTheorem": decl(r["theorem"]),
-            })
-    obs = next(r for r in rows if r["dataset"] == "chemla-2009a" and "observed" in r)
-    graduation = next(r["graduation"] for r in rows if "graduation" in r)
-    datasets.append({
-        "id": "chemla-2009a", "kind": "parsers",
-        "cite": bib["chemla-2009a"], "task": DATASETS["chemla-2009a"]["task"],
-        "locators": [f"Experiment 1, {tables['experiment1Universal']['locator']}"],
-        "verified": tables["experiment1Universal"]["verified"],
-        "observed": obs["observed"]["args"][0] if isinstance(obs["observed"], dict) else None,
-        "rates": tables["experiment1Universal"]["rows"],
-        "observedTheorem": decl(obs["theorem"]), "graduation": decl(graduation),
-        "groups": [{"label": "parse", "cols": parsers}],
-    })
 
-    return {"theories": theories, "datasets": datasets, "cells": cells,
-            "theorems": list(theorems.values())}
+def run_export(json_path):
+    """Run the Lean export on every module of `Eval` and `Lab`: the export's body, after a line
+    importing them all, so that Lean reads their theorems as it elaborates the file."""
+    modules = sorted(".".join(f.relative_to(ROOT).with_suffix("").parts)
+                     for lib in LIBRARIES for f in (ROOT / lib).rglob("*.lean"))
+    body = EXPORT.read_text(encoding="utf-8")
+    header = "import Lean\n"
+    assert body.startswith(header)
+    source = header + "".join(f"import {m}\n" for m in modules) + body[len(header):]
+    json_path.parent.mkdir(parents=True, exist_ok=True)
+    composed = json_path.parent / "Export.lean"
+    composed.write_text(source, encoding="utf-8")
+    env = dict(os.environ, EVAL_PAGE_JSON=str(json_path))
+    if subprocess.run(["lake", "env", "lean", str(composed)], cwd=ROOT, env=env).returncode:
+        sys.exit("the Lean export failed")
 
 
 def git_commit():
@@ -260,11 +284,7 @@ def main():
     args = ap.parse_args()
 
     if args.export:
-        env = dict(os.environ, EVAL_PAGE_JSON=str(args.json))
-        result = subprocess.run(["lake", "env", "lean", str(EXPORT.relative_to(ROOT))],
-                                cwd=ROOT, env=env)
-        if result.returncode != 0:
-            sys.exit("the Lean export failed")
+        run_export(args.json)
 
     page = build(json.loads(args.json.read_text(encoding="utf-8")), args.docs_base)
     sha = git_commit()
@@ -277,8 +297,8 @@ def main():
     out = TEMPLATE.read_text(encoding="utf-8").replace("/*EVAL_DATA*/{}", data)
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "index.html").write_text(out, encoding="utf-8")
-    n = len(page["cells"])
-    print(f"wrote {args.out / 'index.html'}: {len(page['theories'])} theories, {n} verdicts")
+    print(f"wrote {args.out / 'index.html'}: {len(page['experiments'])} experiments, "
+          f"{len(page['theories'])} theories, {len(page['cells'])} verdicts")
 
 
 if __name__ == "__main__":

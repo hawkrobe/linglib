@@ -1,17 +1,17 @@
-import Lab.Colinguistics.QuantifiedLimitedSymmetry
+import Lean
 
 /-!
-# Export the projection verdicts
+# Export the verdicts of `Eval` and `Lab`
 
-Writes the verdicts that `Eval` and `Lab` prove for the theories of presupposition projection as
-JSON, for `scripts/gen_eval_page.py`. A verdict is the right-hand side of a proved equation,
-instantiated at a theory and a cell and reduced to a constructor by Lean, so the page shows what
-the theorems say and nothing typed by hand; a theorem that rests on `sorry` stops the export. Run
-from the repository root, after building `Lab`:
-
-```
-lake env lean scripts/eval_page/Export.lean
-```
+Writes every verdict that `Eval` and `Lab` prove as JSON, for `scripts/gen_eval_page.py`, which runs
+this file after a line importing every module of the two libraries. The export reads the theorems
+whose statements are equations about an `Eval.Experiment`: a verdict `X.verdict T c = v`, an
+observation `X.observed c = o`, the stipulations of a parser `π.stipulations = {…}`, or two parsers
+that parse alike. A theorem whose variables range over finite enumerations, such as the accounts or
+the cells of a design, is instantiated at each of their values, and each right-hand side is reduced
+to a constructor by Lean. So the page shows what the theorems say and nothing typed by hand, and a
+new experiment reaches the page through its theorems alone. A theorem that rests on `sorry` stops
+the export.
 
 The output path is `$EVAL_PAGE_JSON`, by default `.lake/build/eval-page/verdicts.json`.
 -/
@@ -20,27 +20,29 @@ open Lean Meta
 
 namespace EvalPage
 
-/-- The constructors of an inductive type. -/
-def ctors (ty : Name) : MetaM (List Name) := do
-  let .inductInfo info ← getConstInfo ty | throwError "{ty} is not an inductive type"
-  return info.ctors
+/-- The libraries whose theorems are read. -/
+def libraries : List String := ["Eval", "Lab"]
 
-/-- The `i`-th conjunct (from 1) of a right-nested conjunction with `n` conjuncts. -/
-partial def conjunct (e : Expr) (i n : Nat) : MetaM Expr := do
-  if n ≤ 1 then return e
-  let some (a, b) := (← whnfR e).and? | throwError "not a conjunction: {e}"
-  if i = 1 then return a else conjunct b (i - 1) (n - 1)
+/-- The constructors of an enumeration, or `none` for any other type. -/
+def enumCtors (ty : Expr) : MetaM (Option (List Name)) := do
+  let .const n _ := (← whnfR ty).getAppFn | return none
+  let some (.inductInfo info) := (← getEnv).find? n | return none
+  if info.numParams ≠ 0 ∨ info.numIndices ≠ 0 then return none
+  for c in info.ctors do
+    let .ctorInfo ci ← getConstInfo c | return none
+    if ci.numFields ≠ 0 then return none
+  return some info.ctors
 
-/-- The right-hand side of the equation that a proof proves, or of one conjunct of it. -/
-def rhs (proof : Expr) (i n : Nat := 1) : MetaM Expr := do
-  let stmt ← conjunct (← instantiateMVars (← inferType proof)) i n
-  let some (_, _, r) := (← whnfR stmt).eq? | throwError "not an equation: {stmt}"
-  return r
+/-- The position of a constructor in its type, used to order rows and columns. -/
+def rank (n : Name) : MetaM Nat := do
+  match (← getEnv).find? n with
+  | some (.ctorInfo ci) => return ci.cidx
+  | _ => return 1000
 
-/-- A closed term reduced to its tree of constructors: a constructor without fields is its name, a
-constructor with fields is its name and theirs. -/
+/-- A closed term reduced to its tree of constructors. -/
 partial def ctorTree (e : Expr) : MetaM Json := do
   let e ← whnf e
+  if let .lit (.natVal n) := e then return toJson n
   let .const c _ := e.getAppFn | throwError "does not reduce to a constructor: {e}"
   let .ctorInfo info ← getConstInfo c | throwError "does not reduce to a constructor: {e}"
   let fields := e.getAppArgs.extract info.numParams e.getAppNumArgs
@@ -56,81 +58,126 @@ partial def literalElems (e : Expr) : MetaM (List Expr) := do
   | some ``Insert.insert, args => return args[3]! :: (← literalElems args[4]!)
   | _, _ => throwError "not a finite set literal: {e}"
 
-/-- The module that declares a constant. -/
-def moduleOf (n : Name) : MetaM Name := do
+/-- A named constant: its name, its module, its docstring, and its position if a constructor. -/
+def named (n : Name) : MetaM Json := do
   let env ← getEnv
-  let some i := env.getModuleIdxFor? n | throwError "{n} is not imported"
-  return env.header.moduleNames[i.toNat]!
+  let mod := (env.getModuleIdxFor? n).map fun i ↦ env.header.moduleNames[i.toNat]!
+  return Json.mkObj [("name", toJson n.toString),
+    ("module", toJson ((mod.map Name.toString).getD "")),
+    ("doc", toJson ((← findDocString? env n).getD "")), ("rank", toJson (← rank n))]
 
-/-- A constant with the module that declares it and its docstring. -/
-def declJson (n : Name) : MetaM Json := do
-  return Json.mkObj [("name", toJson n.toString), ("module", toJson (← moduleOf n).toString),
-    ("doc", toJson ((← findDocString? (← getEnv) n).getD ""))]
+/-- The constant a term names: a constant, or the constructor that indexes it, as the account in
+`Account.theory a` or the accommodation in `Accommodation.parser p`. -/
+def nameOf (e : Expr) : MetaM Name := do
+  let e := e.consumeMData
+  if let .const n _ := e then return n
+  match e.getAppArgs.back? with
+  | some (.const n _) => return n
+  | _ => throwError "cannot name {e}"
 
-/-- A theorem, refused if it rests on `sorry`: a mark the page shows is a proof. -/
-def theoremJson (n : Name) : MetaM Json := do
-  if (← collectAxioms n).contains ``sorryAx then throwError "{n} depends on sorry"
-  declJson n
+/-- A theory, and the variant it is scored with if it is a pair. -/
+def theoryOf (T : Expr) : MetaM (Name × Option Name) := do
+  if T.isAppOfArity ``Prod.mk 4 then
+    return (← nameOf T.appFn!.appArg!, some (← nameOf T.appArg!))
+  return (← nameOf T, none)
 
-/-- A verdict, with the theorem whose equation gives it. -/
-def verdictRow (dataset theory cell : String) (thm : Name) (value : Expr) : MetaM Json := do
-  return Json.mkObj [("dataset", toJson dataset), ("theory", toJson theory), ("cell", toJson cell),
-    ("verdict", ← ctorTree value), ("theorem", ← theoremJson thm)]
+/-- The components of a cell: a constructor, a tuple of them, or `()`. -/
+partial def cellOf (c : Expr) : MetaM (List Name) := do
+  let c := c.consumeMData
+  if c.isAppOfArity ``Prod.mk 4 then
+    return (← cellOf c.appFn!.appArg!) ++ (← cellOf c.appArg!)
+  if c.isConstOf ``PUnit.unit || c.isConstOf ``Unit.unit then return []
+  return [← nameOf c]
 
-open Eval.Projection
+/-- The conjuncts of a statement. -/
+partial def conjuncts (e : Expr) : MetaM (List Expr) := do
+  match (← whnfR e).and? with
+  | some (a, b) => return (← conjuncts a) ++ (← conjuncts b)
+  | none => return [e]
 
-def chemlaSchlenker2012 (accounts constructions orders : List Name) : MetaM (Array Json) := do
-  let mut rows := #[]
-  for k in constructions do
-    for o in orders do
-      let cell := s!"{k.getString!}.{o.getString!}"
-      let obs ← mkAppM ``ChemlaSchlenker2012.observed_eq #[mkConst k, mkConst o]
-      rows := rows.push <| Json.mkObj [("dataset", "chemla-schlenker-2012"), ("cell", toJson cell),
-        ("observed", ← ctorTree (← rhs obs 2 2)),
-        ("theorem", ← theoremJson ``ChemlaSchlenker2012.observed_eq)]
-      for a in accounts do
-        let pf ← mkAppM ``ChemlaSchlenker2012.verdict_eq #[mkConst a, mkConst k, mkConst o]
-        rows := rows.push (← verdictRow "chemla-schlenker-2012" a.toString cell
-          ``ChemlaSchlenker2012.verdict_eq (← rhs pf 2 2))
-      let pf ← mkAppM ``Lab.Colinguistics.verdict_chemlaSchlenker2012 #[mkConst k, mkConst o]
-      rows := rows.push (← verdictRow "chemla-schlenker-2012"
-        (``Lab.Colinguistics.limitedSymmetry).toString cell
-        ``Lab.Colinguistics.verdict_chemlaSchlenker2012 (← rhs pf))
-  return rows
+/-- Every assignment of constructors to the variables. -/
+def assignments : List (List Name) → List (List Expr)
+  | [] => [[]]
+  | cs :: rest => cs.flatMap fun c ↦ (assignments rest).map (mkConst c :: ·)
 
-def chemla2009a (accounts : List Name) : MetaM (Array Json) := do
-  let parsers := [(``Chemla2009a.global, ``Chemla2009a.stipulations_global,
-      ``Chemla2009a.verdict_global),
-    (``Chemla2009a.stipulated, ``Chemla2009a.stipulations_stipulated,
-      ``Chemla2009a.verdict_stipulated),
-    (``Chemla2009a.oneStep, ``Chemla2009a.stipulations_oneStep, ``Chemla2009a.verdict_oneStep)]
-  let mut rows := #[Json.mkObj [("dataset", "chemla-2009a"), ("cell", "experiment1"),
-    ("observed", ← ctorTree (← rhs (mkConst ``Chemla2009a.observed_eq))),
-    ("theorem", ← theoremJson ``Chemla2009a.observed_eq)],
-    Json.mkObj [("dataset", "chemla-2009a"),
-      ("graduation", ← theoremJson ``Chemla2009a.parse_oneStep)]]
-  for (i, parser, stipulations, verdict) in (List.range 3).zip parsers do
-    let elems ← literalElems (← rhs (mkConst stipulations))
-    rows := rows.push <| Json.mkObj [("dataset", "chemla-2009a"), ("parser", ← declJson parser),
-      ("stipulations", toJson (← elems.mapM ctorTree)), ("theorem", ← theoremJson stipulations)]
-    for a in accounts do
-      let pf ← mkAppM verdict #[mkConst a]
-      rows := rows.push (← verdictRow "chemla-2009a" a.toString parser.getString! verdict
-        (← rhs pf))
-    rows := rows.push (← verdictRow "chemla-2009a" (``Lab.Colinguistics.limitedSymmetry).toString
-      parser.getString! ``Lab.Colinguistics.verdict_chemla2009a
-      (← rhs (mkConst ``Lab.Colinguistics.verdict_chemla2009a) (i + 1) 3))
-  return rows
+/-- Whether a statement is a claim the export reads. -/
+def isClaim (e : Expr) : Bool :=
+  match e.eq? with
+  | some (_, l, _) => l.isAppOfArity `Eval.Experiment.verdict 7 ||
+      l.isAppOfArity `Eval.Experiment.observed 5 || l.isAppOfArity `Eval.Parser.stipulations 4 ||
+      l.isAppOfArity `Eval.Parser.parse 6
+  | none => false
 
+/-- What the export collects. -/
+structure Out where
+  verdicts : Array Json := #[]
+  observed : Array Json := #[]
+  stipulations : Array Json := #[]
+  sameParse : Array Json := #[]
+  names : Std.HashSet Name := {}
+
+/-- Read one claim, instantiated. -/
+def readClaim (thm : Name) (claim : Expr) (out : Out) : MetaM Out := do
+  let some (_, l, r) := claim.eq? | return out
+  let src := toJson thm.toString
+  let args := l.getAppArgs
+  if l.isAppOfArity `Eval.Experiment.verdict 7 then
+    let X ← nameOf args[4]!
+    let (T, v) ← theoryOf args[5]!
+    let c ← cellOf args[6]!
+    let names := ((c ++ v.toList).foldl (·.insert ·) out.names).insert X |>.insert T
+    return { out with names, verdicts := out.verdicts.push <| Json.mkObj [
+      ("experiment", toJson X.toString), ("theory", toJson T.toString),
+      ("variant", toJson (v.map Name.toString)), ("cell", toJson (c.map Name.toString)),
+      ("verdict", ← ctorTree r), ("theorem", src)] }
+  if l.isAppOfArity `Eval.Experiment.observed 5 then
+    let X ← nameOf args[3]!
+    let c ← cellOf args[4]!
+    return { out with observed := out.observed.push <| Json.mkObj [
+      ("experiment", toJson X.toString), ("cell", toJson (c.map Name.toString)),
+      ("observed", ← ctorTree r), ("theorem", src)] }
+  if l.isAppOfArity `Eval.Parser.stipulations 4 then
+    let v ← nameOf args[3]!
+    let sentences ← (← literalElems r).mapM nameOf
+    let row := Json.mkObj [("variant", toJson v.toString),
+      ("sentences", toJson (sentences.map Name.toString)), ("theorem", src)]
+    return { out with names := out.names.insert v, stipulations := out.stipulations.push row }
+  let some π' := r.getAppArgs[3]? | throwError "not a parse: {r}"
+  return { out with sameParse := out.sameParse.push <| Json.mkObj [
+    ("variant", toJson (← nameOf args[3]!).toString), ("as", toJson (← nameOf π').toString),
+    ("theorem", src)] }
+
+/-- Read one theorem, if it is a claim about experiments or parsers whose variables range over
+enumerations. -/
+def readTheorem (thm : Name) (ty : Expr) (out : Out) : MetaM Out :=
+  forallTelescope ty fun xs body ↦ do
+    let mut ctors := []
+    for x in xs do
+      let some cs ← enumCtors (← inferType x) | return out
+      ctors := ctors ++ [cs]
+    let claims ← conjuncts body
+    unless claims.all isClaim do return out
+    if (← collectAxioms thm).contains ``sorryAx then throwError "{thm} depends on sorry"
+    let mut out := { out with names := out.names.insert thm }
+    for vals in assignments ctors do
+      for claim in claims do
+        out ← readClaim thm (claim.replaceFVars xs vals.toArray) out
+    return out
+
+/-- Read every theorem of the libraries. -/
 def exportAll : MetaM Json := do
-  let accounts ← ctors ``Account
-  let theories := (← accounts.mapM fun a ↦ return Json.mkObj [("id", toJson a.toString),
-      ("source", "registered"), ("decl", ← declJson a)]) ++
-    [Json.mkObj [("id", toJson (``Lab.Colinguistics.limitedSymmetry).toString), ("source", "lab"),
-      ("decl", ← declJson ``Lab.Colinguistics.limitedSymmetry)]]
-  let rows := (← chemlaSchlenker2012 accounts (← ctors ``_root_.ChemlaSchlenker2012.Construction)
-    (← ctors ``_root_.ChemlaSchlenker2012.Order)) ++ (← chemla2009a accounts)
-  return Json.mkObj [("theories", toJson theories), ("rows", toJson rows)]
+  let env ← getEnv
+  let mut out : Out := {}
+  for (n, info) in env.constants.map₁.toList do
+    let .thmInfo t := info | continue
+    if n.isInternal then continue
+    let some i := env.getModuleIdxFor? n | continue
+    unless libraries.contains env.header.moduleNames[i.toNat]!.getRoot.toString do continue
+    out ← readTheorem n t.type out
+  let names ← out.names.toList.mapM fun n ↦ return (n.toString, ← named n)
+  return Json.mkObj [("verdicts", toJson out.verdicts), ("observed", toJson out.observed),
+    ("stipulations", toJson out.stipulations), ("sameParse", toJson out.sameParse),
+    ("names", Json.mkObj names)]
 
 end EvalPage
 

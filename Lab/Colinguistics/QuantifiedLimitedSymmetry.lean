@@ -390,22 +390,31 @@ def limitedSymmetry : Theory := ⟨Kalomoiros2023.TranspLS, some fun _ _ _ ↦ C
 cell, as the registered account is. -/
 theorem verdict_chemlaSchlenker2012 (k : _root_.ChemlaSchlenker2012.Construction)
     (o : _root_.ChemlaSchlenker2012.Order) :
-    ChemlaSchlenker2012.verdict ChemlaSchlenker2012.observed1 limitedSymmetry k o =
-      if k = .unlessSentence ∧ o = .canonical then .silent else .correct := by
-  rw [show ChemlaSchlenker2012.verdict ChemlaSchlenker2012.observed1 limitedSymmetry k o =
-      ChemlaSchlenker2012.verdict ChemlaSchlenker2012.observed1 Account.limitedSymmetry.theory k o
-    from rfl, (ChemlaSchlenker2012.verdict_eq _ k o).2]
+    ChemlaSchlenker2012.experiment1.verdict limitedSymmetry (k, o) =
+        (if k = .unlessSentence ∧ o = .canonical then .silent else .correct) ∧
+      ChemlaSchlenker2012.experiment4.verdict limitedSymmetry (k, o) =
+        if k = .unlessSentence ∧ o = .canonical then .silent else .correct := by
+  -- Limited Symmetry accepts a formula as the registered account does.
+  have h1 : ChemlaSchlenker2012.experiment1.verdict limitedSymmetry (k, o) =
+      ChemlaSchlenker2012.experiment1.verdict Account.limitedSymmetry.theory (k, o) := rfl
+  have h4 : ChemlaSchlenker2012.experiment4.verdict limitedSymmetry (k, o) =
+      ChemlaSchlenker2012.experiment4.verdict Account.limitedSymmetry.theory (k, o) := rfl
+  rw [h1, h4, ChemlaSchlenker2012.verdict_experiment1, ChemlaSchlenker2012.verdict_experiment4]
   simp [ChemlaSchlenker2012.incremental]
 
 /-- On Chemla's first experiment, Limited Symmetry is wrong with every presupposition accommodated
 in the context, and right by §4.1.2's stipulations and by the one-step rule. -/
-theorem verdict_chemla2009a :
-    Chemla2009a.verdict limitedSymmetry Chemla2009a.global = .wrong ∧
-      Chemla2009a.verdict limitedSymmetry Chemla2009a.stipulated = .correct ∧
-      Chemla2009a.verdict limitedSymmetry Chemla2009a.oneStep = .correct := by
-  have h := Chemla2009a.verdict_oneStep_of (T := limitedSymmetry) rfl
-    (fun _ _ _ _ _ _ h ↦ ClauseLS.transpS _ h) fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho
-  exact ⟨Chemla2009a.verdict_global_of rfl fun _ _ _ _ _ _ h ↦ ClauseLS.transpS _ h,
-    (Chemla2009a.verdict_stipulated_eq _).trans h, h⟩
+theorem verdict_chemla2009a (p : Chemla2009a.Accommodation) :
+    Chemla2009a.experiment1.verdict (limitedSymmetry, p) () =
+      if p = .global then .wrong else .correct := by
+  have hT : ∀ Atom W E I C c, ClauseLS (Atom := Atom) (W := W) (E := E) I C c →
+      Schlenker2009.QuantifiedClause.TranspS I C c := fun _ _ _ _ _ _ h ↦ ClauseLS.transpS _ h
+  have h := Chemla2009a.verdict_oneStep_of (T := limitedSymmetry) rfl hT
+    fun _ _ _ _ _ _ hc o ho ↦ by simp [hc] at ho
+  rw [Chemla2009a.verdict_experiment1_eq]
+  cases p
+  · exact Chemla2009a.verdict_global_of rfl hT
+  · exact (Chemla2009a.verdict_stipulated_eq _).trans h
+  · exact h
 
 end Lab.Colinguistics
