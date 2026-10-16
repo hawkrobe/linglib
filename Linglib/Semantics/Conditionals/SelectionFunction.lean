@@ -32,8 +32,9 @@ the conditional of the closest worlds.
 ## Main results
 
 * `SelectionFunction.exists_sel_eq`: outside a proposition any of its worlds can be selected.
-* `SelectionFunction.modal_eq_core`, `SelectionFunction.modal_inter_refl`: the selectional modal
-  along a relation is necessity along a function, idle where the relation is reflexive.
+* `SelectionFunction.modal_eq_core`, `SelectionFunction.modal_inter_refl`,
+  `SelectionFunction.modal_eq_id`: the selectional modal along a relation is necessity along a
+  function, idle where the relation is reflexive and the identity along a reflexive relation.
 * `SelectionFunction.Compatible.isCSO`: selection by a completion satisfies condition (4).
 * `mem_closestImp_iff_forall_compatible`: the conditional of the closest worlds is the
   supervaluation over completions.
@@ -178,6 +179,12 @@ theorem modal_inter_refl (A : Set W) : s.modal R A ∩ {w | w ~[R] w} = A ∩ {w
   Set.ext fun w ↦ and_congr_left fun h ↦ by
     change s.along R w ∈ A ↔ w ∈ A
     rw [along_eq_self (R := R) h]
+
+/-- Along a reflexive relation selection is idle, so the selectional modal is the identity. -/
+theorem modal_eq_id [R.IsRefl] : s.modal R = CompleteLatticeHom.id (Set W) := by
+  ext A w
+  change s.along R w ∈ A ↔ w ∈ A
+  rw [along_eq_self R.rfl]
 
 end SelectionFunction
 
