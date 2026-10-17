@@ -9,6 +9,7 @@ syntactic-monoid and variety substrate.
 module
 
 public import Mathlib.Order.CompleteLattice.Finset
+public import Linglib.Core.Algebra.FreeMonoid.Basic
 public import Linglib.Core.Computability.Variety.Langs
 
 /-!
@@ -124,19 +125,10 @@ theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
   exact .of_recognizes h.2 _ S (Set.ext_iff.mp hS)
 
 /-- Star-free languages are closed under preimage by erasure, the instance of `IsStarFree.comap`
-for the homomorphism `List.filter p` that erases the letters failing `p`. -/
+for `FreeMonoid.filter p`, which erases the letters failing `p`. -/
 theorem IsStarFree.preimage_filter (h : L.IsStarFree) (p : α → Bool) :
-    IsStarFree {w | w.filter p ∈ L} := by
-  have e (w : List α) : (FreeMonoid.lift fun a ↦ if p a then FreeMonoid.of a else 1)
-      (FreeMonoid.ofList w) = FreeMonoid.ofList (w.filter p) := by
-    induction w with
-    | nil => rfl
-    | cons a w ih =>
-      rw [FreeMonoid.ofList_cons, map_mul, FreeMonoid.lift_eval_of, ih, List.filter_cons]
-      split <;> rfl
-  have := h.comap (FreeMonoid.lift fun a ↦ if p a then FreeMonoid.of a else 1)
-  simp only [e] at this
-  exact this
+    IsStarFree {w | w.filter p ∈ L} :=
+  h.comap (FreeMonoid.filter p)
 
 /-- The full language is star-free. -/
 theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=
