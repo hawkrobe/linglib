@@ -40,7 +40,7 @@ open PolarityItem
     (A266) and the free-choice span but not under direct negation, where
     *?Tā bù xǐhuan shéi* is degraded while *shénme* is perfect (A267,
     [li-1992] p. 150); that slot belongs to the emphatic series. -/
-noncomputable def shei : PolarityItem :=
+def shei : PolarityItem :=
   { form := "shéi"
   , licensor := some .weak
   , freeChoice := true
@@ -53,7 +53,7 @@ noncomputable def shei : PolarityItem :=
     shénme* 'He does not like anything' (A267). It also occurs in the irrealis imperative *Chī
     diǎn shénme zài zǒu ba!* 'Please eat a little something before you
     leave' (A264, [li-1992] p. 152) and in conditionals (A266). -/
-noncomputable def shenme : PolarityItem :=
+def shenme : PolarityItem :=
   { form := "shénme"
   , licensor := some .weak
   , freeChoice := true
@@ -96,16 +96,14 @@ def renhe : PolarityItem :=
 
 /-- Every attested context of every entry admits it. -/
 theorem mandarin_licensing_sound :
-    ∀ e ∈ [shei, shenme, sheiDou, renhe], ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp only [shei, shenme, sheiDou, renhe, List.forall_mem_cons, List.not_mem_nil,
-    IsEmpty.forall_iff, implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ [shei, shenme, sheiDou, renhe], ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
+  decide
 
 /-- The emphatic series needs clausemate negation, so it is licensed exactly by the contexts
 carrying anti-morphic strength, clausal negation alone among the named contexts. -/
 theorem sheiDou_licensing_characterized (c : LicensingContext) :
-    c.Licenses sheiDou ↔ c.licenser.Carries .antiMorphic :=
-  LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
+    c.licenser.Licenses sheiDou ↔ c.licenser.Carries .antiMorphic :=
+  Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- Direct negation is attested with *shénme* but not with bare *shéi*,
     whose direct-negation slot the emphatic series fills instead. -/
@@ -113,9 +111,6 @@ theorem direct_negation_asymmetry :
     .negation ∈ shenme.licensingContexts ∧
       .negation ∉ shei.licensingContexts ∧
       .negation ∈ sheiDou.licensingContexts := by
-  refine ⟨by simp [shenme], fun h ↦ ?_, by simp [sheiDou]⟩
-  simp only [shei, List.mem_cons, List.not_mem_nil, or_false] at h
-  rcases h with h | h | h | h | h | h | h <;>
-    exact absurd (congrArg LicensingContext.haspelmath h) (by decide)
+  decide
 
 end Mandarin.PolarityItems

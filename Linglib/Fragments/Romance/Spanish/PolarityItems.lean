@@ -41,7 +41,7 @@ open PolarityItem
 whether anyone can pass as a native', *la mayor tontería que haya dicho nadie* 'the most stupid
 thing anyone has said', *él tenía la culpa por llegar antes que nadie* 'it was his fault for
 arriving before anyone else'. -/
-noncomputable def nadie : PolarityItem :=
+def nadie : PolarityItem :=
   { form := "nadie", licensor := some .weak,
     licensingContexts :=
       [.negation, .nobody, .superlative, .doubtVerb, .denyVerb, .sinceTemporal, .tooTo,
@@ -58,37 +58,36 @@ def nada : PolarityItem :=
 /-- *ninguno* 'none', 'any', as in *es más lista que ninguno de los otros* 'she's cleverer than any
 of the others', literary *si he sido insincero con ninguno de vosotros* 'if I have been insincere
 with any of you'. -/
-noncomputable def ninguno : PolarityItem :=
+def ninguno : PolarityItem :=
   { form := "ninguno", licensor := some .weak,
     licensingContexts := [.negation, .nobody, .clausalComparative, .conditionalAntecedent] }
 
 /-- *nunca* 'never', 'ever', as in *salió más temprano que nunca* 'she went out earlier than ever
 before', *¿quién hubiera pensado nunca que se casaría con Julia?* 'who would ever have thought
 he'd have married Julia?'. -/
-noncomputable def nunca : PolarityItem :=
+def nunca : PolarityItem :=
   { form := "nunca", licensor := some .weak,
     licensingContexts := [.negation, .nobody, .clausalComparative, .superlative, .question] }
 
 /-- *jamás* 'never', 'ever' is stronger and less common than *nunca*, as in *el mejor que jamás
 hubiera* 'the best that ever was', and is never used after a comparative. -/
-noncomputable def jamás : PolarityItem :=
+def jamás : PolarityItem :=
   { form := "jamás", licensor := some .weak,
     licensingContexts := [.negation, .superlative, .question],
     excludedContexts := [.clausalComparative] }
 
 /-- The polarity items. -/
-noncomputable def items : List PolarityItem := [nadie, nada, ninguno, nunca, jamás]
+def items : List PolarityItem := [nadie, nada, ninguno, nunca, jamás]
 
 /-- Every attested context of every entry licenses it. -/
 theorem spanish_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp only [nadie, nada, ninguno, nunca, jamás, items, List.forall_mem_cons, List.not_mem_nil,
-    IsEmpty.forall_iff, implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
+  decide
 
 /-- The licensing theory admits *jamás* after a comparative, where [butt-benjamin-2019] exclude
 it, because a weak negative polarity item is licensed by every anti-additive context. -/
-theorem clausalComparative_admits_jamás : LicensingContext.clausalComparative.Admits jamás := by
+theorem clausalComparative_admits_jamás :
+    LicensingContext.clausalComparative.licenser.Admits jamás := by
   decide
 
 end Spanish.PolarityItems

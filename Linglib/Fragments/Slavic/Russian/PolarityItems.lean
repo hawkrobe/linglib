@@ -35,7 +35,7 @@ open PolarityItem
 
 /-- *kto-libo* (кто-либо) 'anyone', a weak negative polarity item, licensed in questions,
 conditionals, comparatives and under indirect negation. -/
-noncomputable def ktoLibo : PolarityItem :=
+def ktoLibo : PolarityItem :=
   { form := Indefinites.ktoLibo.form
   , licensor := some .weak
   , licensingContexts := [.question, .conditionalAntecedent, .negation, .clausalComparative] }
@@ -74,7 +74,7 @@ def ktoUgodno : PolarityItem :=
 /-! ### The entries -/
 
 /-- The polarity items. -/
-noncomputable def items : List PolarityItem :=
+def items : List PolarityItem :=
   [ktoLibo, nikto, nichego, nikogda, ktoUgodno]
 
 /-! ### Verification -/
@@ -83,17 +83,15 @@ noncomputable def items : List PolarityItem :=
 clausal negation alone among the named contexts. -/
 theorem niSeries_licensing_characterized :
     ∀ e ∈ [nikto, nichego, nikogda], ∀ c : LicensingContext,
-      c.Licenses e ↔ c.licenser.Carries .antiMorphic := by
+      c.licenser.Licenses e ↔ c.licenser.Carries .antiMorphic := by
   intro e he c
   simp only [List.mem_cons, List.not_mem_nil, or_false] at he
   rcases he with rfl | rfl | rfl <;>
-    exact LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
+    exact Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- Every attested context of every entry admits it. -/
 theorem russian_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp only [ktoLibo, nikto, nichego, nikogda, ktoUgodno, items, List.forall_mem_cons,
-    List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
+  decide
 
 end Russian.PolarityItems

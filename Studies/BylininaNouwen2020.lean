@@ -132,7 +132,7 @@ theorem poss_eq_iff_lowScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
   simp only [Spector2013.poss, exists_mem_image, Comparison.interval_eq, lowScope_maxIn]
   rfl
 
-/-- Over *some students* the high reading (39) is strictly stronger than the low one: it entails
+/-- Over *some students* the high reading (39) is strictly stronger than the low one. It entails
 the low one (`Degree.lowScope_some_of_highScope`), and a student answering `n` questions with
 another answering `n + 1` makes the low reading true and (39) false. -/
 theorem lowScope_some_not_highScope (n : ℕ) :
@@ -153,8 +153,8 @@ theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = ident n :=
   funext fun x ↦ propext (maxIn_singleton.trans
     ⟨fun h ↦ (h.1 : n = x).symm, fun h ↦ h ▸ isGreatest_singleton⟩)
 
-/-- Lowering forgets the upper bound: `BE` sends the exactly-reading quantifier where it sends the
-lower-bound one. -/
+/-- Lowering forgets the upper bound, since `BE` sends the exactly-reading quantifier where it sends
+the lower-bound one. -/
 theorem BE_maxIn_singleton_eq_BE_individual (n : ℕ) : BE (MaxIn {n}) = BE (individual n) := by
   rw [BE_maxIn_singleton, BE_individual]
 
@@ -200,15 +200,15 @@ theorem MAX_individual_zero_iff [DecidableEq α] {A B : Set α} :
 
 section Polarity
 
-open PolarityItem (LicensingContext NonemptyPredicate)
+open PolarityItem (NonemptyPredicate)
 open scoped Classical
 
-/-- With `MAX` apart from the numeral, *zero* is a scalar licenser: the lower-bound numeral below
+/-- With `MAX` apart from the numeral, *zero* is a scalar licenser, the lower-bound numeral below
 `MAX` and its `MAX` above it. -/
-def zeroWithMAX : LicensingContext :=
-  ⟨.scalar ⟨⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
+def zeroWithMAX : PolarityItem.Licenser :=
+  .scalar ⟨⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
       fun p B ↦ individual 0 (countDegrees p.A (plural B))⟩,
-    fun p B ↦ MAX (individual 0) (countDegrees p.A (plural B))⟩, none⟩
+    fun p B ↦ MAX (individual 0) (countDegrees p.A (plural B))⟩
 
 /-- It is the *zero* of [bylinina-nouwen-2018], since `MAX` is exhaustification at its site. -/
 theorem zeroWithMAX_eq_zero : zeroWithMAX = BylininaNouwen2018.zero := by

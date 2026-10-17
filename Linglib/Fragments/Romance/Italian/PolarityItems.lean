@@ -81,7 +81,7 @@ cappello* 'I've never seen him hatless', *Nessuno è mai arrivato puntuale* 'Nob
 arrived on time', *Hai mai letto I promessi sposi?* 'Have you ever read The Betrothed?', *l'uomo
 più dolce e più grande che abbia mai incontrato* 'the sweetest and greatest man I have ever
 encountered', *Piove più che mai* 'It rains more than ever'. -/
-noncomputable def mai : PolarityItem :=
+def mai : PolarityItem :=
   { form := "mai"
   , licensor := some .weak
   , licensingContexts :=
@@ -93,7 +93,7 @@ seen anyone', *Dubito che Gianni abbia comprato alcun libro* 'I doubt that Giann
 book', *Se Gianni avesse comprato alcun libro, ce lo avrebbe detto* 'If Gianni had bought any
 book, he would have told us', against *\*Ho comprato alcun libro*. The plural *alcuni* 'some' is
 a plain indefinite. -/
-noncomputable def alcuno : PolarityItem :=
+def alcuno : PolarityItem :=
   { form := "alcuno"
   , licensor := some .weak
   , licensingContexts := [.negation, .withoutClause, .doubtVerb, .conditionalAntecedent] }
@@ -139,14 +139,12 @@ def unoQualsiasi : PolarityItem :=
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative] }
 
 /-- The polarity items. -/
-noncomputable def items : List PolarityItem :=
+def items : List PolarityItem :=
   [nessuno, niente, neanche, mai, alcuno, pur, affatto, qualsiasi, unoQualsiasi]
 
 /-- Every attested context of every entry admits it. -/
 theorem italian_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp only [nessuno, niente, neanche, mai, alcuno, pur, affatto, qualsiasi, unoQualsiasi, items,
-    List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
+  decide
 
 end Italian.PolarityItems

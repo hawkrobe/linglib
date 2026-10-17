@@ -16,30 +16,40 @@ public import Mathlib.Basic.Rel
 /-!
 # Licensing contexts
 
-A licensing context is a construction that can host a polarity item, given by the licenser it
-places over the item and by the function of Haspelmath's implicational map it realizes, where it
-realizes one. Each context below is named for its construction, and what its licenser carries is
-a theorem about the operators it denotes. Clausal negation is anti-morphic. *Nobody*, the
-restrictor of a universal, *without*, *deny*, *before*, *too … to* and the clausal comparative are
-anti-additive and no more, and *doubt* downward entailing and no more. *Few* and *at most* are
-scalar: downward entailing, and not even that once exhaustified against the stronger *no* and *at
-most n − 1*, the determiner exhaustification `Quantifier.GQ.exhaustified`. Every downward
+A licensing context is a construction that can host a polarity item. It places a licenser over the
+item and realizes a function of Haspelmath's implicational map, where it realizes one, and what its
+licenser carries is a theorem about the operators it denotes. Clausal negation is anti-morphic.
+*Nobody*, the restrictor of a universal, *without*, *deny*, *before*, *too … to* and the clausal
+comparative are anti-additive and no more, and *doubt* downward entailing and no more. *Few* and *at
+most* are scalar: downward entailing, and not even that once exhaustified against the stronger *no*
+and *at most n − 1*, the determiner exhaustification `Quantifier.GQ.exhaustified`. Every downward
 entailing context is so non-trivially. Focus *only*, adversatives, superlatives, conditional
 antecedents and temporal *since* are downward entailing only modulo their presuppositions, the
 modals, imperatives, generics and free relatives are modal licensers, and questions license by
-relevance. The inventory is open: a fragment or a study can define a context of its own.
+relevance. A study can state the theory of a licenser of its own; the named constructions are the
+shared inventory that lexical entries cite.
 
 ## Main declarations
 
-* `PolarityItem.LicensingContext`: a construction, given by its licenser and its function on
-  Haspelmath's map.
+* `PolarityItem.LicensingContext`: the named constructions.
+* `PolarityItem.LicensingContext.licenser`, `PolarityItem.LicensingContext.haspelmath`: the
+  operator a construction places over the item and its function on Haspelmath's map.
 * `Quantifier.GQ.exhaustified`: a determiner exhaustified against its scale-mates.
-* `PolarityItem.LicensingContext.negation`, `PolarityItem.LicensingContext.nobody`, …: the
-  contexts, each with its certificates (`holds_negation`, `holds_nobody_iff`,
-  `not_isStrawsonUE_nobody`, `not_holds_exhaustified_few`, …).
+* `PolarityItem.LicensingContext.holds_negation`, `holds_nobody_iff`, `not_isStrawsonUE_nobody`,
+  `not_holds_exhaustified_few`, …: the certificates of each context's licenser.
 
 ## Implementation notes
 
+* A context is a name, so the lexical entries that list the contexts an item is attested in are
+  computable data with decidable equality, while the licenser, often defined classically, is a
+  function of the name. Distinct constructions can share a licenser: the necessity modal, the
+  imperative, the generic and the free relative are all necessities, and the clausal comparative
+  and *too … to* both exceed the clause's degrees.
+* The inventory is the contexts the library gives a semantics, not an exhaustive list. It realizes
+  six of Haspelmath's nine functions; the irrealis non-specific function, where nonveridical rather
+  than downward-entailing operators license, has no context yet, and neither do many licensers of
+  the downward-entailing literature, such as negative adverbs, *neither … nor*, the restrictor of
+  *no* or *not every*.
 * *Before* is Anscombe's universal reading, *before ever*. *Too … to* is the
   subject's degree exceeding every degree at which the infinitive holds, after Meier. *Doubt* is not
   believing and *deny* asserting the negation, over a doxastic or assertoric accessibility.
@@ -109,13 +119,69 @@ namespace PolarityItem
 
 open NaturalLogic Presupposition Quantifier Quantifier.GQ Tense Indefinite
 
-/-- A licensing context is a construction that can host a polarity item, given by the licenser it
-places over the item and the function of [haspelmath-1997]'s implicational map it realizes. -/
-structure LicensingContext where
-  /-- The operator family over the item's position. -/
-  licenser : Licenser
-  /-- The function of the implicational map the construction realizes, if any. -/
-  haspelmath : Option HaspelmathFunction
+/-- A licensing context is a construction that can host a polarity item. What it does to the item
+is the licenser it places over the item's position (`LicensingContext.licenser`), and where it sits
+typologically is the function of [haspelmath-1997]'s implicational map it realizes
+(`LicensingContext.haspelmath`). Distinct constructions can share a licenser, as the necessity
+modal, the imperative, the generic and the free relative do. -/
+inductive LicensingContext where
+  /-- Clausal negation, as in *not*, complement over predicates. -/
+  | negation
+  /-- A negative quantifier, as in *nobody*, over a restrictor true of something. -/
+  | nobody
+  /-- *Few* NP, the proportional reading of the English fragment, below the stronger *no* on its
+  scale. -/
+  | few
+  /-- *At most n* NP, below the stronger *at most n − 1* on its scale. -/
+  | atMost
+  /-- The restrictor of a universal, as in *everyone who*, over a scope false of something. -/
+  | universalRestrictor
+  /-- A *without*-phrase, the matrix predicate holding without the phrase's. -/
+  | withoutClause
+  /-- A *before*-clause, Anscombe's universal *before*. -/
+  | beforeClause
+  /-- A clausal comparative, *taller than S*, the individual above every degree of the clause. -/
+  | clausalComparative
+  /-- *Too* ADJ *to* VP, the individual above every degree at which the infinitive holds. -/
+  | tooTo
+  /-- A verb of doubting, as in *I doubt that*, which does not believe its complement. -/
+  | doubtVerb
+  /-- A verb of denying, as in *she denied that*, which asserts the negation of its complement. -/
+  | denyVerb
+  /-- The scope of focus *only*, von Fintel's *only*. -/
+  | onlyFocus
+  /-- An adversative predicate, as in *sorry*, *surprised*, *regret*. -/
+  | adversative
+  /-- A superlative, in its comparison class. -/
+  | superlative
+  /-- The antecedent of a conditional, the modal-horizon counterfactual. -/
+  | conditionalAntecedent
+  /-- Temporal *since*, as in *it's been five years since*. -/
+  | sinceTemporal
+  /-- A question. -/
+  | question
+  /-- A possibility modal. -/
+  | modalPossibility
+  /-- A necessity modal. -/
+  | modalNecessity
+  /-- An imperative, a necessity over what is commanded. -/
+  | imperative
+  /-- A generic sentence, a necessity over normal worlds. -/
+  | generic
+  /-- A free relative, as in *whatever*, *whoever*, a necessity over its alternatives. -/
+  | freeRelative
+  deriving DecidableEq, Fintype, Repr
+
+/-- The function of [haspelmath-1997]'s implicational map a construction realizes, if any. -/
+def LicensingContext.haspelmath : LicensingContext → Option HaspelmathFunction
+  | negation => some .directNeg
+  | withoutClause | doubtVerb | denyVerb => some .indirectNeg
+  | clausalComparative => some .comparative
+  | conditionalAntecedent => some .conditional
+  | question => some .question
+  | modalPossibility | modalNecessity | imperative | generic | freeRelative => some .freeChoice
+  | nobody | few | atMost | universalRestrictor | beforeClause | tooTo | onlyFocus | adversative
+  | superlative | sinceTemporal => none
 
 /-! ### The parameters of the operator families -/
 
@@ -253,111 +319,46 @@ attribute [instance] Ago.ord
 
 namespace LicensingContext
 
-/-! ### The contexts -/
-
-/-- Clausal negation, as in *not*, complement over predicates. -/
-def negation : LicensingContext :=
-  ⟨.classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ compl⟩, some .directNeg⟩
-
-/-- A negative quantifier, as in *nobody*, over a restrictor true of something. -/
-def nobody : LicensingContext :=
-  ⟨.classical ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.no p.A⟩, none⟩
-
-/-- *Few* NP, the proportional reading of the English fragment, below the stronger *no* on its
-scale. -/
-def few : LicensingContext :=
-  ⟨.scalar ⟨⟨FinitePredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.few p.A⟩,
-    fun p ↦ GQ.exhaustified GQ.few {GQ.no} p.A⟩, none⟩
-
-/-- *At most n* NP, below the stronger *at most n − 1* on its scale. -/
-def atMost : LicensingContext :=
-  ⟨.scalar ⟨⟨BoundedPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.atMost p.n p.A⟩,
-    fun p ↦ GQ.exhaustified (GQ.atMost p.n) {GQ.atMost (p.n - 1)} p.A⟩, none⟩
-
-/-- The restrictor of a universal, as in *everyone who*, over a scope false of something. -/
-def universalRestrictor : LicensingContext :=
-  ⟨.classical ⟨NonuniversalPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
-    fun p R ↦ GQ.every R p.A⟩, none⟩
-
-/-- A *without*-phrase, the matrix predicate holding without the phrase's. -/
-def withoutClause : LicensingContext :=
-  ⟨.classical ⟨Predicate, fun p ↦ p.ι → Prop, fun p ↦ p.ι → Prop, fun p V ↦ p.A ⊓ Vᶜ⟩,
-    some .indirectNeg⟩
-
-/-- A *before*-clause, Anscombe's universal *before*. -/
-def beforeClause : LicensingContext :=
-  ⟨.classical ⟨MainClause, fun p ↦ Set (NonemptyInterval p.T), fun _ ↦ Prop,
-    fun p ↦ beforeEver p.A⟩, none⟩
+/-! ### The licensers of the contexts -/
 
 /-- The degrees a clause leaves the compared individual above. -/
 abbrev exceedsFamily : OperatorFamily :=
   ⟨Measured, fun p ↦ Set p.D, fun _ ↦ Prop, fun p Δ ↦ p.μ p.x ∈ strictUpperBounds Δ⟩
 
-/-- A clausal comparative, *taller than S*, the individual above every degree of the clause. -/
-def clausalComparative : LicensingContext := ⟨.classical exceedsFamily, some .comparative⟩
-
-/-- *Too* ADJ *to* VP, the individual above every degree at which the infinitive holds. -/
-def tooTo : LicensingContext := ⟨.classical exceedsFamily, none⟩
-
-/-- A verb of doubting, as in *I doubt that*, which does not believe its complement. -/
-def doubtVerb : LicensingContext :=
-  ⟨.classical ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩,
-    some .indirectNeg⟩
-
-/-- A verb of denying, as in *she denied that*, which asserts the negation of its complement. -/
-def denyVerb : LicensingContext :=
-  ⟨.classical ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop,
-    fun p P ↦ p.w ∈ p.R.core Pᶜ⟩, some .indirectNeg⟩
-
-/-- The scope of focus *only*, von Fintel's *only*. -/
-noncomputable def onlyFocus : LicensingContext :=
-  ⟨.strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W, fun p ↦ only p.x⟩, none⟩
-
-/-- An adversative predicate, as in *sorry*, *surprised*, *regret*. -/
-noncomputable def adversative : LicensingContext :=
-  ⟨.strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
-    fun p ↦ Desire.BestWorlds.regret p.dox p.base p.g⟩, none⟩
-
-/-- A superlative, in its comparison class. -/
-noncomputable def superlative : LicensingContext :=
-  ⟨.strawson ⟨Superlative, fun p ↦ p.W → Set p.α, fun p ↦ p.W,
-    fun p C ↦ Degree.superlative p.μ C p.x⟩, none⟩
-
-/-- The antecedent of a conditional, the modal-horizon counterfactual. -/
-noncomputable def conditionalAntecedent : LicensingContext :=
-  ⟨.strawson ⟨Horizon, fun p ↦ Set p.W, fun p ↦ p.I,
-    fun p P ↦ Conditional.horizonCounterfactual p.horizon P p.q⟩, some .conditional⟩
-
-/-- Temporal *since*, as in *it's been five years since*. -/
-noncomputable def sinceTemporal : LicensingContext :=
-  ⟨.strawson ⟨Ago, fun p ↦ Set p.T, fun p ↦ p.T, fun p ↦ since p.ago⟩, none⟩
-
-/-- A question. -/
-def question : LicensingContext := ⟨.question, some .question⟩
-
 /-- Necessity over a frame. -/
 abbrev necessityFamily : ModalFamily := ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.core⟩
 
-/-- A possibility modal. -/
-def modalPossibility : LicensingContext :=
-  ⟨.modal ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.preimage⟩, some .freeChoice⟩
-
-/-- A necessity modal. -/
-def modalNecessity : LicensingContext := ⟨.modal necessityFamily, some .freeChoice⟩
-
-/-- An imperative, a necessity over what is commanded. -/
-def imperative : LicensingContext := ⟨.modal necessityFamily, some .freeChoice⟩
-
-/-- A generic sentence, a necessity over normal worlds. -/
-def generic : LicensingContext := ⟨.modal necessityFamily, some .freeChoice⟩
-
-/-- A free relative, as in *whatever*, *whoever*, a necessity over its alternatives. -/
-def freeRelative : LicensingContext := ⟨.modal necessityFamily, some .freeChoice⟩
-
-/-- Contexts realizing different functions of the map are different. -/
-theorem ne_of_haspelmath_ne {c c' : LicensingContext} (h : c.haspelmath ≠ c'.haspelmath) :
-    c ≠ c' :=
-  mt (congrArg haspelmath) h
+/-- The licenser a construction places over the position of a polarity item. -/
+noncomputable def licenser : LicensingContext → Licenser
+  | negation => .classical ⟨Type, fun α ↦ α → Prop, fun α ↦ α → Prop, fun _ ↦ compl⟩
+  | nobody => .classical ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.no p.A⟩
+  | few => .scalar ⟨⟨FinitePredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.few p.A⟩,
+      fun p ↦ GQ.exhaustified GQ.few {GQ.no} p.A⟩
+  | atMost => .scalar
+      ⟨⟨BoundedPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p ↦ GQ.atMost p.n p.A⟩,
+        fun p ↦ GQ.exhaustified (GQ.atMost p.n) {GQ.atMost (p.n - 1)} p.A⟩
+  | universalRestrictor => .classical
+      ⟨NonuniversalPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop, fun p R ↦ GQ.every R p.A⟩
+  | withoutClause => .classical
+      ⟨Predicate, fun p ↦ p.ι → Prop, fun p ↦ p.ι → Prop, fun p V ↦ p.A ⊓ Vᶜ⟩
+  | beforeClause => .classical
+      ⟨MainClause, fun p ↦ Set (NonemptyInterval p.T), fun _ ↦ Prop, fun p ↦ beforeEver p.A⟩
+  | clausalComparative | tooTo => .classical exceedsFamily
+  | doubtVerb => .classical
+      ⟨Accessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∉ p.R.core P⟩
+  | denyVerb => .classical
+      ⟨SerialAccessibility, fun p ↦ Set p.W, fun _ ↦ Prop, fun p P ↦ p.w ∈ p.R.core Pᶜ⟩
+  | onlyFocus => .strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W, fun p ↦ only p.x⟩
+  | adversative => .strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
+      fun p ↦ Desire.BestWorlds.regret p.dox p.base p.g⟩
+  | superlative => .strawson ⟨Superlative, fun p ↦ p.W → Set p.α, fun p ↦ p.W,
+      fun p C ↦ Degree.superlative p.μ C p.x⟩
+  | conditionalAntecedent => .strawson ⟨Horizon, fun p ↦ Set p.W, fun p ↦ p.I,
+      fun p P ↦ Conditional.horizonCounterfactual p.horizon P p.q⟩
+  | sinceTemporal => .strawson ⟨Ago, fun p ↦ Set p.T, fun p ↦ p.T, fun p ↦ since p.ago⟩
+  | question => .question
+  | modalPossibility => .modal ⟨Frame, fun p ↦ p.W, fun p ↦ p.R.preimage⟩
+  | modalNecessity | imperative | generic | freeRelative => .modal necessityFamily
 
 /-! ### Classical licensers -/
 
