@@ -4,7 +4,7 @@ public import Linglib.Core.Order.Partition.Finpartition
 public import Linglib.Semantics.Questions.Value
 public import Linglib.Data.Examples.VanRooy2003
 public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Partition
 
 /-!
 # van Rooy (2003): Questioning to Resolve Decision Problems

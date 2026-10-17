@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Data.SetLike.Basic
+public import Mathlib.Basic.SetLike.Basic
 public import Mathlib.Order.Lattice
 public import Mathlib.Tactic.DeriveFintype
 
@@ -98,7 +98,7 @@ instance : SetLike PersistenceLevel Feature where
   coe l := l.features
   coe_injective _ _ h := features_injective (Finset.coe_injective h)
 
-instance : PartialOrder PersistenceLevel := .ofSetLike PersistenceLevel Feature
+instance : PartialOrder PersistenceLevel := .ofSetLike PersistenceLevel
 
 @[simp] theorem mem_features {l : PersistenceLevel} {f : Feature} : f ∈ l.features ↔ f ∈ l :=
   Iff.rfl
@@ -107,7 +107,7 @@ instance (l : PersistenceLevel) : DecidablePred (· ∈ l) := fun f ↦
   inferInstanceAs (Decidable (f ∈ l.features))
 
 theorem le_iff_features_subset {l m : PersistenceLevel} : l ≤ m ↔ l.features ⊆ m.features :=
-  SetLike.le_def.trans Finset.coe_subset
+  IsConcreteLE.le_iff.trans Finset.coe_subset
 
 instance : DecidableRel (α := PersistenceLevel) (· ≤ ·) := fun _ _ ↦
   decidable_of_iff _ le_iff_features_subset.symm

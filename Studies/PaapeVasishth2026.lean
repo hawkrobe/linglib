@@ -359,9 +359,9 @@ theorem monotone_integral_gardenPath :
     Monotone fun g ↦ ∫ o, k.disambiguating o ∂tree {p with gardenPath := g} := by
   intro g g' h
   have := nonneg p.covert
-  have := one_minus_nonneg p.triage
-  have := one_minus_nonneg p.covert
-  have := one_minus_nonneg p.postpone
+  have := unitInterval.one_sub_nonneg p.triage
+  have := unitInterval.one_sub_nonneg p.covert
+  have := unitInterval.one_sub_nonneg p.postpone
   simp only [integral_disambiguating_tree]
   gcongr
   unit_interval

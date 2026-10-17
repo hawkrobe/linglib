@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Nominality
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Fragments.Turkish.ObjectMarking
 public import Linglib.Syntax.Case.Alignment
 public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs

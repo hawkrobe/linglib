@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.ConstructionGrammar.Basic
+public import Linglib.Core.Data.List.Forall2
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Morphology.Word.Basic
 

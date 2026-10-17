@@ -145,7 +145,7 @@ theorem servesFor_iff : ServesFor π fo s g ↔ Usable π fo s g := by
   · by_contra hu
     simp only [Usable, not_or, not_and] at hu
     obtain ⟨hne, hsg⟩ := hu
-    cases π <;> cases fo <;> cases g <;> first | exact absurd rfl hne | skip
+    cases π <;> cases fo <;> cases g <;> try exact absurd rfl hne
     all_goals try have hs : s := by_contra fun hs ↦ hsg hs (by decide)
     all_goals first
       | refine not_servesFor_of (fun _ ↦ True) ?_ ?_ h <;> clear h <;> twoWorlds

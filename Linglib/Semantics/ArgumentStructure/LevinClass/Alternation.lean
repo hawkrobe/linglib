@@ -42,7 +42,6 @@ inductive AlternationFamily where
   | specialDiathesis
   deriving DecidableEq, Repr
 
-set_option maxRecDepth 2000 in
 /-- The numbered sections of [levin-1993] Part One. -/
 inductive DiathesisAlternation where
   /-- §1.1, Object of Transitive = Subject of Intransitive Alternations. -/

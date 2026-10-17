@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Linglib.Logic.Trivalent.Propositional
 public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Data.Examples.BeaverKrahmer2001

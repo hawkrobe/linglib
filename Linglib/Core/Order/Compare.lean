@@ -49,7 +49,7 @@ theorem compare_mem_comp (a b c : α) : compare a c ∈ (compare a b).comp (comp
     simp only [compare_lt_iff_lt, compare_eq_iff_eq, compare_gt_iff_gt] at h₁ h₂ <;>
     simp [comp, compare_lt_iff_lt, compare_gt_iff_gt, h₁, h₂] <;>
     first
-      | exact h₁.trans h₂ | exact h₂.trans h₁ | exact h₁.trans_eq h₂ | exact h₁.trans_lt h₂
+      | exact h₁.trans h₂ | exact h₂.trans h₁ | exact h₁.trans_eq h₂
       | exact h₂.symm.trans_lt h₁
 
 /-- In a dense linear order without endpoints, every result the composition table allows is

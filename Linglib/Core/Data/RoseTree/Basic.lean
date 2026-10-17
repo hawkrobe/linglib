@@ -67,7 +67,7 @@ abbrev leaf (a : α) : RoseTree α := .node a []
 
 /-! ### Decidable equality
 
-`deriving DecidableEq` does not fire through the nested `List` occurrence (as of Lean v4.34.1), so
+`deriving DecidableEq` does not fire through the nested `List` occurrence (as of Lean v4.35.0), so
 the instance is built by mutual recursion on the tree and its child list. -/
 
 section DecidableEq

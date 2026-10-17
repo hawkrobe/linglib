@@ -207,7 +207,7 @@ theorem getElem?_flankWord :
 theorem getElem?_flankWord_mid (h₁ : 0 < k) (h₂ : k ≤ n) :
     (flankWord x fill y n)[k]? = some fill := by
   rw [getElem?_flankWord]
-  split_ifs <;> first | rfl | exact ‹False›.elim | omega
+  split_ifs <;> first | rfl | omega
 
 /-- A non-filler value sits only on a flank. -/
 theorem getElem?_flankWord_eq_some_iff {j : ℕ} (hfill : fill ≠ a) :

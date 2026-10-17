@@ -205,10 +205,9 @@ theorem SelectionState.isSaturated_iff_not_isSaturated_of_mul_ne_zero (h : x * y
 theorem SelectionState.head_mul_of_not_isSaturated (h : x * y ≠ 0) (hx : ¬ x.IsSaturated) :
     (x * y).head = x.head := by
   rcases x with ⟨_ | ⟨a, _ | ⟨c, rest⟩⟩⟩ <;> rcases y with ⟨_ | ⟨b, _ | ⟨c', rest'⟩⟩⟩ <;>
-    first
+    try first
     | exact absurd rfl h
     | exact absurd rfl hx
-    | skip
   by_cases hc : b.item.cat = c
   · simp [SelectionState.mul_def, selCombine, hc, SelectionState.head]
   · exact absurd (by simp [SelectionState.mul_def, selCombine, hc]; rfl) h

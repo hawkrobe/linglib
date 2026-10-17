@@ -6,7 +6,7 @@ public import Linglib.Data.Examples.PoesioEtAl2004
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.List.MinMax
 public import Mathlib.Data.List.Dedup
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!

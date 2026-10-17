@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Quantification.Numerals.Basic
 public import Mathlib.Order.Interval.Set.Defs
-public import Mathlib.Data.Nat.SuccPred
+public import Mathlib.Order.SuccPred.Nat
 
 /-!
 # Spector (2013): Bare Numerals and Scalar Implicatures

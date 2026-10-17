@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.Antichain
-public import Mathlib.Data.SetLike.Basic
+public import Mathlib.Basic.SetLike.Basic
 public import Mathlib.Order.BoundedOrder.Basic
 public import Mathlib.Order.CompleteBooleanAlgebra
 public import Mathlib.Order.Heyting.Regular
@@ -285,7 +285,7 @@ theorem le_def {P Q : Question W} : P ≤ Q ↔ P.props ⊆ Q.props :=
   Iff.rfl
 
 instance : IsConcreteLE (Question W) (Set W) where
-  coe_subset_coe' := Iff.rfl
+  le_iff := Iff.rfl
 
 /-- Meets distribute over joins and joins over meets, since intersection and union of the
 underlying families of states do. -/

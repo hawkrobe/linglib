@@ -57,9 +57,9 @@ def lattice : Sublattice ParticipantType where
   carrier := {n | n.Valid}
   supClosed' a ha b hb := ⟨Agentivity.lattice.supClosed ha.1 hb.1, by
     rcases ha.2 with h | h
-    · exact .inl (SetLike.le_def.1 le_sup_left h)
+    · exact .inl (IsConcreteLE.le_iff.1 le_sup_left h)
     rcases hb.2 with h' | h'
-    · exact .inl (SetLike.le_def.1 le_sup_right h')
+    · exact .inl (IsConcreteLE.le_iff.1 le_sup_right h')
     · exact .inr (by simp [h, h'])⟩
   infClosed' a ha b hb := ⟨Agentivity.lattice.infClosed ha.1 hb.1, by
     rcases ha.2 with h | h

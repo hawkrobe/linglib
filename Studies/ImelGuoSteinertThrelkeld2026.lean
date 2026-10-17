@@ -333,6 +333,10 @@ theorem complexity_eq_iff {m : Meaning} (hm : m ⊆ space) {n : ℕ} :
     complexity m = n ↔ m ∈ Formula.dens n ∧ ∀ k < n, m ∉ Formula.dens k := by
   rw [complexity, dite_eq_left hm, Nat.find_eq_iff]
 
+theorem le_complexity_iff {m : Meaning} (hm : m ⊆ space) {n : ℕ} :
+    n ≤ complexity m ↔ ∀ k < n, m ∉ Formula.dens k := by
+  rw [complexity, dite_eq_left hm, Nat.le_find_iff]
+
 theorem complexity_le {m : Meaning} (φ : Formula) (h : φ.den = m) : complexity m ≤ φ.atoms := by
   rw [complexity, dite_eq_left (h ▸ φ.den_subset)]
   exact Nat.find_le (h ▸ (Formula.den_mem_dens φ).1)
@@ -358,8 +362,11 @@ theorem complexity_may : complexity may = 2 := by
   rw [may_eq, complexity_eq_iff (by decide)]; decide +kernel
 
 /-- *mought* needs four atoms, *(w ∧ e) ∨ (s ∧ d)*. -/
-theorem complexity_mought : complexity mought = 4 := by
-  rw [complexity_eq_iff (by decide)]; decide +kernel
+theorem complexity_mought : complexity mought = 4 :=
+  le_antisymm
+    (complexity_le (.or (.and (.atom .weak) (.atom .epistemic))
+      (.and (.atom .strong) (.atom .deontic))) (by decide))
+    ((le_complexity_iff (by decide)).2 (by decide +kernel))
 
 /-- *notcirc* is the single literal *¬c*. -/
 theorem complexity_notcirc : complexity notcirc = 1 := by

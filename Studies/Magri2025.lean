@@ -239,8 +239,8 @@ noncomputable def inverseHarmony (w : Fin n → ℝ) (v : Fin n → ℕ) : ℝ :
 theorem inverseHarmony_pos {w : Fin n → ℝ} (hw : ∀ k, 0 ≤ w k) (v : Fin n → ℕ) :
     0 < inverseHarmony w v := by
   unfold inverseHarmony dotProduct
-  have := sum_nonneg fun k (_ : k ∈ univ) ↦ mul_nonneg (hw k) (Nat.cast_nonneg (v k))
-  positivity
+  exact inv_pos.2 <| add_pos_of_pos_of_nonneg one_pos <|
+    sum_nonneg fun k _ ↦ mul_nonneg (hw k) (Nat.cast_nonneg (v k))
 
 /-- On the Tagalog square, the inverse harmony satisfies HZ's identity (28) only when the two
 prefix constraints have equal weights, or the two stem-nasal constraints have none (§4.4 and

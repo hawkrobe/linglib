@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Data.SetLike.Basic
+public import Mathlib.Basic.SetLike.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
@@ -87,7 +87,7 @@ instance : SetLike (Space S) S where
     rfl
 
 /-- Spaces are ordered by inclusion, and the smaller space is the stronger act. -/
-instance : PartialOrder (Space S) := .ofSetLike (Space S) S
+instance : PartialOrder (Space S) := .ofSetLike (Space S)
 
 @[ext] theorem ext {C D : Space S} (h : ∀ c, c ∈ C ↔ c ∈ D) : C = D := SetLike.ext h
 

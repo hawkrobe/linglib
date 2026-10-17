@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Data.Finset.Lattice.Fold
-public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Hom.Lattice
 
 /-!

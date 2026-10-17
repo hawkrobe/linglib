@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Conditionals.Basic
 public import Mathlib.Order.Extension.Linear
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Hom.CompleteLattice
 

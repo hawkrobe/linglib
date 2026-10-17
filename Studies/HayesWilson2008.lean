@@ -415,7 +415,7 @@ theorem rows_scores : ∀ e ∈ Examples.all, Reproduced e := by decide +kernel
 def candidates : Finset (List Seg) :=
   (attested ++ twelve ++ [[r, t], [s, ch], [zh]]).toFinset
 
-instance : Nonempty candidates := ⟨⟨[r, t], by decide⟩⟩
+instance : Nonempty candidates := ⟨⟨[r, t], by decide +kernel⟩⟩
 
 /-- `onsetProb` is the probability (6) of each candidate under the learned grammar, with the
     weights of Table 4 read as reals. -/
@@ -437,7 +437,7 @@ theorem onsetProb_lt_iff {o₁ o₂ : candidates} : onsetProb o₁ < onsetProb o
 
 /-- The accidental gap [stw] is more probable than [rt]. -/
 theorem onsetProb_rt_lt_stw :
-    onsetProb ⟨[r, t], by decide⟩ < onsetProb ⟨[s, t, w], by decide⟩ :=
-  onsetProb_lt_iff.2 (by decide)
+    onsetProb ⟨[r, t], by decide +kernel⟩ < onsetProb ⟨[s, t, w], by decide +kernel⟩ :=
+  onsetProb_lt_iff.2 (by decide +kernel)
 
 end HayesWilson2008

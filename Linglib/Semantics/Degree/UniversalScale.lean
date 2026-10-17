@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Algebra.Order.Field.Rat
-public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Degree.Quotient

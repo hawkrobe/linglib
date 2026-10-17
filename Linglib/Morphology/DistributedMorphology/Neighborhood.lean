@@ -1,9 +1,10 @@
 module
 
 public import Mathlib.Algebra.Group.Int.Defs
+public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Order.RelClasses
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Neighborhoods

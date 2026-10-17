@@ -5,7 +5,7 @@ public import Mathlib.Data.List.Permutation
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Algebra.Order.Interval.Finset.SuccPred
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Nat.SuccPred
+public import Mathlib.Order.SuccPred.Nat
 public import Linglib.Syntax.CCG.Grammar
 public import Studies.Cinque2005
 

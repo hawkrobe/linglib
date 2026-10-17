@@ -231,9 +231,6 @@ theorem counit_lTensor_comulAlgHomN :
   simp [comulTreeN_node_cocycle, h]
 
 section CoassocFoissy
--- The nested tensor squares `CK ⊗ (CK ⊗ CK)` of the coassociativity statement
--- need one extra pending step during instance synthesis.
-set_option maxSynthPendingDepth 2
 
 /-! ### Coassociativity: Foissy's subalgebra argument
 

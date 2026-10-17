@@ -3,6 +3,7 @@ module
 public import Linglib.Fragments.Mwaghavul.Basic
 public import Linglib.Phonology.Autosegmental.Melody
 public import Linglib.Phonology.OCP
+public import Linglib.Core.Data.List.Forall2
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Examples.AkinboFwangwar2026
 public import Mathlib.Tactic.DeriveFintype

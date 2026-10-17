@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Set.Finite.Range
-public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Order.Setoid.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Syntax.Gender.Basic

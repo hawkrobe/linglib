@@ -7,7 +7,7 @@ public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Data.Examples.Hanink2021
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Hanink (2021): DP Structure and Internally Headed Relatives in Washo

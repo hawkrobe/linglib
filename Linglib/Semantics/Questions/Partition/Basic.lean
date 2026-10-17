@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.Setoid.Basic
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Partition
 
 /-!
 # Partition questions

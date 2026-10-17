@@ -94,7 +94,6 @@ def shifted : Graph 11 :=
     1 [(1, 0, .nsubj), (1, 10, .obj), (10, 5, .det), (7, 6, .advmod), (10, 7, .amod),
       (9, 8, .advmod), (10, 9, .amod), (4, 2, .case_), (4, 3, .det), (1, 4, .obl)]
 
-set_option maxRecDepth 4000 in
 /-- The unshifted order is the shifted one with the prepositional phrase and the object swapped,
 each moving as a block. -/
 theorem longObjectFirst_eq_reorderDependents :

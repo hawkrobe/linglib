@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
-public import Mathlib.Data.Vector.Defs
 
 /-!
 # Diatheses
@@ -31,8 +30,6 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
 * Participants are numbered, and a diathesis is entered as the participants of its slots in slot
   order, the external argument first: `ofSlots .np [0, 1]` puts participant 0 in subject
   position and participant 1 in object position.
-* Links and profiles are `List.Vector`s, lists with their length, since entries are compared
-  and evaluated by `decide` and the array-backed `Vector` does not reduce there.
 * A diathesis may leave out a participant another diathesis of the verb expresses, as the
   intransitive of *break* leaves out the breaker, so a causative or anticausative pair is two
   diatheses of one verb. Mel'čuk's narrower diathesis keeps the semantic actants fixed and
@@ -48,14 +45,11 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
 
 open ArgumentFrame (Slot)
 
-instance {α : Type*} [Repr α] {n : ℕ} : Repr (List.Vector α n) :=
-  ⟨fun v p ↦ reprPrec v.toList p⟩
-
 /-- A diathesis of `n` participants is an argument frame together with the slot each participant
 occupies in it, `none` for a participant the construction leaves out. -/
 structure Diathesis (n : ℕ) extends ArgumentFrame where
   /-- The slot each participant occupies. -/
-  links : List.Vector (Option Slot) n
+  links : Vector (Option Slot) n
   deriving DecidableEq, Repr
 
 namespace Diathesis
@@ -85,7 +79,7 @@ structure Verb.Valency where
   /-- The number of participants. -/
   arity : ℕ
   /-- The entailment profile of each participant, where the entry records one. -/
-  profiles : List.Vector (Option EntailmentProfile) arity
+  profiles : Vector (Option EntailmentProfile) arity
   /-- The diatheses, the basic diathesis first. -/
   diatheses : List (Diathesis arity)
   deriving DecidableEq, Repr

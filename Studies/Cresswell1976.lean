@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Data.Sigma.Order
+public import Mathlib.Order.Sigma
 public import Linglib.Semantics.Degree.Quotient
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Semantics.Conditionals.SelectionFunction

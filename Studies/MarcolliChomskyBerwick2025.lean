@@ -364,7 +364,8 @@ example :
     Merge.mergeOpEps (R := ℤ) 0 Vertex.bare (UnorderedTree.node Vertex.bare {appleN.val}) theD.val
         (Merge.mergeOpUnit theD.val (of' ({theApple.val} : Forest (UnorderedTree Vertex)))) =
       of' ({UnorderedTree.node Vertex.bare
-        {UnorderedTree.node Vertex.bare {appleN.val}, theD.val}} : Forest (UnorderedTree Vertex)) :=
+              {UnorderedTree.node Vertex.bare {appleN.val}, theD.val}} :
+        Forest (UnorderedTree Vertex)) :=
   Merge.mergeOpEps_im_composition _ _ _ _ _ _ filter_cutSummandsN_theApple rfl
     (fun h ↦ (by decide : theApple ≠ theD) (Subtype.ext h))
 

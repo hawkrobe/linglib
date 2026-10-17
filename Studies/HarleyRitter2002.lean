@@ -285,8 +285,7 @@ theorem first_before_second :
 theorem singular_before_plural (hm : Node.minimal ∉ A) (hi : Node.individuation ∈ A) :
     ∀ g ∈ cell A p .singular, ∀ g' ∈ cell A p .plural, g ⊂ g' := by
   cases p <;> simp only [cell, personNodes, numberNodes, Option.bind_eq_bind, Option.pure_def,
-    Option.bind, hi, hm, ↓reduceIte, Option.mem_def, Option.some.injEq, forall_eq', reduceCtorEq,
-    false_implies, implies_true] <;> decide
+    Option.bind, hi, hm, ↓reduceIte, Option.mem_def, Option.some.injEq, forall_eq'] <;> decide
 
 /-- Second person and third plural are incomparable, so their order varies
 ((20b)). -/

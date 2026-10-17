@@ -5,10 +5,6 @@ public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Processing.DiscriminativeLexicon.Realization
 public import Linglib.Processing.DiscriminativeLexicon.Training
 public import Linglib.Processing.ErrorDrivenLearning
-import all Init.Data.String.Pattern.Basic  -- for unfolding `String.Slice.Pattern.Internal.memcmpSlice`
-import all Init.Data.String.Pattern.String  -- for unfolding `String.Slice.Pattern.BackwardSliceSearcher.endsWith`, `String.Slice.Pattern.BackwardSliceSearcher.skipSuffix?`
-import all Init.Data.String.Slice  -- for unfolding `String.Slice.endsWith`
-import all Init.Data.String.TakeDrop  -- for unfolding `String.endsWith`
 
 /-!
 # Heitmeier, Chuang and Baayen (2026): The Discriminative Lexicon

@@ -115,7 +115,7 @@ instance : IsEquiv ℝ* FinitelyClose where
 indistinguishable from a shorter one's (67). -/
 theorem not_infinitesimallyClose_coe {r s : ℝ} (h : r ≠ s) :
     ¬ InfinitesimallyClose (r : ℝ*) s := by
-  rw [InfinitesimallyClose, mem_infinitesimals, ← coe_sub, archimdeanClassMk_coe (sub_ne_zero.2 h)]
+  rw [InfinitesimallyClose, mem_infinitesimals, ← coe_sub, archimedeanClassMk_coe (sub_ne_zero.2 h)]
   exact lt_irrefl 0
 
 /-- The standard part of a real minus an infinitesimal is the real (22). -/

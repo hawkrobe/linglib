@@ -97,7 +97,7 @@ alternatives' similarity to the unit counts for nothing, as under surprisal. -/
 theorem informationValue_discrete (x : Π i : Iic n, X i) (w : X (n + 1)) :
     informationValue (κ n) discrete x w = 1 - (κ n x).real {w} := by
   simp only [informationValue, discrete]
-  rw [integral_sub (integrable_const _)
+  rw [integral_sub (g := ({w} : Set (X (n + 1))).indicator 1) (integrable_const _)
       ((integrable_const 1).indicator (measurableSet_singleton w)),
     integral_const, integral_indicator_one (measurableSet_singleton w)]
   simp

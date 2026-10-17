@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Kalin2018
 public import Linglib.Syntax.Minimalist.Case.Dependent
+public import Linglib.Core.Data.List.Forall2
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Order.CompleteLattice.Finset
 public import Mathlib.Order.Minimal

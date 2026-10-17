@@ -1,5 +1,7 @@
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Algebra.Notation.Lemmas
 public import Mathlib.Combinatorics.SetFamily.FourFunctions
 
 /-!

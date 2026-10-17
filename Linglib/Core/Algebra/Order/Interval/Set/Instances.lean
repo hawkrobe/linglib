@@ -22,9 +22,6 @@ namespace Set.Icc
 
 variable {β : Type*} [Ring β] [PartialOrder β] [IsOrderedRing β]
 
-instance [NeZero (1 : β)] : NeZero (1 : Icc (0 : β) 1) :=
-  ⟨coe_ne_zero.mp (NeZero.ne 1)⟩
-
 /-- The involution `1 - t` of the unit interval — `unitInterval.symm` at the
     generality of this file's instances. -/
 def symm (t : Icc (0 : β) 1) : Icc (0 : β) 1 :=

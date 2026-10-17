@@ -91,8 +91,7 @@ theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
 /-- A stative and an accomplishment overlap iff neither ends before the other starts. -/
 theorem overlap_stative_accomplishment_iff (a b : NonemptyInterval T) :
     Overlap (Set.Iic a) {b} ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
-  simp only [Overlap, timeTrace_Iic, timeTrace_singleton,
-    Set.mem_ofPred_eq, NonemptyInterval.mem_def]
+  simp only [Overlap, timeTrace_Iic, timeTrace_singleton]
   constructor
   · rintro ⟨t, ⟨h1, h2⟩, h3, h4⟩
     exact ⟨h1.trans h4, h3.trans h2⟩

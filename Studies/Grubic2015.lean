@@ -91,13 +91,13 @@ theorem posExt_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
 open Classical in
 /-- *ke('e)* 'also' (45) makes no truth-conditional contribution and presupposes a salient
 antecedent about a different topic situation, one that need not itself be true (46). -/
-noncomputable def ke (given : Set (Set W)) (topic : Set W → T) : W → SignType :=
-  {_w | ∃ q ∈ given, topic q ≠ topic p}.indicator fun w ↦ SignType.ofProp (w ∈ p)
+noncomputable def ke (salient : Set (Set W)) (topic : Set W → T) : W → SignType :=
+  {_w | ∃ q ∈ salient, topic q ≠ topic p}.indicator fun w ↦ SignType.ofProp (w ∈ p)
 
 /-- When every salient antecedent is anaphoric to the host's topic situation, as parallel
 background-marked antecedents are by default, *ke('e)* is undefined ((44) and (49)). -/
-theorem ke_eq_zero_of_anaphoric {given : Set (Set W)} {topic : Set W → T}
-    (h : ∀ q ∈ given, topic q = topic p) (w : W) : ke p given topic w = 0 := by
+theorem ke_eq_zero_of_anaphoric {salient : Set (Set W)} {topic : Set W → T}
+    (h : ∀ q ∈ salient, topic q = topic p) (w : W) : ke p salient topic w = 0 := by
   simpa [ke] using h
 
 /-! ### The scalar *har('i)*, section 7.2 -/

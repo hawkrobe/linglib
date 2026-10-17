@@ -47,7 +47,8 @@ variable {α : Type*} {l l₁ l₂ : List α} {m n : ℕ}
 @[simp] theorem length_rtake : (l.rtake n).length = min n l.length := by
   simp [rtake_eq_reverse_take_reverse]
 
-theorem length_rtake_le (n : ℕ) (l : List α) : (l.rtake n).length ≤ n := by simp
+theorem length_rtake_le (n : ℕ) (l : List α) : (l.rtake n).length ≤ n :=
+  length_rtake.trans_le (Nat.min_le_left ..)
 
 @[simp] theorem length_rdrop : (l.rdrop n).length = l.length - n := by
   simp [rdrop_eq_reverse_drop_reverse]

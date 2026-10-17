@@ -5,7 +5,7 @@ public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.List.NodupEquivFin
-public import Mathlib.Data.Nat.SuccPred
+public import Mathlib.Order.SuccPred.Nat
 public import Mathlib.Tactic.FinCases
 public import Linglib.Core.Computability.Edge
 public import Linglib.Core.Order.Flat

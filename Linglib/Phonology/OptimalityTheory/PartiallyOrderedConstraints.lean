@@ -616,7 +616,7 @@ theorem isMinOn_active_iff_isMinOn_filter_stratum
     x ∈ active con i chosen other ∧ IsMinOn σ.symm (active con i chosen other) x ↔
       x ∈ (active con i chosen other).filter (stratumOf · = k) ∧
         IsMinOn σ.symm ((active con i chosen other).filter (stratumOf · = k)) x := by
-  refine ⟨fun ⟨hx, hmin⟩ => ⟨mem_filter.2 ⟨hx, ?_⟩, hmin.on_subset (filter_subset _ _)⟩,
+  refine ⟨fun ⟨hx, hmin⟩ => ⟨mem_filter.2 ⟨hx, ?_⟩, hmin.of_subset (filter_subset _ _)⟩,
     fun ⟨hx, hmin⟩ => ⟨(mem_filter.1 hx).1, isMinOn_iff.2 fun y hy => ?_⟩⟩
   · obtain ⟨z, hz⟩ := h_dec
     rcases lt_trichotomy (stratumOf x) k with hlt | heq | hgt

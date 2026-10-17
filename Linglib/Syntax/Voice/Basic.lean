@@ -301,7 +301,7 @@ then those it adds, each in the slot of `gr` that `links` lists for it, `none` f
 def of (fr gr : ArgumentFrame) (links : List (Option Slot)) : Voice where
   arity := links.length
   initial := { fr with links := .ofFn fun i ↦ fr.slots[i.val]? }
-  derived := { gr with links := ⟨links, rfl⟩ }
+  derived := { gr with links := ⟨links.toArray, List.size_toArray⟩ }
 
 variable (v : Voice)
 
@@ -418,7 +418,9 @@ def refl (fr : ArgumentFrame) : Voice := of fr fr (fr.slots.map some)
 
 theorem derived_refl (fr : ArgumentFrame) : (refl fr).derived = (refl fr).initial := by
   simp only [refl, of, Diathesis.mk.injEq, true_and]
-  exact List.Vector.ext fun m ↦ by rw [List.Vector.get_ofFn]; simp [List.Vector.get]
+  ext m hm
+  simp only [List.length_map] at hm
+  simp [List.getElem?_eq_getElem hm]
 
 /-- The trivial voice is symmetrical. -/
 theorem isSymmetrical_refl (fr : ArgumentFrame) : (refl fr).IsSymmetrical := by

@@ -339,11 +339,7 @@ lists, (12), (13), (16)–(18), (21) and (22). -/
 theorem rows_irgendein :
     ∀ r ∈ Examples.all, ∀ c ∈ contextOf? r,
       (r.judgment = .acceptable ↔ c ∈ German.PolarityItems.irgendein.licensingContexts) := by
-  simp +decide [Examples.all, contextOf?, Datum.parse?, Datum.feature?,
-    List.lookup, German.PolarityItems.irgendein, Examples.ex23a, Examples.ex23b, Examples.ex23c,
-    Examples.ex23d, Examples.ex23e, Examples.ex23f, Examples.ex23g, Examples.ex24a, Examples.ex24b,
-    Examples.ex24c, Examples.ex24d, Examples.ex24e, Examples.ex12, Examples.ex13, Examples.ex16,
-    Examples.ex17, Examples.ex18, Examples.ex21, Examples.ex22]
+  decide
 
 /-- Under a negative operator *irgendein* is acceptable exactly when the operator closes its scope
 with [∃] and not with [Neg], so under *niemand* and *auf keinen Fall* and not under *nicht*, (12),
