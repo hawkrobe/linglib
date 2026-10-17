@@ -84,7 +84,7 @@ theorem superI_canonical (k : Construction) :
     SuperI I C (target p q q' k .canonical) ↔ C ⊆ {w | w ∈ I p → w ∈ I q} := by
   rw [superI_iff_forall]
   refine forall₂_congr fun w _ ↦ ?_
-  cases k <;> simp [target, unlessThen, Formula.filter, Connective.filter]
+  cases k <;> simp [target, unlessThen, Formula.filter, Formula.eval]
 
 /-- In the canonical order the symmetric condition predicts the conditional presupposition `if p, q`
 ((13a)–(15a), p. 185). -/
@@ -92,7 +92,7 @@ theorem superS_canonical (k : Construction) :
     SuperS I C (target p q q' k .canonical) ↔ C ⊆ {w | w ∈ I p → w ∈ I q} := by
   cases k <;> rw [superS_iff_forall I (by simp [target, unlessThen, Formula.occurrences])] <;>
     refine forall₂_congr fun w _ ↦ ?_ <;>
-    simp [target, unlessThen, Formula.strong, Connective.strong] <;> tauto
+    simp [target, unlessThen, Formula.strong, Formula.eval] <;> tauto
 
 /-- In the inverse order the incremental condition predicts the unconditional presupposition `q`
 ((13b)–(15b), p. 185). -/
@@ -100,7 +100,7 @@ theorem superI_inverse (k : Construction) :
     SuperI I C (target p q q' k .inverse) ↔ C ⊆ I q := by
   rw [superI_iff_forall]
   refine forall₂_congr fun w _ ↦ ?_
-  cases k <;> simp [target, unlessThen, Formula.filter, Connective.filter]
+  cases k <;> simp [target, unlessThen, Formula.filter, Formula.eval]
 
 /-- In the inverse order the symmetric condition still predicts the conditional presupposition
 `if p, q` ((13b)–(15b), p. 185). -/
@@ -108,7 +108,7 @@ theorem superS_inverse (k : Construction) :
     SuperS I C (target p q q' k .inverse) ↔ C ⊆ {w | w ∈ I p → w ∈ I q} := by
   cases k <;> rw [superS_iff_forall I (by simp [target, unlessThen, Formula.occurrences])] <;>
     refine forall₂_congr fun w _ ↦ ?_ <;>
-    simp [target, unlessThen, Formula.strong, Connective.strong] <;> tauto
+    simp [target, unlessThen, Formula.strong, Formula.eval] <;> tauto
 
 /-- In the inverse order, any context that the Incremental Theory accepts entails the unconditional
 presupposition (§2.3.2). -/

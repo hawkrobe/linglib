@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Probability
+public import Linglib.Logic.Trivalent.Propositional
 public import Studies.Adams1975
 
 /-!
@@ -17,11 +18,10 @@ conjunction and the Product Rule.
 
 ## Main statements
 
-* `Formula.equiv_neg_cond`, `Formula.equiv_cond_cond`, `Formula.equiv_conj_cond`,
-  `Formula.equiv_disj_cond`, `Formula.equiv_cond_left`: Proposition 1, the five equivalences, each
-  at the generality the paper claims for it, with `conjunction_needs_boolean` and
-  `sk_fails_conjunction` marking where the laws stop.
-* `Formula.eval_flat`: the Reduction Theorem, by the appendix's recursion `Formula.flat`.
+* `equiv_neg_cond`, `equiv_cond_cond`, `equiv_conj_cond`, `equiv_disj_cond`, `equiv_cond_left`:
+  Proposition 1, the five equivalences, each at the generality the paper claims for it, with
+  `conjunction_needs_boolean` and `sk_fails_conjunction` marking where the laws stop.
+* `cooperEval_flat`: the Reduction Theorem, by the appendix's recursion `flat`.
 * `prob_value_neg`, `prob_value_disj`: the second and third principles of trivalent probability;
   `additivity_all_void` shows the third fails without properness, which the paper does not flag.
 * `ofAdams`, `exists_ofAdams_eq`, `ofAdams_eq_ofAdams_iff`, `prob_ofAdams`: an
@@ -44,6 +44,9 @@ conjunction and the Product Rule.
 
 ## Implementation notes
 
+* The language is the shared `Trivalent.Formula` and a Cooper valuation is its evaluation by
+  `Trivalent.Connectives.cooper` on a Boolean model, so the paper's `⊤` and `⊥` are the formulas
+  `p ∨ ¬p` and `p ∧ ¬p` of an atom.
 * Worlds carry a classical valuation of the atoms through a map `t : W → ι → Bool`, after the
   paper's identification of worlds with atom-classical valuations; a formula's value at a world
   is a `SignType`, and its probability is `Trivalent.prob`, which builds in the paper's All Void
@@ -181,80 +184,82 @@ theorem meetBelnap_condAssert_of_false (b : SignType) :
 
 end ValueLaws
 
-/-! ### Formulas and Cooper valuations -/
+/-! ### Cooper valuations
 
-/-- Formulas of the conditional language `L→`, built from atoms and `⊥` by the Boolean connectives
-and the conditional. -/
-inductive Formula (ι : Type*) where
-  | atom : ι → Formula ι
-  | bot : Formula ι
-  | neg : Formula ι → Formula ι
-  | conj : Formula ι → Formula ι → Formula ι
-  | disj : Formula ι → Formula ι → Formula ι
-  | cond : Formula ι → Formula ι → Formula ι
-  deriving DecidableEq
-
-namespace Formula
+The language `L→` is `Trivalent.Formula`, atoms closed under `¬`, `∧`, `∨` and `→`, and a Cooper
+valuation (Definition 1) evaluates it by `Connectives.cooper` on the Boolean model of a classical
+valuation of the atoms. The paper's `⊤` and `⊥` abbreviate a classical tautology and
+contradiction. -/
 
 variable {ι : Type*}
 
-/-- `⊤`. -/
-def top : Formula ι := .neg .bot
+/-- The Cooper valuation induced by a classical valuation of the atoms (Definition 1), in which
+negation is Kleene's, conjunction and disjunction skip the void value, and the conditional asserts
+its consequent where its antecedent is non-false. -/
+def cooperEval (v : ι → Bool) (φ : Formula ι) : SignType := φ.eval .cooper (Model.ofBool v)
+
+/-- `⊤`, the classical tautology `p ∨ ¬p`. -/
+def top (i : ι) : Formula ι := .disj (.atom i) (.neg (.atom i))
+
+/-- `⊥`, the classical contradiction `p ∧ ¬p`. -/
+def bot (i : ι) : Formula ι := .conj (.atom i) (.neg (.atom i))
 
 /-- The material conditional `¬φ ∨ ψ`, with Cooper's disjunction. -/
 def material (φ ψ : Formula ι) : Formula ι := .disj (.neg φ) ψ
 
-/-- The Cooper valuation induced by a classical valuation of the atoms (Definition 1). Negation is
-Kleene's, conjunction and disjunction skip the void value, and the conditional asserts its
-consequent where its antecedent is non-false. -/
-def eval (v : ι → Bool) : Formula ι → SignType
-  | atom i => .ofProp (v i)
-  | bot => -1
-  | neg φ => -eval v φ
-  | conj φ ψ => meetBelnap (eval v φ) (eval v ψ)
-  | disj φ ψ => joinBelnap (eval v φ) (eval v ψ)
-  | cond φ ψ => condAssert .lp (eval v φ) (eval v ψ)
+section CooperEval
 
 variable {v : ι → Bool}
 
-@[simp] theorem eval_atom (i : ι) : eval v (atom i) = .ofProp (v i) := rfl
-@[simp] theorem eval_bot : eval v (bot : Formula ι) = -1 := rfl
-@[simp] theorem eval_top : eval v (top : Formula ι) = 1 := rfl
-@[simp] theorem eval_neg (φ : Formula ι) : eval v (neg φ) = -eval v φ := rfl
-@[simp] theorem eval_conj (φ ψ : Formula ι) :
-    eval v (conj φ ψ) = meetBelnap (eval v φ) (eval v ψ) := rfl
-@[simp] theorem eval_disj (φ ψ : Formula ι) :
-    eval v (disj φ ψ) = joinBelnap (eval v φ) (eval v ψ) := rfl
-@[simp] theorem eval_cond (φ ψ : Formula ι) :
-    eval v (cond φ ψ) = condAssert .lp (eval v φ) (eval v ψ) := rfl
-@[simp] theorem eval_material (φ ψ : Formula ι) :
-    eval v (material φ ψ) = joinBelnap (-eval v φ) (eval v ψ) := rfl
+@[simp] theorem cooperEval_atom (i : ι) : cooperEval v (.atom i) = ofProp (v i) := rfl
+
+@[simp] theorem cooperEval_neg (φ : Formula ι) : cooperEval v (.neg φ) = -cooperEval v φ := rfl
+
+@[simp] theorem cooperEval_conj (φ ψ : Formula ι) :
+    cooperEval v (.conj φ ψ) = meetBelnap (cooperEval v φ) (cooperEval v ψ) := rfl
+
+@[simp] theorem cooperEval_disj (φ ψ : Formula ι) :
+    cooperEval v (.disj φ ψ) = joinBelnap (cooperEval v φ) (cooperEval v ψ) := rfl
+
+@[simp] theorem cooperEval_cond (φ ψ : Formula ι) :
+    cooperEval v (.cond φ ψ) = condAssert .lp (cooperEval v φ) (cooperEval v ψ) := rfl
+
+@[simp] theorem cooperEval_material (φ ψ : Formula ι) :
+    cooperEval v (material φ ψ) = joinBelnap (-cooperEval v φ) (cooperEval v ψ) := rfl
+
+@[simp] theorem cooperEval_top (i : ι) : cooperEval v (top i) = 1 := by
+  simp only [top, cooperEval_disj, cooperEval_neg, cooperEval_atom]
+  cases v i <;> rfl
+
+@[simp] theorem cooperEval_bot (i : ι) : cooperEval v (bot i) = -1 := by
+  simp only [bot, cooperEval_conj, cooperEval_neg, cooperEval_atom]
+  cases v i <;> rfl
+
+end CooperEval
 
 /-- Two formulas are semantically equivalent when every Cooper valuation gives them the same value
 (Definition 2). -/
-def Equiv (φ ψ : Formula ι) : Prop := ∀ v : ι → Bool, eval v φ = eval v ψ
+def CooperEquiv (φ ψ : Formula ι) : Prop := ∀ v : ι → Bool, cooperEval v φ = cooperEval v ψ
 
 /-- The conditional-free fragment `L`. -/
 def NoCond : Formula ι → Prop
-  | atom _ => True
-  | bot => True
-  | neg φ => φ.NoCond
-  | conj φ ψ => φ.NoCond ∧ ψ.NoCond
-  | disj φ ψ => φ.NoCond ∧ ψ.NoCond
-  | cond _ _ => False
+  | .atom _ => True
+  | .neg φ => NoCond φ
+  | .conj φ ψ | .disj φ ψ => NoCond φ ∧ NoCond ψ
+  | .cond _ _ => False
 
 /-- Valuations are atom-classical and the conditional is the only source of the third value, so
 conditional-free formulas take classical values. -/
-theorem NoCond.eval_ne_zero {φ : Formula ι} (h : φ.NoCond) (v : ι → Bool) : eval v φ ≠ 0 := by
+theorem NoCond.cooperEval_ne_zero {φ : Formula ι} (h : NoCond φ) (v : ι → Bool) :
+    cooperEval v φ ≠ 0 := by
   induction φ with
   | atom i => simp
-  | bot => simp
   | neg φ ih => simpa using ih h
   | conj φ ψ ihφ ihψ =>
-      rw [eval_conj, Ne, meetBelnap_eq_zero_iff]
+      rw [cooperEval_conj, Ne, meetBelnap_eq_zero_iff]
       exact fun hc ↦ ihφ h.1 hc.1
   | disj φ ψ ihφ ihψ =>
-      rw [eval_disj, Ne, joinBelnap_eq_zero_iff]
+      rw [cooperEval_disj, Ne, joinBelnap_eq_zero_iff]
       exact fun hc ↦ ihφ h.1 hc.1
   | cond φ ψ _ _ => exact h.elim
 
@@ -262,56 +267,55 @@ theorem NoCond.eval_ne_zero {φ : Formula ι} (h : φ.NoCond) (v : ι → Bool) 
 
 /-- Negating a conditional negates its consequent, for arbitrary formulas (**Negation
 Commutation**). -/
-theorem equiv_neg_cond (φ ψ : Formula ι) : Equiv (neg (cond φ ψ)) (cond φ (neg ψ)) :=
+theorem equiv_neg_cond (φ ψ : Formula ι) : CooperEquiv (.neg (.cond φ ψ)) (.cond φ (.neg ψ)) :=
   fun _ ↦ neg_condAssert
 
 /-- **Import-Export**, for arbitrary formulas. -/
 theorem equiv_cond_cond (φ ψ χ : Formula ι) :
-    Equiv (cond φ (cond ψ χ)) (cond (conj φ ψ) χ) := fun v ↦ by
-  rw [eval_cond, eval_cond, eval_cond, condAssert_condAssert, eval_conj,
+    CooperEquiv (.cond φ (.cond ψ χ)) (.cond (.conj φ ψ) χ) := fun v ↦ by
+  rw [cooperEval_cond, cooperEval_cond, cooperEval_cond, condAssert_condAssert, cooperEval_conj,
     condAssert_lp_meetBelnap_left]
 
 /-- **Conjunction**, for conditional-free components. -/
-theorem equiv_conj_cond {φ ψ χ ξ : Formula ι} (hφ : φ.NoCond) (hψ : ψ.NoCond) (hχ : χ.NoCond)
-    (hξ : ξ.NoCond) :
-    Equiv (conj (cond φ ψ) (cond χ ξ))
-      (cond (disj φ χ) (conj (material φ ψ) (material χ ξ))) := fun v ↦ by
-  simpa using meetBelnap_condAssert_condAssert (hφ.eval_ne_zero v) (hψ.eval_ne_zero v)
-    (hχ.eval_ne_zero v) (hξ.eval_ne_zero v)
+theorem equiv_conj_cond {φ ψ χ ξ : Formula ι} (hφ : NoCond φ) (hψ : NoCond ψ) (hχ : NoCond χ)
+    (hξ : NoCond ξ) :
+    CooperEquiv (.conj (.cond φ ψ) (.cond χ ξ))
+      (.cond (.disj φ χ) (.conj (material φ ψ) (material χ ξ))) := fun v ↦ by
+  simpa using meetBelnap_condAssert_condAssert (hφ.cooperEval_ne_zero v)
+    (hψ.cooperEval_ne_zero v) (hχ.cooperEval_ne_zero v) (hξ.cooperEval_ne_zero v)
 
 /-- **Disjunction**, for conditional-free components. -/
-theorem equiv_disj_cond {φ ψ χ ξ : Formula ι} (hφ : φ.NoCond) (hψ : ψ.NoCond) (hχ : χ.NoCond)
-    (hξ : ξ.NoCond) :
-    Equiv (disj (cond φ ψ) (cond χ ξ))
-      (cond (disj φ χ) (disj (conj φ ψ) (conj χ ξ))) := fun v ↦ by
-  simpa using joinBelnap_condAssert_condAssert (hφ.eval_ne_zero v) (hψ.eval_ne_zero v)
-    (hχ.eval_ne_zero v) (hξ.eval_ne_zero v)
+theorem equiv_disj_cond {φ ψ χ ξ : Formula ι} (hφ : NoCond φ) (hψ : NoCond ψ) (hχ : NoCond χ)
+    (hξ : NoCond ξ) :
+    CooperEquiv (.disj (.cond φ ψ) (.cond χ ξ))
+      (.cond (.disj φ χ) (.disj (.conj φ ψ) (.conj χ ξ))) := fun v ↦ by
+  simpa using joinBelnap_condAssert_condAssert (hφ.cooperEval_ne_zero v)
+    (hψ.cooperEval_ne_zero v) (hχ.cooperEval_ne_zero v) (hξ.cooperEval_ne_zero v)
 
 /-- **Left-Nesting**, for a conditional-free inner consequent: in antecedent position an
 indicative and its material conditional express the same supposition. -/
-theorem equiv_cond_left {ψ : Formula ι} (hψ : ψ.NoCond) (φ χ : Formula ι) :
-    Equiv (cond (cond φ ψ) χ) (cond (material φ ψ) χ) := fun v ↦ by
-  simpa using condAssert_condAssert_material (b := eval v ψ) (hψ.eval_ne_zero v)
+theorem equiv_cond_left {ψ : Formula ι} (hψ : NoCond ψ) (φ χ : Formula ι) :
+    CooperEquiv (.cond (.cond φ ψ) χ) (.cond (material φ ψ) χ) := fun v ↦ by
+  simpa using condAssert_condAssert_material (b := cooperEval v ψ) (hψ.cooperEval_ne_zero v)
 
 /-! ### The Reduction Theorem -/
 
 /-- The conditional-free antecedent and consequent of the simple conditional equivalent to a
-formula, by the appendix's recursion. -/
+formula, by the appendix's recursion; an atom `p` is `⊤ → p`. -/
 def flat : Formula ι → Formula ι × Formula ι
-  | neg φ => ((flat φ).1, neg (flat φ).2)
-  | conj φ ψ =>
-      (disj (flat φ).1 (flat ψ).1,
-        conj (material (flat φ).1 (flat φ).2) (material (flat ψ).1 (flat ψ).2))
-  | disj φ ψ =>
-      (disj (flat φ).1 (flat ψ).1,
-        disj (conj (flat φ).1 (flat φ).2) (conj (flat ψ).1 (flat ψ).2))
-  | cond φ ψ => (conj (material (flat φ).1 (flat φ).2) (flat ψ).1, (flat ψ).2)
-  | φ => (top, φ)
+  | .atom i => (top i, .atom i)
+  | .neg φ => ((flat φ).1, .neg (flat φ).2)
+  | .conj φ ψ =>
+      (.disj (flat φ).1 (flat ψ).1,
+        .conj (material (flat φ).1 (flat φ).2) (material (flat ψ).1 (flat ψ).2))
+  | .disj φ ψ =>
+      (.disj (flat φ).1 (flat ψ).1,
+        .disj (.conj (flat φ).1 (flat φ).2) (.conj (flat ψ).1 (flat ψ).2))
+  | .cond φ ψ => (.conj (material (flat φ).1 (flat φ).2) (flat ψ).1, (flat ψ).2)
 
-theorem flat_noCond (φ : Formula ι) : (flat φ).1.NoCond ∧ (flat φ).2.NoCond := by
+theorem noCond_flat (φ : Formula ι) : NoCond (flat φ).1 ∧ NoCond (flat φ).2 := by
   induction φ with
-  | atom i => exact ⟨trivial, trivial⟩
-  | bot => exact ⟨trivial, trivial⟩
+  | atom i => exact ⟨⟨trivial, trivial⟩, trivial⟩
   | neg φ ih => exact ih
   | conj φ ψ ihφ ihψ => exact ⟨⟨ihφ.1, ihψ.1⟩, ⟨ihφ.1, ihφ.2⟩, ihψ.1, ihψ.2⟩
   | disj φ ψ ihφ ihψ => exact ⟨⟨ihφ.1, ihψ.1⟩, ⟨ihφ.1, ihφ.2⟩, ihψ.1, ihψ.2⟩
@@ -319,37 +323,34 @@ theorem flat_noCond (φ : Formula ι) : (flat φ).1.NoCond ∧ (flat φ).2.NoCon
 
 /-- Every formula is semantically equivalent to the simple conditional `flat` computes (**the
 Reduction Theorem**, Theorem 1). -/
-theorem eval_flat (φ : Formula ι) (v : ι → Bool) :
-    eval v φ = eval v (cond (flat φ).1 (flat φ).2) := by
+theorem cooperEval_flat (φ : Formula ι) (v : ι → Bool) :
+    cooperEval v φ = cooperEval v (.cond (flat φ).1 (flat φ).2) := by
   induction φ with
   | atom i => simp [flat]
-  | bot => simp [flat]
-  | neg φ ih => rw [eval_neg, ih, flat]; exact neg_condAssert
+  | neg φ ih => rw [cooperEval_neg, ih, flat]; exact neg_condAssert
   | conj φ ψ ihφ ihψ =>
-      have hφ := flat_noCond φ
-      have hψ := flat_noCond ψ
-      rw [eval_conj, ihφ, ihψ, flat]
-      simpa using meetBelnap_condAssert_condAssert (hφ.1.eval_ne_zero v) (hφ.2.eval_ne_zero v)
-        (hψ.1.eval_ne_zero v) (hψ.2.eval_ne_zero v)
+      have hφ := noCond_flat φ
+      have hψ := noCond_flat ψ
+      rw [cooperEval_conj, ihφ, ihψ, flat]
+      simpa using meetBelnap_condAssert_condAssert (hφ.1.cooperEval_ne_zero v)
+        (hφ.2.cooperEval_ne_zero v) (hψ.1.cooperEval_ne_zero v) (hψ.2.cooperEval_ne_zero v)
   | disj φ ψ ihφ ihψ =>
-      have hφ := flat_noCond φ
-      have hψ := flat_noCond ψ
-      rw [eval_disj, ihφ, ihψ, flat]
-      simpa using joinBelnap_condAssert_condAssert (hφ.1.eval_ne_zero v) (hφ.2.eval_ne_zero v)
-        (hψ.1.eval_ne_zero v) (hψ.2.eval_ne_zero v)
+      have hφ := noCond_flat φ
+      have hψ := noCond_flat ψ
+      rw [cooperEval_disj, ihφ, ihψ, flat]
+      simpa using joinBelnap_condAssert_condAssert (hφ.1.cooperEval_ne_zero v)
+        (hφ.2.cooperEval_ne_zero v) (hψ.1.cooperEval_ne_zero v) (hψ.2.cooperEval_ne_zero v)
   | cond φ ψ ihφ ihψ =>
-      have hφ := flat_noCond φ
-      have hψ := flat_noCond ψ
-      rw [eval_cond, ihφ, ihψ, flat]
-      simpa using condAssert_condAssert_condAssert (hφ.1.eval_ne_zero v) (hφ.2.eval_ne_zero v)
-        (hψ.1.eval_ne_zero v) (hψ.2.eval_ne_zero v)
+      have hφ := noCond_flat φ
+      have hψ := noCond_flat ψ
+      rw [cooperEval_cond, ihφ, ihψ, flat]
+      simpa using condAssert_condAssert_condAssert (hφ.1.cooperEval_ne_zero v)
+        (hφ.2.cooperEval_ne_zero v) (hψ.1.cooperEval_ne_zero v) (hψ.2.cooperEval_ne_zero v)
 
 /-- The flat fragment is as expressive as the whole language, Theorem 1 in the paper's form. -/
 theorem reduction (φ : Formula ι) :
-    ∃ A B : Formula ι, A.NoCond ∧ B.NoCond ∧ Equiv φ (cond A B) :=
-  ⟨_, _, (flat_noCond φ).1, (flat_noCond φ).2, eval_flat φ⟩
-
-end Formula
+    ∃ A B : Formula ι, NoCond A ∧ NoCond B ∧ CooperEquiv φ (.cond A B) :=
+  ⟨_, _, (noCond_flat φ).1, (noCond_flat φ).2, cooperEval_flat φ⟩
 
 /-! ### The logic C of certain inference
 
@@ -357,25 +358,21 @@ The paper takes from [egre-rossi-sprenger-2025] the logic C, preservation of pro
 its trivalent characterization as preservation of the LP-designated values. Here the
 characterization is the definition and the probabilistic description is the theorem. -/
 
-open Formula
-
-variable {ι : Type*}
-
 /-- An inference is certain when every Cooper valuation designating the premises designates the
 conclusion. -/
 def CEntails (Γ : List (Formula ι)) (B : Formula ι) : Prop :=
-  ∀ v : ι → Bool, (∀ A ∈ Γ, 0 ≤ eval v A) → 0 ≤ eval v B
+  ∀ v : ι → Bool, (∀ A ∈ Γ, 0 ≤ cooperEval v A) → 0 ≤ cooperEval v B
 
 instance [Fintype ι] [DecidableEq ι] (Γ : List (Formula ι)) (B : Formula ι) :
     Decidable (CEntails Γ B) :=
-  inferInstanceAs (Decidable (∀ v : ι → Bool, (∀ A ∈ Γ, 0 ≤ eval v A) → 0 ≤ eval v B))
+  inferInstanceAs (Decidable (∀ v : ι → Bool, (∀ A ∈ Γ, 0 ≤ cooperEval v A) → 0 ≤ cooperEval v B))
 
 /-- Certain inference preserves probability 1 under every credence over the valuations, and
 conversely (Definition 4 and [egre-rossi-sprenger-2025]'s characterization). -/
 theorem cEntails_iff_forall_prob [MeasurableSpace (ι → Bool)]
     [DiscreteMeasurableSpace (ι → Bool)] {Γ : List (Formula ι)} {B : Formula ι} :
     CEntails Γ B ↔ ∀ μ : Measure (ι → Bool), IsProbabilityMeasure μ →
-      (∀ A ∈ Γ, Trivalent.prob μ (eval · A) = 1) → Trivalent.prob μ (eval · B) = 1 := by
+      (∀ A ∈ Γ, Trivalent.prob μ (cooperEval · A) = 1) → Trivalent.prob μ (cooperEval · B) = 1 := by
   constructor
   · intro h μ hμ hΓ
     rw [Trivalent.prob_eq_one_iff]
@@ -390,8 +387,8 @@ theorem cEntails_iff_forall_prob [MeasurableSpace (ι → Bool)]
     exact absurd h0 (by decide)
   · intro h v hΓ
     have := h (Measure.dirac v) inferInstance fun A hA ↦
-      (Trivalent.prob_dirac_eq_one_iff (p := (eval · A))).2 (hΓ A hA)
-    exact (Trivalent.prob_dirac_eq_one_iff (p := (eval · B))).1 this
+      (Trivalent.prob_dirac_eq_one_iff (p := (cooperEval · A))).2 (hΓ A hA)
+    exact (Trivalent.prob_dirac_eq_one_iff (p := (cooperEval · B))).1 this
 
 /-! ### Trivalent probability over a world space -/
 
@@ -401,21 +398,21 @@ variable {W : Type*} [MeasurableSpace W]
 
 /-- The trivalent proposition a formula expresses over a world space whose worlds `t` maps to
 classical valuations of the atoms. -/
-abbrev value (t : W → ι → Bool) (φ : Formula ι) : W → SignType := fun w ↦ eval (t w) φ
+abbrev value (t : W → ι → Bool) (φ : Formula ι) : W → SignType := fun w ↦ cooperEval (t w) φ
 
 variable {μ : Measure W} {t : W → ι → Bool}
 
 /-- `⊤` is certain, the first principle. -/
-theorem prob_value_top [IsProbabilityMeasure μ] :
-    Trivalent.prob μ (value t Formula.top) = 1 := by
-  have : value t (Formula.top (ι := ι)) = fun w ↦ ofProp True := rfl
+theorem prob_value_top [IsProbabilityMeasure μ] (i : ι) :
+    Trivalent.prob μ (value t (top i)) = 1 := by
+  have : value t (top i) = fun w ↦ ofProp True := funext fun w ↦ cooperEval_top i
   rw [this, Trivalent.prob_ofProp]
   simp
 
 /-- `⊥` is impossible, the first principle. -/
-theorem prob_value_bot [IsProbabilityMeasure μ] :
-    Trivalent.prob μ (value t Formula.bot) = 0 := by
-  have : value t (Formula.bot (ι := ι)) = fun w ↦ ofProp False := rfl
+theorem prob_value_bot [IsProbabilityMeasure μ] (i : ι) :
+    Trivalent.prob μ (value t (bot i)) = 0 := by
+  have : value t (bot i) = fun w ↦ ofProp False := funext fun w ↦ cooperEval_bot i
   rw [this, Trivalent.prob_ofProp]
   simp
 
@@ -423,13 +420,14 @@ theorem prob_value_bot [IsProbabilityMeasure μ] :
 printed axiom omits: a
 certainly void disjunction of certainly void disjuncts has probability 1 by the All Void
 convention, while the disjuncts' probabilities sum to 2. -/
-theorem additivity_all_void (μ : Measure W) (t : W → ι → Bool) :
-    posExt (value t (.cond .bot .top)) = ∅ ∧
-      Trivalent.prob μ (value t (.disj (.cond .bot .top) (.cond .bot .top))) = 1 ∧
-        Trivalent.prob μ (value t (.cond .bot .top)) +
-          Trivalent.prob μ (value t (.cond .bot (.top : Formula ι))) = 2 := by
-  have hA : value t (.cond .bot (.top : Formula ι)) = fun _ ↦ 0 := rfl
-  have hD : value t (.disj (.cond .bot .top) (.cond .bot (.top : Formula ι))) = fun _ ↦ 0 := rfl
+theorem additivity_all_void (μ : Measure W) (t : W → ι → Bool) (i : ι) :
+    posExt (value t (.cond (bot i) (top i))) = ∅ ∧
+      Trivalent.prob μ (value t (.disj (.cond (bot i) (top i)) (.cond (bot i) (top i)))) = 1 ∧
+        Trivalent.prob μ (value t (.cond (bot i) (top i))) +
+          Trivalent.prob μ (value t (.cond (bot i) (top i))) = 2 := by
+  have hA : value t (.cond (bot i) (top i)) = fun _ ↦ 0 := funext fun w ↦ by simp
+  have hD : value t (.disj (.cond (bot i) (top i)) (.cond (bot i) (top i))) = fun _ ↦ 0 :=
+    funext fun w ↦ by simp
   refine ⟨by rw [hA]; ext w; simp, ?_, ?_⟩
   · rw [hD, Trivalent.prob_of_measure_support_eq_zero (by simp)]
   · rw [hA, Trivalent.prob_of_measure_support_eq_zero (by simp), one_add_one_eq_two]
@@ -438,11 +436,11 @@ theorem additivity_all_void (μ : Measure W) (t : W → ι → Bool) :
 
 /-- Axiom 2′ fails as printed. C refutes `⊥ → ⊤` and makes `⊤` certain, yet the conditional
 probability of `⊥ → ⊤` given `⊤` is 1 by the All Void convention, not 0. -/
-theorem axiom2'_all_void (μ : Measure W) (t : W → ι → Bool) :
-    CEntails [] (.neg (.cond .bot .top) : Formula ι) ∧ CEntails [] (.top : Formula ι) ∧
-      Trivalent.prob μ (value t (.cond .top (.cond .bot .top))) = 1 := by
+theorem axiom2'_all_void (μ : Measure W) (t : W → ι → Bool) (i : ι) :
+    CEntails [] (.neg (.cond (bot i) (top i))) ∧ CEntails [] (top i) ∧
+      Trivalent.prob μ (value t (.cond (top i) (.cond (bot i) (top i)))) = 1 := by
   refine ⟨fun v _ ↦ by simp, fun v _ ↦ by simp, ?_⟩
-  have : value t (.cond .top (.cond .bot (.top : Formula ι))) = fun _ ↦ 0 := rfl
+  have : value t (.cond (top i) (.cond (bot i) (top i))) = fun _ ↦ 0 := funext fun w ↦ by simp
   rw [this, Trivalent.prob_of_measure_support_eq_zero (by simp)]
 
 /-- Antecedents equivalent in C give the same conditional probabilities (Left Logical Equivalence,
@@ -452,6 +450,7 @@ theorem prob_cond_congr_left {A A' : Formula ι} (h₁ : CEntails [A] A') (h₂ 
     Trivalent.prob μ (value t (.cond A C)) = Trivalent.prob μ (value t (.cond A' C)) := by
   have : value t (.cond A C) = value t (.cond A' C) := by
     funext w
+    simp only [cooperEval_cond]
     exact condAssert_congr_left
       ⟨fun h ↦ h₁ (t w) (by simpa using h), fun h ↦ h₂ (t w) (by simpa using h)⟩ _
   rw [this]
@@ -467,17 +466,17 @@ theorem stalnaker_thesis (A B C : Formula ι) :
 
 /-- In antecedent position a simple indicative and its material conditional are designated
 together. -/
-theorem designated_cond_iff_material {A B : Formula ι} (hA : A.NoCond) (hB : B.NoCond)
-    (v : ι → Bool) : 0 ≤ eval v (.cond A B) ↔ 0 ≤ eval v (material A B) := by
-  have ha := hA.eval_ne_zero v
-  have hb := hB.eval_ne_zero v
-  rw [eval_cond, eval_material]
+theorem designated_cond_iff_material {A B : Formula ι} (hA : NoCond A) (hB : NoCond B)
+    (v : ι → Bool) : 0 ≤ cooperEval v (.cond A B) ↔ 0 ≤ cooperEval v (material A B) := by
+  have ha := hA.cooperEval_ne_zero v
+  have hb := hB.cooperEval_ne_zero v
+  rw [cooperEval_cond, cooperEval_material]
   revert ha hb
-  cases eval v A <;> cases eval v B <;> decide
+  cases cooperEval v A <;> cases cooperEval v B <;> decide
 
 /-- Learning `A → B` is learning the material conditional `A ⊃ B`, for conditional-free `A` and `B`
 (**Updating on Simple Conditionals**, Proposition 6). -/
-theorem prob_cond_material_eq {A B : Formula ι} (hA : A.NoCond) (hB : B.NoCond) (H : Formula ι) :
+theorem prob_cond_material_eq {A B : Formula ι} (hA : NoCond A) (hB : NoCond B) (H : Formula ι) :
     Trivalent.prob μ (value t (.cond (.cond A B) H)) =
       Trivalent.prob μ (value t (.cond (material A B) H)) :=
   prob_cond_congr_left
@@ -509,7 +508,8 @@ hypothesis holds, the designated weight of `C` included. -/
 theorem additivity_cond_all_void :
     CEntails [AllVoid.C] (.neg (.conj AllVoid.A AllVoid.B)) ∧
       ¬ CEntails [AllVoid.C] (.conj AllVoid.A AllVoid.B) ∧
-      (∀ v, 0 ≤ eval v AllVoid.C → (eval v AllVoid.A = 0 ↔ eval v AllVoid.B = 0)) ∧
+      (∀ v, 0 ≤ cooperEval v AllVoid.C →
+        (cooperEval v AllVoid.A = 0 ↔ cooperEval v AllVoid.B = 0)) ∧
       Measure.dirac () {w : Unit | 0 ≤ value AllVoid.assign AllVoid.C w} ≠ 0 ∧
       Trivalent.prob (Measure.dirac ())
         (value AllVoid.assign (.cond AllVoid.C (.disj AllVoid.A AllVoid.B))) = 1 ∧
@@ -559,7 +559,7 @@ theorem prob_cond_eq_one_of_cEntails [IsFiniteMeasure μ] {A B : Formula ι}
   rw [Trivalent.prob_eq_one_iff]
   convert measure_empty (μ := μ)
   ext w
-  simp only [mem_negExt, value, eval_cond, condAssert_eq_neg_one_iff,
+  simp only [mem_negExt, value, cooperEval_cond, condAssert_eq_neg_one_iff,
     Trivalent.Designation.threshold_lp, Set.mem_empty_iff_false, iff_false, not_and]
   intro hw hB
   have h0 := h (t w) fun X hX ↦ by rw [List.mem_singleton] at hX; exact hX ▸ hw
@@ -576,17 +576,18 @@ theorem prob_cond_eq_zero_of_cEntails_neg {A B : Formula ι} (h : CEntails [] (.
   convert measure_empty (μ := μ)
   ext w
   rw [mem_posExt]
-  simp only [value, eval_cond, condAssert_eq_one_iff, Set.mem_empty_iff_false, iff_false, not_and]
+  simp only [value, cooperEval_cond, condAssert_eq_one_iff, Set.mem_empty_iff_false, iff_false,
+    not_and]
   intro _ hB
   have := h (t w) (by simp)
-  rw [eval_neg, hB] at this
+  rw [cooperEval_neg, hB] at this
   exact absurd this (by decide)
 
 /-- Trivalent Additivity (axiom 5′) holds under conditions (ii) and (iii) in their
 designated-value form together with a live defined region for `C → A`, the properness the
 printed version lacks. -/
 theorem prob_cond_disj {A B C : Formula ι} (hii : CEntails [C] (.neg (.conj A B)))
-    (hiii : ∀ v, 0 ≤ eval v C → (eval v A = 0 ↔ eval v B = 0))
+    (hiii : ∀ v, 0 ≤ cooperEval v C → (cooperEval v A = 0 ↔ cooperEval v B = 0))
     (hproper : μ (Function.support (value t (.cond C A))) ≠ 0) :
     Trivalent.prob μ (value t (.cond C (.disj A B))) =
       Trivalent.prob μ (value t (.cond C A)) + Trivalent.prob μ (value t (.cond C B)) := by
@@ -597,19 +598,19 @@ theorem prob_cond_disj {A B C : Formula ι} (hii : CEntails [C] (.neg (.conj A B
   have hsupp : Function.support (value t (.cond C A)) =
       Function.support (value t (.cond C B)) := by
     ext w
-    simp only [Function.mem_support, Ne, value, eval_cond, condAssert_eq_zero_iff,
+    simp only [Function.mem_support, Ne, value, cooperEval_cond, condAssert_eq_zero_iff,
       Trivalent.Designation.threshold_lp]
-    by_cases hC : 0 ≤ eval (t w) C
+    by_cases hC : 0 ≤ cooperEval (t w) C
     · simp [hC, hiii (t w) hC]
     · simp [hC]
   have hdisj : Disjoint (posExt (value t (.cond C A))) (posExt (value t (.cond C B))) := by
     rw [Set.disjoint_left]
     intro w hwA hwB
     rw [mem_posExt] at hwA hwB
-    simp only [value, eval_cond, condAssert_eq_one_iff, Trivalent.Designation.threshold_lp]
+    simp only [value, cooperEval_cond, condAssert_eq_one_iff, Trivalent.Designation.threshold_lp]
       at hwA hwB
     have := hii (t w) (by simpa using hwA.1)
-    rw [eval_neg, eval_conj, hwA.2, hwB.2] at this
+    rw [cooperEval_neg, cooperEval_conj, hwA.2, hwB.2] at this
     exact absurd this (by decide)
   rw [hval, Trivalent.prob_joinBelnap hsupp hdisj hproper]
 
@@ -664,14 +665,14 @@ theorem ofAdams_eq_ofAdams_iff {φ ψ : Adams1975.Formula W} :
 
 /-- A simple conditional of conditional-free formulas denotes the Adams formula of their truth
 sets. -/
-theorem value_cond_eq_ofAdams {A B : Formula ι} (hA : A.NoCond) (hB : B.NoCond)
+theorem value_cond_eq_ofAdams {A B : Formula ι} (hA : NoCond A) (hB : NoCond B)
     (t : W → ι → Bool) :
-    value t (.cond A B) = ofAdams ⟨{w | eval (t w) A = 1}, {w | eval (t w) B = 1}⟩ := by
+    value t (.cond A B) = ofAdams ⟨{w | cooperEval (t w) A = 1}, {w | cooperEval (t w) B = 1}⟩ := by
   funext w
-  simp only [value, eval_cond, ofAdams, Set.mem_ofPred_eq]
+  simp only [value, cooperEval_cond, ofAdams, Set.mem_ofPred_eq]
   congr 1
-  · convert (ofProp_eq_one_of_ne_zero (hA.eval_ne_zero (t w))).symm
-  · convert (ofProp_eq_one_of_ne_zero (hB.eval_ne_zero (t w))).symm
+  · convert (ofProp_eq_one_of_ne_zero (hA.cooperEval_ne_zero (t w))).symm
+  · convert (ofProp_eq_one_of_ne_zero (hB.cooperEval_ne_zero (t w))).symm
 
 variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {μ : Measure W}
 
@@ -684,10 +685,10 @@ theorem prob_ofAdams {φ : Adams1975.Formula W} (h : μ φ.ante ≠ 0) :
 
 /-- For conditional-free `A` and `B` with a live antecedent, the probability of `A → B` is the
 conditional probability of `B` given `A` (**Adams's Thesis**). -/
-theorem adams_thesis {A B : Formula ι} (hA : A.NoCond) (hB : B.NoCond) {t : W → ι → Bool}
-    (h : μ {w | eval (t w) A = 1} ≠ 0) :
+theorem adams_thesis {A B : Formula ι} (hA : NoCond A) (hB : NoCond B) {t : W → ι → Bool}
+    (h : μ {w | cooperEval (t w) A = 1} ≠ 0) :
     Trivalent.prob μ (value t (.cond A B)) =
-      μ[{w | eval (t w) B = 1} | {w | eval (t w) A = 1}] := by
+      μ[{w | cooperEval (t w) B = 1} | {w | cooperEval (t w) A = 1}] := by
   rw [value_cond_eq_ofAdams hA hB t, prob_ofAdams h]
 
 /-- [adams-1975]'s p-entailment is a condition on trivalent probabilities, with his proper
@@ -713,8 +714,6 @@ The fair models the paper computes in: Goldstein and Santorio's die, Santorio an
 partition die, Edgington's coin, and the two-world model where `p(X ∧ Y) ≤ p(X)` fails. -/
 
 section Examples
-
-open Formula
 
 /-- Cross-multiplication for the finite fractions of the examples. -/
 private theorem ennreal_div_eq {a b c d : ℝ≥0∞} (hb0 : b ≠ 0) (hb : b ≠ ⊤) (hd0 : d ≠ 0)
@@ -801,9 +800,9 @@ def lawVal : Bool → Fin 2 → Bool := fun w i ↦ if i = 0 then w else true
 /-- The standard law `p(X ∧ Y) ≤ p(X)` fails (§2, §4). The bet on `A → ⊥` is lost or called off,
 while the bet on its conjunction with a truth is won at the world where it is called off. -/
 theorem prob_conj_gt :
-    Trivalent.prob (uniformOn Set.univ) (value lawVal (.cond (.atom 0) .bot)) = 0 ∧
+    Trivalent.prob (uniformOn Set.univ) (value lawVal (.cond (.atom 0) (bot 1))) = 0 ∧
       Trivalent.prob (uniformOn Set.univ)
-        (value lawVal (.conj (.cond (.atom 0) .bot) (.atom 1))) = 1 / 2 := by
+        (value lawVal (.conj (.cond (.atom 0) (bot 1)) (.atom 1))) = 1 / 2 := by
   constructor <;> rw [Trivalent.prob_uniformOn_univ]
   · rw [Trivalent.prob_count_eq (P := ∅) (S := {true}) (by decide) (by decide) ⟨true, by decide⟩]
     simp

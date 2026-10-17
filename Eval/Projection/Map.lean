@@ -175,7 +175,7 @@ theorem not_limitedSymmetry_stronger_transparencyIncremental :
   intro h
   have := (Formula.admits_ccp_iff I).1 ((transpI_iff_admits I _ _).1 (h _ _ _ _ _ hls))
     (Set.mem_univ ())
-  simp [I, Formula.filter, Connective.filter] at this
+  simp [I, Formula.filter, Formula.eval] at this
 
 /-- By Fact 3.4.1, `(pp' and q)` separates the two where `p` and `q` fail. -/
 theorem not_supervaluationSymmetric_stronger_limitedSymmetry :
@@ -183,7 +183,7 @@ theorem not_supervaluationSymmetric_stronger_limitedSymmetry :
   let I : Fin 3 → Set Unit := fun _ ↦ ∅
   have hs : SuperS I Set.univ (.bin .conj (.trigger 0 1) (.atom 2)) := fun w _ ↦
     (superDefined_iff_of_nodup I (by simp [Formula.occurrences])).2
-      (by simp [I, Formula.strong, Connective.strong])
+      (by simp [I, Formula.strong, Formula.eval])
   intro h
   have := (Kalomoiros2023.transpLS_and_left I).1 (h _ _ _ _ _ hs) (Set.mem_univ ())
   simp [I] at this

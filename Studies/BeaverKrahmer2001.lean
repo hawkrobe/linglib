@@ -163,6 +163,15 @@ def Connective.eval : Connective → Kleene → SignType → SignType → SignTy
   | .disj, k => k.join
   | .imp, k => fun a b ↦ k.join (-a) b
 
+/-- The connectives of each logic as the substrate's truth tables, with the conditional `¬a ∨ b`;
+these are the strong, Middle and Weak Kleene connectives (`Kleene.connectives_strong`, …). -/
+def Kleene.connectives (k : Kleene) : Trivalent.Connectives :=
+  ⟨k.meet, k.join, fun a b ↦ k.join (-a) b⟩
+
+theorem Kleene.connectives_strong : Kleene.strong.connectives = .strongKleene := rfl
+theorem Kleene.connectives_middle : Kleene.middle.connectives = .middleKleene := rfl
+theorem Kleene.connectives_weak : Kleene.weak.connectives = .weakKleene := rfl
+
 /-- The middle conjunction in strong Kleene terms. -/
 theorem meetMiddle_eq (a b : SignType) :
     meetMiddle a b = (a ⊓ b) ⊔ (a ⊓ -a) := by
@@ -300,20 +309,23 @@ def eval (V : Valuation Atom) : Formula Atom → SignType
 @[simp] theorem eval_assert (V : Valuation Atom) (φ : Formula Atom) :
     eval V (assert φ) = ofProp (eval V φ = 1) := rfl
 
-/-- The substrate's strong Kleene formulas embed. -/
-def ofFormula : Trivalent.Formula Atom → Formula Atom
+/-- The substrate's formulas embed, with every connective read in one logic. -/
+def ofFormula (k : Kleene) : Trivalent.Formula Atom → Formula Atom
   | .atom a => atom a
-  | .neg φ => neg (ofFormula φ)
-  | .conj φ ψ => conn .conj .strong (ofFormula φ) (ofFormula ψ)
+  | .neg φ => neg (ofFormula k φ)
+  | .conj φ ψ => conn .conj k (ofFormula k φ) (ofFormula k ψ)
+  | .disj φ ψ => conn .disj k (ofFormula k φ) (ofFormula k ψ)
+  | .cond φ ψ => conn .imp k (ofFormula k φ) (ofFormula k ψ)
 
-/-- On a bivalent valuation the embedding evaluates as the substrate does on the
-corresponding trivalent model. -/
-theorem eval_ofFormula (V : Valuation Atom) (φ : Trivalent.Formula Atom) :
-    eval V (ofFormula φ) = Trivalent.Formula.eval (fun a ↦ ofProp (V a)) φ := by
+/-- On a bivalent valuation, a formula whose connectives are all read in one logic evaluates as
+the substrate does under that logic's connectives. -/
+theorem eval_ofFormula (k : Kleene) (V : Valuation Atom) (φ : Trivalent.Formula Atom) :
+    eval V (ofFormula k φ) = Trivalent.Formula.eval k.connectives (Trivalent.Model.ofBool V) φ := by
   induction φ with
   | atom a => rfl
   | neg φ ih => simp [ofFormula, ih]
-  | conj φ ψ ih₁ ih₂ => simp [ofFormula, ih₁, ih₂, Connective.eval, Kleene.meet]
+  | conj φ ψ ih₁ ih₂ | disj φ ψ ih₁ ih₂ | cond φ ψ ih₁ ih₂ =>
+    simp [ofFormula, ih₁, ih₂, Connective.eval, Kleene.connectives]
 
 /-- Meta-denial at formula level is `Dφ = A¬φ`. -/
 def deny (φ : Formula Atom) : Formula Atom := assert (neg φ)

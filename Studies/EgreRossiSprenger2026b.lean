@@ -1206,7 +1206,7 @@ variable {ι : Type*} (t : W → ι → Bool)
 
 /-- The nonmodal sentence a formula of the conditional language expresses, at worlds whose atoms
 `t` values. -/
-def ofFormula (A : Formula ι) : Sentence W := ofCooper fun w ↦ A.eval (t w)
+def ofFormula (A : Formula ι) : Sentence W := ofCooper (value t A)
 
 theorem contextFree_ofFormula (A : Formula ι) : ContextFree (ofFormula t A) :=
   contextFree_ofCooper _
