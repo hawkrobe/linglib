@@ -32,6 +32,7 @@ ordered by refinement, so a schematic frame lies below every frame instantiating
 * `ArgumentFrame.IsIntransitive`, `ArgumentFrame.HasNominal`,
   `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal`, `ArgumentFrame.HasFinite`,
   `ArgumentFrame.HasImplicit` — shape predicates
+* `ArgumentFrame.leaveImplicit` — a frame with one complement left unexpressed
 * `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, … — smart
   constructors
 
@@ -82,7 +83,7 @@ inductive ImplicitInterp where
   | reciprocal
   /-- Understood as a body part of the subject (*Mary waved*). -/
   | bodyPart
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 namespace ArgumentFrame
 
@@ -341,7 +342,7 @@ instance : Decidable fr.IsTransitive := inferInstanceAs (Decidable (_ ≤ _))
 /-- The core objects are the core complements. -/
 def coreObjects : List Slot := fr.coreSlots.filter (· != .external)
 
-/-- The comparative argument role of a core slot, read off its coding: a nominal subject is S
+/-- The comparative argument role of a core slot is read off its coding. A nominal subject is S
     without a core object and A with one, a sole core object is P, and of two core objects the
     first is R and the second T. -/
 def argumentRole : Slot → Option ArgumentRole
@@ -389,6 +390,10 @@ def HasImplicit : Prop := ∃ p ∈ fr.complements, p.kind = .implicit
 
 instance : Decidable fr.HasImplicit := inferInstanceAs (Decidable (∃ p ∈ _, _))
 
+/-- The frame with its `i`-th complement left unexpressed, interpreted as `a`. -/
+def leaveImplicit (i : ℕ) (a : Option ImplicitInterp := none) : ArgumentFrame :=
+  { fr with complements := fr.complements.set i (.implicit a) }
+
 /-- The [noonan-2007] codings recorded across the frame's complements. -/
 def codings : List Complement.Coding := fr.complements.filterMap (·.coding?)
 
@@ -406,12 +411,12 @@ def intransitive : ArgumentFrame := ⟨some .nominal, []⟩
 /-- The impersonal frame has an expletive subject and no complement. -/
 def impersonal : ArgumentFrame := ⟨some .expletive, []⟩
 
-/-- The object-drop frame leaves the object unexpressed, with interpretation `i`. -/
-def objectDrop (i : Option ImplicitInterp := none) : ArgumentFrame :=
-  ⟨some .nominal, [.implicit i]⟩
-
 /-- The transitive frame has one nominal complement. -/
 def np : ArgumentFrame := ⟨some .nominal, [.nominal]⟩
+
+/-- The object-drop frame is the transitive frame with its object left unexpressed, with
+interpretation `a`. -/
+def objectDrop (a : Option ImplicitInterp := none) : ArgumentFrame := np.leaveImplicit 0 a
 
 /-- The double-object frame has two nominal complements. -/
 def np_np : ArgumentFrame := ⟨some .nominal, [.nominal, .nominal]⟩

@@ -208,10 +208,10 @@ def schema? : DiathesisAlternation → Option Voice
   | .inducedAction => some causative
   | .conative => some (of .np (.pp (some at_)) [some external, some (complement 0)])
   | .substanceSource => some (of (.pp (some from_)) .np [some (complement 0), some external])
-  | .unspecifiedObject => some (objectDrop .indef)
-  | .understoodBodyPartObject => some (objectDrop .bodyPart)
-  | .understoodReflexiveObject => some (objectDrop .reflexive)
-  | .understoodReciprocalObject => some (objectDrop .reciprocal)
+  | .unspecifiedObject => some (leaveImplicit .np 0 (some .indef))
+  | .understoodBodyPartObject => some (leaveImplicit .np 0 (some .bodyPart))
+  | .understoodReflexiveObject => some (leaveImplicit .np 0 (some .reflexive))
+  | .understoodReciprocalObject => some (leaveImplicit .np 0 (some .reciprocal))
   | .dative => some (toDoubleObject to_)
   | .benefactive => some (toDoubleObject for_)
   | .locative => some <|
@@ -233,9 +233,6 @@ def schema? : DiathesisAlternation → Option Voice
       (of (.np_pp (some with_)) .np [none, some (complement 0), some external])
   | _ => none
 where
-  /-- The unexpressed object alternations, which drop the object with interpretation `i`. -/
-  objectDrop (i : ImplicitInterp) : Voice :=
-    of .np (.objectDrop (some i)) [some external, some (complement 0)]
   /-- The dative and benefactive alternations, in which the *p* phrase becomes the first
   object. -/
   toDoubleObject (p : Adposition) : Voice :=

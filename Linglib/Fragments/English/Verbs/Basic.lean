@@ -225,9 +225,9 @@ def aim : Verb where
     [(ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.at_), [0, 2, 1])]
 
-/-- "give" — ditransitive, alternates DOC/PP.
-    Implicit goal is definite ([fillmore-1986]: pragmatically recoverable).
-    Neither object can be implicit alone. -/
+/-- "give" — ditransitive, alternates DOC/PP. The direct object may be implicit in the
+    prepositional frame only, an indefinite (*She gives to the Red Cross*); the PP may be
+    implicit, a definite ([fillmore-1986]: pragmatically recoverable). -/
 def give : Verb where
   morphs := [.root "give"]
   past := "gave"
@@ -235,9 +235,9 @@ def give : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (⟨some .nominal, [.implicit (some .indef), .adpositional]⟩, [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 0 (some .indef), [0, 2, 1]),
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give}
 
@@ -312,9 +312,9 @@ def sell : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .adpositional]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 0 (some .def), [0, 1, 2]),
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
     [some possessionTransfer.subjectProfile, none, none]
   vendlerClass := some .accomplishment
@@ -399,8 +399,8 @@ def build : Verb where
 
 /-- "write" — Levin 25.2 Scribble verbs, cross-listed with the build verbs;
     creation verb, strictly incremental theme.
-    Alternates DOC/PP. Implicit DO in both frames (indefinite).
-    Uniquely allows implicit DO in both DOC and PP ([bruening-2021]). -/
+    Alternates DOC/PP, and uniquely allows an implicit direct object, an indefinite, in both
+    (*She wrote me*, *She wrote to me*; [bruening-2021]). -/
 def write : Verb where
   morphs := [.root "write"]
   past := "wrote"
@@ -408,7 +408,9 @@ def write : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_np, [0, 2, 1]),
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 2, 1]),
+     (ArgumentFrame.np_pp.leaveImplicit 0 (some .indef), [0, 1, 2]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict

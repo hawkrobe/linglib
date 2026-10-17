@@ -108,15 +108,16 @@ def steal : Verb where
 /-! ### Sending and Carrying (§ 11) -/
 
 /-- "send" — Levin 11.1 Send verbs. Alternates DOC/PP.
-    Goal does not entail possession (prospective). Neither object implicit alone. -/
+    Goal does not entail possession (prospective). The PP may be implicit, a definite; the
+    theme may not ([bruening-2021]). -/
 def send : Verb where
   morphs := [.root "send"]
   past := "sent"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 1 (some .def), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.send}
 
@@ -194,9 +195,9 @@ def throw : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (⟨some .nominal, [.implicit (some .def), .adpositional]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 0 (some .def), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 1 (some .indef), [0, 1, 2])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.amuse, .throw}
 

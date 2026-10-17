@@ -125,7 +125,8 @@ def melt : Verb where
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np_np, [0, 3, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   root := { content := {

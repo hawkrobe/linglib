@@ -71,8 +71,8 @@ def envy : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
   vendlerClass := some .state
   levinClasses := {LevinClass.admire}
 

@@ -32,8 +32,9 @@ def say : Verb where
   levinClasses := {LevinClass.say}
 
 /-- "tell" — communication verb with recipient.
-    Also ditransitive ("tell me a story"). Implicit second obj is definite
-    ([bruening-2021]: recoverable). Implicit goal (PP) is indefinite. -/
+    Also ditransitive ("tell me a story"). The direct object may be implicit in the double
+    object frame only, a definite (*Tell me*, but not *told to me*); the PP may be implicit, an
+    indefinite ([bruening-2021]). -/
 def tell : Verb where
   morphs := [.root "tell"]
   past := "told"
@@ -41,9 +42,9 @@ def tell : Verb where
   valency := .of
     [(ArgumentFrame.finiteClause, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (⟨some .nominal, [.implicit (some .def), .adpositional]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 1 (some .indef), [0, 1, 2])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.tell, .transferOfMessage}
 

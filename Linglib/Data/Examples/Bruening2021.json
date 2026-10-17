@@ -1,0 +1,839 @@
+[
+  {
+    "id": "bruening2021_10a",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She is going to serve the guests now, but I don't know what.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "serve"],
+      ["sluiced", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_10b",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She is going to feed the dogs now, but didn't say what.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "feed"],
+      ["sluiced", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_10c",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(10c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ron has to pay the loan shark, but I don't know how much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "pay"],
+      ["sluiced", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_10d",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(10d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They charge every visitor, but their website doesn't say how much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "charge"],
+      ["sluiced", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_10e",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(10e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They are definitely going to fine you, I just don't know how much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "fine"],
+      ["sluiced", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_10f",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(10f)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I think you need to tip the waiter in Germany, but I don't know how much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "tip"],
+      ["sluiced", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_10g",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(10g)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It will cost you, I just don't know how much.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "cost"],
+      ["sluiced", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_10h",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(10h)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "He teaches high-schoolers, but I'm not sure what subject.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "teach"],
+      ["sluiced", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_11a",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(11a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They accidentally charged way too much, but we can't figure out who.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "They accidentally charged someone way too much, but we can't figure out who.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "charge"],
+      ["sluiced", "firstObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_11b",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "That guy once tipped almost 300%, but I can't remember which waitress.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "That guy once tipped a waitress almost 300%, but I can't remember which waitress.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "tip"],
+      ["sluiced", "firstObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_11c",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(11c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "That guy envies the big house and the expensive car, but I can't remember which of his neighbors.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "That guy envies one of his neighbors the big house and the expensive car, but I can't remember which of his neighbors.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "envy"],
+      ["sluiced", "firstObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_11d",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(11d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The pope once forgave blasphemy, but I don't know who.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "The pope once forgave someone blasphemy, but I don't know who.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "forgive"],
+      ["sluiced", "firstObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_11e",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(11e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The court denied due process, but they won't tell us who.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "The court denied one of the prisoners due process, but they won't tell us who.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "deny"],
+      ["sluiced", "firstObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_11f",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(11f)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The warden will permit one last conjugal visit, but he didn't say who.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "The warden will permit someone one last conjugal visit, but he didn't say who.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "permit"],
+      ["sluiced", "firstObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_11g",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(11g)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The black knight struck a killing blow, but we couldn't see which opponent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "The black knight struck one of his opponents a killing blow, but we couldn't see which opponent.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "strike"],
+      ["sluiced", "firstObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63a_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't show us yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "show"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63a_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't show to us yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "show"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63b_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't ask us yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ask"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63b_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't ask of us yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "ask"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63c_email_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't email me yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "email"],
+      ["implicit", "secondObject"]
+    ],
+    "comment": "The whole class of verbs of instrument of communication behaves the same.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63c_email_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't email to me yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "email"],
+      ["implicit", "directObject"]
+    ],
+    "comment": "The whole class of verbs of instrument of communication behaves the same.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63c_text_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't text me yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "text"],
+      ["implicit", "secondObject"]
+    ],
+    "comment": "The whole class of verbs of instrument of communication behaves the same.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63c_text_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't text to me yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "text"],
+      ["implicit", "directObject"]
+    ],
+    "comment": "The whole class of verbs of instrument of communication behaves the same.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63c_telegraph_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't telegraph me yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "telegraph"],
+      ["implicit", "secondObject"]
+    ],
+    "comment": "The whole class of verbs of instrument of communication behaves the same.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63c_telegraph_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't telegraph to me yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "telegraph"],
+      ["implicit", "directObject"]
+    ],
+    "comment": "The whole class of verbs of instrument of communication behaves the same.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63d_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't pay me yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "pay"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63d_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She didn't pay to me yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "pay"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63e_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They didn't serve us yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "serve"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63e_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They didn't serve to us yet.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "serve"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63f_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63f)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You promised me!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "promise"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63f_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63f)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You promised to me!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "promise"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63g_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63g)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She teaches special-needs children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "teach"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63g_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63g)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She teaches to special-needs children.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "teach"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63h_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63h)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They're feeding the seals right now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "feed"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_63h_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(63h)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "They're feeding to the seals right now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "feed"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_64a_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(64a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She wouldn't pass me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "pass"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_64a_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(64a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She wouldn't pass to me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "pass"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_64b_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(64b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She wouldn't throw me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "throw"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_64b_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(64b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She wouldn't throw to me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "throw"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_64c_doc",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(64c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She gives the Red Cross.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "give"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_64c_pp",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(64c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She gives to the Red Cross.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "give"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_65a",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(65a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She wrote to me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "write"],
+      ["implicit", "directObject"]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "bruening2021_65b",
+    "source": {"bibkey": "bruening-2021", "paperLabel": "(65b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She wrote me.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verb", "write"],
+      ["implicit", "secondObject"]
+    ],
+    "verified": "page-image"
+  }
+]
