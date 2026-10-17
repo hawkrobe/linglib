@@ -403,7 +403,7 @@ features generate them. English *this* and *these* denote things in the speaker'
 person specification to the vicinity of the referents it denotes ((16), p. 180), so *this*
 denotes the vicinity of the first person's referents. -/
 
-/-- English *this* and *that* realize the author bipartition (p. 171): *that* covers the
+/-- English *this* and *that* realize the author bipartition (p. 171). *That* covers the
 participant sets *this* does not, and two sets fall under the same demonstrative iff [±author]
 does not tell them apart. -/
 theorem english_demonstratives_author_bipartition :
@@ -414,7 +414,7 @@ theorem english_demonstratives_author_bipartition :
   rw [generated_r_iff]; revert s t; decide
 
 /-- The referents whose vicinity *this* picks out are the first person's referents ((16),
-p. 180): the author feature that defines *I* and *we* defines the speaker's space. -/
+p. 180), so the author feature that defines *I* and *we* defines the speaker's space. -/
 theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
     (c : Reference.Context W E P T) :
     c.participants ⁻¹' English.Determiners.this.deixis = Person.dom c (some .first) :=
@@ -438,11 +438,12 @@ def near : SetRel (Finset (Fin 2)) (Finset (Fin 2)) := Set.univ
 def g₀ : Assignment (Finset (Fin 2)) := fun _ ↦ ∅
 
 /-- *this* resolved with a trivial restrictor is defined and its deictic presupposition holds. -/
-example : ((English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near).toPartialProp
-    (fun _ _ ↦ True) g₀).presup () := by
+example : (English.Determiners.this.denote (fun _ _ _ ↦ True) 0 ctx near).toTrivalent
+    (fun _ _ ↦ True) g₀ () ≠ 0 := by
+  rw [Ne, Nominal.toTrivalent_eq_zero_iff, not_imp]
   refine ⟨⟨{0}, ?_, trivial⟩, ?_⟩
   · simp [English.Determiners.this, Person.participants_mem_participantSets_first, ctx]
-  · rw [Nominal.resolve_presup, Option.isSome_iff_exists]
+  · rw [← ne_eq, Option.ne_none_iff_exists']
     exact ⟨∅, (iota_eq_some_iff (P := fun x : Finset (Fin 2) ↦ True ∧ x = g₀ 0)).2
       ⟨⟨trivial, rfl⟩, fun _ hx ↦ hx.2⟩⟩
 

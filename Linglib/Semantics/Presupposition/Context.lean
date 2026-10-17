@@ -8,31 +8,27 @@ public import Linglib.Discourse.CommonGround
 # Presuppositions in context
 
 A context set admits a sentence with a presupposition when it entails the presupposition, in the
-tradition of Stalnaker, Karttunen and Heim. An embedded clause is checked in its local context.
-Karttunen's table gives the local contexts of the connectives (`Connective.localContext`): a
-first argument and the argument of negation are evaluated in the context itself, the second
-argument of a conjunction or a conditional in the context updated with the first argument, and a
-second disjunct in the context updated with the first disjunct's negation. The complement of an
-attitude verb is evaluated in the image of the context under the subject's doxastic
-accessibility, the beliefs attributed to the subject in the context. That local context admits a
-sentence iff the context entails the core of its presupposition along the relation
-(`PartialProp.admits_image_iff`), so the report presupposes that the subject believes what the
-complement presupposes.
+tradition of Stalnaker, Karttunen and Heim: for a trivalent proposition `p`, when
+`C ⊆ Function.support p`. An embedded clause is checked in its local context. Karttunen's table
+gives the local contexts of the connectives (`Connective.localContext`): a first argument and the
+argument of negation are evaluated in the context itself, the second argument of a conjunction or
+a conditional in the context updated with the first argument, and a second disjunct in the context
+updated with the first disjunct's negation. The complement of an attitude verb is evaluated in the
+image of the context under the subject's doxastic accessibility, which admits a sentence iff the
+context entails the core of its presupposition along the relation (`SetRel.image_subset_iff`), so
+the report presupposes that the subject believes what the complement presupposes.
 
 Theories of projection agree on the table and differ in why it holds. Karttunen's filtering
-connectives are admittance in it, Heim's context change potentials evaluate their second argument
-in it (`Semantics/Dynamic/Partial.lean`), and Schlenker derives it from transparency. They part
-at disjunction, where the table is asymmetric and symmetric filtering is
-`PartialProp.orKPSymmetric`.
+connectives, Peters' Middle Kleene connectives, are admittance in it
+(`subset_support_meetMiddle_iff`), Heim's context change potentials evaluate their second argument
+in it (`Semantics/Dynamic/Partial.lean`), and Schlenker derives it from transparency. They part at
+disjunction, where the table is asymmetric and symmetric filtering is `TwoDim.orKPSymmetric`.
 
 ## Main declarations
 
-* `PartialProp.Admits`: the context entails the presupposition.
 * `Connective.localContext`: the local context of the second argument of a connective.
-* `PartialProp.admits_andFilter`, `PartialProp.admits_impFilter`, `PartialProp.admits_orFilter`:
+* `subset_support_meetMiddle_iff`, `support_impMiddle_subset_iff`, `support_joinMiddle_subset_iff`:
   the filtering connectives are admittance in the local contexts.
-* `PartialProp.admits_image_iff`: the image of a context under a relation admits a sentence iff
-  the context entails the core of its presupposition.
 
 ## References
 
@@ -49,18 +45,9 @@ at disjunction, where the table is asymmetric and symmetric filtering is
 
 namespace Presupposition
 
+open Trivalent
+
 variable {W : Type*}
-
-/-- The context `c` admits `p` when it entails `p`'s presupposition; where it does not, the
-presupposition projects. -/
-abbrev PartialProp.Admits (p : PartialProp W) (c : Set W) : Prop := c ⊆ p.presup
-
-/-- The image of the context under `R` admits `p` iff the context entails the core of `p`'s
-presupposition along `R`. For an attitude verb with accessibility `R`, the image is the local
-context of the complement and the core is the subject's belief in the presupposition. -/
-theorem PartialProp.admits_image_iff {p : PartialProp W} {R : SetRel W W} {C : Set W} :
-    p.Admits (R.image C) ↔ C ⊆ R.core p.presup :=
-  SetRel.image_subset_iff
 
 /-- The binary connectives of [karttunen-1974-presupposition]'s table of local contexts. -/
 inductive Connective
@@ -77,32 +64,40 @@ def Connective.localContext (C A : Set W) : Connective → Set W
   | cond => C ∩ A
   | disj => C ∩ Aᶜ
 
-namespace PartialProp
-
 open Connective
 
-variable {C : Set W} {p q : PartialProp W}
+variable {C : Set W} {p q : W → SignType}
 
 /-- A context admits Karttunen's filtering conjunction when it admits the first conjunct and the
 second conjunct's local context admits the second. -/
-theorem admits_andFilter :
-    (p.andFilter q).Admits C ↔ p.Admits C ∧ q.Admits (conj.localContext C p.assertion) :=
-  ⟨fun h ↦ ⟨fun _ hw ↦ (h hw).1, fun _ hw ↦ (h hw.1).2 hw.2⟩,
-    fun h _ hw ↦ ⟨h.1 hw, fun ha ↦ h.2 ⟨hw, ha⟩⟩⟩
+theorem subset_support_meetMiddle_iff :
+    C ⊆ Function.support (fun w ↦ (p w).meetMiddle (q w)) ↔
+      C ⊆ Function.support p ∧ conj.localContext C (posExt p) ⊆ Function.support q := by
+  simp only [Set.subset_def, Function.mem_support, ne_eq, SignType.meetMiddle_eq_zero_iff,
+    not_or, not_and, localContext, Set.mem_inter_iff, mem_posExt, and_imp]
+  exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
+    fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
 /-- A context admits Karttunen's filtering conditional when it admits the antecedent and the
 consequent's local context admits the consequent. -/
-theorem admits_impFilter :
-    (p.impFilter q).Admits C ↔ p.Admits C ∧ q.Admits (cond.localContext C p.assertion) :=
-  admits_andFilter
+theorem subset_support_impMiddle_iff :
+    C ⊆ Function.support (fun w ↦ (-p w).joinMiddle (q w)) ↔
+      C ⊆ Function.support p ∧ cond.localContext C (posExt p) ⊆ Function.support q := by
+  simp only [Set.subset_def, Function.mem_support, ne_eq, SignType.joinMiddle_eq_zero_iff,
+    SignType.neg_eq_zero_iff, SignType.neg_eq_neg_one_iff, not_or, not_and, localContext,
+    Set.mem_inter_iff, mem_posExt, and_imp]
+  exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
+    fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
 /-- A context admits Karttunen's filtering disjunction when it admits the first disjunct and the
 second disjunct's local context admits the second. -/
-theorem admits_orFilter :
-    (p.orFilter q).Admits C ↔ p.Admits C ∧ q.Admits (disj.localContext C p.assertion) :=
-  ⟨fun h ↦ ⟨fun _ hw ↦ (h hw).1, fun _ hw ↦ (h hw.1).2 hw.2⟩,
-    fun h _ hw ↦ ⟨h.1 hw, fun ha ↦ h.2 ⟨hw, ha⟩⟩⟩
-
-end PartialProp
+theorem subset_support_joinMiddle_iff :
+    C ⊆ Function.support (fun w ↦ (p w).joinMiddle (q w)) ↔
+      C ⊆ Function.support p ∧ disj.localContext C (posExt p) ⊆ Function.support q := by
+  simp only [Set.subset_def, Function.mem_support, ne_eq, SignType.joinMiddle_eq_zero_iff,
+    not_or, not_and, localContext, Set.mem_inter_iff, Set.mem_compl_iff, mem_posExt, and_imp]
+  refine ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw h1 ↦ ?_⟩, fun h w hw ↦ ⟨h.1 w hw, ?_⟩⟩
+  · exact (h w hw).2 (by have := (h w hw).1; cases hp : p w <;> simp_all)
+  · exact fun _ ↦ h.2 w hw (by intro h1; simp_all)
 
 end Presupposition

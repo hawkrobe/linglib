@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Necessity
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Kernel semantics for epistemic modals
@@ -17,12 +17,14 @@ directly settling it. The partition-based implementation and the worked examples
 
 * `Kernel`: a set of direct-information propositions, with its base `Kernel.base`.
 * `Kernel.directlySettles`: some member of the kernel entails or excludes the prejacent.
-* `kernelMust`, `kernelMight`, `kernelCant`: the presuppositional operators.
+* `kernelMust`, `kernelMight`, `kernelCant`: the presuppositional operators, trivalent
+  propositions undefined where the kernel directly settles the prejacent.
 
 ## Main statements
 
 * `explicit_implies_entailment`: direct settling implies entailment, but not conversely.
-* `kernelMust_iff_simpleNecessity`: the assertion of `kernelMust` is Kratzer's simple
+* `kernelMight_eq_neg_kernelCant`: *might* is the negation of *can't*, presupposition and all.
+* `Kernel.followsFrom_iff_simpleNecessity`: the assertion of `kernelMust` is Kratzer's simple
   necessity over the kernel.
 
 ## References
@@ -36,7 +38,6 @@ directly settling it. The partition-based implementation and the worked examples
 namespace Modality
 
 open Modality
-open Presupposition
 
 variable {W : Type*}
 
@@ -107,54 +108,88 @@ theorem Kernel.directlySettles_singleton (p : W → Prop) :
       {w | p w} ⊆ {w | φ w} ∨ Disjoint {w | p w} {w | φ w} := by
   simp [Kernel.directlySettles]
 
+/-- Settling is symmetric under negation, since a proposition entails `φ` iff it is incompatible
+with `¬φ`. -/
+@[simp]
+theorem Kernel.directlySettles_not : k.directlySettles (fun w' ↦ ¬ φ w') ↔ k.directlySettles φ := by
+  simp [Kernel.directlySettles, Set.disjoint_left, Set.subset_def, or_comm]
+
 /-! ### Modal operators ([von-fintel-gillies-2010] Defs 5–6) -/
 
+open Classical in
 /-- `⟦must φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ⊆ ⟦φ⟧`. -/
-def kernelMust : PartialProp W where
-  presup := fun _ ↦ ¬ k.directlySettles φ
-  assertion := fun _ ↦ k.FollowsFrom φ
+noncomputable def kernelMust : W → SignType :=
+  {_w | ¬ k.directlySettles φ}.indicator fun _ ↦ SignType.ofProp (k.FollowsFrom φ)
 
+open Classical in
 /-- `⟦might φ⟧` presupposes that `K` does not directly settle `φ` and asserts
     `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
-def kernelMight : PartialProp W where
-  presup := fun _ ↦ ¬ k.directlySettles φ
-  assertion := fun _ ↦ k.compatibleWith φ
+noncomputable def kernelMight : W → SignType :=
+  {_w | ¬ k.directlySettles φ}.indicator fun _ ↦ SignType.ofProp (k.compatibleWith φ)
 
 /-- `⟦can't φ⟧` is `⟦must ¬φ⟧`. -/
-def kernelCant : PartialProp W :=
+noncomputable def kernelCant : W → SignType :=
   kernelMust k (fun w' ↦ ¬ φ w')
+
+variable {k φ w}
+
+@[simp] theorem kernelMust_eq_zero_iff : kernelMust k φ w = 0 ↔ k.directlySettles φ := by
+  simp [kernelMust]
+
+@[simp] theorem kernelMust_eq_one_iff :
+    kernelMust k φ w = 1 ↔ ¬ k.directlySettles φ ∧ k.FollowsFrom φ := by
+  simp [kernelMust]
+
+@[simp] theorem kernelMust_eq_neg_one_iff :
+    kernelMust k φ w = -1 ↔ ¬ k.directlySettles φ ∧ ¬ k.FollowsFrom φ := by
+  simp [kernelMust]
+
+@[simp] theorem kernelMight_eq_zero_iff : kernelMight k φ w = 0 ↔ k.directlySettles φ := by
+  simp [kernelMight]
+
+@[simp] theorem kernelMight_eq_one_iff :
+    kernelMight k φ w = 1 ↔ ¬ k.directlySettles φ ∧ k.compatibleWith φ := by
+  simp [kernelMight]
+
+@[simp] theorem kernelMight_eq_neg_one_iff :
+    kernelMight k φ w = -1 ↔ ¬ k.directlySettles φ ∧ ¬ k.compatibleWith φ := by
+  simp [kernelMight]
 
 /-! ### Core properties -/
 
-/-- Must `φ` entails `φ` when `B_K` is realistic (the T axiom). -/
-theorem must_entails_prejacent (hReal : w ∈ k.base)
-    (hTrue : (kernelMust k φ).assertion w) :
-    φ w :=
+variable (k φ w)
+
+/-- The assertion of *must* `φ`, `B_K ⊆ ⟦φ⟧`, entails `φ` when `B_K` is realistic (the T
+axiom). -/
+theorem must_entails_prejacent (hReal : w ∈ k.base) (hTrue : k.FollowsFrom φ) : φ w :=
   hTrue w hReal
 
-/-- Might `φ` and `¬must ¬φ` have the same assertion content. -/
-theorem kernel_duality :
-    (kernelMight k φ).assertion w ↔ ¬(kernelMust k (fun w' ↦ ¬ φ w')).assertion w := by
-  simp [kernelMight, kernelMust, Kernel.compatibleWith, Kernel.FollowsFrom, Pi.le_def]
+/-- The assertion of *might* `φ` is the negation of the assertion of *must* `¬φ`. -/
+theorem Kernel.compatibleWith_iff_not_followsFrom_not :
+    k.compatibleWith φ ↔ ¬ k.FollowsFrom fun w' ↦ ¬ φ w' := by
+  simp [Kernel.compatibleWith, Kernel.FollowsFrom, Pi.le_def]
 
-/-- The empty kernel settles nothing, so must is always defined. -/
-theorem empty_kernel_always_defined : (kernelMust ⟨∅⟩ φ).presup w :=
-  fun ⟨_, hx, _⟩ ↦ hx
+/-- *Might* `φ` is the negation of *can't* `φ`, with the same presupposition and the negated
+assertion. -/
+theorem kernelMight_eq_neg_kernelCant : kernelMight k φ = -kernelCant k φ := by
+  ext w
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>
+    simp [kernelCant, Kernel.compatibleWith_iff_not_followsFrom_not]
+
+/-- The empty kernel settles nothing, so *must* is always defined. -/
+theorem kernelMust_empty_ne_zero : kernelMust ⟨∅⟩ φ w ≠ 0 := by
+  simp [Kernel.directlySettles]
 
 /-! ### Bridge to Kratzer necessity -/
 
-/-- The assertion of kernel must is Kratzer simple necessity over the induced
-    modal base. -/
-theorem kernelMust_iff_simpleNecessity :
-    (kernelMust k φ).assertion w ↔ simpleNecessity k.toBackground φ w :=
+/-- The assertion of kernel *must* is Kratzer simple necessity over the induced modal base. -/
+theorem Kernel.followsFrom_iff_simpleNecessity :
+    k.FollowsFrom φ ↔ simpleNecessity k.toBackground φ w :=
   Iff.rfl
 
-/-- The assertion of kernel must is Kratzer necessity with the empty ordering
-    source. -/
-theorem kernelMust_iff_necessity :
-    (kernelMust k φ).assertion w ↔ necessity k.toBackground ⊥ φ w :=
-  (kernelMust_iff_simpleNecessity k φ w).trans
-    (necessity_bot_iff k.toBackground φ w).symm
+/-- The assertion of kernel *must* is Kratzer necessity with the empty ordering source. -/
+theorem Kernel.followsFrom_iff_necessity : k.FollowsFrom φ ↔ necessity k.toBackground ⊥ φ w :=
+  (k.followsFrom_iff_simpleNecessity φ w).trans (necessity_bot_iff k.toBackground φ w).symm
 
 end Modality

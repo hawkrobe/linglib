@@ -66,7 +66,7 @@ tell pied-piping from anti-pied-piping.
 
 namespace BrananErlewine2023
 
-open Core.Order PhraseStructure Minimalist Focus.Particles Presupposition Reflex OrderDual
+open Core.Order PhraseStructure Minimalist Focus.Particles Reflex OrderDual
 
 /-! ### The particle is not a quantifier -/
 
@@ -74,32 +74,43 @@ section Semantics
 
 variable {W σ : Type*} {C : Set σ} {α : σ} {β : σ → Set W} {D : Set (Set W)} {ψ : Set W} {w : W}
 
+open Classical in
 /-- On the quantificational theory a particle meaning *only* composes with its sister `α` and
 then with its scope `β`, presupposing `β α` and asserting that `β` is false of every other
 alternative to `α` in `C` ((72)). -/
-def quantifierOnly (C : Set σ) (α : σ) (β : σ → Set W) : PartialProp W :=
-  ⟨(· ∈ β α), fun w ↦ ∀ γ ∈ C, γ ≠ α → w ∉ β γ⟩
+noncomputable def quantifierOnly (C : Set σ) (α : σ) (β : σ → Set W) : W → SignType :=
+  (β α).indicator fun w ↦ SignType.ofProp (∀ γ ∈ C, γ ≠ α → w ∉ β γ)
 
 /-- The quantificational particle is the operator *only* of (73) restricted to the alternatives
 that differ from the prejacent in the particle's sister alone. -/
 theorem quantifierOnly_eq_only (hα : α ∈ C) (hβ : Set.InjOn β C) :
     quantifierOnly C α β = only (· = ·) (β '' C) (β α) := by
-  refine PartialProp.ext (funext fun w ↦ propext ?_) (funext fun w ↦ propext ?_)
-  · exact ⟨fun h ↦ ⟨_, Set.mem_image_of_mem β hα, h, rfl⟩, by rintro ⟨_, _, h, rfl⟩; exact h⟩
-  · exact (forall₂_congr fun γ hγ ↦
+  have hL : β α = atLeast (· = ·) (β '' C) (β α) := Set.ext fun _ ↦
+    ⟨fun h ↦ ⟨_, Set.mem_image_of_mem β hα, h, rfl⟩, by rintro ⟨_, _, h, rfl⟩; exact h⟩
+  have hM (w : W) : (∀ γ ∈ C, γ ≠ α → w ∉ β γ) ↔ w ∈ atMost (· = ·) (β '' C) (β α) :=
+    (forall₂_congr fun γ hγ ↦
       ⟨fun h hw ↦ (congrArg β (not_not.1 fun hne ↦ h hne hw)).symm,
         fun h hne hw ↦ hne (hβ hγ hα (h hw).symm)⟩).trans Set.forall_mem_image.symm
+  funext w
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
+  · rw [only_eq_zero_iff, ← hL]
+    simp [quantifierOnly]
+  · rw [only_eq_one_iff, ← hL, ← hM]
+    simp [quantifierOnly]
 
 /-- A particle on a proper part of its focus is not a quantifier over alternatives to its sister.
 Where the scope holds of the sister and of nothing else, the quantifier is true whatever
 alternatives it is given, though an alternative `ψ` to the whole focus is true as well, so that
 the operator associating with that focus is false. -/
 theorem quantifierOnly_ne_only (C : Set σ) (hψ : ψ ∈ D) (hne : ψ ≠ β α) (hw : w ∈ ψ)
-    (hβ : ∀ γ, γ ≠ α → w ∉ β γ) : quantifierOnly C α β ≠ only (· = ·) D (β α) := by
+    (hwα : w ∈ β α) (hβ : ∀ γ, γ ≠ α → w ∉ β γ) :
+    quantifierOnly C α β ≠ only (· = ·) D (β α) := by
   intro h
-  have hq : (quantifierOnly C α β).assertion w := fun γ _ hγ ↦ hβ γ hγ
-  rw [h] at hq
-  exact notMem_atMost hψ hw hne.symm hq
+  have hq : quantifierOnly C α β w = 1 := by
+    simp only [quantifierOnly, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff]
+    exact ⟨hwα, fun γ _ hγ ↦ hβ γ hγ⟩
+  rw [h, only_eq_one_iff] at hq
+  exact notMem_atMost hψ hw hne.symm hq.2
 
 -- The paper's pseudo-English "Peter read only Hamlet" (79), a world being what Peter did.
 inductive Book | hamlet | macbeth
@@ -111,14 +122,17 @@ def swam : Set (Set Deed) := {w | .swim ∈ w}
 he read nothing else; the reading on which he only read Hamlet, the operator's over the
 predicate's alternatives, is false ((79)–(81)). -/
 theorem peter_read_only_hamlet :
-    (quantifierOnly Set.univ Book.hamlet read).holds {.read .hamlet, .swim} ∧
-      ¬ (only (· = ·) {read .hamlet, read .macbeth, swam} (read .hamlet)).holds
-        {.read .hamlet, .swim} := by
-  refine ⟨⟨by simp [quantifierOnly, read], ?_⟩, fun h ↦ ?_⟩
+    quantifierOnly Set.univ Book.hamlet read {.read .hamlet, .swim} = 1 ∧
+      only (· = ·) {read .hamlet, read .macbeth, swam} (read .hamlet)
+        {.read .hamlet, .swim} = -1 := by
+  simp only [quantifierOnly, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff,
+    only_eq_neg_one_iff]
+  refine ⟨⟨by simp [read], ?_⟩, mem_atLeast.2 ⟨read .hamlet, by simp, by simp [read], rfl⟩,
+    fun h ↦ ?_⟩
   · rintro (_ | _) - h
     · exact absurd rfl h
     · simp [read]
-  · have := congrArg ({Deed.swim} ∈ ·) (h.2 swam (by simp) (by simp [swam]))
+  · have := congrArg ({Deed.swim} ∈ ·) (mem_atMost.1 h swam (by simp) (by simp [swam]))
     simp [read, swam] at this
 
 end Semantics

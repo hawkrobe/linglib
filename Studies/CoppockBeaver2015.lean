@@ -43,7 +43,7 @@ article competes with the indefinite under an expression-level Maximize Presuppo
 - `no_determinate_indefinites`: an indefinite that survives blocking has no defined update
   under the iota shift, while iota and the existential shift update alike where unique
   existence is settled (`readings_agree_of_existsUnique`).
-- `only_eval_answer`: the adjectival entry is the earlier paper's exclusive schema at the
+- `only_answer_apply`: the adjectival entry is the earlier paper's exclusive schema at the
   question *what things are P*, with answers ranked by entailment.
 - `Scenario.restrictor_rows`, `Lobner.rows`: the paper's predicative judgments are decided
   by weak uniqueness of the restrictor.
@@ -328,19 +328,18 @@ theorem mem_atMost_answer {w : Set E} {x : E} :
 /-- Adjectival *only* is the exclusive schema at the question *what things are P*. The
 schema of [coppock-beaver-2014] over the answers, on the entailment scale, evaluated at an
 extension, is the entry (57) of the predicate with that extension. -/
-theorem only_eval_answer [DecidableRel (Exclusive (E := E))] (w : Set E)
+theorem only_answer_apply [DecidableRel (Exclusive (E := E))] (w : Set E)
     [DecidablePred (· ∈ w)] (x : E) :
-    (Focus.Particles.only (· ⊆ ·) (Set.range answer) (answer {x})).eval w =
+    Focus.Particles.only (· ⊆ ·) (Set.range answer) (answer {x}) w =
       only (fun y ↦ ofProp (y ∈ w)) x := by
   have hw : (posExt fun y : E ↦ ofProp (y ∈ w)) = w := Set.ext fun y ↦ ofProp_eq_one_iff
   have hiff : Exclusive (fun y ↦ ofProp (y ∈ w)) x ↔ w ⊆ {x} := by
     rw [exclusive_iff_subset_singleton, hw]
   refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
-  · rw [Presupposition.PartialProp.eval_eq_indet_iff, Focus.Particles.only_presup,
-      only_eq_zero_iff, ne_eq, ofProp_eq_one_iff, not_iff_not]
+  · rw [Focus.Particles.only_eq_zero_iff, only_eq_zero_iff, ne_eq, ofProp_eq_one_iff,
+      not_iff_not]
     exact mem_atLeast_answer
-  · rw [Presupposition.PartialProp.eval_eq_true_iff, Focus.Particles.only_presup,
-      Focus.Particles.only_assertion, only_eq_one_iff, ofProp_eq_one_iff]
+  · rw [Focus.Particles.only_eq_one_iff, only_eq_one_iff, ofProp_eq_one_iff]
     exact and_congr mem_atLeast_answer (mem_atMost_answer.trans hiff.symm)
 
 end Schema

@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Modality.EventRelativity
 public import Linglib.Semantics.Mood.SpeechEvent
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Data.Examples.AlonsoOvalleRoyer2024
 
 /-!
@@ -77,7 +77,7 @@ Italian *un N qualsiasi* (121) are as selective. *Yalnhej*'s claim has no upper 
 
 namespace AlonsoOvalleRoyer2024
 
-open Modality Presupposition Finset Discourse.SpeechAct
+open Modality Finset Discourse.SpeechAct
 
 /-! ### The schema (59) -/
 
@@ -258,13 +258,8 @@ attribute [instance] ModalIndefinite.decAdmits ModalIndefinite.decBound
 /-- The item's denotation anchored to `e` is defined when the item admits the anchor and true
 when the claim holds within the bound. -/
 def ModalIndefinite.denotation (i : ModalIndefinite) (s : Scenario) (e : Ev) :
-    PartialProp World where
-  presup _ := i.Admits s e
-  assertion w := Claim s e w ∧ i.Bound w
-
-instance (i : ModalIndefinite) (s : Scenario) (e : Ev) (w : World) :
-    Decidable ((i.denotation s e).holds w) := by
-  unfold PartialProp.holds ModalIndefinite.denotation; infer_instance
+    World → SignType :=
+  fun w ↦ if i.Admits s e then SignType.ofProp (Claim s e w ∧ i.Bound w) else 0
 
 /-- The decision behind a volitional event and an order have normative conditions; a speech
 event and a belief state do not, having informational content (p. 35, after
@@ -293,28 +288,26 @@ def nimporteQuel : ModalIndefinite := ⟨Scenario.Normative, fun _ ↦ True⟩
 epistemic reading ((67)–(68), (93)), but anchored to the order of (86) it is defined, and an
 order that any card fulfils verifies it. -/
 theorem cualquiera_selective (s : Scenario) (w : World) :
-    ¬ (cualquiera.denotation s .assertion).holds w ∧
-      ¬ (cualquiera.denotation s .belief).holds w ∧
-      (cualquiera.denotation (scenario (some {{0}}) ∅ {{0}, {1}}) .order).holds {0} := by
+    cualquiera.denotation s .assertion w = 0 ∧ cualquiera.denotation s .belief w = 0 ∧
+      cualquiera.denotation (scenario (some {{0}}) ∅ {{0}, {1}}) .order {0} = 1 := by
   refine ⟨?_, ?_, by decide⟩ <;>
-    simp [PartialProp.holds, ModalIndefinite.denotation, cualquiera, Scenario.Normative]
+    simp [ModalIndefinite.denotation, cualquiera, Scenario.Normative]
 
 /-- *N'importe quel* conveys random choice and is undefined anchored to the assertion
 (120). -/
 theorem nimporteQuel_selective (s : Scenario) (w : World) :
-    (nimporteQuel.denotation (scenario (some nonempty)) .vp).holds {0} ∧
-      ¬ (nimporteQuel.denotation s .assertion).holds w :=
-  ⟨by decide, by simp [PartialProp.holds, ModalIndefinite.denotation, nimporteQuel,
-    Scenario.Normative]⟩
+    nimporteQuel.denotation (scenario (some nonempty)) .vp {0} = 1 ∧
+      nimporteQuel.denotation s .assertion w = 0 :=
+  ⟨by decide, by simp [ModalIndefinite.denotation, nimporteQuel, Scenario.Normative]⟩
 
 /-- Where everything was taken, because everyone danced (124)–(125) or Xun bought all the
 books (126)–(127), *yalnhej*'s claim holds, while *algún*'s bound (122) and *uno cualquiera*'s
 unique witness (123) fail. -/
 theorem upperBound_universal :
-    (yalnhej.denotation (scenario none {{0, 1}}) .assertion).holds {0, 1} ∧
-      (yalnhej.denotation (scenario (some {{0, 1}})) .vp).holds {0, 1} ∧
+    yalnhej.denotation (scenario none {{0, 1}}) .assertion {0, 1} = 1 ∧
+      yalnhej.denotation (scenario (some {{0, 1}})) .vp {0, 1} = 1 ∧
       ¬ NotAll univ (fun _ _ ↦ True) Taken {0, 1} ∧
-      ¬ (cualquiera.denotation (scenario (some {{0, 1}})) .vp).holds {0, 1} := by
+      cualquiera.denotation (scenario (some {{0, 1}})) .vp {0, 1} = -1 := by
   decide
 
 /-! ### The paper's judgments -/
@@ -377,7 +370,7 @@ that flavor makes the item defined and true given an indiscriminate decision and
 speaker. -/
 def ModalIndefinite.Available (i : ModalIndefinite) (fl : ModalFlavor) : Prop :=
   ∃ e ∈ binders .internal none, e.flavor = fl ∧
-    (i.denotation (scenario (some nonempty) nonempty) e).holds {0}
+    i.denotation (scenario (some nonempty) nonempty) e {0} = 1
 
 instance (i : ModalIndefinite) (fl : ModalFlavor) : Decidable (i.Available fl) := by
   unfold ModalIndefinite.Available; infer_instance

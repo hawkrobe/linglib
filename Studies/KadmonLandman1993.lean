@@ -510,7 +510,7 @@ inductive Context where
   deriving DecidableEq, Repr
 
 /-- The library's licensing context a row's context is. -/
-def Context.toLicensingContext : Context → LicensingContext
+noncomputable def Context.toLicensingContext : Context → LicensingContext
   | .negation => .negation
   | .generic => .generic
   | .universalRestrictor => .universalRestrictor

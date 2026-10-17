@@ -5,7 +5,7 @@ public import Studies.TieuEtAl2020
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Syntax.Number.Resolve
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Alternatives.Competition
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Core.MeasureTheory.Constructions.Option
@@ -38,9 +38,10 @@ conceivability presupposition, which fails exactly where the chance of ineffabil
 
 ## Main statements
 
-* `useful_iff_presup`: preferring useful referents yields the conceivability presupposition.
-* `negated_presup_iff_ineffability_ne_one`: the presupposition holds exactly when ineffability is
-  not certain.
+* `useful_iff_negated_ne_zero`: preferring useful referents yields the conceivability
+  presupposition.
+* `negated_ne_zero_iff_ineffability_ne_one`: the presupposition holds exactly when ineffability
+  is not certain.
 * `unblocked_mpPresup_isCompl`, `not_H2_of_isZeroOneMeasure`: Maximize Presupposition puts the
   two numbers in complementary distribution, and a speaker in complementary distribution is not
   gradient.
@@ -49,7 +50,8 @@ conceivability presupposition, which fails exactly where the chance of ineffabil
 ## Implementation notes
 
 * Worlds are witness cardinalities, as in `TieuEtAl2020`, and the conceivable cardinalities are a
-  parameter, so the presupposition is constant across worlds.
+  parameter, so the presupposition is constant across worlds. A negated indefinite is a trivalent
+  proposition `ℕ → SignType`, undefined where its presupposition fails.
 * A production is a negated indefinite of some number or another strategy (`none`), the three
   categories of Figure 2, and the hypotheses concern the productions conditioned on the
   indefinites, the second analysis of footnote 8. Figure 2 is a plot, so no share is typed.
@@ -64,7 +66,7 @@ conceivability presupposition, which fails exactly where the chance of ineffabil
   every intermediate condition. The gradience needs a probabilistic choice rule over
   `ineffability`, or variation in the distribution each participant saw (footnote 5), which the
   paper leaves open.
-* Projection out of questions (§2) awaits a question semantics over `PartialProp`.
+* Projection out of questions (§2) awaits a question semantics over trivalent propositions.
 
 ## References
 
@@ -83,7 +85,7 @@ conceivability presupposition, which fails exactly where the chance of ineffabil
 
 namespace Enguehard2024
 
-open MeasureTheory ProbabilityTheory Exhaustification Presupposition
+open MeasureTheory ProbabilityTheory Exhaustification
 open scoped ENNReal NNReal
 open TieuEtAl2020 (weak strong singular)
 open English.Nouns (numberSystem)
@@ -180,22 +182,29 @@ theorem indefiniteRows_inference : ∀ r ∈ indefiniteRows,
 
 /-! ### The conceivability presupposition -/
 
+open Classical in
 /-- The negated indefinite of number `n`, where the conceivable witness cardinalities are `K`,
 asserts that there is no witness and presupposes that a cardinality its number fits is
 conceivable, (7). -/
-def negated (K : Set ℕ) (n : Number) : PartialProp ℕ where
-  presup _ := (K ∩ inference n).Nonempty
-  assertion k := k ∈ weakᶜ
+noncomputable def negated (K : Set ℕ) (n : Number) : ℕ → SignType :=
+  {_k | (K ∩ inference n).Nonempty}.indicator fun k ↦ SignType.ofProp (k ∈ weakᶜ)
 
-/-- Both numbers assert the same thing under negation. -/
-theorem negated_assertion (K : Set ℕ) (n n' : Number) :
-    (negated K n).assertion = (negated K n').assertion := rfl
+theorem negated_ne_zero_iff {K : Set ℕ} {n : Number} {k : ℕ} :
+    negated K n k ≠ 0 ↔ (K ∩ inference n).Nonempty := by
+  simp [negated]
+
+/-- Both numbers assert the same thing under negation, so they agree wherever both are
+defined. -/
+theorem negated_eq_negated {K : Set ℕ} {n n' : Number} {k : ℕ} (h : negated K n k ≠ 0)
+    (h' : negated K n' k ≠ 0) : negated K n k = negated K n' k := by
+  simp_all [negated]
 
 /-- The presupposition projects through negation and out of a conditional antecedent (§2). -/
-theorem negated_presup_projects (K : Set ℕ) (n : Number) (q : PartialProp ℕ) (k : ℕ) :
-    (negated K n).neg.presup k = (negated K n).presup k ∧
-      (((negated K n).impFilter q).presup k → (negated K n).presup k) :=
-  ⟨rfl, And.left⟩
+theorem support_negated_projects (K : Set ℕ) (n : Number) (q : ℕ → SignType) :
+    Function.support (-negated K n) = Function.support (negated K n) ∧
+      Function.support (fun k ↦ (-negated K n k).joinMiddle (q k)) ⊆
+        Function.support (negated K n) :=
+  ⟨by ext; simp, fun k hk ha ↦ hk (by simp [ha])⟩
 
 /-- A book has at most one table of contents. -/
 def tableOfContents : Set ℕ := Set.Iic 1
@@ -204,18 +213,20 @@ def tableOfContents : Set ℕ := Set.Iic 1
 def chapters : Set ℕ := {1}ᶜ
 
 /-- The singular presupposition of *table of contents* is met and the plural one fails, (5). -/
-theorem tableOfContents_presup :
-    (negated tableOfContents .singular).presup 0 ∧
-      ¬ (negated tableOfContents .plural).presup 0 :=
-  ⟨⟨1, Set.mem_Iic.2 le_rfl, by simp [singular]⟩, fun ⟨k, hk, h⟩ ↦ by
-    simp only [tableOfContents, inference_plural, strong, Set.mem_Iic, Set.mem_ofPred_eq] at hk h
-    omega⟩
+theorem negated_tableOfContents :
+    negated tableOfContents .singular 0 ≠ 0 ∧ negated tableOfContents .plural 0 = 0 := by
+  refine ⟨negated_ne_zero_iff.2 ⟨1, Set.mem_Iic.2 le_rfl, by simp [singular]⟩,
+    not_not.1 fun h ↦ ?_⟩
+  obtain ⟨k, hk, h⟩ := negated_ne_zero_iff.1 h
+  simp only [tableOfContents, inference_plural, strong, Set.mem_Iic, Set.mem_ofPred_eq] at hk h
+  omega
 
 /-- The plural presupposition of *chapters* is met and the singular one fails, (6). -/
-theorem chapters_presup :
-    (negated chapters .plural).presup 0 ∧ ¬ (negated chapters .singular).presup 0 :=
-  ⟨⟨2, by simp [chapters], by simp [strong]⟩,
-    fun ⟨_, hk, h⟩ ↦ hk (by simpa [singular] using h)⟩
+theorem negated_chapters :
+    negated chapters .plural 0 ≠ 0 ∧ negated chapters .singular 0 = 0 := by
+  refine ⟨negated_ne_zero_iff.2 ⟨2, by simp [chapters], by simp [strong]⟩, not_not.1 fun h ↦ ?_⟩
+  obtain ⟨_, hk, h⟩ := negated_ne_zero_iff.1 h
+  exact hk (by simpa [singular] using h)
 
 /-- The rows name the nouns, each standing for its conceivable cardinalities. -/
 def nounTable : List (String × Set ℕ) :=
@@ -242,11 +253,11 @@ private theorem bookRows_eq :
 
 /-- The judgments of (5)–(6) are the conceivability presupposition. -/
 theorem bookRows_judgment :
-    ∀ r ∈ bookRows, r.judgment = .acceptable ↔ (negated r.noun r.number).presup 0 := by
+    ∀ r ∈ bookRows, r.judgment = .acceptable ↔ negated r.noun r.number 0 ≠ 0 := by
   rw [bookRows_eq]
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
-  exact ⟨by simpa using tableOfContents_presup.1, by simpa using tableOfContents_presup.2,
-    by simpa using chapters_presup.2, by simpa using chapters_presup.1⟩
+  exact ⟨by simpa using negated_tableOfContents.1, by simpa using negated_tableOfContents.2,
+    by simpa using negated_chapters.2, by simpa using negated_chapters.1⟩
 
 /-! ### Referents and their continuations -/
 
@@ -276,7 +287,7 @@ theorem continuationRows_match :
   decide
 
 /-- The referent of an indefinite of number `n` can be resumed when the witness set has `k`
-members: a third person pronoun bears `n`, and read maximally its number fits `k`. -/
+members, that is, when a third person pronoun bears `n` and, read maximally, its number fits `k`. -/
 def Usable (n : Number) (k : ℕ) : Prop :=
   ∃ p ∈ pronouns, p.person = some .third ∧ p.number = some n ∧ k ∈ inference n
 
@@ -297,9 +308,9 @@ resume it, (23). -/
 def Useful (K : Set ℕ) (n : Number) : Prop := ∃ k ∈ K, Usable n k
 
 /-- Preferring useful referents, (23), yields the conceivability presupposition (7). -/
-theorem useful_iff_presup {n : Number} (hn : n ∈ numberSystem.values) (K : Set ℕ) (k : ℕ) :
-    Useful K n ↔ (negated K n).presup k := by
-  simp only [Useful, negated, Set.Nonempty, Set.mem_inter_iff, usable_iff hn]
+theorem useful_iff_negated_ne_zero {n : Number} (hn : n ∈ numberSystem.values) (K : Set ℕ)
+    (k : ℕ) : Useful K n ↔ negated K n k ≠ 0 := by
+  simp only [negated_ne_zero_iff, Useful, Set.Nonempty, Set.mem_inter_iff, usable_iff hn]
 
 /-- Where both numbers are conceivable, (23) cannot be obeyed, since each number's referent cannot
 be resumed in some conceivable situation with a witness. -/
@@ -484,16 +495,16 @@ theorem ineffability_singular_add_plural (μ : Measure ℕ) [IsFiniteMeasure μ]
 /-- The conceivability presupposition is the limiting case of the chance of ineffability (§6).
 With the conceivable cardinalities those of positive probability, a number's presupposition
 holds exactly when the chance that its referent cannot be resumed is not certain. -/
-theorem negated_presup_iff_ineffability_ne_one (μ : Measure ℕ) [IsFiniteMeasure μ]
+theorem negated_ne_zero_iff_ineffability_ne_one (μ : Measure ℕ) [IsFiniteMeasure μ]
     (hμ : μ weak ≠ 0) (n : Number) (w : ℕ) :
-    (negated {k | μ {k} ≠ 0} n).presup w ↔ ineffability μ n ≠ 1 := by
+    negated {k | μ {k} ≠ 0} n w ≠ 0 ↔ ineffability μ n ≠ 1 := by
   have := cond_isProbabilityMeasure hμ
   rw [ineffability, ← (prob_le_one (μ := μ[|weak])).lt_iff_ne, prob_compl_eq_one_sub .of_discrete,
     ENNReal.sub_lt_self_iff ENNReal.one_ne_top, cond_apply .of_discrete,
     Set.inter_eq_right.2 (inference_subset_weak n)]
   simp only [pos_iff_ne_zero, ne_eq, mul_eq_zero, ENNReal.inv_eq_zero, measure_ne_top, false_or]
   rw [← Set.biUnion_of_singleton (inference n), measure_biUnion_null_iff (Set.to_countable _)]
-  simp [negated, Set.Nonempty, and_comm]
+  simp [negated_ne_zero_iff, Set.Nonempty, and_comm]
 
 /-- A best guess under the witness distribution `μ` is an English number minimizing the chance of
 ineffability (§5.3). -/

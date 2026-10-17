@@ -9,7 +9,7 @@ public import Linglib.Data.Experiments.ChemlaSchlenker2012
 This file formalizes the paper's predictions and its experimental results. The paper takes a
 trivalent theory in which a sentence is presuppositionally acceptable when its supervaluation is
 defined at every world of the context (its (9), the symmetric condition, `SuperS` of
-[schlenker-2009]'s appendix), and an incremental condition that also completes the sentence after
+Schlenker's appendix), and an incremental condition that also completes the sentence after
 each trigger by every good final without triggers (its (10), `SuperI`). The Incremental Theory
 lets (10) alone govern projection; the Strict Symmetric Theory lets (9) alone govern it; the Mixed
 Theory prefers (10) but lets a presupposition satisfied only by (9) through at a cost.
@@ -55,11 +55,11 @@ variable {Atom W : Type*} (I : Atom → Set W)
 
 /-! ### The predictions of §1.4 -/
 
-/-- §1.4: *unless F, G* means *if not F, G*. -/
+/-- *Unless F, G* means *if not F, G* (§1.4). -/
 def unlessThen (F G : Formula Atom) : Formula Atom := .bin .cond (.not F) G
 
-/-- (48)–(49), p. 200: the target sentence of a construction in an order, with the clause `p` that
-can satisfy the presupposition `q` of the trigger `qq'`. -/
+/-- The target sentence of a construction in an order, with the clause `p` that can satisfy the
+presupposition `q` of the trigger `qq'` ((48)–(49), p. 200). -/
 def target (p q q' : Atom) : Construction → Order → Formula Atom
   | .ifSentence, .canonical => .bin .cond (.atom p) (.trigger q q')
   | .ifSentence, .inverse => .bin .cond (.not (.trigger q q')) (.not (.atom p))
@@ -71,51 +71,47 @@ def target (p q q' : Atom) : Construction → Order → Formula Atom
 variable {p q q' : Atom} {C : Set W}
 
 private theorem superI_iff_forall {F : Formula Atom} :
-    SuperI I C F ↔ ∀ w ∈ C, (F.filter I).presup w :=
+    SuperI I C F ↔ ∀ w ∈ C, F.filter I w ≠ 0 :=
   (superI_iff I C F).trans Iff.rfl
 
 private theorem superS_iff_forall {F : Formula Atom} (hF : (F.occurrences.map Prod.snd).Nodup) :
-    SuperS I C F ↔ ∀ w ∈ C, (F.strong I).presup w :=
+    SuperS I C F ↔ ∀ w ∈ C, F.strong I w ≠ 0 :=
   forall₂_congr fun _ _ ↦ superDefined_iff_of_nodup I hF
 
-/-- (13a)–(15a), p. 185: in the canonical order the incremental condition predicts the
-conditional presupposition `if p, q`. -/
+/-- In the canonical order the incremental condition predicts the conditional presupposition
+`if p, q` ((13a)–(15a), p. 185). -/
 theorem superI_canonical (k : Construction) :
     SuperI I C (target p q q' k .canonical) ↔ C ⊆ {w | w ∈ I p → w ∈ I q} := by
   rw [superI_iff_forall]
   refine forall₂_congr fun w _ ↦ ?_
-  cases k <;> simp [target, unlessThen, Formula.filter, Connective.filter, PartialProp.impFilter,
-    PartialProp.orFilter, PartialProp.neg]
+  cases k <;> simp [target, unlessThen, Formula.filter, Connective.filter]
 
-/-- (13a)–(15a), p. 185: in the canonical order the symmetric condition predicts the
-conditional presupposition `if p, q`. -/
+/-- In the canonical order the symmetric condition predicts the conditional presupposition `if p, q`
+((13a)–(15a), p. 185). -/
 theorem superS_canonical (k : Construction) :
     SuperS I C (target p q q' k .canonical) ↔ C ⊆ {w | w ∈ I p → w ∈ I q} := by
   cases k <;> rw [superS_iff_forall I (by simp [target, unlessThen, Formula.occurrences])] <;>
     refine forall₂_congr fun w _ ↦ ?_ <;>
-    simp [target, unlessThen, Formula.strong, Connective.strong, PartialProp.orStrong,
-      PartialProp.neg] <;> tauto
+    simp [target, unlessThen, Formula.strong, Connective.strong] <;> tauto
 
-/-- (13b)–(15b), p. 185: in the inverse order the incremental condition predicts the unconditional
-presupposition `q`. -/
+/-- In the inverse order the incremental condition predicts the unconditional presupposition `q`
+((13b)–(15b), p. 185). -/
 theorem superI_inverse (k : Construction) :
     SuperI I C (target p q q' k .inverse) ↔ C ⊆ I q := by
   rw [superI_iff_forall]
   refine forall₂_congr fun w _ ↦ ?_
-  cases k <;> simp [target, unlessThen, Formula.filter, Connective.filter, PartialProp.impFilter,
-    PartialProp.orFilter, PartialProp.neg]
+  cases k <;> simp [target, unlessThen, Formula.filter, Connective.filter]
 
-/-- (13b)–(15b), p. 185: in the inverse order the symmetric condition still predicts the
-conditional presupposition `if p, q`. -/
+/-- In the inverse order the symmetric condition still predicts the conditional presupposition
+`if p, q` ((13b)–(15b), p. 185). -/
 theorem superS_inverse (k : Construction) :
     SuperS I C (target p q q' k .inverse) ↔ C ⊆ {w | w ∈ I p → w ∈ I q} := by
   cases k <;> rw [superS_iff_forall I (by simp [target, unlessThen, Formula.occurrences])] <;>
     refine forall₂_congr fun w _ ↦ ?_ <;>
-    simp [target, unlessThen, Formula.strong, Connective.strong, PartialProp.orStrong,
-      PartialProp.neg] <;> tauto
+    simp [target, unlessThen, Formula.strong, Connective.strong] <;> tauto
 
-/-- §2.3.2: in the inverse order, any context that the Incremental Theory accepts entails the
-unconditional presupposition. -/
+/-- In the inverse order, any context that the Incremental Theory accepts entails the unconditional
+presupposition (§2.3.2). -/
 theorem superI_inverse_subset (k : Construction) (h : SuperI I C (target p q q' k .inverse)) :
     C ⊆ I q :=
   (superI_inverse I k).1 h
@@ -130,24 +126,24 @@ theorem exists_superS_inverse_not_subset (k : Construction) {w : W} (hp : w ∉ 
 
 /-! ### The results -/
 
-/-- Table 4, p. 206: in Experiment 1, for every tested sentence, the conditional inference is
-endorsed more than the unconditional one. -/
+/-- In Experiment 1, for every tested sentence, the conditional inference is endorsed more than the
+unconditional one (Table 4, p. 206). -/
 theorem experiment1_conditional_gt_unconditional :
     ∀ r ∈ experiment1Inferences, r.inference = .conditional →
       ∃ r' ∈ experiment1Inferences, r'.construction = r.construction ∧ r'.order = r.order ∧
         r'.inference = .unconditional ∧ r'.mean.toRat < r.mean.toRat := by
   decide +kernel
 
-/-- Table 7, p. 212: in Experiment 4, for every tested sentence, the conditional inference is
-endorsed more than the unconditional one. -/
+/-- In Experiment 4, for every tested sentence, the conditional inference is endorsed more than the
+unconditional one (Table 7, p. 212). -/
 theorem experiment4_conditional_gt_unconditional :
     ∀ r ∈ experiment4Inferences, r.inference = .conditional →
       ∃ r' ∈ experiment4Inferences, r'.construction = r.construction ∧ r'.order = r.order ∧
         r'.inference = .unconditional ∧ r'.mean.toRat < r.mean.toRat := by
   decide +kernel
 
-/-- Table 5, p. 209: every target sentence of Experiment 2 is rated above the control sentence
-that forces local accommodation with *too*. -/
+/-- Every target sentence of Experiment 2 is rated above the control sentence that forces local
+accommodation with *too* (Table 5, p. 209). -/
 theorem experiment2_targets_gt_control :
     ∀ r ∈ experiment2Targets,
       (experiment2Controls .localAccommodationToo).mean.toRat < r.mean.toRat := by

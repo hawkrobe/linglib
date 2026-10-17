@@ -20,12 +20,12 @@ feature rather than a feature of its own.
 
 ## Main results
 
-* `selector_eq_assignment` — a pronoun denotes the assignment value at its index.
-* `undefined_of_masculine`, `undefined_of_not_agent` — a feminine entry is undefined of a
+* `selector_eq_assignment`: a pronoun denotes the assignment value at its index.
+* `undefined_of_masculine`, `undefined_of_not_agent`: a feminine entry is undefined of a
   referent gendered masculine, a first-person entry of one not including the agent.
-* `defined_of_unmarked_features` — an entry with only unmarked values imposes no condition.
-* `they_defined_where_she_undefined` — the two English entries at a male referent.
-* `bound_reading` — binding is an assignment update, with the entry's denotation unchanged.
+* `defined_of_unmarked_features`: an entry with only unmarked values imposes no condition.
+* `they_defined_where_she_undefined`: the two English entries at a male referent.
+* `bound_reading`: binding is an assignment update, with the entry's denotation unchanged.
 
 ## References
 
@@ -37,36 +37,36 @@ feature rather than a feature of its own.
 
 namespace Buring2012
 
-open English.Pronouns Presupposition
+open English.Pronouns
 
 variable {E P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (g : Assignment E)
   (n : ℕ) (c : Reference.Context PUnit E P T) (scope : E → PUnit → Prop)
 
-/-- A pronoun denotes the value of its index under the assignment: its selector is the canonical
+/-- A pronoun denotes the value of its index under the assignment. Its selector is the canonical
 variable lookup, the same one for the bound, anaphoric and deictic uses. -/
 theorem selector_eq_assignment :
     (e.denote n c).selector g ⟨⟩
       = some (HeimKratzer.interpPronoun n g) := rfl
 
-/-- A feminine pronoun is undefined of a referent gendered masculine: the feature does not assert
-the referent's gender, it presupposes it, so the denotation has no value at all when it fails. -/
+/-- A feminine pronoun is undefined of a referent gendered masculine. The feature does not assert
+the referent's gender but presupposes it, so the denotation has no value at all when it fails. -/
 theorem undefined_of_masculine (hfem : e.gender = some .feminine) (h : g n ∈ Gendered.masculine) :
-    ¬ ((e.denote n c).toPartialProp scope g).presup ⟨⟩ := by
+    (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
   simp [hfem, h]
 
 /-- *She* is undefined of a referent gendered masculine. -/
 theorem she_undefined_of_masculine (h : g n ∈ Gendered.masculine) :
-    ¬ ((she.denote n c).toPartialProp scope g).presup ⟨⟩ :=
+    (she.denote n c).toTrivalent scope g ⟨⟩ = 0 :=
   undefined_of_masculine she g n c scope rfl h
 
 /-- A first-person pronoun is undefined of a referent that does not include the agent. -/
 theorem undefined_of_not_agent (hp : e.referentialPerson = some .first) (h : ¬ c.agent ≤ g n) :
-    ¬ ((e.denote n c).toPartialProp scope g).presup ⟨⟩ := by
+    (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
   simp [hp, h]
 
 /-- *I* is undefined of a referent that does not include the agent. -/
 theorem i_undefined_of_not_agent (h : ¬ c.agent ≤ g n) :
-    ¬ ((i.denote n c).toPartialProp scope g).presup ⟨⟩ :=
+    (i.denote n c).toTrivalent scope g ⟨⟩ = 0 :=
   undefined_of_not_agent i g n c scope (by decide) h
 
 /-- An entry carrying only unmarked values — third person, plural, no gender — restricts the
@@ -75,23 +75,22 @@ a feature rather than a feature of their own, which is why the underspecified fo
 avoid a gender specification. -/
 theorem defined_of_unmarked_features (hp : e.referentialPerson = some .third)
     (hn : e.referentialNumber = some .plural) (hg : e.gender = none) :
-    ((e.denote n c).toPartialProp scope g).presup ⟨⟩ := by
+    (e.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 := by
   simp [hp, hn, hg]
 
 /-- *They* is defined of a referent of any gender. -/
 theorem they_defined_regardless_of_gender :
-    ((they.denote n c).toPartialProp scope g).presup ⟨⟩ :=
+    (they.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 :=
   defined_of_unmarked_features they g n c scope (by decide) (by decide) rfl
 
-/-- The two entries come apart exactly at the referents the gender feature excludes: where *she*
-has no value, *they* has one. -/
+/-- The two entries come apart exactly at the referents the gender feature excludes, where *she*
+has no value and *they* has one. -/
 theorem they_defined_where_she_undefined (h : g n ∈ Gendered.masculine) :
-    ¬ ((she.denote n c).toPartialProp scope g).presup ⟨⟩ ∧
-      ((they.denote n c).toPartialProp scope g).presup ⟨⟩ :=
+    (she.denote n c).toTrivalent scope g ⟨⟩ = 0 ∧ (they.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 :=
   ⟨she_undefined_of_masculine g n c scope h,
     they_defined_regardless_of_gender g n c scope⟩
 
-/-- Binding leaves the pronoun alone: the binding operator updates the assignment at the pronoun's
+/-- Binding leaves the pronoun alone. The binding operator updates the assignment at the pronoun's
 index, and the unchanged denotation then returns the binder. There is no bound-pronoun lexeme. -/
 theorem bound_reading (b : E) :
     (e.denote n c).selector (Function.update g n b) ⟨⟩ = some b := by

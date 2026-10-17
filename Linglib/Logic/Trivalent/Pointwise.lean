@@ -7,6 +7,7 @@ module
 
 public import Linglib.Logic.Trivalent.Basic
 public import Mathlib.Data.Set.Basic
+public import Mathlib.Algebra.Notation.Indicator
 
 /-!
 # Trivalent propositions
@@ -28,8 +29,12 @@ adds the extensions, bivalence, and the three families of trivalent quantifiers.
 * `Trivalent.forallHaug`, `Trivalent.existsHaug`: Haug's quantifiers, undefined only when
   every instance is, with `existsHaug_meetWeak_presuppose` as Quantifier Projection.
 
-Each family is the trivalent face of a presupposition-projection theory under
-`PartialProp.eval` (`Presupposition.Quantified`).
+Each family is the quantifier of a theory of how a presupposition projects from the scope of a
+quantifier. Over the domain's subtype, the Weak Kleene quantifiers project universally, as
+Chemla's experiments support, Haug's existentially, as Mayr and Sauerland argue for a semantic
+projection that pragmatics then strengthens, and the Strong Kleene existential of Kleene and Fox
+is defined exactly where some instance is true or every instance is false; Spector and Sudo
+delimit when each reading surfaces.
 
 ## Implementation notes
 
@@ -43,6 +48,10 @@ instance search prefers, making every later `⊓` noncomputable.
 * [kriz-2016]
 * [haug-2014]
 * [coppock-beaver-2015]
+* [chemla-2009a]
+* [mayr-sauerland-2015]
+* [spector-sudo-2017]
+* [fox-2013]
 -/
 
 @[expose] public section
@@ -83,6 +92,13 @@ instance (p : W → SignType) : DecidablePred (· ∈ negExt p) :=
 instance (p : W → SignType) : DecidablePred (· ∈ gapExt p) :=
   fun w ↦ inferInstanceAs (Decidable (p w = 0))
 
+/-- A proposition is defined where it is true or false. -/
+theorem posExt_union_negExt (p : W → SignType) : posExt p ∪ negExt p = Function.support p := by
+  ext w; cases h : p w <;> simp [h]
+
+theorem posExt_subset_support (p : W → SignType) : posExt p ⊆ Function.support p :=
+  fun w (h : p w = 1) ↦ by simp [Function.mem_support, h]
+
 /-- The three extensions cover the world space. -/
 theorem posExt_union_negExt_union_gapExt (p : W → SignType) :
     posExt p ∪ negExt p ∪ gapExt p = Set.univ := by
@@ -115,6 +131,34 @@ theorem isBivalent_iff_forall_ne_zero (p : W → SignType) :
 
 theorem IsBivalent.ne_zero {p : W → SignType} (h : IsBivalent p) (w : W) : p w ≠ 0 :=
   (isBivalent_iff_forall_ne_zero p).1 h w
+
+/-! ### Presupposition and assertion
+
+A proposition defined where `A` holds and asserting `B` there is the indicator
+`{w | A w}.indicator fun w ↦ ofProp (B w)`: the classical value of `B` on `A` and `0` elsewhere.
+Its defined region is its `Function.support`, and an indicator of an indicator is the indicator
+of the intersection (`Set.indicator_indicator`). -/
+
+section Indicator
+
+variable {s : Set W} {f : W → SignType} {w : W}
+
+/-- A classical proposition is defined everywhere, so by `Set.support_indicator` an assertion
+restricted to `s` is defined exactly on `s`. -/
+@[simp] theorem support_ofProp (B : W → Prop) [DecidablePred B] :
+    Function.support (fun w ↦ SignType.ofProp (B w)) = Set.univ :=
+  Set.eq_univ_of_forall fun _ ↦ SignType.ofProp_ne_zero
+
+@[simp] theorem indicator_apply_eq_one_iff : s.indicator f w = 1 ↔ w ∈ s ∧ f w = 1 := by
+  by_cases h : w ∈ s <;> simp [h]
+
+@[simp] theorem indicator_apply_eq_neg_one_iff : s.indicator f w = -1 ↔ w ∈ s ∧ f w = -1 := by
+  by_cases h : w ∈ s <;> simp [h]
+
+/-- The defined region of a proposition is the complement of its gap. -/
+theorem support_eq_compl_gapExt (p : W → SignType) : Function.support p = (gapExt p)ᶜ := rfl
+
+end Indicator
 
 /-! ### Extensions under assertion
 

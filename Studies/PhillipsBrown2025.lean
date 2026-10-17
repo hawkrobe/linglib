@@ -32,7 +32,7 @@ is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defin
   context, and *Fail* is undefined in the first.
 * `not_rain_deckstacked`, `deckstacked_excluded`: the deck-stacked question of Lu's case is
   excluded by the anti-deckstacking constraint, which the level playing field satisfies.
-* `undefined_of_insensitive`, `toPartialProp_strawsonEntails`: an agent whose beliefs are
+* `undefined_of_insensitive`, `want_strawsonEntails`: an agent whose beliefs are
   insensitive to every question deciding *p* has *S wants p* undefined, which leaves the semantics
   Strawson upward monotone.
 * `want_bot_iff`: on the finest question the semantics is the best-worlds one,
@@ -42,7 +42,7 @@ is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defin
 
 * A question is a `Setoid`, its answers the cells; the question raised by a list of issues is
   their `Setoid.ofProps`, and *p* is considered relative to a question when the question
-  decides it. Answers are ordered by the desires they entail, [kratzer-1981]'s ordering with
+  decides it. Answers are ordered by the desires they entail, Kratzer's ordering with
   entailment as satisfaction (`entailed`), and the best answers are the `MaximalFor` elements
   of that valuation.
 * The act, its benefit and its cost are the three issues of the nap and lobster cases (nap,
@@ -99,8 +99,11 @@ def IsBelSensitive : Prop := (∃ w, Live s bel w) ∧ ∃ w, ¬ Live s bel w
 def Defined : Prop :=
   s.Decides p ∧ IsDiverse s p ∧ IsAntiDeckstacking N s ∧ IsBelSensitive s bel
 
-/-- Question-based *want* with its definedness conditions as presupposition. -/
-def toPartialProp : PartialProp W := ⟨fun _ ↦ Defined N s bel p, fun _ ↦ Want G s bel p⟩
+open Classical in
+/-- Question-based *want* as a trivalent proposition, with its definedness conditions as
+presupposition. -/
+noncomputable def want : W → SignType :=
+  {_w | Defined N s bel p}.indicator fun _ ↦ SignType.ofProp (Want G s bel p)
 
 section Decidable
 
@@ -149,9 +152,10 @@ theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell
 
 /-- The semantics is Strawson upward monotone, since where both ascriptions are defined,
 `want p` entails `want q` for `p ⊆ q`. -/
-theorem toPartialProp_strawsonEntails (hpq : p ⊆ q) :
-    (toPartialProp G N s bel p).strawsonEntails (toPartialProp G N s bel q) :=
-  fun _ _ _ h ↦ h.mono hpq
+theorem want_strawsonEntails (hpq : p ⊆ q) :
+    strawsonEntails (want G N s bel p) (want G N s bel q) := fun _ hp hq ↦ by
+  simp_all [want]
+  exact hp.2.mono hpq
 
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/
 theorem want_bot_iff :

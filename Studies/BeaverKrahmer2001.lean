@@ -699,7 +699,7 @@ theorem update_iff (ξ : (W → SignType)) (σ τ : Set W) :
   show τ ∈ CCP.Partial.ofTrivalent ξ σ ↔ _
   rw [CCP.Partial.mem_ofTrivalent]
   refine and_congr (forall₂_congr fun i _ ↦ ?_) ?_
-  · rw [Set.mem_ofPred_eq, presupVal_eq_one_iff]
+  · rw [Set.mem_ofPred_eq, presupVal_eq_one_iff, Function.mem_support]
   · have e : {w ∈ σ | ξ w = 1} = σ ∩ {i | ofProp (ξ i = 1) = 1} :=
       Set.ext fun i ↦ by simp
     rw [e]

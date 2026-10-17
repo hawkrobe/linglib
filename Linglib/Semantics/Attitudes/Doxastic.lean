@@ -14,11 +14,12 @@ tradition: `w ~[R x] w'` reads "`w'` is compatible with what `x` believes or kno
 K axiom `ModalLogic.box_K`.
 
 A `DoxasticPredicate` pairs an accessibility relation with a veridicality value and a factivity
-class. Applied to a complement it is a partial proposition (`toPartialProp`) that presupposes the
-complement when the predicate is factive and asserts the box, together with the complement when
-it is veridical. Veridicality is thus an entailment (`veridical_entails_complement`) and factivity
-a presupposition, which a context admits only if it entails the complement. Over reflexive
-accessibility both requirements are redundant by the T axiom (`holdsAt_iff_box`).
+class. Applied to a complement it is a trivalent proposition (`DoxasticPredicate.sentence`) that
+presupposes the complement when the predicate is factive and asserts the box, together with the
+complement when it is veridical. Veridicality is thus an entailment
+(`veridical_entails_complement`) and factivity a presupposition, which a context admits only if it
+entails the complement (`support_sentence`). Over reflexive accessibility both requirements are
+redundant by the T axiom (`holdsAt_iff_box`).
 
 ## References
 
@@ -60,26 +61,32 @@ namespace DoxasticPredicate
 
 variable (V : DoxasticPredicate W E) (agent : E) (p : W → Prop) (w : W)
 
-/-- Applied to a holder and a complement, the predicate is a partial proposition that presupposes
-the complement if the predicate is factive and asserts the box, together with the complement if
-it is veridical. -/
-def toPartialProp : PartialProp W where
-  presup w := ∀ _ ∈ V.factivity, p w
-  assertion w := VeridicalityHolds V.veridicality p w ∧ □[V.access agent] p w
+open Classical in
+/-- Applied to a holder and a complement, the predicate is a trivalent proposition that
+presupposes the complement if the predicate is factive and asserts the box, together with the
+complement if it is veridical. -/
+noncomputable def sentence : W → SignType :=
+  {w | ∀ _ ∈ V.factivity, p w}.indicator fun w ↦
+    SignType.ofProp (VeridicalityHolds V.veridicality p w ∧ □[V.access agent] p w)
 
-/-- ⟦x V that p⟧(w) is true when the presupposition and the assertion of `toPartialProp` hold. -/
-def HoldsAt : Prop := (V.toPartialProp agent p).holds w
+/-- ⟦x V that p⟧(w) is true when `sentence` is. -/
+def HoldsAt : Prop := V.sentence agent p w = 1
 
 theorem holdsAt_iff :
     V.HoldsAt agent p w ↔ (∀ _ ∈ V.factivity, p w) ∧ VeridicalityHolds V.veridicality p w ∧
-      □[V.access agent] p w :=
-  Iff.rfl
+      □[V.access agent] p w := by
+  simp [HoldsAt, sentence]
+
+/-- A factive predicate is defined exactly where its complement is true, and a non-factive one
+everywhere. -/
+theorem support_sentence :
+    Function.support (V.sentence agent p) = {w | ∀ _ ∈ V.factivity, p w} := by
+  ext w
+  simp [sentence, -SignType.ofProp_and]
 
 instance [Fintype W] [∀ v, Decidable (w ~[V.access agent] v)] [DecidablePred p] :
     Decidable (V.HoldsAt agent p w) :=
-  inferInstanceAs
-    (Decidable ((∀ _ ∈ V.factivity, p w) ∧ VeridicalityHolds V.veridicality p w ∧
-      □[V.access agent] p w))
+  decidable_of_iff _ (V.holdsAt_iff agent p w).symm
 
 variable {V agent p w}
 
@@ -93,6 +100,7 @@ theorem veridical_entails_complement (hV : V.veridicality = .veridical)
 the predicate holds exactly when its complement is true at every accessible world. -/
 theorem holdsAt_iff_box [(V.access agent).IsRefl] :
     V.HoldsAt agent p w ↔ □[V.access agent] p w := by
+  rw [holdsAt_iff]
   refine ⟨fun h ↦ h.2.2, fun h ↦ ⟨fun _ _ ↦ box_T h, ?_, h⟩⟩
   cases V.veridicality
   exacts [box_T h, trivial]

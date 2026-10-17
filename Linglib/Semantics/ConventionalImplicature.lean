@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Composition.Writer
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Conventional implicature
@@ -25,20 +25,25 @@ It is a monad morphism (`ofWriter_pure`, `ofWriter_bind`), so composing two-dime
 node by node predicts what collecting at the root does. Conjoining forgets how the log was
 itemized, for instance how often a CI was contributed (`ofWriter_not_injective`).
 
-Reading a presupposition as not-at-issue content (`ofPartialProp`) turns the classical,
-non-filtering connectives on presuppositions into the two-dimensional ones
-(`ofPartialProp_neg`, `ofPartialProp_imp`). The two part at Karttunen's filtering. A filtering
-conditional presupposes at most what the unfiltered one does
-(`imp_notAtIssue_le_impFilter_presup`), and less in general, because its antecedent's at-issue
-content can satisfy its consequent's presupposition. No at-issue operator on two-dimensional
-meanings allows that (`exists_ofPartialProp_impFilter_ne`).
+Karttunen and Peters treat presupposition the same way, as not-at-issue content. A
+two-dimensional proposition evaluates to a trivalent one (`toTrivalent`), undefined where its
+not-at-issue content fails, and the connectives here then evaluate to the Weak Kleene ones
+(`toTrivalent_and`). The two part at Karttunen's filtering: a filtering conditional presupposes
+at most what the unfiltered one does (`imp_notAtIssue_subset_support`), and less in
+general, because its antecedent's at-issue content can satisfy its consequent's presupposition,
+which no at-issue operator on two-dimensional meanings allows (`exists_notAtIssue_ne_support`). Two
+operations read the at-issue content where the not-at-issue content fails, and so are no
+trivalent operations: Karttunen and Peters's symmetric disjunction (`orKPSymmetric_not_trivalent`)
+and embedding under a negative factive (`negFactive`).
 
 ## Main definitions
 
 * `TwoDim`: an at-issue value and not-at-issue content, with its `Monad` instance.
 * `TwoDim.neg`, `TwoDim.and`, `TwoDim.or`, `TwoDim.imp`: the connectives on propositions.
 * `TwoDim.ofWriter`: the conjunction of a writer's log of CIs.
-* `TwoDim.ofPartialProp`: a presupposition read as not-at-issue content.
+* `TwoDim.toTrivalent`: the trivalent proposition, undefined where the not-at-issue content fails.
+* `TwoDim.orKPSymmetric`, `TwoDim.negFactive`: the symmetric two-dimensional disjunction and
+  embedding under a negative factive.
 
 ## Implementation notes
 
@@ -56,6 +61,11 @@ utterance updates the context with each kind is not modelled here.
 * [giorgolo-asudeh-2012]
 * [karttunen-1973]
 * [anderbois-brasoveanu-henderson-2015]
+* [karttunen-peters-1979]
+* [yagi-2025]
+* [kalomoiros-schwarz-2021]
+* [heim-1992]
+* [delpinal-bassi-sauerland-2024]
 -/
 
 @[expose] public section
@@ -63,8 +73,6 @@ utterance updates the context with each kind is not modelled here.
 namespace ConventionalImplicature
 
 universe u
-
-open Presupposition (PartialProp)
 
 /-- A two-dimensional meaning pairs an at-issue value with the not-at-issue proposition it
 carries ([potts-2005]). *That bastard John is late* has at-issue content "John is late" and
@@ -194,37 +202,110 @@ theorem ofWriter_not_injective [Nonempty α] :
 
 /-! ### Presuppositions as not-at-issue content -/
 
-/-- `ofPartialProp p` reads the presupposition of `p` as not-at-issue content, forgetting that it
-conditions definedness. -/
-def ofPartialProp (p : PartialProp W) : TwoDim W (W → Prop) := ⟨p.assertion, p.presup⟩
+section Trivalent
 
-@[simp] theorem ofPartialProp_neg (p : PartialProp W) :
-    ofPartialProp p.neg = (ofPartialProp p).neg := rfl
+open Classical
 
-@[simp] theorem ofPartialProp_and (p q : PartialProp W) :
-    ofPartialProp (p.and q) = (ofPartialProp p).and (ofPartialProp q) := rfl
+variable (p q : TwoDim W (W → Prop)) {w : W}
 
-@[simp] theorem ofPartialProp_or (p q : PartialProp W) :
-    ofPartialProp (p.or q) = (ofPartialProp p).or (ofPartialProp q) := rfl
+/-- A two-dimensional proposition evaluates to the trivalent proposition undefined where its
+not-at-issue content fails and the classical value of its at-issue content elsewhere. -/
+noncomputable def toTrivalent : W → SignType :=
+  Set.indicator {w | p.notAtIssue w} fun w ↦ SignType.ofProp (p.atIssue w)
 
-@[simp] theorem ofPartialProp_imp (p q : PartialProp W) :
-    ofPartialProp (p.imp q) = (ofPartialProp p).imp (ofPartialProp q) := rfl
+@[simp] theorem toTrivalent_eq_one_iff : p.toTrivalent w = 1 ↔ p.notAtIssue w ∧ p.atIssue w := by
+  simp [toTrivalent]
+
+@[simp] theorem toTrivalent_eq_neg_one_iff :
+    p.toTrivalent w = -1 ↔ p.notAtIssue w ∧ ¬ p.atIssue w := by
+  simp [toTrivalent]
+
+@[simp] theorem toTrivalent_eq_zero_iff : p.toTrivalent w = 0 ↔ ¬ p.notAtIssue w := by
+  simp [toTrivalent]
+
+/-- Negation evaluates to Kleene's negation. -/
+theorem toTrivalent_neg : p.neg.toTrivalent = -p.toTrivalent := by
+  funext w; by_cases h : p.notAtIssue w <;> by_cases a : p.atIssue w <;> simp [toTrivalent, h, a]
+
+/-- Conjunction evaluates to Weak Kleene conjunction. -/
+theorem toTrivalent_and : (p.and q).toTrivalent w = (p.toTrivalent w).meetWeak (q.toTrivalent w) :=
+  by by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
+    by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b] <;> rfl
+
+/-- Disjunction evaluates to Weak Kleene disjunction. -/
+theorem toTrivalent_or : (p.or q).toTrivalent w = (p.toTrivalent w).joinWeak (q.toTrivalent w) :=
+  by by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
+    by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b] <;> rfl
+
+/-- Implication evaluates to the Weak Kleene material conditional. -/
+theorem toTrivalent_imp :
+    (p.imp q).toTrivalent w = (-p.toTrivalent w).joinWeak (q.toTrivalent w) := by
+  by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
+    by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b, himp_eq] <;> rfl
 
 /-- A filtering conditional presupposes at most what the antecedent and consequent presuppose
 together. -/
-theorem imp_notAtIssue_le_impFilter_presup (p q : PartialProp W) :
-    ((ofPartialProp p).imp (ofPartialProp q)).notAtIssue ≤ (p.impFilter q).presup :=
-  fun _ h ↦ ⟨h.1, fun _ ↦ h.2⟩
+theorem imp_notAtIssue_subset_support :
+    {w | (p.imp q).notAtIssue w} ⊆
+      Function.support fun w ↦ (-p.toTrivalent w).joinMiddle (q.toTrivalent w) := fun w h ↦ by
+  simp only [Set.mem_ofPred_eq, imp_notAtIssue, Pi.inf_apply, inf_Prop_eq] at h
+  simp [h.1, h.2]
 
 /-- Filtering is no composition of two-dimensional meanings. A filtering conditional's
-presupposition depends on its antecedent's at-issue content, which no at-issue operator passes
-to the not-at-issue dimension ([karttunen-1973]). -/
-theorem exists_ofPartialProp_impFilter_ne [Nonempty W] :
-    ∃ p q : PartialProp W, ∀ f : (W → Prop) → (W → Prop) → W → Prop,
-      ofPartialProp (p.impFilter q) ≠ f <$> ofPartialProp p <*> ofPartialProp q := by
-  refine ⟨⟨⊤, ⊥⟩, ⟨⊥, ⊥⟩, fun f h ↦ ?_⟩
+presupposition depends on its antecedent's at-issue content, which no at-issue operator passes to
+the not-at-issue dimension ([karttunen-1973]). -/
+theorem exists_notAtIssue_ne_support [Nonempty W] :
+    ∃ p q : TwoDim W (W → Prop), ∀ f : (W → Prop) → (W → Prop) → W → Prop,
+      {w | (f <$> p <*> q).notAtIssue w} ≠
+        Function.support fun w ↦ (-p.toTrivalent w).joinMiddle (q.toTrivalent w) := by
+  refine ⟨⟨⊥, ⊤⟩, ⟨⊥, ⊥⟩, fun f h ↦ ?_⟩
   obtain ⟨w⟩ := ‹Nonempty W›
-  simpa [ofPartialProp, PartialProp.impFilter] using congrFun (congrArg notAtIssue h) w
+  have := congrArg (w ∈ ·) h
+  simp at this
+
+/-- The symmetric two-dimensional disjunction of the [karttunen-peters-1979] tradition projects
+`(A(ψ) ∨ Π(φ)) ∧ (A(φ) ∨ Π(ψ))` and asserts `A(φ) ∨ A(ψ)`. The literal 1979 formulation was
+asymmetric, projecting the first disjunct's presupposition unconditionally; this is the symmetric
+variant of [yagi-2025]'s Definition 2, for whose symmetry [kalomoiros-schwarz-2021] give
+experimental support. -/
+def orKPSymmetric : TwoDim W (W → Prop) :=
+  ⟨p.atIssue ⊔ q.atIssue, fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w)⟩
+
+/-- The symmetric disjunction is invariant under swapping its disjuncts. -/
+theorem orKPSymmetric_comm : orKPSymmetric p q = orKPSymmetric q p :=
+  TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext and_comm)
+
+/-- When the disjuncts' presuppositions conflict, a defined symmetric disjunction is true, so it is
+never both defined and false there ([yagi-2025] §2.2). -/
+theorem orKPSymmetric_atIssue_of_conflict (h : ¬ (p.notAtIssue w ∧ q.notAtIssue w))
+    (hp : (orKPSymmetric p q).notAtIssue w) : (orKPSymmetric p q).atIssue w := by
+  obtain ⟨h₁, h₂⟩ := hp
+  by_cases hp : p.notAtIssue w
+  · exact Or.inl (h₂.resolve_right fun hq ↦ h ⟨hp, hq⟩)
+  · exact Or.inr (h₁.resolve_right hp)
+
+/-- The symmetric disjunction is no trivalent operation. No binary operation on `SignType`
+computes its value from its disjuncts' values, since its presupposition reads their at-issue
+content where their presuppositions fail. -/
+theorem orKPSymmetric_not_trivalent (w : W) :
+    ¬ ∃ f : SignType → SignType → SignType,
+      ∀ p q : TwoDim W (W → Prop),
+        (orKPSymmetric p q).toTrivalent w = f (p.toTrivalent w) (q.toTrivalent w) := by
+  rintro ⟨f, hf⟩
+  have h₁ := hf ⟨fun _ ↦ True, fun _ ↦ False⟩ ⟨fun _ ↦ True, fun _ ↦ False⟩
+  have h₂ := hf ⟨fun _ ↦ False, fun _ ↦ False⟩ ⟨fun _ ↦ True, fun _ ↦ False⟩
+  simp [orKPSymmetric, toTrivalent] at h₁ h₂
+  exact absurd (h₁.trans h₂.symm) (by decide)
+
+/-- Embedding under a negative factive, *x is unaware that p*, presupposes that the complement
+holds and asserts that `x` does not believe its at-issue content. Presupposing that the complement
+holds, rather than only its at-issue content as [heim-1992] does for atomic complements, is
+[delpinal-bassi-sauerland-2024]'s treatment; the two part when the complement has its own
+presupposition. -/
+def negFactive (believes : (W → Prop) → W → Prop) : TwoDim W (W → Prop) :=
+  ⟨fun w ↦ ¬ believes p.atIssue w, fun w ↦ p.notAtIssue w ∧ p.atIssue w⟩
+
+end Trivalent
 
 end TwoDim
 

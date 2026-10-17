@@ -6,7 +6,7 @@ public import Linglib.Semantics.Presupposition.LocalContext
 /-!
 # Syntactic environments
 
-A syntactic environment `a _ b` is a formula with a gap ([schlenker-2009]). It is represented by
+A syntactic environment `a _ b` is a formula with a gap, in Schlenker's sense. It is represented by
 the steps from the gap to the root, innermost first (`SyntacticEnvironment`): the argument of a
 negation, or the first or the second argument of a binary connective whose other argument is given.
 Filling the gap gives a formula (`SyntacticEnvironment.fill`), and the environment's meaning is the
@@ -19,18 +19,17 @@ replaces what follows it. For the first argument of a conjunction or a disjuncti
 itself follows the gap in the string, so it may be replaced too, while *if* precedes its
 antecedent.
 
-[kalomoiros-2023] checks the constraint at every parse point after a trigger:
+Kalomoiros checks the constraint at every parse point after a trigger:
 `AgreeUpTo n K K'` holds when `K'` keeps the material before the gap and the first `n` items after
 it, counting the connective after a first argument and the second argument as one item each. At the
 first point it admits every good final (`SyntacticEnvironment.agreeUpTo_zero_iff`), and from the
 last point on only the environment itself (`SyntacticEnvironment.agreeUpTo_iff_eq`).
 
-[karttunen-1974-presupposition]'s local context of a gap (`SyntacticEnvironment.localContext`) is
-recovered from the good finals: some good final makes the formula's truth value at a world depend on
-the gap iff the world is in the local context (`SyntacticEnvironment.exists_dependsAt_iff`), and the
-presupposition computed by the filtering connectives holds at a world iff every trigger's
-presupposition holds there whenever the world is in the trigger's local context
-(`Formula.filter_presup_iff`).
+Karttunen's local context of a gap (`SyntacticEnvironment.localContext`) is recovered from the
+good finals: some good final makes the formula's truth value at a world depend on the gap iff the
+world is in the local context (`SyntacticEnvironment.exists_dependsAt_iff`), and the filtering
+evaluation is defined at a world iff every trigger's presupposition holds there whenever the world
+is in the trigger's local context (`Formula.filter_ne_zero_iff`).
 
 ## Main definitions
 
@@ -41,8 +40,7 @@ presupposition holds there whenever the world is in the trigger's local context
 * `Presupposition.SyntacticEnvironment.SameInitialString`: the environments of the good finals.
 * `Presupposition.SyntacticEnvironment.AgreeUpTo`: the environments of the good finals at a parse
   point.
-* `Presupposition.SyntacticEnvironment.localContext`: [karttunen-1974-presupposition]'s local
-  context of the gap.
+* `Presupposition.SyntacticEnvironment.localContext`: Karttunen's local context of the gap.
 
 ## References
 
@@ -58,7 +56,7 @@ namespace Presupposition
 
 variable {Atom W : Type*}
 
-/-- One step from a gap to the root: the argument of a negation, or the first (`left`) or second
+/-- One step from a gap to the root is the argument of a negation, or the first (`left`) or second
 (`right`) argument of a binary connective whose other argument is given. -/
 inductive SyntacticEnvironment.Step (Atom : Type*) where
   | not
@@ -66,8 +64,8 @@ inductive SyntacticEnvironment.Step (Atom : Type*) where
   | right (c : Connective) (F : Formula Atom)
   deriving DecidableEq
 
-/-- A syntactic environment `a _ b`: a formula with a gap, as the steps from the gap to the root,
-innermost first. -/
+/-- A syntactic environment `a _ b` is a formula with a gap, given as the steps from the gap to
+the root, innermost first. -/
 abbrev SyntacticEnvironment (Atom : Type*) := List (SyntacticEnvironment.Step Atom)
 
 namespace SyntacticEnvironment
@@ -86,9 +84,9 @@ def truth (I : Atom → Set W) : Step Atom → Set W → Set W
   | left c G, d => {w | c.eval (w ∈ d) (w ∈ G.truth I)}
   | right c F, d => {w | c.eval (w ∈ F.truth I) (w ∈ d)}
 
-/-- [karttunen-1974-presupposition]'s local context of the gap of a step in the context `C`: the
-second argument of a binary connective is evaluated in `C` updated as `Connective.localContext`
-prescribes, and any other gap in `C` itself. -/
+/-- In [karttunen-1974-presupposition]'s local context of the gap of a step in the context `C`,
+the second argument of a binary connective is evaluated in `C` updated as
+`Connective.localContext` prescribes, and any other gap in `C` itself. -/
 def localContext (I : Atom → Set W) : Step Atom → Set W → Set W
   | right c F, C => c.localContext C (F.truth I)
   | _, C => C
@@ -162,9 +160,9 @@ theorem localContext_eq_inter (I : Atom → Set W) (K : SyntacticEnvironment Ato
     rw [localContext_cons, localContext_cons, Step.localContext_eq_inter, ih,
       Step.localContext_eq_inter I s (localContext I K Set.univ), Set.inter_assoc]
 
-/-- Two steps have the same initial string when a good final may turn one into the other: it may
-replace the second argument of a first argument, and the connective unless it is *if*, which
-precedes its antecedent. -/
+/-- Two steps have the same initial string when a good final may turn one into the other, which it
+does by replacing the second argument of a first argument, and the connective unless it is *if*,
+which precedes its antecedent. -/
 inductive Step.SameInitialString : Step Atom → Step Atom → Prop
   | not : Step.SameInitialString .not .not
   | right (c : Connective) (F : Formula Atom) : Step.SameInitialString (.right c F) (.right c F)
@@ -176,8 +174,8 @@ inductive Step.SameInitialString : Step Atom → Step Atom → Prop
   | .right c F => .right c F
   | .left _ G => .left Iff.rfl G G
 
-/-- `SameInitialString K K'`: `K'` keeps the material of `K` before the gap and replaces what
-follows it, so that it is `K` with another good final. -/
+/-- `SameInitialString K K'` holds when `K'` keeps the material of `K` before the gap and replaces
+what follows it, so that it is `K` with another good final. -/
 def SameInitialString (K K' : SyntacticEnvironment Atom) : Prop :=
   List.Forall₂ Step.SameInitialString K K'
 
@@ -206,9 +204,9 @@ theorem sameInitialString_append_singleton {K L : SyntacticEnvironment Atom} {s 
 
 /-! ### Parse points -/
 
-/-- The number of items of the string that follow the first argument of a connective: the
-connective and the second argument for a conjunction or a disjunction, only the consequent for
-*if*, which precedes its antecedent and whose separator is forced. -/
+/-- The number of items of the string that follow the first argument of a connective is two for a
+conjunction or a disjunction, the connective and the second argument, and one for *if*, the
+consequent, since *if* precedes its antecedent and its separator is forced. -/
 def _root_.Presupposition.Connective.rightItems : Connective → ℕ
   | .cond => 1
   | _ => 2
@@ -240,9 +238,9 @@ def Step.AgreeUpTo (n : ℕ) : Step Atom → Step Atom → Prop
     if n = 0 then ∃ c' G', s' = .left c' G' ∧ (c = .cond ↔ c' = .cond)
     else if n < c.rightItems then ∃ G', s' = .left c G' else s' = .left c G
 
-/-- `AgreeUpTo n K K'`: `K'` keeps the material of `K` before the gap and the first `n` items after
-it, so that it is `K` with a good final of the string up to the `n`-th item: the parse points of
-[kalomoiros-2023]. -/
+/-- `AgreeUpTo n K K'` holds when `K'` keeps the material of `K` before the gap and the first `n`
+items after it, so that it is `K` with a good final of the string up to the `n`-th item, the parse
+points of [kalomoiros-2023]. -/
 def AgreeUpTo : ℕ → SyntacticEnvironment Atom → SyntacticEnvironment Atom → Prop
   | _, [], K' => K' = []
   | n, s :: K, K' =>
@@ -363,8 +361,8 @@ namespace Formula
 
 open SyntacticEnvironment
 
-/-- The triggers of a formula, each with its environment and its presupposition and assertion:
-`K.fill (trigger p p') = F` for every `(K, p, p')` listed. -/
+/-- The triggers of a formula, each with its environment and its presupposition and assertion, so
+that `K.fill (trigger p p') = F` for every `(K, p, p')` listed. -/
 def occurrences : Formula Atom → List (SyntacticEnvironment Atom × Atom × Atom)
   | atom _ => []
   | trigger p p' => [([], p, p')]
@@ -484,30 +482,30 @@ theorem exists_dependsAt_iff [Nonempty Atom] (K : SyntacticEnvironment Atom) (w 
 
 end SyntacticEnvironment
 
-/-- The presupposition computed by the filtering connectives holds at `w` iff every trigger's
-presupposition holds there whenever `w` is in the trigger's [karttunen-1974-presupposition] local
-context. -/
-theorem Formula.filter_presup_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
-    (F.filter I).presup w ↔
+/-- The filtering evaluation is defined at `w` iff every trigger's presupposition holds there
+whenever `w` is in the trigger's [karttunen-1974-presupposition] local context. -/
+theorem Formula.filter_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
+    F.filter I w ≠ 0 ↔
       ∀ o ∈ F.occurrences, w ∈ o.1.localContext I Set.univ → w ∈ I o.2.1 := by
   open SyntacticEnvironment in
   induction F with
   | atom p => simp [filter, occurrences]
   | trigger p p' => simp [filter, occurrences]
   | not F ih =>
-    simp only [occurrences, List.forall_mem_map, localContext_append, localContext_cons,
-      localContext_nil, Step.localContext]
+    simp only [filter, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff, occurrences,
+      List.forall_mem_map, localContext_append, localContext_cons, localContext_nil,
+      Step.localContext]
     exact ih
   | bin c F G ihF ihG =>
     simp only [occurrences, List.forall_mem_append, List.forall_mem_map, localContext_append,
       localContext_cons, localContext_nil, Step.localContext]
     rw [← ihF]
     have hG : (∀ o ∈ G.occurrences, w ∈ o.1.localContext I (c.localContext Set.univ (F.truth I)) →
-        w ∈ I o.2.1) ↔ (w ∈ c.localContext Set.univ (F.truth I) → (G.filter I).presup w) := by
+        w ∈ I o.2.1) ↔ (w ∈ c.localContext Set.univ (F.truth I) → G.filter I w ≠ 0) := by
       rw [ihG]
       refine ⟨fun h hc o ho hl ↦ h o ho ?_, fun h o ho hl ↦ ?_⟩
       · rw [localContext_eq_inter]; exact ⟨hc, hl⟩
       · rw [localContext_eq_inter] at hl; exact h hl.1 o ho hl.2
-    rw [hG, filter_presup_bin]
+    rw [hG, filter_bin_ne_zero I]
 
 end Presupposition

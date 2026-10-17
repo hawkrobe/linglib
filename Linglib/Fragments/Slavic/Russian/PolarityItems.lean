@@ -8,10 +8,11 @@ public import Linglib.Semantics.Polarity.Licensing
 
 This file gives the Russian indefinite polarity items, typed by `PolarityItem`, the person row
 taking its forms from `Russian.Indefinites`, after
-[haspelmath-1997]'s map of the Russian series: the *-libo* series spans the functions of a weak
+Haspelmath's map of the Russian series: the *-libo* series spans the functions of a weak
 negative polarity item, questions, conditionals, comparatives and indirect negation; the *ni-*
 series occupies direct negation as negative concord items, which co-occur with clausemate verbal
-negation *ne* ([zeijlstra-2004], [giannakidou-1998]); and *kto ugodno* is a free-choice item.
+negation *ne*, as Zeijlstra and Giannakidou describe them; and *kto ugodno* is a free-choice
+item.
 
 The concord items carry `licensor := some .antiMorphic`, so a context licenses them exactly when
 its licenser is anti-morphic, which among the named contexts is clausemate *ne* alone
@@ -34,7 +35,7 @@ open PolarityItem
 
 /-- *kto-libo* (кто-либо) 'anyone', a weak negative polarity item, licensed in questions,
 conditionals, comparatives and under indirect negation. -/
-def ktoLibo : PolarityItem :=
+noncomputable def ktoLibo : PolarityItem :=
   { form := Indefinites.ktoLibo.form
   , licensor := some .weak
   , licensingContexts := [.question, .conditionalAntecedent, .negation, .clausalComparative] }
@@ -73,7 +74,7 @@ def ktoUgodno : PolarityItem :=
 /-! ### The entries -/
 
 /-- The polarity items. -/
-def items : List PolarityItem :=
+noncomputable def items : List PolarityItem :=
   [ktoLibo, nikto, nichego, nikogda, ktoUgodno]
 
 /-! ### Verification -/

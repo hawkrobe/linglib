@@ -364,18 +364,29 @@ section Aspectual
 
 open Presupposition ModalLogic Aspect
 
-/-- The candidate for a sentence with the partial meaning `φ` commits the speaker to its
-presupposition and its assertion. -/
-def Candidate.ofPartialProp (φ : PartialProp W) : Candidate W :=
-  presupSentence {w | φ.presup w} {w | φ.assertion w}
+/-- The candidate for a sentence with the trivalent meaning `φ` commits the speaker to its
+presupposition, where `φ` is defined, and to its assertion, where `φ` is true. -/
+def Candidate.ofTrivalent (φ : W → SignType) : Candidate W :=
+  presupSentence (Function.support φ) (Trivalent.posExt φ)
 
-variable {R S : SetRel W W} {P : W → Prop} {ctx : Set (Set W)} {t : Trigger} {φ : PartialProp W}
+variable {R S : SetRel W W} {P : W → Prop} {ctx : Set (Set W)} {t : Trigger} {φ : W → SignType}
+
+/-- A sentence that asserts `a` wherever its meaning is defined is the presuppositional sentence
+with that presupposition and the assertion `a`. -/
+theorem Candidate.ofTrivalent_eq_presupSentence {a : Set W}
+    (h : ∀ w, φ w ≠ 0 → (φ w = 1 ↔ w ∈ a)) :
+    Candidate.ofTrivalent φ = presupSentence (Function.support φ) a := by
+  simp only [Candidate.ofTrivalent, presupSentence, Candidate.mk.injEq, and_true]
+  congr 1
+  ext w
+  exact and_congr_right (h w)
 
 /-- The meaning of an aspectual trigger with the prejacent `P`. `R` relates an index to the
 earlier ones, the `<` of (12), and `S` relates an index to the earlier index of (19), (24) and
 (38), a relation the dissertation writes `∞`. The meaning of *kaishi* is that of the phasal class
 of its fragment entry, and the other triggers of Table 4.1 are not aspectual. -/
-def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) : Trigger → Option (PartialProp W)
+noncomputable def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) :
+    Trigger → Option (W → SignType)
   | .you | .zai => some (again R P)
   | .reng => some (Phasal.continuation.denote S P)
   | .buzai => some (Phasal.cessation.denote S P)
@@ -384,31 +395,32 @@ def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) : Trigger → Option (
 
 /-- An aspectual trigger whose alternative is obtained by deletion asserts its prejacent, so the
 sentence without the trigger makes the same assertion, as (1) requires of the alternative. -/
-theorem assertion_eq_of_altStructure_deletion (h : t.aspectual R S P = some φ)
-    (ht : t.altStructure = .deletion) : φ.assertion = P := by
-  cases t <;> first | (cases h; rfl) | (cases h; done) | cases ht
+theorem eq_one_iff_of_altStructure_deletion (h : t.aspectual R S P = some φ)
+    (ht : t.altStructure = .deletion) {w : W} (hw : φ w ≠ 0) : φ w = 1 ↔ P w := by
+  cases t <;>
+    first | (cases ht; done) | (cases h; done) | (cases h; simp_all [Phasal.denote, again])
 
 /-- *Buzai* asserts the negation of its prejacent, so its alternative replaces it by negation. -/
-theorem assertion_buzai (h : Trigger.buzai.aspectual R S P = some φ) :
-    φ.assertion = fun w ↦ ¬ P w := by
-  cases h; rfl
+theorem eq_one_iff_buzai (h : Trigger.buzai.aspectual R S P = some φ) {w : W} (hw : φ w ≠ 0) :
+    φ w = 1 ↔ ¬ P w := by
+  cases h; simp_all [Phasal.denote]
 
 /-- A sentence with an aspectual trigger that asserts its prejacent is obligatory, against the
 sentence without the trigger, when the context entails its presupposition, as in Table 4.2. -/
 theorem aspectual_obligatory_of_entailed (h : t.aspectual R S P = some φ)
-    (ht : t.altStructure = .deletion) (hp : ctx ⊆ K {w | φ.presup w})
+    (ht : t.altStructure = .deletion) (hp : ctx ⊆ K (Function.support φ))
     (hwit : ∃ s ∈ ctx, s ⊆ {w | P w}) :
-    Beats (ranking ctx (.ofPartialProp φ)) (.ofPartialProp φ) (plain {w | P w}) := by
-  obtain rfl := assertion_eq_of_altStructure_deletion h ht
+    Beats (ranking ctx (.ofTrivalent φ)) (.ofTrivalent φ) (plain {w | P w}) := by
+  rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_one_iff_of_altStructure_deletion h ht]
   exact obligatory_of_entailed hp hwit
 
 /-- A sentence with an aspectual trigger that asserts its prejacent loses to the sentence without
 the trigger when the context does not entail its presupposition, as in Table 4.3. -/
 theorem aspectual_omitted_of_not_entailed (h : t.aspectual R S P = some φ)
-    (ht : t.altStructure = .deletion) (hp : ¬ ctx ⊆ K {w | φ.presup w})
-    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ {w | φ.presup w} ∩ {w | P w}) :
-    Beats (ranking ctx (.ofPartialProp φ)) (plain {w | P w}) (.ofPartialProp φ) := by
-  obtain rfl := assertion_eq_of_altStructure_deletion h ht
+    (ht : t.altStructure = .deletion) (hp : ¬ ctx ⊆ K (Function.support φ))
+    (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ Function.support φ ∩ {w | P w}) :
+    Beats (ranking ctx (.ofTrivalent φ)) (plain {w | P w}) (.ofTrivalent φ) := by
+  rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_one_iff_of_altStructure_deletion h ht]
   exact omitted_of_not_entailed hp hwit
 
 end Aspectual

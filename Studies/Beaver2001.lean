@@ -387,12 +387,12 @@ theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
   induction hφ with
   | atom p =>
     funext σ; refine Part.ext fun τ ↦ ?_
-    simp [eval, tval, CCP.Partial.mem_ofTrivalent]
+    simp [eval, tval, CCP.Partial.mem_ofTrivalent, Set.subset_def]
   | @not φ _ ih =>
     funext σ; refine Part.ext fun τ ↦ ?_
     rw [mem_eval_not, ih]
-    simp only [CCP.Partial.mem_ofTrivalent, tval, ne_eq, SignType.neg_eq_zero_iff,
-      SignType.neg_eq_one_iff]
+    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Function.mem_support, tval, ne_eq,
+      SignType.neg_eq_zero_iff, SignType.neg_eq_one_iff]
     have e : ∀ t : W → SignType, (∀ w ∈ σ, t w ≠ 0) →
         σ \ {w ∈ σ | t w = 1} = {w ∈ σ | t w = -1} := fun t h ↦ Set.ext fun w ↦ by
       by_cases hw : w ∈ σ
@@ -404,8 +404,8 @@ theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
   | @and φ ψ _ _ ihφ ihψ =>
     funext σ; refine Part.ext fun τ ↦ ?_
     rw [mem_eval_and, ihφ, ihψ]
-    simp only [CCP.Partial.mem_ofTrivalent, tval, meetMiddle_ne_zero_iff,
-      SignType.meetMiddle_eq_one_iff]
+    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Function.mem_support, tval,
+      meetMiddle_ne_zero_iff, SignType.meetMiddle_eq_one_iff]
     constructor
     · rintro ⟨_, ⟨h₁, rfl⟩, h₂, rfl⟩
       exact ⟨fun w hw ↦ ⟨h₁ w hw, fun ht ↦ h₂ w ⟨hw, ht⟩⟩, by ext; simp [and_assoc]⟩
@@ -415,8 +415,8 @@ theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
   | @presup φ _ ih =>
     funext σ; refine Part.ext fun τ ↦ ?_
     rw [mem_eval_presup, ih, CCP.Partial.mem_ofTrivalent_self]
-    simp only [CCP.Partial.mem_ofTrivalent, tval, ne_eq, SignType.sup_zero_eq_zero_iff,
-      not_not, SignType.sup_zero_eq_one_iff]
+    simp only [CCP.Partial.mem_ofTrivalent, Set.subset_def, Function.mem_support, tval, ne_eq,
+      SignType.sup_zero_eq_zero_iff, not_not, SignType.sup_zero_eq_one_iff]
     exact and_congr_right fun h ↦ by rw [Set.sep_eq_self_iff_mem_true.2 h]
 
 theorem admits_iff (hφ : NonModal φ) :
@@ -430,7 +430,7 @@ theorem trueAt_iff (hφ : NonModal φ) : TrueAt F w φ ↔ φ.tval F w = 1 := by
 /-- Update falsity is trivalent falsity (Lemma 10.1). -/
 theorem falseAt_iff (hφ : NonModal φ) : FalseAt F w φ ↔ φ.tval F w = -1 := by
   rw [FalseAt, eval_eq_ofTrivalent hφ, CCP.Partial.mem_ofTrivalent]
-  simp only [Set.mem_singleton_iff, forall_eq, eq_comm (a := (∅ : Set W))]
+  simp only [Set.mem_singleton_iff, eq_comm (a := (∅ : Set W))]
   cases hv : φ.tval F w <;> simp [Set.eq_empty_iff_forall_notMem, hv]
 
 /-- A state satisfies a non-modal sentence iff the sentence is true at each of its worlds, the
@@ -618,7 +618,7 @@ theorem unentailed_rows : ∀ row ∈ Examples.all,
       rw [ConsistentWith, eval_eq_ofTrivalent ((NonModal.atom _).and hR)]
       simp only [CCP.Partial.mem_ofTrivalent]
       refine ⟨_, ⟨?_, rfl⟩, {.hiding, .believesHiding}, ?_⟩ <;>
-        simp [hσ, tval, termModel, SignType.meetMiddle_neg_one_left]
+        simp [hσ, tval, termModel, Set.insert_subset_iff]
     have := (satisfies_iff (.atom _)).1 hs ∅ (by simp [hσ])
     simp [trueAt_iff (NonModal.atom _), tval, termModel] at this
 

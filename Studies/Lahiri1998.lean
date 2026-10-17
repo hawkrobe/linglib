@@ -191,7 +191,7 @@ structure Row where
 
 /-- The fragment entry of a row's item, with its alternatives; the paper does not classify
 *kabhii bhii* 'ever', read here with the property alternatives of *koii* and *kuch*. -/
-def item? (r : Datum) : Option (PolarityItem × Alternatives) :=
+noncomputable def item? (r : Datum) : Option (PolarityItem × Alternatives) :=
   r.parse? "npi" [("koii bhii", (koiiBhii, .property)), ("koi bhii", (koiiBhii, .property)),
     ("kisii-ko bhii", (koiiBhii, .property)), ("kisii-se bhii", (koiiBhii, .property)),
     ("kisiike bhii", (koiiBhii, .property)), ("ek bhii", (ekBhii, .cardinality)),
@@ -199,7 +199,7 @@ def item? (r : Datum) : Option (PolarityItem × Alternatives) :=
     ("zaraa bhii", (zaraaBhii, .cardinality)), ("kabhii bhii", (kabhiiBhii, .property))]
 
 /-- A row of the survey. -/
-def Row.ofDatum (r : Datum) : Option Row :=
+noncomputable def Row.ofDatum (r : Datum) : Option Row :=
   match r.parse? "environment" [("positive (UE)", Environment.positive),
     ("negation", .negation), ("negation (subject NPI)", .negation),
     ("conditional protasis", .protasis), ("conditional apodosis", .apodosis),
@@ -217,7 +217,7 @@ def Row.ofDatum (r : Datum) : Option Row :=
   | _, _ => none
 
 /-- The survey. -/
-def data : List Row := Examples.all.filterMap Row.ofDatum
+noncomputable def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Setting aside the cardinality items in imperatives and with numerals, an indefinite plus
 *bhii* in the survey is acceptable exactly in the environments the analysis licenses. -/

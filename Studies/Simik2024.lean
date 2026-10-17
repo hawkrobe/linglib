@@ -4,7 +4,7 @@ public import Studies.BuringGunlogson2000
 public import Linglib.Syntax.PolarInterrogative
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Questions.Exhaustivity
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Discourse.CommonGround
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Fragments.Slavic.Russian.QuestionParticles
@@ -20,11 +20,11 @@ public import Linglib.Data.Examples.Simik2024
 /-!
 # Šimík (2024): Polar question semantics and bias: Lessons from Slavic/Czech
 
-This file formalizes [simik-2024]'s survey of polar-question bias in Slavic. A question
+This file formalizes Šimík's survey of polar-question bias in Slavic. A question
 form's bias profile is the set of cells, contextual evidence by prior epistemic bias
-([sudo-2013]), in which it is felicitous: Table 2 gives the profile of the four Czech forms,
+(after Sudo), in which it is felicitous: Table 2 gives the profile of the four Czech forms,
 interrogative and declarative crossed with polarity (`czechBiasProfile`), and Table 1 the
-profile of the Serbian strategies reported from [todorovic-2023] (`serbianBiasProfile`).
+profile of the Serbian strategies reported from Todorović (`serbianBiasProfile`).
 The Czech cleaning-service scenarios (11)–(18) are typed rows, and the table predicts each
 judgment (`cleaning_examples_match_table2`); declaratives need evidence
 (`declarative_requires_evidence`) and Czech InterNPQ, unlike English high negation, is
@@ -41,9 +41,9 @@ between evidence for the prejacent and a prior against it (`razveProfile`), inva
 across inner and outer negation (`razveProfile_negation_invariant`), and is a root
 phenomenon while *li* embeds (`razve_root_li_embedded`). The chapter's Czech FALSUM
 (`falsumCz`) presupposes only epistemic possibility of the prejacent, weaker than
-[repp-2013]'s operator, the necessity `□[epi ○ conv] (p ∉ cg ·)` along the
-knowledge and conversational goals of its bearer (`assertion_of_falsum`), and licenses the particle
-*náhodou* under outer negation alone (`NahodouLicensed`, `nahodou_examples`).
+Repp's operator, the necessity `□[epi ○ conv] (p ∉ cg ·)` along the
+knowledge and conversational goals of its bearer (`falsumCz_eq_one_of_falsum`), and licenses
+the particle *náhodou* under outer negation alone (`NahodouLicensed`, `nahodou_examples`).
 
 ## Implementation notes
 
@@ -71,24 +71,24 @@ open scoped ModalLogic
 
 /-! ### Bias and the polarity of the prejacent (§3.1) -/
 
-/-- The contextual evidence a conflict-resolving question of the given polarity rests on:
-evidence for the prejacent as asked. -/
+/-- The contextual evidence a conflict-resolving question of the given polarity rests on,
+which is evidence for the prejacent as asked. -/
 def evidence (s : Polarity) : SignType := s
 
 /-- The prior epistemic bias a conflict-resolving question of the given polarity
-double-checks: against the prejacent as asked. -/
+double-checks, which is against the prejacent as asked. -/
 def prior (s : Polarity) : SignType := -(s : SignType)
 
-/-- The polarity of a question with the given reading: positive without negation, negative with
-either reading of it. -/
+/-- The polarity of a question with the given reading of negation, which is positive without
+negation and negative with either reading of it. -/
 def polarityOf : Option Polarity → Polarity
   | none => .positive
   | some _ => .negative
 
 /-! ### The Czech forms and their bias profile (§3.2, Table 2) -/
 
-/-- The chapter's grid of Czech polar-question forms: interrogative (verb-initial) or
-declarative word order, crossed with polarity. -/
+/-- The chapter's grid of Czech polar-question forms, which crosses interrogative
+(verb-initial) or declarative word order with polarity. -/
 inductive CzechPQForm
   | interPPQ
   | interNPQ
@@ -96,7 +96,7 @@ inductive CzechPQForm
   | declNPQ
   deriving DecidableEq, Repr, Fintype
 
-/-- The position of the negation of each grid cell ([romero-2024]'s forms): the verb-initial
+/-- The position of the negation of each grid cell, in [romero-2024]'s forms. The verb-initial
 InterNPQ preposes its negated verb, a high negation question, and DeclNPQ does not, a low one. -/
 def CzechPQForm.negation : CzechPQForm → Option NegationPosition
   | .interPPQ | .declPPQ => none
@@ -111,8 +111,8 @@ def CzechPQForm.Declarative : CzechPQForm → Prop
 instance : DecidablePred CzechPQForm.Declarative := fun f => by
   cases f <;> simp only [CzechPQForm.Declarative] <;> infer_instance
 
-/-- Table 2: the forms natural in each cell of contextual evidence by prior epistemic
-bias, the starred DeclPPQ of the neutral cell left to `czechFelicitous`. -/
+/-- The forms natural in each cell of contextual evidence by prior epistemic bias (Table 2),
+with the starred DeclPPQ of the neutral cell left to `czechFelicitous`. -/
 def czechBiasProfile : SignType → SignType → Finset CzechPQForm
   | .pos, .pos => ∅
   | .pos, .zero => {.declPPQ, .interNPQ}
@@ -161,8 +161,8 @@ theorem declarative_requires_evidence (f : CzechPQForm) (hf : f.Declarative)
     (h : f ∈ czechBiasProfile ev ob) : ev ≠ 0 := by
   revert hf h; decide +revert
 
-/-- Czech high negation is broader than English: felicitous under positive evidence, which the
-evidence condition of [buring-gunlogson-2000] on outer negation excludes. -/
+/-- Czech high negation is broader than English, being felicitous under positive evidence,
+which the evidence condition of [buring-gunlogson-2000] on outer negation excludes. -/
 theorem interNPQ_broader_than_english_outer :
     .interNPQ ∈ czechBiasProfile 1 0 ∧
       ¬ BuringGunlogson2000.Felicitous (some .positive) 1 := by
@@ -188,7 +188,7 @@ def epistemic? (e : Datum) : Option SignType :=
 def contrastiveTopic (e : Datum) : Bool :=
   e.feature? "contrastiveTopic" == some "true"
 
-/-- Table 2 predicts the scenarios: a form is judged infelicitous exactly when its cell
+/-- Table 2 predicts the scenarios. A form is judged infelicitous exactly when its cell
 excludes it, the degraded InterPPQ of (18) counting as admitted. -/
 theorem cleaning_examples_match_table2 :
     ∀ e ∈ Examples.all, ∀ f ∈ form? e, ∀ ev ∈ evidence? e, ∀ ob ∈ epistemic? e,
@@ -233,7 +233,7 @@ inductive Strategy
   | intonation
   deriving DecidableEq, Repr, Fintype
 
-/-- The chapter's summary classification of each language's default strategy: verb or
+/-- The chapter's summary classification of each language's default strategy as verb or
 auxiliary movement, an utterance-initial particle, or a verb-attached particle. -/
 def Language.defaultStrategy : Language → Strategy
   | .czech | .slovak | .upperSorbian | .slovenian => .verbMovement
@@ -319,8 +319,8 @@ theorem particles_licensed_polar : ∀ p ∈ l.particles, p.Licensed .polar .mat
 
 /-! ### The Serbian strategies and Todorović's bias profile (§4.2.2, Table 1) -/
 
-/-- The Serbian strategies of (31) and Table 1: the two positive particle strategies,
-high negation (*nije li*) and low negation (*je l' … nije*). -/
+/-- The Serbian strategies of (31) and Table 1, which are the two positive particle
+strategies, high negation (*nije li*), and low negation (*je l' … nije*). -/
 inductive SerbianPQForm
   | daLiPPQ
   | jeLiPPQ
@@ -340,7 +340,7 @@ def SerbianPQForm.negation : SerbianPQForm → Option NegationPosition
   | .hnpq => some .preposed
   | .lnpq => some .nonPreposed
 
-/-- Table 1: the Serbian strategies natural in each cell, after [todorovic-2023]. -/
+/-- The Serbian strategies natural in each cell (Table 1), after [todorovic-2023]. -/
 def serbianBiasProfile : SignType → SignType → Finset SerbianPQForm
   | .pos, .pos => ∅
   | .pos, .zero => {.jeLiPPQ}
@@ -378,7 +378,7 @@ theorem lnpq_of_hnpq (h : .hnpq ∈ serbianBiasProfile ev ob) :
     .lnpq ∈ serbianBiasProfile ev ob := by
   revert h; decide +revert
 
-/-- Serbian high negation is narrower than English: neutral evidence, which the evidence
+/-- Serbian high negation is narrower than English, since neutral evidence, which the evidence
 condition of [buring-gunlogson-2000] on outer negation admits, admits no Serbian HNPQ. -/
 theorem serbian_hnpq_narrower_than_english :
     BuringGunlogson2000.Felicitous (some .positive) 0 ∧ ∀ ob, .hnpq ∉ serbianBiasProfile 0 ob := by
@@ -392,7 +392,7 @@ theorem ex31_markers :
     Examples.ex31d.feature? "particle" = some SerbianPQForm.lnpq.particle.form := by
   decide
 
-/-- The quiz-versus-information-seeking contrast: *je li* is natural in the neutral cell
+/-- In the quiz-versus-information-seeking contrast, *je li* is natural in the neutral cell
 of Table 1 yet infelicitous in the quiz (31b), where *da li* is felicitous (31a). -/
 theorem jeLi_neutral_yet_quiz_infelicitous :
     .jeLiPPQ ∈ serbianBiasProfile 0 0 ∧
@@ -425,8 +425,8 @@ theorem trueAnswers_polar_existsUnique : ∃! q, q ∈ trueAnswers {p, pᶜ} w :
     · exact absurd hwq hw
     · rfl
 
-/-- The chapter's (36): the speaker wants to know the true answer to the polar question
-over `p`; the embedded (10b) is the same form with the attitude holder in place of the
+/-- The speaker wants to know the true answer to the polar question over `p` (the chapter's
+(36)); the embedded (10b) is the same form with the attitude holder in place of the
 speaker. -/
 def wonderLF {E : Type*} (wantToKnow : E → Set W → Set W) (x : E) : Set W :=
   {w | ∃ q ∈ trueAnswers {p, pᶜ} w, w ∈ wantToKnow x q}
@@ -435,21 +435,22 @@ end Wonder
 
 /-! ### Russian *razve* and its kin (§4.2.4) -/
 
-/-- The bias profile of a *razve* question by reading: evidence for the prejacent as asked
-against a prior for its negation (the conflict-resolving profile of §3.1). -/
+/-- The bias profile of a *razve* question on each reading, which pairs evidence for the
+prejacent as asked with a prior for its negation (the conflict-resolving profile of §3.1). -/
 def razveProfile (r : Option Polarity) : SignType × SignType :=
   (evidence (polarityOf r), prior (polarityOf r))
 
 /-- The profile of *razve* negative questions is the same under inner negation (VERUM)
-and outer negation (FALSUM): negative evidence, positive prior. -/
+and outer negation (FALSUM), with negative evidence and a positive prior. -/
 theorem razveProfile_negation_invariant :
     razveProfile (some .negative) = razveProfile (some .positive) ∧
       razveProfile (some .positive) = (-1, 1) :=
   ⟨rfl, rfl⟩
 
 /-- *Razve* is compatible with both negations ([repp-geist-2022]'s LFs (40), diagnosed
-by the polarity items in (41)), *neuželi* with inner negation only: the readings double-checking
-the negation of the prejacent, `some .negative`, and the prejacent itself, `some .positive`. -/
+by the polarity items in (41)), *neuželi* with inner negation only. The two readings
+double-check the negation of the prejacent, `some .negative`, and the prejacent itself,
+`some .positive`. -/
 def razveNegations : Finset (Option Polarity) := {some .negative, some .positive}
 
 /-- *Neuželi* lexicalizes VERUM and so tolerates inner negation only. -/
@@ -478,35 +479,36 @@ open scoped SetRel
 
 variable {W : Type*} (epi conv : SetRel W W) (cg : W → Filter W) (p : Set W)
 
-/-- The chapter's Czech FALSUM (44): defined when the attitude holder considers the
+open Classical in
+/-- The chapter's Czech FALSUM (44) is defined when the attitude holder considers the
 prejacent possible, and true when it is not in the common ground. -/
-def falsumCz : Presupposition.PartialProp W where
-  presup := ModalLogic.Diamond epi (· ∈ p)
-  assertion := fun w => p ∉ cg w
+noncomputable def falsumCz : W → SignType :=
+  {w | ModalLogic.Diamond epi (· ∈ p) w}.indicator fun w ↦ SignType.ofProp (p ∉ cg w)
 
-/-- The question (45) over the Czech FALSUM: whether the prejacent is outside the common
+/-- The question (45) over the Czech FALSUM asks whether the prejacent is outside the common
 ground. -/
 def falsumCzQuestion : Question W := polar {w | p ∉ cg w}
 
-/-- The commitment of the Czech operator is weak: its presupposition is epistemic
-possibility, the dual of necessity. -/
-theorem falsumCz_presup_iff (w : W) :
-    (falsumCz epi cg p).presup w ↔ ¬ ModalLogic.Box epi (· ∉ p) w := by
+/-- The commitment of the Czech operator is weak, since its presupposition is epistemic
+possibility, the dual of necessity, and fails only where the prejacent is necessarily false. -/
+theorem falsumCz_eq_zero_iff (w : W) :
+    falsumCz epi cg p w = 0 ↔ ModalLogic.Box epi (· ∉ p) w := by
   simp [falsumCz, ModalLogic.Box, ModalLogic.Diamond]
 
-/-- [repp-2013]'s FALSUM (22b), `□[epi ○ conv] (p ∉ cg ·)`, entails the Czech
-assertion when the bearer's knowledge-then-goals relation is reflexive, as it is for reflexive
-`epi` and `conv`; reflexive `conv`, every world satisfying the bearer's conversational goals, is
-an idealization. -/
-theorem assertion_of_falsum [(epi ○ conv).IsRefl] {w : W}
-    (h : □[epi ○ conv] (p ∉ cg ·) w) : (falsumCz epi cg p).assertion w :=
-  ModalLogic.box_T h
+/-- [repp-2013]'s FALSUM (22b), `□[epi ○ conv] (p ∉ cg ·)`, makes the Czech operator true
+wherever it is defined when the bearer's knowledge-then-goals relation is reflexive, as it is for
+reflexive `epi` and `conv`; reflexive `conv`, every world satisfying the bearer's conversational
+goals, is an idealization. -/
+theorem falsumCz_eq_one_of_falsum [(epi ○ conv).IsRefl] {w : W}
+    (h : □[epi ○ conv] (p ∉ cg ·) w) (hw : falsumCz epi cg p w ≠ 0) :
+    falsumCz epi cg p w = 1 := by
+  simp_all [falsumCz, ModalLogic.box_T h]
 
 end Falsum
 
 /-- *Náhodou* is licensed by outer negation and by nothing else (43). The two readings of negation
 in a polar question (the chapter's (14), after [ladd-1981] and [repp-2013]) are polarities of the
-proposition the question double-checks: inner negation, the classical propositional operator
+proposition the question double-checks. Inner negation, the classical propositional operator
 diagnosed by negative polarity items, double-checks the negation of the prejacent, `.negative`;
 outer negation, the non-propositional FALSUM diagnosed by positive polarity items, the prejacent
 itself, `.positive`. -/
@@ -524,8 +526,8 @@ theorem nahodou_requires_negation (r : Polarity) : ¬ NahodouLicensed .positive 
 theorem nahodou_requires_outer (pol : Polarity) (r : Polarity)
     (h : NahodouLicensed pol r) : r = .positive := h.2
 
-/-- The reading of negation an indefinite diagnoses: the polarity item the outer one, the
-concord item the inner one. -/
+/-- The reading of negation an indefinite diagnoses, the polarity item diagnosing the outer
+one and the concord item the inner one. -/
 def indefiniteReading? (e : Datum) : Option Polarity :=
   e.parse? "indefinite" [("ppi", .positive), ("nci", .negative)]
 

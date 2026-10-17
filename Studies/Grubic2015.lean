@@ -27,9 +27,9 @@ implication of it ranks highest among its alternatives.
 
 * `prejacent_projects`: on an entailment scale, the complement-exclusion reading, the
   presupposition of *yak('i)* entails the prejacent, which therefore projects through negation.
-* `truthSet_only_conjunctions`: over the conjunctions of independent atomic answers *yak('i)* is
+* `posExt_only_conjunctions`: over the conjunctions of independent atomic answers *yak('i)* is
   defined and true exactly where the prejacent holds and every other atom fails.
-* `ke_undefined_of_anaphoric`: parallel background-marked antecedents, being anaphoric, cannot
+* `ke_eq_zero_of_anaphoric`: parallel background-marked antecedents, being anaphoric, cannot
   supply the antecedent of *ke('e)*.
 
 ## Implementation notes
@@ -61,8 +61,8 @@ variable {W T : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set
 /-- Negation leaves the presupposition in place, so *not only Dimza built a house* still has
 Dimza building a house (29); on a rank-order scale, where alternatives need not entail the
 prejacent, nothing of the kind follows. -/
-theorem prejacent_projects {w : W} (h : (only (· ⊆ ·) C p).neg.presup w) : w ∈ p :=
-  atLeast_subset_subset h
+theorem prejacent_projects {w : W} (h : -only (· ⊆ ·) C p w ≠ 0) : w ∈ p :=
+  atLeast_subset_subset (by simpa using h)
 
 /-- The answers of (11) are the nonempty conjunctions of a set of atomic answers. -/
 def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
@@ -71,9 +71,10 @@ def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
 /-- Over the conjunctions of atomic answers, the truth set of *yak('i)* on the entailment scale
 is the prejacent with no other atom true, the exhaustification `Exhaustification.exh` over the
 atoms ((166) and (25)). -/
-theorem truthSet_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
-    (only (· ⊆ ·) (conjunctions atoms) p).truthSet = exh atoms p := by
+theorem posExt_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
+    Trivalent.posExt (only (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
   ext w
+  rw [Trivalent.mem_posExt, only_eq_one_iff]
   constructor
   · rintro ⟨⟨_, ⟨A, hA, -, rfl⟩, hw, hq⟩, hmost⟩
     refine ⟨hq hw, fun r hr hwr x hx ↦ ?_⟩
@@ -87,16 +88,17 @@ theorem truthSet_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
 
 /-! ### The additive *ke('e)*, section 7.3 -/
 
+open Classical in
 /-- *ke('e)* 'also' (45) makes no truth-conditional contribution and presupposes a salient
 antecedent about a different topic situation, one that need not itself be true (46). -/
-def ke (given : Set (Set W)) (topic : Set W → T) : PartialProp W :=
-  ⟨fun _ ↦ ∃ q ∈ given, topic q ≠ topic p, (· ∈ p)⟩
+noncomputable def ke (given : Set (Set W)) (topic : Set W → T) : W → SignType :=
+  {_w | ∃ q ∈ given, topic q ≠ topic p}.indicator fun w ↦ SignType.ofProp (w ∈ p)
 
 /-- When every salient antecedent is anaphoric to the host's topic situation, as parallel
 background-marked antecedents are by default, *ke('e)* is undefined ((44) and (49)). -/
-theorem ke_undefined_of_anaphoric {given : Set (Set W)} {topic : Set W → T}
-    (h : ∀ q ∈ given, topic q = topic p) (w : W) : ¬ (ke p given topic).presup w :=
-  fun ⟨q, hq, hne⟩ ↦ hne (h q hq)
+theorem ke_eq_zero_of_anaphoric {given : Set (Set W)} {topic : Set W → T}
+    (h : ∀ q ∈ given, topic q = topic p) (w : W) : ke p given topic w = 0 := by
+  simpa [ke] using h
 
 /-! ### The scalar *har('i)*, section 7.2 -/
 
@@ -104,16 +106,18 @@ theorem ke_undefined_of_anaphoric {given : Set (Set W)} {topic : Set W → T}
 not by the common ground alone. -/
 def CImpl (CG q : Set W) : Prop := ¬ CG ⊆ q ∧ CG ∩ p ⊆ q
 
+open Classical in
 /-- *har('i)* 'even' (17) asserts the prejacent and presupposes that some contextual implication
 of it ranks highest among its alternatives on the salient scale. -/
-def har (CG : Set W) (alt : Set W → Set (Set W)) : PartialProp W :=
-  ⟨fun w ↦ ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q', (· ∈ p)⟩
+noncomputable def har (CG : Set W) (alt : Set W → Set (Set W)) : W → SignType :=
+  {w | ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q'}.indicator fun w ↦
+    SignType.ofProp (w ∈ p)
 
 /-- At a world of the common ground where the prejacent holds, the implication *har('i)*
 presupposes holds as well, so the scale is anchored by a true alternative. -/
 theorem har_impl_holds {CG : Set W} {alt : Set W → Set (Set W)} {w : W} (hw : w ∈ CG)
-    (hp : w ∈ p) (h : (har S p CG alt).presup w) : ∃ q, CImpl p CG q ∧ w ∈ q :=
-  let ⟨q, hq, _⟩ := h
+    (hp : w ∈ p) (h : har S p CG alt w ≠ 0) : ∃ q, CImpl p CG q ∧ w ∈ q :=
+  let ⟨q, hq, _⟩ := Set.mem_of_indicator_ne_zero h
   ⟨q, hq, hq.2 ⟨hw, hp⟩⟩
 
 end Grubic2015

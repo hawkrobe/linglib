@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # The modal-horizon counterfactual
@@ -15,11 +15,12 @@ horizon, but it is valid wherever the conclusion's presupposition holds.
 
 ## Main definitions
 
-* `Conditional.horizonCounterfactual`: the counterfactual over a modal horizon.
+* `Conditional.horizonCounterfactual`: the counterfactual over a modal horizon, a trivalent
+  proposition.
 
 ## Main results
 
-* `Conditional.exists_mem_of_holds_horizonCounterfactual`: a defined and true counterfactual has a
+* `Conditional.exists_mem_of_horizonCounterfactual_eq_one`: a true counterfactual has a
   horizon-world where antecedent and consequent hold together.
 
 ## Implementation notes
@@ -38,29 +39,33 @@ consequent as evaluated at `w`; it is evaluated at the horizon-world `w'`, as he
 
 namespace Conditional
 
-open Presupposition
-
 variable {I W : Type*} (horizon : I → Set W) (p q : Set W)
 
+open Classical in
 /-- *If p, would q* over a modal horizon presupposes that the horizon admits `p` and asserts the
 strict conditional over the horizon ([von-fintel-1999]'s (82) and (83)). -/
-def horizonCounterfactual : PartialProp I where
-  presup i := (horizon i ∩ p).Nonempty
-  assertion i := i ∈ strictImp horizon p q
+noncomputable def horizonCounterfactual : I → SignType :=
+  {i | (horizon i ∩ p).Nonempty}.indicator fun i ↦ SignType.ofProp (i ∈ strictImp horizon p q)
 
 variable {horizon p q} {i : I}
 
-@[simp] theorem horizonCounterfactual_presup :
-    (horizonCounterfactual horizon p q).presup i ↔ (horizon i ∩ p).Nonempty := Iff.rfl
+@[simp] theorem horizonCounterfactual_eq_zero_iff :
+    horizonCounterfactual horizon p q i = 0 ↔ ¬ (horizon i ∩ p).Nonempty := by
+  simp [horizonCounterfactual]
 
-@[simp] theorem horizonCounterfactual_assertion :
-    (horizonCounterfactual horizon p q).assertion i ↔ horizon i ∩ p ⊆ q := Iff.rfl
+@[simp] theorem horizonCounterfactual_eq_one_iff :
+    horizonCounterfactual horizon p q i = 1 ↔ (horizon i ∩ p).Nonempty ∧ horizon i ∩ p ⊆ q := by
+  simp [horizonCounterfactual]
 
-/-- A defined and true counterfactual has a horizon-world where its antecedent and consequent hold
-together. -/
-theorem exists_mem_of_holds_horizonCounterfactual
-    (h : (horizonCounterfactual horizon p q).holds i) : ∃ w ∈ horizon i, w ∈ p ∧ w ∈ q :=
-  let ⟨w, hw⟩ := h.1
-  ⟨w, hw.1, hw.2, h.2 hw⟩
+@[simp] theorem horizonCounterfactual_eq_neg_one_iff :
+    horizonCounterfactual horizon p q i = -1 ↔
+      (horizon i ∩ p).Nonempty ∧ ¬ horizon i ∩ p ⊆ q := by
+  simp [horizonCounterfactual]
+
+/-- A true counterfactual has a horizon-world where its antecedent and consequent hold together. -/
+theorem exists_mem_of_horizonCounterfactual_eq_one (h : horizonCounterfactual horizon p q i = 1) :
+    ∃ w ∈ horizon i, w ∈ p ∧ w ∈ q :=
+  let ⟨⟨w, hw⟩, hs⟩ := horizonCounterfactual_eq_one_iff.1 h
+  ⟨w, hw.1, hw.2, hs hw⟩
 
 end Conditional

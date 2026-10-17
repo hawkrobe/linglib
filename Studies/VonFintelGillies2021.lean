@@ -6,8 +6,8 @@ public import Linglib.Data.Examples.VonFintelGillies2021
 /-!
 # von Fintel & Gillies (2021): Still Going Strong
 
-This file formalizes [von-fintel-gillies-2021]'s return to the strong *must* of
-[von-fintel-gillies-2010]. Two observations about epistemic *can't* pose a dilemma for the
+This file formalizes von Fintel and Gillies's return to the strong *must* of their 2010
+paper. Two observations about epistemic *can't* pose a dilemma for the
 Mantra: *can't* patterns with *must* in its evidential distribution (Observation 4), and
 *can't φ* is incompatible with *it's possible that φ* (Observation 5), so *can't* can be the
 negation neither of a strong nor of a weak existential modal. Kernel semantics resolves the
@@ -41,59 +41,46 @@ construction, while the strong assertion B_K ⊆ ⟦¬φ⟧ delivers Observation
 
 open Modality VonFintelGillies2010
 
+/-- `⟦not blue⟧`. -/
+abbrev notBlue : World → Prop := (· ≠ .w1)
+
 variable {W : Type*} (k : Kernel W) (φ : W → Prop) (w : W)
 
-/-- When can't `φ` holds (`B_K ⊆ ⟦¬φ⟧`), might `φ` is false
-(Observation 5). -/
-theorem cant_might_exclusion (hCant : (kernelCant k φ).assertion w) :
-    ¬(kernelMight k φ).assertion w := by
-  intro hc
-  obtain ⟨w', hw', hφ⟩ := (Kernel.compatibleWith_iff _ _).mp hc
-  exact hCant w' hw' hφ
+/-- When can't `φ` is true (`B_K ⊆ ⟦¬φ⟧`), might `φ` is false (Observation 5). -/
+theorem cant_might_exclusion (hCant : kernelCant k φ w = 1) : kernelMight k φ w = -1 := by
+  rw [kernelMight_eq_neg_kernelCant, Pi.neg_apply, hCant]
 
-/-- When `B_K` is realistic and can't `φ` holds, `¬φ` holds
-(S2). -/
-theorem cant_entails_negation (hReal : w ∈ k.base)
-    (hTrue : (kernelCant k φ).assertion w) :
-    ¬ φ w :=
-  hTrue w hReal
+/-- When `B_K` is realistic and can't `φ` is true, `¬φ` holds (S2). -/
+theorem cant_entails_negation (hReal : w ∈ k.base) (hTrue : kernelCant k φ w = 1) : ¬ φ w :=
+  must_entails_prejacent k _ w hReal (kernelMust_eq_one_iff.1 hTrue).2
 
-/-- A single kernel simultaneously exhibits evidentiality, strength, and
-might-exclusion: over `mastermindK`, can't *notBlue* is defined, true, and
-excludes might *notBlue* — the joint profile the Mantra cannot assign. -/
+/-- Over `mastermindK` a single kernel exhibits evidentiality, strength, and might-exclusion at
+once, since can't *notBlue* is defined and true and might *notBlue* is false — the joint profile
+the Mantra cannot assign. -/
 theorem cant_dilemma_resolved :
-    .w1 ∈ mastermindK.base ∧
-    (kernelCant mastermindK notBlue).presup .w1 ∧
-    (kernelCant mastermindK notBlue).assertion .w1 ∧
-    ¬(kernelMight mastermindK notBlue).assertion .w1 ∧
-    ¬ notBlue .w1 := by
-  refine ⟨by rw [mastermind_base]; rfl, ?_, ?_, ?_, by decide⟩
-  · rintro ⟨x, hx, hxor⟩
-    rcases hx with rfl | hx'
-    · rcases hxor with h_sub | h_disj
-      · exact h_sub (show redOrBlue .w0 from by decide) (by decide)
-      · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
-          (show ¬ notBlue .w1 from by decide)
-    · obtain rfl : x = notRed := hx'
-      rcases hxor with h_sub | h_disj
-      · exact h_sub (show notRed .w2 from by decide) (by decide)
-      · exact Set.disjoint_left.mp h_disj (show notRed .w1 from by decide)
-          (show ¬ notBlue .w1 from by decide)
-  · rw [show (kernelCant mastermindK notBlue).assertion .w1 =
-        mastermindK.FollowsFrom (λ w => ¬ notBlue w) from rfl,
-      Kernel.followsFrom_iff, mastermind_base]
-    rintro w rfl
-    decide
-  · intro hc
-    obtain ⟨w, hw, hnb⟩ := (Kernel.compatibleWith_iff _ _).mp hc
-    rw [mastermind_base] at hw
-    rcases hw with rfl
-    exact (by decide : ¬ notBlue World.w1) hnb
+    .w1 ∈ mastermindK.base ∧ kernelCant mastermindK notBlue .w1 = 1 ∧
+      kernelMight mastermindK notBlue .w1 = -1 ∧ ¬ notBlue .w1 := by
+  have hCant : kernelCant mastermindK notBlue .w1 = 1 := by
+    refine kernelMust_eq_one_iff.2 ⟨?_, ?_⟩
+    · rintro ⟨x, hx, hxor⟩
+      rcases hx with rfl | hx'
+      · rcases hxor with h_sub | h_disj
+        · exact h_sub (show redOrBlue .w0 from by decide) (by decide)
+        · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
+            (show ¬ notBlue .w1 from by decide)
+      · obtain rfl : x = notRed := hx'
+        rcases hxor with h_sub | h_disj
+        · exact h_sub (show notRed .w2 from by decide) (by decide)
+        · exact Set.disjoint_left.mp h_disj (show notRed .w1 from by decide)
+            (show ¬ notBlue .w1 from by decide)
+    · rw [Kernel.followsFrom_iff, mastermind_base]
+      rintro w rfl
+      decide
+  exact ⟨by rw [mastermind_base]; rfl, hCant, cant_might_exclusion _ _ _ hCant, by decide⟩
 
-/-- Direct evidence blocks can't, paralleling must: when `K` settles `¬φ`,
-can't `φ` has presupposition failure. -/
-theorem cant_direct_evidence_infelicity :
-    ¬(kernelCant mastermindK red).presup .w0 := λ h =>
-  h ⟨notRed, by simp [mastermindK], Or.inl λ _ hw => hw⟩
+/-- Direct evidence blocks can't, paralleling must, since when `K` settles `¬φ` can't `φ` has
+presupposition failure. -/
+theorem cant_direct_evidence_infelicity : kernelCant mastermindK red .w0 = 0 :=
+  kernelMust_eq_zero_iff.2 ⟨notRed, by simp [mastermindK], Or.inl fun _ hw ↦ hw⟩
 
 end VonFintelGillies2021

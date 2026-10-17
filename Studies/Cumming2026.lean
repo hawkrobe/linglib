@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Tense.Evidential
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.Cumming2026
 
 /-!
@@ -60,7 +60,7 @@ namespace Cumming2026
 
 open Semantics
 
-open Tense Presupposition
+open Tense
 
 variable {T : Type*} [LinearOrder T]
 
@@ -106,12 +106,12 @@ theorem downstream_of_holds {c : Cell} (hc : c.ep ≤ ⟦future⟧ᶜ) {f : Evid
     (h : c.Holds f) : f.Downstream :=
   f.downstream_iff.2 (hc h.1)
 
+open Classical in
 /-- The meaning of a cell at a frame presupposes the constraints and asserts the content, so the
 constraint is not part of what is asserted. -/
-@[simps] def meaning {W : Type*} (c : Cell) (f : EvidentialFrame T) (φ : W → Prop) :
-    PartialProp W where
-  presup _ := c.Holds f
-  assertion := φ
+noncomputable def meaning {W : Type*} (c : Cell) (f : EvidentialFrame T) (φ : W → Prop) :
+    W → SignType :=
+  {_w | c.Holds f}.indicator fun w ↦ SignType.ofProp (φ w)
 
 end Cell
 
@@ -219,10 +219,13 @@ theorem speechTime_lt_acquisitionTime {f : EvidentialFrame T}
   lt_of_lt_of_le ((compare_mem_future _ _).1 h.2.2) ((compare_mem_compl_future _ _).1 h.1)
 
 /-- The past-directed *will have* and the simple past assert the same proposition and differ
-in what they presuppose, so *will have* is no necessity modal ((23)). -/
-theorem willHave_meaning_assertion {W : Type*} (f : EvidentialFrame T) (φ : W → Prop) :
-    (willHave.meaning f φ).assertion = (simplePast.meaning f φ).assertion :=
-  rfl
+in what they presuppose, so *will have* is no necessity modal ((23)). At frames meeting their
+respective constraints the two are the same proposition. -/
+theorem willHave_meaning_eq_simplePast_meaning {W : Type*} {f f' : EvidentialFrame T}
+    (φ : W → Prop) (h : willHave.Holds f) (h' : simplePast.Holds f') :
+    willHave.meaning f φ = simplePast.meaning f' φ := by
+  funext w
+  simp [Cell.meaning, h, h']
 
 /-! ### The felicity judgments -/
 

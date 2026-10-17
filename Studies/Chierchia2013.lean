@@ -11,7 +11,7 @@ public import Linglib.Data.Examples.Chierchia2013
 /-!
 # Chierchia (2013): Logic in Grammar
 
-This file formalizes the opening chapter of [chierchia-2013], where the preferred reading of
+This file formalizes the opening chapter of Chierchia's book, where the preferred reading of
 *or* and the distribution of *any* and *ever* are shown to track one logical property of a
 position. *Or* is exclusive in an upward-entailing position and inclusive in a
 downward-entailing one, because Maximize Strength adds the not-both implicature only where it
@@ -111,7 +111,7 @@ section Exhaustification
 variable {W E : Type*} (D : Finset E) (P : E → Set W)
 
 /-- Under an antitone context the existential entails each of its subdomain alternatives, so
-*any* in a downward-entailing position is exhaustified vacuously: a plain existential. -/
+*any* in a downward-entailing position is exhaustified vacuously, leaving a plain existential. -/
 theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
     exh (C '' supClosure (P '' D)) (C (⋃ a ∈ D, P a)) = C (⋃ a ∈ D, P a) :=
   exh_eq_self <| by
@@ -120,7 +120,7 @@ theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
     exact hC (Set.biUnion_subset_biUnion_left hS)
 
 /-- At the existential itself, where no witness is entailed, exhaustifying the obligatory
-alternatives negates every singleton alternative and is a contradiction: the source of the
+alternatives negates every singleton alternative and is a contradiction, which is the source of the
 deviance of *any* in a positive episodic sentence. -/
 theorem exh_supClosure_eq_empty (h : ∀ a ∈ D, ¬ (⋃ b ∈ D, P b) ⊆ P a) :
     exh (supClosure (P '' D)) (⋃ a ∈ D, P a) = ∅ := by
@@ -156,7 +156,7 @@ inductive Position where
   deriving DecidableEq, Repr
 
 /-- The licensing context a position is, if it is one. -/
-def Position.context : Position → Option LicensingContext
+noncomputable def Position.context : Position → Option LicensingContext
   | .conditionalAntecedent => some .conditionalAntecedent
   | .universalRestrictor => some .universalRestrictor
   | .negation => some .negation
@@ -228,7 +228,7 @@ instance : ∀ p : Position, DecidablePred p.Licenses
   | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope =>
     fun _ ↦ isFalse fun ⟨_, h, _⟩ ↦ nomatch h
 
-/-- Every downward-entailing position licenses *ever*: the hard column of the readings of *or*
+/-- Every downward-entailing position licenses *ever*, so the hard column of the readings of *or*
 is the column where the pure negative-polarity item is grammatical. -/
 theorem licenses_ever_of_downward (pos : Position) (h : pos.polarity = -1) :
     pos.Licenses English.PolarityItems.ever := by
@@ -278,7 +278,7 @@ def Position.ofKey : String → Option Position
   | _ => none
 
 /-- The Fragment entry a row names. -/
-def item : String → Option PolarityItem
+noncomputable def item : String → Option PolarityItem
   | "any" => some English.PolarityItems.any
   | "ever" => some English.PolarityItems.ever
   | "alcuno" => some Italian.PolarityItems.alcuno

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Repetitive *again*
@@ -24,7 +24,7 @@ the earlier times it is the past of tense logic (`Tense.diamond_toSetRel_past`).
 
 ## Main definitions
 
-* `Presupposition.again`: the partial proposition asserting `P` and presupposing an earlier
+* `Presupposition.again`: the trivalent proposition asserting `P` and presupposing an earlier
   eventuality of which `P` holds.
 
 ## References
@@ -41,14 +41,16 @@ open ModalLogic
 
 variable {ι : Type*} {R : SetRel ι ι} {P : ι → Prop}
 
+open Classical in
 /-- `again R P` asserts `P` of an eventuality and presupposes that `P` holds of one of the
 eventualities that `R` relates it to, the earlier ones. -/
-def again (R : SetRel ι ι) (P : ι → Prop) : PartialProp ι where
-  presup := ◇[R] P
-  assertion := P
+noncomputable def again (R : SetRel ι ι) (P : ι → Prop) : ι → SignType :=
+  {i | ◇[R] P i}.indicator fun i ↦ SignType.ofProp (P i)
 
-@[simp] theorem again_presup : (again R P).presup = ◇[R] P := rfl
+variable {i : ι}
 
-@[simp] theorem again_assertion : (again R P).assertion = P := rfl
+@[simp] theorem again_eq_zero_iff : again R P i = 0 ↔ ¬ ◇[R] P i := by simp [again]
+
+@[simp] theorem again_eq_one_iff : again R P i = 1 ↔ ◇[R] P i ∧ P i := by simp [again]
 
 end Presupposition

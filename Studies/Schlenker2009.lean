@@ -180,12 +180,12 @@ theorem transpI_iff_admits (C : Set W) (F : Formula Atom) :
   have hdep [Nonempty Atom] (K : SyntacticEnvironment Atom) (w : W) :
       (∃ f ∈ goodFinals I K, DependsAt f w) ↔ w ∈ K.localContext I Set.univ :=
     Set.exists_mem_image.trans (SyntacticEnvironment.exists_dependsAt_iff I K w)
-  refine ⟨fun h w hw ↦ (Formula.filter_presup_iff I F w).2 fun o ho hl ↦ ?_,
+  refine ⟨fun h w hw ↦ (Formula.filter_ne_zero_iff I F w).2 fun o ho hl ↦ ?_,
     fun h o ho ↦ (transparent_iff_subset henv).2 fun w ⟨hw, hl⟩ ↦ ?_⟩
   · have : Nonempty Atom := ⟨o.2.1⟩
     exact (transparent_iff_subset henv).1 (h o ho) ⟨hw, (hdep o.1 w).2 hl⟩
   · have : Nonempty Atom := ⟨o.2.1⟩
-    exact (Formula.filter_presup_iff I F w).1 (h hw) o ho ((hdep o.1 w).1 hl)
+    exact (Formula.filter_ne_zero_iff I F w).1 (h hw) o ho ((hdep o.1 w).1 hl)
 
 /-- Incremental satisfaction is admittance by the formula's context change potential (C.22). -/
 theorem satI_iff_admits (C : Set W) (F : Formula Atom) : SatI I C F ↔ (F.ccp I).Admits C :=
@@ -205,44 +205,38 @@ variable {p p' q q' : Atom} {C : Set W}
 theorem satI_initial_iff {c : Connective} (hc : c ≠ .cond) :
     SatI I C (.bin c (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  cases c <;> simp_all [Set.subset_def, Formula.filter, Connective.filter, PartialProp.andFilter,
-    PartialProp.orFilter] <;> exact Iff.rfl
+  cases c <;> simp_all [Set.subset_def, Formula.filter, Connective.filter]
 
 /-- `(not pp')` presupposes `p`, (23). -/
 theorem satI_not_iff : SatI I C (.not (.trigger p p')) ↔ C ⊆ I p := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  rfl
+  simp [Set.subset_def, Formula.filter]
 
 /-- `(p and qq')` presupposes `(if p . q)`, (26). -/
 theorem satI_and_iff :
     SatI I C (.bin .conj (.atom p) (.trigger q q')) ↔
       C ⊆ (Formula.bin .cond (.atom p) (.atom q)).truth I := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval,
-    PartialProp.andFilter]
-  exact Iff.rfl
+  simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval]
 
 /-- `(if pp' . q)` presupposes `p`, (29). -/
 theorem satI_if_iff : SatI I C (.bin .cond (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Connective.filter, PartialProp.impFilter]
-  exact Iff.rfl
+  simp [Set.subset_def, Formula.filter, Connective.filter]
 
 /-- `(if p . qq')` presupposes `(if p . q)`, (32). -/
 theorem satI_then_iff :
     SatI I C (.bin .cond (.atom p) (.trigger q q')) ↔
       C ⊆ (Formula.bin .cond (.atom p) (.atom q)).truth I := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval,
-    PartialProp.impFilter]
-  exact Iff.rfl
+  simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval]
 
 /-! ### A trigger alone, and symmetric conjunction -/
 
 /-- A trigger standing alone presupposes `p` on the incremental theory. -/
 theorem satI_trigger_iff : SatI I C (.trigger p p') ↔ C ⊆ I p := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  rfl
+  simp [Set.subset_def, Formula.filter]
 
 /-- A trigger standing alone presupposes `p` on the symmetric theory. -/
 theorem satS_trigger_iff : SatS I C (.trigger p p') ↔ C ⊆ I p := by
@@ -305,9 +299,9 @@ end Belief
 admits the report under rule (18) of [heim-1992], which the paper calls the standard result obtained
 in Heim's framework (p. 3:32). -/
 theorem satisfied_believe_iff_admits {E : Type*} (Dox : E → W → Set W) (a : E)
-    (p : PartialProp W) {C : Set W} :
-    Satisfied C (believe (Dox a)) (Prod.snd ⁻¹' p.presup) ↔
-      (Heim1992.believes Dox a (CCP.Partial.ofPartialProp p)).Admits C := by
+    (p : W → SignType) {C : Set W} :
+    Satisfied C (believe (Dox a)) (Prod.snd ⁻¹' Function.support p) ↔
+      (Heim1992.believes Dox a (CCP.Partial.ofTrivalent p)).Admits C := by
   rw [satisfied_believe_iff, Heim1992.admits_believes_iff]
 
 /-! ### The King conditional ([heim-1983]) -/
@@ -321,9 +315,7 @@ theorem satI_king_iff_admits {k s ks b : Atom} (hk : I k = {w | king w}) (hs : I
     SatI I C (.bin .cond (.trigger k s) (.trigger ks b)) ↔
       (ifKingHasSon king son bald).Admits C := by
   rw [satI_iff_admits, king_admits_iff, Formula.admits_ccp_iff]
-  simp only [Formula.filter, Connective.filter, PartialProp.impFilter, PartialProp.Admits,
-    hk, hs, hks, Set.subset_def, Set.mem_ofPred_eq]
-  exact ⟨fun h w hw ↦ (h w hw).1, fun h w hw ↦ ⟨h w hw, fun hsn ↦ ⟨h w hw, hsn⟩⟩⟩
+  simp [Formula.filter, Connective.filter, hk, hs, hks, Set.subset_def]
 
 /-! ### Strong Kleene and supervaluations (items 24–41 of [schlenker-2008b]) -/
 
@@ -352,7 +344,7 @@ def TokenDefined (w : W) (F : Formula Atom) : Prop :=
 
 /-- Symmetric Kleene acceptability, by the Strong Kleene evaluation of item 40, which Theorem 41
 (`tokenDefined_iff`) shows equivalent to items 27–28 (item 29b). -/
-def KleeneS (C : Set W) (F : Formula Atom) : Prop := (F.strong I).Admits C
+def KleeneS (C : Set W) (F : Formula Atom) : Prop := C ⊆ Function.support (F.strong I)
 
 /-- Symmetric supervaluation acceptability (item 26b). -/
 def SuperS (C : Set W) (F : Formula Atom) : Prop := ∀ w ∈ C, SuperDefined I w F
@@ -365,7 +357,7 @@ def Incrementally (P : Formula Atom → Prop) (F : Formula Atom) : Prop :=
 
 /-- Incremental Kleene acceptability (item 29a). -/
 def KleeneI (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ w ∈ C, Incrementally (fun X ↦ (X.strong I).presup w) F
+  ∀ w ∈ C, Incrementally (fun X ↦ X.strong I w ≠ 0) F
 
 /-- Incremental supervaluation acceptability (item 26a). -/
 def SuperI (C : Set W) (F : Formula Atom) : Prop :=
@@ -416,18 +408,18 @@ private theorem exists_resolve_merge (c : Connective) (F G : Formula Atom)
     resolve_congr I G fun _ ↦ ite_eq_right fun ⟨_, h⟩ ↦ append_left_ne_append_right h.symm⟩
 
 /-- On its filtering presupposition, a formula takes its classical value under every resolution. -/
-theorem resolve_of_filter_presup {F : Formula Atom} (h : (F.filter I).presup w)
+theorem resolve_of_filter_ne_zero {F : Formula Atom} (h : F.filter I w ≠ 0)
     (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) (K : SyntacticEnvironment Atom) :
     resolve I w ρ K F ↔ w ∈ F.truth I := by
   induction F generalizing K with
   | atom p => rfl
   | trigger p p' =>
-    have hp : w ∈ I p := h
+    have hp : w ∈ I p := Set.mem_of_indicator_ne_zero h
     simp only [resolve, Formula.truth, Set.mem_inter_iff, hp, not_true_eq_false, false_and,
       or_false, true_and]
-  | not F ih => exact not_congr (ih h _)
+  | not F ih => exact not_congr (ih (by simpa [Formula.filter] using h) _)
   | bin c F G ihF ihG =>
-    rw [Formula.filter_presup_bin] at h
+    rw [Formula.filter_bin_ne_zero] at h
     simp only [resolve, Formula.truth, Set.mem_ofPred_eq, ihF h.1]
     cases c <;> simp only [Connective.eval, Connective.localContext, Set.mem_inter_iff,
       Set.mem_univ, true_and, Set.mem_compl_iff] at h ⊢
@@ -459,11 +451,11 @@ private theorem neg_ne_one {a : SignType} : -a ≠ 1 ↔ a ≠ -1 := by
 /-- A formula can be true under some resolution of its tokens iff its Strong Kleene value is not
 false, and false under some resolution iff its value is not true. -/
 private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment Atom) :
-    ((∃ ρ, resolve I w ρ K F) ↔ (F.strong I).eval w ≠ -1) ∧
-      ((∃ ρ, ¬ resolve I w ρ K F) ↔ (F.strong I).eval w ≠ 1) := by
+    ((∃ ρ, resolve I w ρ K F) ↔ F.strong I w ≠ -1) ∧
+      ((∃ ρ, ¬ resolve I w ρ K F) ↔ F.strong I w ≠ 1) := by
   induction F generalizing K with
   | atom p =>
-    simp [resolve, Formula.strong, PartialProp.eval_eq_false_iff, PartialProp.eval_eq_true_iff]
+    simp [resolve, Formula.strong]
   | trigger p p' =>
     have e₁ : (∃ ρ, resolve I w ρ K (.trigger p p')) ↔ (w ∈ I p ∧ w ∈ I p' ∨ w ∉ I p) :=
       ⟨fun ⟨_, h⟩ ↦ h.imp_right And.left,
@@ -472,20 +464,20 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
       ⟨fun ⟨_, h⟩ hp ↦ h (.inl hp),
         fun h ↦ ⟨fun _ _ _ ↦ False, fun h' ↦ h'.elim h fun h'' ↦ h''.2⟩⟩
     refine ⟨e₁.trans ?_, e₀.trans ?_⟩ <;>
-      simp only [Formula.strong, ne_eq, PartialProp.eval_eq_false_iff,
-        PartialProp.eval_eq_true_iff]
+      simp only [Formula.strong, ne_eq, Trivalent.indicator_apply_eq_neg_one_iff,
+        Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_neg_one_iff,
+        SignType.ofProp_eq_one_iff]
     tauto
   | not F ih =>
-    simp only [resolve, Formula.strong, PartialProp.eval_neg, neg_ne_neg_one, neg_ne_one, not_not]
+    simp only [resolve, Formula.strong, Pi.neg_apply, neg_ne_neg_one, neg_ne_one, not_not]
     exact ⟨(ih _).2, (ih _).1⟩
   | bin c F G ihF ihG =>
     obtain ⟨hF₁, hF₀⟩ := ihF (.left c G :: K)
     obtain ⟨hG₁, hG₀⟩ := ihG (.right c F :: K)
     have merge := exists_resolve_merge I (w := w) c F G K
     cases c <;> simp only [resolve, Formula.strong, Connective.strong, Connective.eval,
-      PartialProp.eval_andStrong, PartialProp.eval_orStrong, PartialProp.eval_neg, inf_ne_neg_one,
-      inf_ne_one, sup_ne_neg_one, sup_ne_one, neg_ne_neg_one, neg_ne_one, ← hF₁, ← hF₀, ← hG₁,
-      ← hG₀]
+      inf_ne_neg_one, inf_ne_one, sup_ne_neg_one, sup_ne_one, neg_ne_neg_one, neg_ne_one, ← hF₁,
+      ← hF₀, ← hG₁, ← hG₀]
     · refine ⟨⟨fun ⟨ρ, a, b⟩ ↦ ⟨⟨ρ, a⟩, ⟨ρ, b⟩⟩, fun ⟨⟨ρ₁, a⟩, ⟨ρ₂, b⟩⟩ ↦ ?_⟩,
         ⟨fun ⟨ρ, h⟩ ↦ ?_, fun h ↦ h.elim (fun ⟨ρ, a⟩ ↦ ⟨ρ, fun h ↦ a h.1⟩)
           (fun ⟨ρ, b⟩ ↦ ⟨ρ, fun h ↦ b h.2⟩)⟩⟩
@@ -509,23 +501,21 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
 
 /-- Where the Strong Kleene evaluation is defined, every resolution of the tokens gives its value
 (the value half of Theorem 41). -/
-theorem resolve_iff_of_presup {F : Formula Atom} (h : (F.strong I).presup w)
+theorem resolve_iff_of_ne_zero {F : Formula Atom} (h : F.strong I w ≠ 0)
     (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) :
-    resolve I w ρ [] F ↔ (F.strong I).assertion w := by
+    resolve I w ρ [] F ↔ F.strong I w = 1 := by
   obtain ⟨h₁, h₀⟩ := exists_resolve_iff I (w := w) F []
-  by_cases ha : (F.strong I).assertion w
-  · have he : (F.strong I).eval w = 1 := (PartialProp.eval_eq_true_iff _ _).2 ⟨h, ha⟩
-    exact iff_of_true (by by_contra hn; exact h₀.1 ⟨ρ, hn⟩ he) ha
-  · have he : (F.strong I).eval w = -1 := (PartialProp.eval_eq_false_iff _ _).2 ⟨h, ha⟩
+  by_cases ha : F.strong I w = 1
+  · exact iff_of_true (by by_contra hn; exact h₀.1 ⟨ρ, hn⟩ ha) ha
+  · have he : F.strong I w = -1 := by cases hv : F.strong I w <;> simp_all
     exact iff_of_false (fun hr ↦ h₁.1 ⟨ρ, hr⟩ he) ha
 
 /-- A formula is Kleene-defined in the sense of items 27–28 iff its Strong Kleene evaluation is
 defined (Theorem 41). -/
-theorem tokenDefined_iff (F : Formula Atom) : TokenDefined I w F ↔ (F.strong I).presup w := by
-  refine ⟨fun hd ↦ by_contra fun hp ↦ ?_, fun hp ρ ρ' ↦ by
-    rw [resolve_iff_of_presup I hp, resolve_iff_of_presup I hp]⟩
+theorem tokenDefined_iff (F : Formula Atom) : TokenDefined I w F ↔ F.strong I w ≠ 0 := by
+  refine ⟨fun hd he ↦ ?_, fun hp ρ ρ' ↦ by
+    rw [resolve_iff_of_ne_zero I hp, resolve_iff_of_ne_zero I hp]⟩
   obtain ⟨h₁, h₀⟩ := exists_resolve_iff I (w := w) F []
-  have he := (PartialProp.eval_eq_indet_iff _ _).2 hp
   obtain ⟨ρ, hρ⟩ := h₁.2 (by rw [he]; decide)
   obtain ⟨ρ', hρ'⟩ := h₀.2 (by rw [he]; decide)
   exact hρ' ((hd ρ ρ').1 hρ)
@@ -533,8 +523,8 @@ theorem tokenDefined_iff (F : Formula Atom) : TokenDefined I w F ↔ (F.strong I
 /-! #### Lemmas 6–8 and 11: Kleene and supervaluations -/
 
 /-- Where the Strong Kleene evaluation is defined, the supervaluation is defined, with the same
-value by `resolve_iff_of_presup` (Lemma 7, item 31). -/
-theorem superDefined_of_presup {F : Formula Atom} (h : (F.strong I).presup w) :
+value by `resolve_iff_of_ne_zero` (Lemma 7, item 31). -/
+theorem superDefined_of_strong_ne_zero {F : Formula Atom} (h : F.strong I w ≠ 0) :
     SuperDefined I w F :=
   fun _ _ ↦ (tokenDefined_iff I F).2 h _ _
 
@@ -565,8 +555,8 @@ theorem resolve_congr_occurrences {ρ ρ' : SyntacticEnvironment Atom → Atom �
 /-- When every trigger occurs once, the supervaluation and the Strong Kleene evaluation are defined
 together (Lemma 6, item 30). -/
 theorem superDefined_iff_of_nodup {F : Formula Atom} (hF : (F.occurrences.map Prod.snd).Nodup) :
-    SuperDefined I w F ↔ (F.strong I).presup w := by
-  refine ⟨fun hs ↦ (tokenDefined_iff I F).1 fun ρ ρ' ↦ ?_, superDefined_of_presup I⟩
+    SuperDefined I w F ↔ F.strong I w ≠ 0 := by
+  refine ⟨fun hs ↦ (tokenDefined_iff I F).1 fun ρ ρ' ↦ ?_, superDefined_of_strong_ne_zero I⟩
   have key (ρ : SyntacticEnvironment Atom → Atom → Atom → Prop) : resolve I w ρ [] F ↔
       resolve I w (fun _ p p' ↦ ∃ o ∈ F.occurrences, o.2 = (p, p') ∧ ρ o.1 p p') [] F :=
     resolve_congr_occurrences I F fun o ho ↦ by
@@ -579,11 +569,11 @@ theorem superDefined_iff_of_nodup {F : Formula Atom} (hF : (F.occurrences.map Pr
 
 /-- Symmetric Kleene acceptability implies symmetric super-acceptability (Lemma 8, item 32). -/
 theorem KleeneS.superS {C : Set W} {F : Formula Atom} (h : KleeneS I C F) : SuperS I C F :=
-  fun _ hw ↦ superDefined_of_presup I (h hw)
+  fun _ hw ↦ superDefined_of_strong_ne_zero I (h hw)
 
 /-- Incremental Kleene acceptability implies incremental super-acceptability (Lemma 8, item 32). -/
 theorem KleeneI.superI {C : Set W} {F : Formula Atom} (h : KleeneI I C F) : SuperI I C F :=
-  fun w hw o ho K' hK hT ↦ superDefined_of_presup I (h w hw o ho K' hK hT)
+  fun w hw o ho K' hK hT ↦ superDefined_of_strong_ne_zero I (h w hw o ho K' hK hT)
 
 /-- `(pp' or (not pp'))` is symmetrically super-acceptable in the set of all worlds, but not
 Kleene-acceptable there when `p` is not a tautology (Lemma 11, item 37). -/
@@ -593,9 +583,9 @@ theorem superS_not_kleeneS {p p' : Atom} {w₀ : W} (hw₀ : w₀ ∉ I p) :
   refine ⟨fun w _ σ σ' ↦ ?_, fun h ↦ ?_⟩
   · simp only [resolve, Connective.eval]
     tauto
-  · have h₀ : (Formula.strong I (.bin .disj (.trigger p p') (.not (.trigger p p')))).presup w₀ :=
+  · have h₀ : Formula.strong I (.bin .disj (.trigger p p') (.not (.trigger p p'))) w₀ ≠ 0 :=
       h (Set.mem_univ w₀)
-    simp [Formula.strong, Connective.strong, PartialProp.orStrong, PartialProp.neg, hw₀] at h₀
+    simp [Formula.strong, Connective.strong, hw₀] at h₀
 
 /-! #### Incremental acceptability -/
 
@@ -669,15 +659,15 @@ private theorem incrementally_iff_filter (P : Formula Atom → Prop)
     (hnot : ∀ X : Formula Atom, P (.not X) ↔ P X)
     (hleft : ∀ (c : Connective) (X : Formula Atom), (∀ (c' : Connective) (G' : Formula Atom),
       (c = .cond ↔ c' = .cond) → G'.occurrences = [] → P (.bin c' X G')) ↔ P X)
-    (hright : ∀ (c : Connective) (F Y : Formula Atom), (F.filter I).presup w →
+    (hright : ∀ (c : Connective) (F Y : Formula Atom), F.filter I w ≠ 0 →
       (P (.bin c F Y) ↔ (w ∈ c.localContext Set.univ (F.truth I) → P Y)))
-    (F : Formula Atom) : Incrementally P F ↔ (F.filter I).presup w := by
+    (F : Formula Atom) : Incrementally P F ↔ F.filter I w ≠ 0 := by
   induction F with
-  | atom p => exact iff_of_true (incrementally_atom P p) trivial
-  | trigger p p' => rw [incrementally_trigger, htrig]; rfl
-  | not F ih => rw [incrementally_not, Incrementally.congr hnot, ih]; rfl
+  | atom p => exact iff_of_true (incrementally_atom P p) (by simp [Formula.filter])
+  | trigger p p' => rw [incrementally_trigger, htrig]; simp [Formula.filter]
+  | not F ih => rw [incrementally_not, Incrementally.congr hnot, ih]; simp [Formula.filter]
   | bin c F G ihF ihG =>
-    rw [incrementally_bin, Incrementally.congr (hleft c), ihF, Formula.filter_presup_bin]
+    rw [incrementally_bin, Incrementally.congr (hleft c), ihF, Formula.filter_bin_ne_zero]
     refine and_congr_right fun hF ↦ ?_
     rw [Incrementally.congr (hright c F · hF), ← ihG]
     exact ⟨fun h hk o ho K' hK hT ↦ h o ho K' hK hT hk, fun h o ho K' hK hT hk ↦ h hk o ho K' hK hT⟩
@@ -687,57 +677,48 @@ private def taut (a : Atom) : Formula Atom := .bin .cond (.atom a) (.atom a)
 
 private theorem occurrences_taut (a : Atom) : (taut a).occurrences = [] := rfl
 
-private theorem filter_presup_of_occurrences {F : Formula Atom} (h : F.occurrences = []) :
-    (F.filter I).presup w :=
-  (Formula.filter_presup_iff I F w).2 fun o ho ↦ by simp [h] at ho
+private theorem filter_ne_zero_of_occurrences {F : Formula Atom} (h : F.occurrences = []) :
+    F.filter I w ≠ 0 :=
+  (Formula.filter_ne_zero_iff I F w).2 fun o ho ↦ by simp [h] at ho
 
-/-- On its filtering presupposition, a formula's Strong Kleene evaluation is defined and true iff
-the formula is. -/
-theorem strong_of_filter_presup {F : Formula Atom} (h : (F.filter I).presup w) :
-    (F.strong I).presup w ∧ ((F.strong I).assertion w ↔ w ∈ F.truth I) := by
-  have hp : (F.strong I).presup w := (tokenDefined_iff I F).1 fun ρ ρ' ↦ by
-    rw [resolve_of_filter_presup I h, resolve_of_filter_presup I h]
-  exact ⟨hp, (resolve_iff_of_presup I hp fun _ _ _ ↦ True).symm.trans
-    (resolve_of_filter_presup I h _ _)⟩
+open Classical in
+/-- On its filtering presupposition, a formula's Strong Kleene evaluation is its classical
+value. -/
+theorem strong_eq_ofProp_of_filter_ne_zero {F : Formula Atom} (h : F.filter I w ≠ 0) :
+    F.strong I w = SignType.ofProp (w ∈ F.truth I) := by
+  have hp : F.strong I w ≠ 0 := (tokenDefined_iff I F).1 fun ρ ρ' ↦ by
+    rw [resolve_of_filter_ne_zero I h, resolve_of_filter_ne_zero I h]
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp [hp]) ?_
+  rw [SignType.ofProp_eq_one_iff, ← resolve_iff_of_ne_zero I hp fun _ _ _ ↦ True]
+  exact resolve_of_filter_ne_zero I h _ _
+
+private theorem strong_ne_zero (c : Connective) {a b : SignType} (ha : a ≠ 0) (hb : b ≠ 0) :
+    c.strong a b ≠ 0 := by
+  revert ha hb; cases c <;> cases a <;> cases b <;> decide
 
 /-- Incremental Strong Kleene definedness is the filtering presupposition. -/
 theorem incrementally_strong_iff (w : W) (F : Formula Atom) :
-    Incrementally (fun X ↦ (X.strong I).presup w) F ↔ (F.filter I).presup w := by
-  refine incrementally_iff_filter I _ (fun _ _ ↦ Iff.rfl) (fun _ ↦ Iff.rfl) (fun c X ↦ ?_)
-    (fun c F Y hF ↦ ?_) F
+    Incrementally (fun X ↦ X.strong I w ≠ 0) F ↔ F.filter I w ≠ 0 := by
+  refine incrementally_iff_filter I _ (fun _ _ ↦ by simp [Formula.strong])
+    (fun _ ↦ by simp [Formula.strong]) (fun c X ↦ ?_) (fun c F Y hF ↦ ?_) F
   · have : Nonempty Atom := X.nonempty_atom
     let a := Classical.arbitrary Atom
-    have hpres (Y : Formula Atom) : (Y.strong I).presup w ↔ (Y.strong I).eval w ≠ 0 := by
-      rw [ne_eq, PartialProp.eval_eq_indet_iff, not_not]
-    have htaut : ((taut a).strong I).eval w = 1 := by
-      rw [PartialProp.eval_eq_true_iff]
-      by_cases ha : w ∈ I a <;>
-        simp [taut, Formula.strong, Connective.strong, PartialProp.orStrong, PartialProp.neg, ha]
+    have htaut : (taut a).strong I w = 1 := by
+      by_cases ha : w ∈ I a <;> simp [taut, Formula.strong, Connective.strong, ha]
     refine ⟨fun h ↦ ?_, fun hX c' G' _ hG ↦ ?_⟩
-    · rw [hpres]
-      cases c
-      · have := (hpres _).1 (h .conj (taut a) Iff.rfl rfl)
-        simp only [Formula.strong, Connective.strong, PartialProp.eval_andStrong, htaut] at this
-        revert this; cases (X.strong I).eval w <;> decide
-      · have := (hpres _).1 (h .cond (.not (taut a)) Iff.rfl rfl)
-        simp only [Formula.strong, Connective.strong, PartialProp.eval_orStrong,
-          PartialProp.eval_neg, htaut] at this
-        revert this; cases (X.strong I).eval w <;> decide
-      · have := (hpres _).1 (h .disj (.not (taut a)) Iff.rfl rfl)
-        simp only [Formula.strong, Connective.strong, PartialProp.eval_orStrong,
-          PartialProp.eval_neg, htaut] at this
-        revert this; cases (X.strong I).eval w <;> decide
-    · obtain ⟨hGp, -⟩ := strong_of_filter_presup I (w := w) (filter_presup_of_occurrences I hG)
-      cases c' <;> simp only [Formula.strong, Connective.strong, PartialProp.andStrong,
-        PartialProp.orStrong, PartialProp.neg] <;> exact .inl ⟨hX, hGp⟩
-  · obtain ⟨hFp, hFa⟩ := strong_of_filter_presup I hF
-    cases c <;> simp only [Formula.strong, Connective.strong, PartialProp.andStrong,
-      PartialProp.orStrong, PartialProp.neg, Connective.localContext, Set.mem_inter_iff,
-      Set.mem_univ, true_and, Set.mem_compl_iff, hFa, hFp] <;> tauto
+    · cases c
+      · simpa [Formula.strong, Connective.strong, htaut] using h .conj (taut a) Iff.rfl rfl
+      · simpa [Formula.strong, Connective.strong, htaut] using h .cond (.not (taut a)) Iff.rfl rfl
+      · simpa [Formula.strong, Connective.strong, htaut] using h .disj (.not (taut a)) Iff.rfl rfl
+    · have hG' := strong_eq_ofProp_of_filter_ne_zero I (w := w) (filter_ne_zero_of_occurrences I hG)
+      exact strong_ne_zero c' hX (by simp [hG'])
+  · have hF' := strong_eq_ofProp_of_filter_ne_zero I hF
+    cases c <;> by_cases ht : w ∈ F.truth I <;>
+      simp [Formula.strong, Connective.strong, Connective.localContext, hF', ht]
 
 /-- Incremental supervaluation definedness is the filtering presupposition. -/
 theorem incrementally_superDefined_iff (w : W) (F : Formula Atom) :
-    Incrementally (SuperDefined I w) F ↔ (F.filter I).presup w := by
+    Incrementally (SuperDefined I w) F ↔ F.filter I w ≠ 0 := by
   have hconst (σ : Atom → Atom → Prop) (K : SyntacticEnvironment Atom) (X : Formula Atom) :=
     resolve_const I (w := w) σ K [] X
   have hbin (σ : Atom → Atom → Prop) (c : Connective) (X Y : Formula Atom) :
@@ -747,7 +728,7 @@ theorem incrementally_superDefined_iff (w : W) (F : Formula Atom) :
     rw [hconst σ [.left c Y] X, hconst σ [.right c X] Y]
   have hfree {G : Formula Atom} (hG : G.occurrences = []) (σ : Atom → Atom → Prop) :
       resolve I w (fun _ ↦ σ) [] G ↔ w ∈ G.truth I :=
-    resolve_of_filter_presup I (filter_presup_of_occurrences I hG) _ _
+    resolve_of_filter_ne_zero I (filter_ne_zero_of_occurrences I hG) _ _
   refine incrementally_iff_filter I _ (fun p p' ↦ ?_) (fun X ↦ ?_) (fun c X ↦ ?_)
     (fun c F Y hF ↦ ?_) F
   · by_cases hp : w ∈ I p
@@ -772,18 +753,20 @@ theorem incrementally_superDefined_iff (w : W) (F : Formula Atom) :
         rw [hbin, hbin, hfree (G := (taut a).not) rfl, hfree (G := (taut a).not) rfl] at this
         simpa [taut, Formula.truth, Connective.eval] using this
     · rw [hbin, hbin, hfree hG, hfree hG, hX σ σ']
-  · have hF' (σ : Atom → Atom → Prop) := resolve_of_filter_presup I hF (fun _ ↦ σ) []
+  · have hF' (σ : Atom → Atom → Prop) := resolve_of_filter_ne_zero I hF (fun _ ↦ σ) []
     simp only [SuperDefined, hbin, hF']
     cases c <;> by_cases ht : w ∈ F.truth I <;>
       simp [Connective.eval, Connective.localContext, ht]
 
 /-- Incremental Kleene acceptability is entailment of the filtering presupposition, the route by
 which Theorems 36 and 38a are proved here. -/
-theorem kleeneI_iff (C : Set W) (F : Formula Atom) : KleeneI I C F ↔ (F.filter I).Admits C :=
+theorem kleeneI_iff (C : Set W) (F : Formula Atom) :
+    KleeneI I C F ↔ C ⊆ Function.support (F.filter I) :=
   forall₂_congr fun w _ ↦ incrementally_strong_iff I w F
 
 /-- Incremental super-acceptability is entailment of the filtering presupposition. -/
-theorem superI_iff (C : Set W) (F : Formula Atom) : SuperI I C F ↔ (F.filter I).Admits C :=
+theorem superI_iff (C : Set W) (F : Formula Atom) :
+    SuperI I C F ↔ C ⊆ Function.support (F.filter I) :=
   forall₂_congr fun w _ ↦ incrementally_superDefined_iff I w F
 
 /-- Incremental Kleene acceptability is incremental super-acceptability (Theorem 36, item 36). -/
@@ -793,7 +776,7 @@ theorem kleeneI_iff_superI (C : Set W) (F : Formula Atom) : KleeneI I C F ↔ Su
 /-- As item 20 notes for every theory, incremental Kleene acceptability implies symmetric Kleene
 acceptability. -/
 theorem KleeneI.kleeneS {C : Set W} {F : Formula Atom} (h : KleeneI I C F) : KleeneS I C F :=
-  fun _ hw ↦ (strong_of_filter_presup I ((kleeneI_iff I C F).1 h hw)).1
+  fun _ hw ↦ by simp [strong_eq_ofProp_of_filter_ne_zero I ((kleeneI_iff I C F).1 h hw)]
 
 /-- As item 20 notes for every theory, incremental super-acceptability implies symmetric
 super-acceptability. -/
@@ -822,9 +805,9 @@ theorem transpS_not_kleeneS_not_superS {p p' q q' : Atom} {w₁ w₂ : W} (hp₁
     rcases hw with rfl | rfl <;> rcases ho with rfl | rfl <;>
       simp [SyntacticEnvironment.truth, SyntacticEnvironment.Step.truth, Connective.eval,
         Formula.truth, hp₁, hq₁, hp₂, hq₂]
-  · have h₁ : (Formula.strong I (.bin .conj (.trigger p p') (.trigger q q'))).presup w₁ :=
+  · have h₁ : Formula.strong I (.bin .conj (.trigger p p') (.trigger q q')) w₁ ≠ 0 :=
       h (Set.mem_insert w₁ _)
-    simp [Formula.strong, Connective.strong, PartialProp.andStrong, hp₁, hq₁] at h₁
+    simp [Formula.strong, Connective.strong, hp₁, hq₁] at h₁
   · have := h w₁ (Set.mem_insert _ _) (fun _ _ ↦ True) (fun _ _ ↦ False)
     simp [resolve, Connective.eval, hp₁, hq₁] at this
 

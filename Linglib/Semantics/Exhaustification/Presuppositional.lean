@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Homogeneity.Defs
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
@@ -19,9 +19,9 @@ between the meet and the join of those alternatives, as `◇(p ∨ q)` lies betw
 ## Main declarations
 
 * `pexIEII`: the operator.
-* `pexIEII_holds_iff`, `pexIEII_neg_holds_iff`: a prejacent between the meet and the join of its
-  relevant includable alternatives holds together with all of them and fails together with all
-  of them.
+* `pexIEII_eq_one_iff_forall_mem`, `pexIEII_eq_neg_one_iff_forall_notMem`: a prejacent between
+  the meet and the join of its relevant includable alternatives is true together with all of them
+  and false together with all of them.
 
 ## References
 
@@ -34,41 +34,55 @@ between the meet and the join of those alternatives, as `◇(p ∨ q)` lies betw
 
 namespace Exhaustification
 
-open Presupposition Homogeneity
+open Homogeneity
 
 variable {World : Type*}
 
+open Classical in
 /-- `pex^{IE+II}` asserts the prejacent and presupposes that the innocently excludable
 alternatives in the relevance set `Rc` are false and that the innocently includable ones in it,
 other than the prejacent, are homogeneous. -/
-def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
-    PartialProp World where
-  assertion := (· ∈ φ)
-  presup w := (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ) ∧
-    Homogeneous (II ALT φ \ {φ} ∩ Rc) w
+noncomputable def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Set World)) :
+    World → SignType :=
+  {w | (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ) ∧
+    Homogeneous (II ALT φ \ {φ} ∩ Rc) w}.indicator fun w ↦ SignType.ofProp (w ∈ φ)
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 
-/-- A prejacent between the meet and the join of its relevant includable alternatives holds
-under `pex` exactly where the presupposition does and all of them are true. -/
-theorem pexIEII_holds_iff (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
-    (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
-    (pexIEII ALT φ Rc).holds w ↔
-      (pexIEII ALT φ Rc).presup w ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∈ α :=
-  and_congr_right fun h ↦ h.2.mem_iff hl hu
+/-- `pex^{IE+II}` is defined where the excludable alternatives in `Rc` are false and the
+includable ones in it other than the prejacent are homogeneous. -/
+theorem pexIEII_ne_zero_iff :
+    pexIEII ALT φ Rc w ≠ 0 ↔ (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ) ∧
+      Homogeneous (II ALT φ \ {φ} ∩ Rc) w := by
+  simp [pexIEII]
 
-/-- A prejacent between the meet and the join of its relevant includable alternatives fails
-under `pex` exactly where the presupposition holds and all of them are false. -/
-theorem pexIEII_neg_holds_iff (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
+/-- `pex^{IE+II}` asserts its prejacent. -/
+theorem pexIEII_eq_one_iff : pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ w ∈ φ := by
+  simp [pexIEII]
+
+/-- Negated, `pex^{IE+II}` denies its prejacent and keeps its presupposition. -/
+theorem pexIEII_eq_neg_one_iff : pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ w ∉ φ := by
+  simp [pexIEII]
+
+/-- A prejacent between the meet and the join of its relevant includable alternatives is true
+under `pex` exactly where the presupposition holds and all of them are true. -/
+theorem pexIEII_eq_one_iff_forall_mem (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
     (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
-    (pexIEII ALT φ Rc).neg.holds w ↔
-      (pexIEII ALT φ Rc).presup w ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∉ α :=
-  and_congr_right fun h ↦ h.2.notMem_iff hl hu
+    pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∈ α :=
+  pexIEII_eq_one_iff.trans <| and_congr_right fun h ↦ (pexIEII_ne_zero_iff.1 h).2.mem_iff hl hu
+
+/-- A prejacent between the meet and the join of its relevant includable alternatives is false
+under `pex` exactly where the presupposition holds and all of them are false. -/
+theorem pexIEII_eq_neg_one_iff_forall_notMem (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
+    (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
+    pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∉ α :=
+  pexIEII_eq_neg_one_iff.trans <| and_congr_right fun h ↦
+    (pexIEII_ne_zero_iff.1 h).2.notMem_iff hl hu
 
 /-- With no relevant includable alternative besides the prejacent, as for a basic scalar
 sentence, the presupposition is that the relevant excludable alternatives are false. -/
-theorem pexIEII_presup_of_inter_eq_empty (h : II ALT φ \ {φ} ∩ Rc = ∅) :
-    (pexIEII ALT φ Rc).presup w ↔ ∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ := by
-  simp [pexIEII, h]
+theorem pexIEII_ne_zero_iff_of_inter_eq_empty (h : II ALT φ \ {φ} ∩ Rc = ∅) :
+    pexIEII ALT φ Rc w ≠ 0 ↔ ∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ := by
+  simp [pexIEII_ne_zero_iff, h]
 
 end Exhaustification

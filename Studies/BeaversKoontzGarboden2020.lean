@@ -187,8 +187,9 @@ def causative : Template .event := .cause .effector .achievement
 `P`, with `R` relating an eventuality of the sort of `t` to the earlier ones. The attachment at
 `state` gives the restitutive reading, at `achievement` the repetitive reading over the change,
 and at `causative` the repetitive reading over the causation. -/
-def againAt (t : Template σ) (R : SetRel (σ.Carrier State Event) (σ.Carrier State Event))
-    (P : Entity → State → Prop) (y x : Entity) : PartialProp (σ.Carrier State Event) :=
+noncomputable def againAt (t : Template σ)
+    (R : SetRel (σ.Carrier State Event) (σ.Carrier State Event)) (P : Entity → State → Prop)
+    (y x : Entity) : σ.Carrier State Event → SignType :=
   again R (t.denote M P ⊤ y x)
 
 variable {M}
@@ -196,25 +197,25 @@ variable {M}
 /-- *Again* attached at a template presupposes an earlier eventuality of the template, and so the
 realization of each of its subterms, with the same undergoer, which is the hierarchy of the
 readings. -/
-theorem exists_denote_of_againAt_presup {t : Template σ} {u : Template τ} (hu : u.IsSubterm t)
+theorem exists_denote_of_againAt_ne_zero {t : Template σ} {u : Template τ} (hu : u.IsSubterm t)
     {R : SetRel (σ.Carrier State Event) (σ.Carrier State Event)} {w : σ.Carrier State Event}
-    (h : (againAt M t R P y x).presup w) : ∃ w', w ~[R] w' ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
-  diamond_mono R (fun _ ↦ exists_denote_of_isSubterm hu) w h
+    (h : againAt M t R P y x w ≠ 0) : ∃ w', w ~[R] w' ∧ ∃ y' v, u.denote M P ⊤ y' x v :=
+  diamond_mono R (fun _ ↦ exists_denote_of_isSubterm hu) w (again_eq_zero_iff.not_left.1 h)
 
 /-- End to end, the repetitive reading over the causation presupposes an earlier causing
 eventuality and a change to the root's state. -/
-theorem exists_become_of_againAt_causative_presup {R : SetRel Event Event} {w : Event}
-    (h : (againAt M causative R P y x).presup w) :
+theorem exists_become_of_againAt_causative_ne_zero {R : SetRel Event Event} {w : Event}
+    (h : againAt M causative R P y x w ≠ 0) :
     ∃ w', w ~[R] w' ∧ ∃ e s, M.become s e ∧ P x s :=
-  let ⟨w', hw, _, e, s, hb, hs⟩ := exists_denote_of_againAt_presup (.caused (.refl _)) h
+  let ⟨w', hw, _, e, s, hb, hs⟩ := exists_denote_of_againAt_ne_zero (.caused (.refl _)) h
   ⟨w', hw, e, s, hb, hs⟩
 
 /-- For a state predicate that entails change, even the restitutive attachment of *again*
 presupposes a change, so result roots never admit a truly restitutive reading. -/
-theorem exists_become_of_againAt_state_presup {R : SetRel State State} {s : State}
-    (hres : M.EntailsChange P) (h : (againAt M .state R P y x).presup s) :
+theorem exists_become_of_againAt_state_ne_zero {R : SetRel State State} {s : State}
+    (hres : M.EntailsChange P) (h : againAt M .state R P y x s ≠ 0) :
     ∃ s', s ~[R] s' ∧ ∃ e, M.become s' e :=
-  diamond_mono R (hres x) s h
+  diamond_mono R (hres x) s (again_eq_zero_iff.not_left.1 h)
 
 end Again
 

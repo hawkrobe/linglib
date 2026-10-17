@@ -30,7 +30,7 @@ open PolarityItem
 /-- *koii bhii* 'anyone', a negative polarity and free choice item ([lahiri-1998] (6),
 (10)–(12), (29), (31b), (32), (34) for the downward-entailing uses; (35), (36b), (39b) for free
 choice; out under a necessity modal, (36d)). -/
-def koiiBhii : PolarityItem :=
+noncomputable def koiiBhii : PolarityItem :=
   { form := "koii bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -41,7 +41,7 @@ def koiiBhii : PolarityItem :=
 
 /-- *ek bhii* 'even one', a negative polarity and free choice item, odd in imperatives
 ([lahiri-1998] (7), (10d), (11a), (29a), (29f), (34b), (35d), (36a); imperative (40b)). -/
-def ekBhii : PolarityItem :=
+noncomputable def ekBhii : PolarityItem :=
   { form := "ek bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -51,7 +51,7 @@ def ekBhii : PolarityItem :=
 
 /-- *kuch bhii* 'anything, any (mass)' ([lahiri-1998] (8), (10f), (34c),
 (35c), (39a)). -/
-def kuchBhii : PolarityItem :=
+noncomputable def kuchBhii : PolarityItem :=
   { form := "kuch bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -60,7 +60,7 @@ def kuchBhii : PolarityItem :=
 
 /-- *zaraa bhii* 'even a little', a negative polarity and free choice item, odd in imperatives
 ([lahiri-1998] (9), (10e), §4.5, (34d), (35e); imperative (40a)). -/
-def zaraaBhii : PolarityItem :=
+noncomputable def zaraaBhii : PolarityItem :=
   { form := "zaraa bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -75,7 +75,8 @@ def kabhiiBhii : PolarityItem :=
   , licensingContexts := [.modalPossibility] }
 
 /-- The *bhii*-compound entries. -/
-def bhiiItems : List PolarityItem := [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii]
+noncomputable def bhiiItems : List PolarityItem :=
+  [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii]
 
 /-- Every attested context of every entry admits it. -/
 theorem hindi_licensing_sound :

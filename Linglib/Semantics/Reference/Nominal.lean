@@ -9,11 +9,11 @@ public import Linglib.Semantics.Reference.Character
 A pronoun, a definite description, a demonstrative and a bound variable are one kind of
 thing: a presuppositional, context-relative individual denotation, differing only in the
 *selector* that chooses the individual (the assignment value, the iota, the demonstratum) and
-in the intrinsic *presupposition* (φ-features, uniqueness, deixis) [buring-2012]. A
-`Nominal` is that common shape. Resolving it against a scope is `PartialProp.presupOfReferent`
-of the selector at a context (`Nominal.resolve`), so a definite built from
-`presupOfReferent` is a resolved `Nominal.ofReferent` by `rfl` (`ofReferent_resolve`),
-and the full denotation conjoins the intrinsic presupposition (`Nominal.toPartialProp`),
+in the intrinsic *presupposition* (φ-features, uniqueness, deixis), as Büring argues. A
+`Nominal` is that common shape. Resolving it against a scope is `presupOfReferent` of the
+selector at a context (`Nominal.resolve`), so a definite built from `presupOfReferent` is a
+resolved `Nominal.ofReferent` by `rfl` (`ofReferent_resolve`), and the full denotation
+restricts the resolved one to where the intrinsic presupposition holds (`Nominal.toTrivalent`),
 which is where a pronoun's φ-features project. A character is the total nominal with no
 presupposition (`Character.toNominal`), and it is directly referential exactly when that
 nominal's selector is rigid at every context (`Character.isDirectlyReferential_iff`).
@@ -56,44 +56,48 @@ namespace Nominal
 
 variable {Ctx : Type*} {W : Type*} {E : Type*}
 
-/-- The simplest nominal: a context-free referent selector with no intrinsic
-presupposition — a bare iota/definite. `(ofReferent r).resolve scope ⟨⟩`
+/-- The simplest nominal is a context-free referent selector with no intrinsic
+presupposition, a bare iota or definite. `(ofReferent r).resolve scope ⟨⟩`
 unfolds to `presupOfReferent r scope`, so any `presupOfReferent`-built
 denotation is an `ofReferent` resolved (`ofReferent_resolve`). -/
 def ofReferent (referent : W → Option E) : Nominal Unit W E where
   presup := fun _ _ => True
   selector := fun _ => referent
 
-/-- Resolve a nominal against a `scope` at context `c`: the presuppositional
-proposition whose presupposition is definedness of the selected referent and
-whose assertion applies `scope` to it. This is just `presupOfReferent` over
-`nd.selector c`, so any `presupOfReferent`-built denotation is a `resolve`, by
-`rfl`. -/
-def resolve (nd : Nominal Ctx W E) (scope : E → W → Prop)
-    (c : Ctx) : PartialProp W :=
-  PartialProp.presupOfReferent (nd.selector c) scope
+/-- Resolving a nominal against a `scope` at context `c` gives the trivalent proposition defined
+where a referent is selected and applying `scope` to it there. It is `presupOfReferent` over
+`nd.selector c`, so any `presupOfReferent`-built denotation is a `resolve`, by `rfl`. -/
+noncomputable def resolve (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) :
+    W → SignType :=
+  presupOfReferent (nd.selector c) scope
 
 /-- An `ofReferent` resolved is exactly the canonical `presupOfReferent` — the
 bridge every definite denotation folds across. -/
 theorem ofReferent_resolve (referent : W → Option E) (scope : E → W → Prop) :
-    (ofReferent referent).resolve scope ⟨⟩ = PartialProp.presupOfReferent referent scope :=
+    (ofReferent referent).resolve scope ⟨⟩ = presupOfReferent referent scope :=
   rfl
 
-/-- The full denotation: `resolve` conjoined with the intrinsic
-presupposition. For a definite the intrinsic presupposition is vacuous, so
-`toPartialProp` and `resolve` agree; for a pronoun the conjoined presupposition is
-where the φ-features project. -/
-def toPartialProp (nd : Nominal Ctx W E) (scope : E → W → Prop)
-    (c : Ctx) : PartialProp W :=
-  PartialProp.and { presup := nd.presup c, assertion := fun _ => True }
-    (nd.resolve scope c)
+open Classical in
+/-- The full denotation is `resolve` restricted to where the intrinsic presupposition holds,
+the two presuppositions conjoined. For a definite the intrinsic presupposition is vacuous, so
+`toTrivalent` and `resolve` agree; for a pronoun the conjoined presupposition is where the
+φ-features project. -/
+noncomputable def toTrivalent (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) :
+    W → SignType :=
+  {w | nd.presup c w}.indicator (nd.resolve scope c)
 
-@[simp] theorem resolve_presup (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx) (w : W) :
-    (nd.resolve scope c).presup w = (nd.selector c w).isSome := rfl
+section Values
 
-@[simp] theorem toPartialProp_presup (nd : Nominal Ctx W E) (scope : E → W → Prop) (c : Ctx)
-    (w : W) : (nd.toPartialProp scope c).presup w ↔ nd.presup c w ∧ (nd.selector c w).isSome :=
-  Iff.rfl
+variable {nd : Nominal Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
+
+@[simp] theorem resolve_eq_zero_iff : nd.resolve scope c w = 0 ↔ nd.selector c w = none :=
+  presupOfReferent_eq_zero_iff
+
+@[simp] theorem toTrivalent_eq_zero_iff :
+    nd.toTrivalent scope c w = 0 ↔ (nd.presup c w → nd.selector c w = none) := by
+  simp [toTrivalent]
+
+end Values
 
 /-! ### Monad structure
 
@@ -111,7 +115,7 @@ instance : Monad (Nominal Ctx W) where
         nd.presup c w ∧ (nd.selector c w).elim True (fun e => (k e).presup c w)
       selector := fun c w => (nd.selector c w).bind (fun e => (k e).selector c w) }
 
-/-- Extensionality: a `Nominal` is its presupposition and selector. -/
+/-- A `Nominal` is determined by its presupposition and its selector. -/
 @[ext] theorem ext {nd₁ nd₂ : Nominal Ctx W E}
     (hp : nd₁.presup = nd₂.presup) (hs : nd₁.selector = nd₂.selector) : nd₁ = nd₂ := by
   cases nd₁; cases nd₂; cases hp; cases hs; rfl
@@ -139,7 +143,7 @@ private theorem bind_pure' (nd : Nominal Ctx W α) : nd >>= pure = nd := by
     simp only [bind_presup, bind_selector, pure_presup, pure_selector] <;>
     cases nd.selector c w <;> simp
 
-/-- The monad laws: left identity feeds a pure referent to its continuation, right identity
+/-- In the monad laws left identity feeds a pure referent to its continuation, right identity
 re-selects by `pure`, and associativity is what makes possessive nesting
 (*John's mother's friend*) free. -/
 instance : LawfulMonad (Nominal Ctx W) := LawfulMonad.mk' (Nominal Ctx W)
@@ -157,7 +161,7 @@ namespace Character
 
 variable {C W E : Type*}
 
-/-- A character as a nominal denotation: total, with no presupposition. -/
+/-- A character is a nominal denotation that is total and has no presupposition. -/
 def toNominal (χ : Character C W E) : Nominal C W E where
   presup _ _ := True
   selector c w := some (χ c w)
@@ -171,7 +175,7 @@ def toNominal (χ : Character C W E) : Nominal C W E where
   rfl
 
 /-- A character is directly referential iff its nominal's selector is rigid at every
-context: the referent does not vary with the world of evaluation. -/
+context, so that the referent does not vary with the world of evaluation. -/
 theorem isDirectlyReferential_iff (χ : Character C W E) :
     χ.IsDirectlyReferential ↔ ∀ c, IsRigid (χ.toNominal.selector c) :=
   forall_congr' fun _ ↦

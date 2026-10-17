@@ -17,9 +17,9 @@ public import Linglib.Semantics.Polarity.Strength
 A licenser is what a construction places over the position of a polarity item: a family of
 operators, one for each choice of what the construction leaves open, such as the model, a
 restrictor, a bound or an accessibility relation. A classical licenser maps between bounded
-lattices, a scalar licenser does so with a stronger mate on its scale, von Fintel's map into partial
-propositions carries a presupposition, a modal licenser quantifies over worlds, and a question
-licenser is a wh-question.
+lattices, a scalar licenser does so with a stronger mate on its scale, von Fintel's map into
+trivalent propositions carries a presupposition, a modal licenser quantifies over worlds, and a
+question licenser is a wh-question.
 
 Following Gajewski, a licenser has two meanings: the plain one below the exhaustivity operator
 and the one above it, with its direct implicature, the exhaustification against its stronger
@@ -90,21 +90,21 @@ structure OperatorFamily where
 attribute [instance] OperatorFamily.latDom OperatorFamily.bndDom OperatorFamily.latCod
   OperatorFamily.bndCod
 
-/-- A family of operators into partial propositions, indexed by what a construction leaves
+/-- A family of operators into trivalent propositions, indexed by what a construction leaves
 open. -/
 structure PresupposingFamily where
   /-- What the construction leaves open. -/
   Param : Type 1
   /-- The lattice the item's position ranges over. -/
   Dom : Param → Type
-  /-- The worlds of the partial propositions. -/
+  /-- The worlds of the trivalent propositions. -/
   W : Param → Type
   /-- The domain is a lattice. -/
   [latDom : ∀ p, Lattice (Dom p)]
   /-- The domain is bounded. -/
   [bndDom : ∀ p, BoundedOrder (Dom p)]
   /-- The operator at each parameter. -/
-  op : ∀ p, Dom p → PartialProp (W p)
+  op : ∀ p, Dom p → W p → SignType
 
 attribute [instance] PresupposingFamily.latDom PresupposingFamily.bndDom
 
@@ -124,8 +124,8 @@ structure ScalarFamily extends OperatorFamily where
   /-- The operator exhaustified against its stronger scale-mates, at each parameter. -/
   exhaustified : ∀ p, Dom p → Cod p
 
-/-- A licenser is the operator a construction places over the position of a polarity item: a
-classical operator, a scalar operator with its enrichment, an operator into partial
+/-- A licenser is the operator a construction places over the position of a polarity item, a
+classical operator, a scalar operator with its enrichment, an operator into trivalent
 propositions, a modal operator, or a question. -/
 inductive Licenser : Type 2 where
   | classical (F : OperatorFamily)
@@ -146,16 +146,16 @@ inductive LicensingMechanism where
 namespace Licenser
 
 /-- The licenser with its direct implicature factored in, the meaning above the exhaustivity
-operator: the enriched operators of a scalar licenser, and any other licenser itself. -/
+operator, is the enriched operators of a scalar licenser and any other licenser itself. -/
 def exhaustified : Licenser → Licenser
   | .scalar F => .classical { F.toOperatorFamily with op := F.exhaustified }
   | L => L
 
 /-- A licenser holds a signature outright when every operator in its family does; an operator into
-partial propositions holds it on its truth set, and a scalar operator on its plain meaning. -/
+trivalent propositions holds it on its truth set, and a scalar operator on its plain meaning. -/
 def Holds : Licenser → Signature → Prop
   | .classical F, σ | .scalar ⟨F, _⟩, σ => ∀ p, σ.HoldsFor (F.op p)
-  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ (F.op p x).truthSet
+  | .strawson F, σ => ∀ p, σ.HoldsFor fun x ↦ Trivalent.posExt (F.op p x)
   | .modal _, _ | .question, _ => False
 
 /-- A licenser is Strawson downward entailing when every operator in its family is downward
@@ -195,8 +195,8 @@ def LicensesFreeChoice : Licenser → Prop
       (oMinus (fun S ↦ F.op p (⋃ a ∈ S, P a)) D).Nonempty
   | .classical _ | .scalar _ | .strawson _ | .question => False
 
-/-- A question licenses a domain widener by relevance: widening the domain of a wh-question never
-lowers its value in any decision problem ([van-rooy-2003-npi]). -/
+/-- A question licenses a domain widener by relevance, since widening the domain of a wh-question
+never lowers its value in any decision problem ([van-rooy-2003-npi]). -/
 def LicensesByRelevance : Licenser → Prop
   | .question => ∀ {W A D : Type} [Fintype W] [DecidableEq W] [DecidableEq D] [MeasurableSpace W]
       [DiscreteMeasurableSpace W] [Finite A] [Nonempty W] (U : W → A → ℝ) (μ : Measure W)
@@ -224,7 +224,7 @@ theorem isStrawsonDE_of_holds_anti (h : L.Holds .anti) : L.IsStrawsonDE := by
   | classical F => exact fun p ↦ Signature.holdsFor_anti_iff.mp (h p)
   | scalar F => exact fun p ↦ Signature.holdsFor_anti_iff.mp (h p)
   | strawson F =>
-    exact fun p ↦ NaturalLogic.IsStrawsonDE.of_antitone_truthSet
+    exact fun p ↦ NaturalLogic.IsStrawsonDE.of_antitone_posExt
       (Signature.holdsFor_anti_iff.mp (h p))
   | modal _ | question => exact h
 

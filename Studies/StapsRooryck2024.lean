@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.Composition.EventIdentification
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Fragments.Romance.French.Verbs
 
 /-!
@@ -68,7 +68,7 @@ inanimate agent allows *par* when a change on an inferred scale is at stake.
 
 namespace StapsRooryck2024
 
-open ArgumentStructure Presupposition French.Verbs
+open ArgumentStructure French.Verbs
 
 /-! ### Polymorphic types -/
 
@@ -114,7 +114,7 @@ the causing situation, whose net force maps it to the situation. -/
 def deCausal : Rel Entity S ⟨.s, .s⟩ := fun s s' ↦ net s s = s'
 
 /-- A cause *de* names as a situation is, through its net force, a cause *par* names as a
-force: both prepositions describe the same causal event. -/
+force, so both prepositions describe the same causal event. -/
 theorem parCausal_net_of_deCausal {s s' : S} (h : deCausal (Entity := Entity) net s s') :
     parCausal (Entity := Entity) net (net s) s' :=
   ⟨s, rfl, h⟩
@@ -142,29 +142,32 @@ theorem voicePass_eventIdentification (init : Entity → E → Prop) (body : E �
       init j e ∧ body e :=
   ⟨fun ⟨_, ⟨_, hb⟩, hj⟩ ↦ ⟨hj, hb⟩, fun ⟨hj, hb⟩ ↦ ⟨j, ⟨hj, hb⟩, hj⟩⟩
 
+open Classical in
 /-- *par* in a passive (35a) is the initiator relation, presupposing high proto-agentivity of
-the agent in the event. The evaluation point of the partial proposition is the event. -/
-def parAgentive (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity) :
-    PartialProp (E) where
-  presup := High x
-  assertion := init x
+the agent in the event. The evaluation point of the trivalent proposition is the event. -/
+noncomputable def parAgentive (init : Entity → E → Prop) (High : Entity → E → Prop)
+    (x : Entity) : E → SignType :=
+  {e | High x e}.indicator fun e ↦ SignType.ofProp (init x e)
 
+open Classical in
 /-- *de* in a passive (35b) is the initiator relation, presupposing low proto-agentivity. -/
-def deAgentive (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity) :
-    PartialProp (E) where
-  presup e := ¬ High x e
-  assertion := init x
+noncomputable def deAgentive (init : Entity → E → Prop) (High : Entity → E → Prop)
+    (x : Entity) : E → SignType :=
+  {e | ¬ High x e}.indicator fun e ↦ SignType.ofProp (init x e)
 
 variable (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity)
 
-/-- The two prepositions share their at-issue content. -/
-theorem parAgentive_assertion :
-    (parAgentive init High x).assertion = (deAgentive init High x).assertion := rfl
+/-- The two prepositions share their at-issue content, each being the initiator relation
+wherever it is defined. -/
+theorem agentive_eq_one_iff_of_ne_zero (e : E) :
+    (parAgentive init High x e ≠ 0 → (parAgentive init High x e = 1 ↔ init x e)) ∧
+      (deAgentive init High x e ≠ 0 → (deAgentive init High x e = 1 ↔ init x e)) := by
+  simp_all [parAgentive, deAgentive]
 
 /-- Their presuppositions are complementary. -/
-theorem parAgentive_presup_iff (e : E) :
-    (parAgentive init High x).presup e ↔ ¬ (deAgentive init High x).presup e :=
-  not_not.symm
+theorem parAgentive_ne_zero_iff (e : E) :
+    parAgentive init High x e ≠ 0 ↔ deAgentive init High x e = 0 := by
+  simp [parAgentive, deAgentive]
 
 end Passive
 
@@ -287,7 +290,7 @@ effect. -/
 def DependsOnProximate (p : P) (q : Q) (x : X) : Prop := ∃ y', h q y' ≠ h q (g p x)
 
 /-- The cases in which the effect depends on the distal cause are among those in which it
-depends on the proximate cause: greater causal distance means less dependency, which the
+depends on the proximate cause. Greater causal distance means less dependency, which the
 paper offers as a reason the ablative *de* marks low proto-agentivity. -/
 theorem dependsOnProximate_of_dependsOnDistal {p : P} {q : Q} {x : X}
     (hd : DependsOnDistal g h p q x) : DependsOnProximate g h p q x :=

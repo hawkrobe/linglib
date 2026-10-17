@@ -115,11 +115,10 @@ def causalReading (s : V → Flat Bool) : Reading (V × Bool) (M.contexts s) whe
 
 end Reading
 
-/-- Dreyfus scenario vertices ([nadathur-2023-implicatives] §6.1.1, Figure 3):
-    INT (Dreyfus intends to spy), NRV (he has the nerve), LST (a German is
-    listening on the correct frequency), BRK (the message is garbled),
-    SEC (he collects secrets), MSG (he sends a radio message),
-    COM (he establishes communication), SPY (he spies for the Germans). -/
+/-- The vertices of the Dreyfus scenario are INT (Dreyfus intends to spy), NRV (he has the
+nerve), LST (a German is listening on the correct frequency), BRK (the message is garbled), SEC
+(he collects secrets), MSG (he sends a radio message), COM (he establishes communication) and
+SPY (he spies for the Germans) ([nadathur-2023-implicatives] §6.1.1, Figure 3). -/
 inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY
   deriving DecidableEq, Fintype, Repr
 
@@ -165,7 +164,7 @@ instance : dreyfusModel.ContextAtRoots :=
 
 /-- *Dreyfus dared to `e`*, a verb of the two-way signature `+/−` under the causal reading, with
 the nerve as the prerequisite. -/
-def dare (e : V) : PartialProp (dreyfusModel.contexts dreyfusBg) :=
+noncomputable def dare (e : V) : dreyfusModel.contexts dreyfusBg → SignType :=
   sentence (causalReading dreyfusModel dreyfusBg) ⟨.some .positive, .some .negative⟩ (.NRV, true)
     (e, true)
 
@@ -213,37 +212,43 @@ theorem nrv_necessary_for_msg :
         true :=
   ⟨by decide, by decide, ⟨_, .refl _, by decide, by decide⟩, fun _ _ hc h ↦ nrv_of_msg hc h⟩
 
-/-- (34a) *Dreyfus dared to send a message to the Germans* is felicitous: at every context of the
-background, NRV is causally necessary and sufficient for MSG. -/
-theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) : (dare .MSG).presup u :=
-  ⟨fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_sufficient_for_msg,
-    fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_necessary_for_msg⟩
+/-- (34a) *Dreyfus dared to send a message to the Germans* is felicitous, since at every context
+of the background NRV is causally necessary and sufficient for MSG. -/
+theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) : dare .MSG u ≠ 0 := by
+  rw [dare, sentence, Set.indicator_apply_ne_zero]
+  exact ⟨⟨fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_sufficient_for_msg,
+    fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_necessary_for_msg⟩, by simp⟩
 
 /-- (34a) entails that Dreyfus sent the message. -/
-theorem msg_of_dare {u : dreyfusModel.contexts dreyfusBg} (h : (dare .MSG).holds u) :
-    dreyfusModel.solve ⊥ u .MSG = true :=
-  holds_signed_of_implied_eq (m := .positive) (q := .positive) rfl h
+theorem msg_of_dare {u : dreyfusModel.contexts dreyfusBg} (h : dare .MSG u = 1) :
+    dreyfusModel.solve ⊥ u .MSG = true := by
+  have h' : (Polarity.positive • dare .MSG) u = 1 := by simpa using h
+  exact holds_signed_of_implied_eq (m := .positive) (q := .positive) rfl h'
 
 /-- (34b) *Dreyfus did not dare to send a message to the Germans* entails that he did not send
 it. -/
 theorem not_msg_of_not_dare {u : dreyfusModel.contexts dreyfusBg}
-    (h : (PartialProp.neg (dare .MSG)).holds u) : dreyfusModel.solve ⊥ u .MSG ≠ true :=
-  ((causalReading dreyfusModel dreyfusBg).holds_neg _ u).1
-    (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl h)
+    (h : (-dare .MSG) u = 1) : dreyfusModel.solve ⊥ u .MSG ≠ true := by
+  have h' : (Polarity.negative • dare .MSG) u = 1 := by simpa using h
+  exact ((causalReading dreyfusModel dreyfusBg).holds_neg _ u).1
+    (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl h')
 
-/-- (34c) *?/# Dreyfus dared to establish communication with the Germans* is infelicitous: NRV is
-not causally sufficient for COM, which stays unsettled while LST and BRK are unresolved. -/
-theorem dare_infelicitous_for_com (u : dreyfusModel.contexts dreyfusBg) :
-    ¬ (dare .COM).presup u :=
-  fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .COM true)
-    (h.1 .positive rfl).2
+/-- (34c) *?/# Dreyfus dared to establish communication with the Germans* is infelicitous, since
+NRV is not causally sufficient for COM, which stays unsettled while LST and BRK are
+unresolved. -/
+theorem dare_infelicitous_for_com (u : dreyfusModel.contexts dreyfusBg) : dare .COM u = 0 := by
+  rw [dare, sentence]
+  exact Set.indicator_of_notMem (fun h ↦
+    (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .COM true)
+      (h.1 .positive rfl).2) _
 
-/-- (34d) *?/# Dreyfus dared to spy for the Germans* is infelicitous: NRV is not causally
+/-- (34d) *?/# Dreyfus dared to spy for the Germans* is infelicitous, since NRV is not causally
 sufficient for SPY, whose conditions LST, BRK and COM are all undetermined. -/
-theorem dare_infelicitous_for_spy (u : dreyfusModel.contexts dreyfusBg) :
-    ¬ (dare .SPY).presup u :=
-  fun h ↦ (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
-    (h.1 .positive rfl).2
+theorem dare_infelicitous_for_spy (u : dreyfusModel.contexts dreyfusBg) : dare .SPY u = 0 := by
+  rw [dare, sentence]
+  exact Set.indicator_of_notMem (fun h ↦
+    (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
+      (h.1 .positive rfl).2) _
 
 /-- In (34c) NRV is nevertheless causally necessary for COM. Achievability settles the exogenous
 LST = 1 and BRK = 0, and every path to COM = 1 runs through NRV = 1. -/
@@ -283,14 +288,14 @@ theorem nrv_necessary_for_msg :
     fun _ _ hc h ↦ nrv_of_msg hc h⟩
 
 /-- Over consistent supersituations NRV is not causally necessary for COM, against the paper's
-verdict on (34c): settling the message reaches communication without the nerve. -/
+verdict on (34c), since settling the message reaches communication without the nerve. -/
 theorem not_nrv_necessary_for_com :
     ¬ dreyfusModel.CausallyNecessary (IsConsistentSupersituation dreyfusModel) dreyfusBg .NRV
       true .COM true :=
   fun h ↦ absurd (h.2.2 messageSent (by decide) (by decide) (by decide)) (by decide)
 
 /-- Over consistent supersituations NRV is not causally necessary for SPY, against the paper's
-verdict on (34d): settling the message reaches spying without the nerve. -/
+verdict on (34d), since settling the message reaches spying without the nerve. -/
 theorem not_nrv_necessary_for_spy :
     ¬ dreyfusModel.CausallyNecessary (IsConsistentSupersituation dreyfusModel) dreyfusBg .NRV
       true .SPY true :=

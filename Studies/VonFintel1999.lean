@@ -29,10 +29,10 @@ entailing.
 
 * `isStrawsonUE_gladBetter`, `isStrawsonUE_regretBetter`: the set-comparison *glad* and *sorry*
   are Strawson upward entailing, like the best-worlds *want* and *glad*.
-* `holds_glad_of_want`, `not_gladBetter_of_want`: wanting and believing gives gladness on the
-  best-worlds semantics, not on the set comparison.
+* `glad_eq_one_of_want_eq_one`, `not_gladBetter_of_want`: wanting and believing gives gladness
+  on the best-worlds semantics, not on the set comparison.
 * `not_isStrawsonDE_regretBetter`: the set-comparison *sorry* would not license.
-* `not_presup_only68b`: the rejected entry for propositional *only* can assess no downward
+* `only68b_eq_zero`: the rejected entry for propositional *only* can assess no downward
   inference within one set of alternatives.
 * `not_antitone_conditionalNecessity`, `not_isStrawsonDE_theSuperlativeExceeds`: the conditional
   under an ordering source and the superlative description fail downward inference.
@@ -40,7 +40,7 @@ entailing.
 ## TODO
 
 * The shifted-context readings of §3.4 and the expansion of the modal horizon in §4.3 need
-  [von-fintel-2000]'s context-change operator; the static horizon semantics of (81)–(83) is
+  von Fintel's later context-change operator; the static horizon semantics of (81)–(83) is
   `Conditional.horizonCounterfactual`.
 
 ## References
@@ -70,21 +70,24 @@ variable (dox rel : W → Set W) (g : W → Set (W → Prop)) (p : Set W)
 ordering source `A`. -/
 def Better (A : Set (W → Prop)) (X Y : Set W) : Prop := ∀ x ∈ X, ∀ y ∈ Y, x <[A] y
 
+open Classical in
 /-- The set-comparison *glad* (52) has the presupposition of the best-worlds one and asserts that
 the belief worlds are strictly better than every relevant non-`p` world. -/
-def gladBetter : PartialProp W where
-  presup := (glad dox rel g p).presup
-  assertion w := Better (g w) (dox w) (rel w \ p)
+noncomputable def gladBetter : W → SignType :=
+  (Function.support (glad dox rel g p)).indicator
+    fun w ↦ SignType.ofProp (Better (g w) (dox w) (rel w \ p))
 
 /-- The set-comparison *glad* is still Strawson upward entailing in its complement (§3.3). -/
 theorem isStrawsonUE_gladBetter : IsStrawsonUE (gladBetter dox rel g) :=
-  .of_monotone fun _ _ h _ hw a ha b hb ↦ hw a ha b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩
+  .of_monotone (a := fun p w ↦ Better (g w) (dox w) (rel w \ p))
+    (fun _ _ h _ hw a ha b hb ↦ hw a ha b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩)
+    fun _ _ h ↦ by simp_all [gladBetter]
 
 /-- On the best-worlds *glad*, *a wants p and believes p* entails *a is glad that p*, the
 inference [kadmon-landman-1993] draw, when the modal base contains the belief worlds. -/
-theorem holds_glad_of_want {w : W} (hd : dox w ⊆ rel w) (hb : dox w ⊆ p)
-    (hw : (want rel g p).holds w) : (glad dox rel g p).holds w :=
-  ⟨⟨hb, hd, hw.1⟩, hw.2⟩
+theorem glad_eq_one_of_want_eq_one {w : W} (hd : dox w ⊆ rel w) (hb : dox w ⊆ p)
+    (hw : want rel g p w = 1) : glad dox rel g p w = 1 := by
+  simp [glad, hd, hb, hw]
 
 /-- The Honda Civic scenario refutes that inference on the set-comparison *glad*. World `0` is
 the actual one, where the Civic bought is a lemon, `1` is where a good Civic is bought, and `2`
@@ -92,26 +95,30 @@ where none is; the subject believes `0`, wants the good Civic, and is not glad t
 bought, since `0` is no better than `2`. -/
 theorem not_gladBetter_of_want :
     ∃ (dox rel : Fin 3 → Set (Fin 3)) (g : Fin 3 → Set (Fin 3 → Prop)) (p : Set (Fin 3))
-      (w : Fin 3), dox w ⊆ p ∧ (want rel g p).assertion w ∧
-        ¬ (gladBetter dox rel g p).assertion w :=
-  ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {(· = 1)}, {0, 1}, 0, by simp, by
-    simp only [want, Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
+      (w : Fin 3), dox w ⊆ p ∧ want rel g p w = 1 ∧ gladBetter dox rel g p w = -1 := by
+  refine ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {(· = 1)}, {0, 1}, 0, by simp, ?_, ?_⟩
+  · refine want_eq_one_iff.2 ⟨⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
+    simp only [Want, Set.subset_def, Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
       Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
-    decide, by
-    simp only [gladBetter, Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
-      Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ,
-      Set.mem_insert_iff]
-    decide⟩
+    decide
+  · simp only [gladBetter, Trivalent.indicator_apply_eq_neg_one_iff, SignType.ofProp_eq_neg_one_iff]
+    refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
+    simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+      Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
+    decide
 
+open Classical in
 /-- The set-comparison *sorry* (54) has the presupposition of *glad* and asserts that every
 relevant non-`p` world is strictly better than every belief world. -/
-def regretBetter : PartialProp W where
-  presup := (glad dox rel g p).presup
-  assertion w := Better (g w) (rel w \ p) (dox w)
+noncomputable def regretBetter : W → SignType :=
+  (Function.support (glad dox rel g p)).indicator
+    fun w ↦ SignType.ofProp (Better (g w) (rel w \ p) (dox w))
 
 /-- The set-comparison *sorry* is Strawson upward entailing in its complement. -/
 theorem isStrawsonUE_regretBetter : IsStrawsonUE (regretBetter dox rel g) :=
-  .of_monotone fun _ _ h _ hw b hb a ha ↦ hw b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩ a ha
+  .of_monotone (a := fun p w ↦ Better (g w) (rel w \ p) (dox w))
+    (fun _ _ h _ hw b hb a ha ↦ hw b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩ a ha)
+    fun _ _ h ↦ by simp_all [regretBetter]
 
 /-- The set-comparison *sorry* is not Strawson downward entailing, so it would not license; the
 paper keeps the best-worlds `regret`. World `2` is the preferred one; the subject believes `0`
@@ -119,14 +126,17 @@ and is sorry about `{0, 1}` but not about `{0}`, since `1` is no better than `0`
 theorem not_isStrawsonDE_regretBetter :
     ¬ IsStrawsonDE (regretBetter (fun _ : Fin 3 ↦ {0}) (fun _ ↦ Set.univ) (fun _ ↦ {(· = 2)})) :=
   fun h ↦ by
-    have := h (p := {0}) (q := {0, 1}) (by simp) 0
-      ⟨by simp, Set.subset_univ _, ⟨0, by simp⟩, ⟨2, by simp⟩⟩
-      ⟨subset_rfl, Set.subset_univ _, ⟨0, by simp⟩, ⟨1, by simp⟩⟩
-    simp only [regretBetter, Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
-      Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff,
-      true_and] at this
-    revert this
-    decide
+    have := h (p := {0}) (q := {0, 1}) (by simp) 0 (by
+        simp only [regretBetter, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff]
+        refine ⟨by simpa [glad] using ⟨⟨0, by simp⟩, ⟨2, by simp⟩⟩, ?_⟩
+        simp only [Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
+          Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff]
+        decide)
+      (by simpa [regretBetter, glad] using ⟨⟨0, by simp⟩, ⟨1, by simp⟩⟩)
+    simp only [regretBetter, Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff,
+      Better, Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff, Set.mem_singleton_iff,
+      forall_eq, Set.mem_sdiff, Set.mem_univ, true_and] at this
+    exact absurd (this.2 1 (by decide)) (by decide)
 
 end Attitudes
 
@@ -145,16 +155,16 @@ open Focus.Particles
 
 variable (C : Set (Set W)) (p : Set W)
 
+open Classical in
 /-- *Only* in the entry (68b) presupposes the prejacent and that no alternative is entailed by
 it, and asserts that every true alternative is the prejacent. -/
-def only68b : PartialProp W :=
-  ⟨fun w ↦ w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r, (· ∈ atMost (· = ·) C p)⟩
+noncomputable def only68b : W → SignType :=
+  {w | w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r}.indicator fun w ↦ SignType.ofProp (w ∈ atMost (· = ·) C p)
 
 /-- With (68b) no downward inference can be assessed within one set of alternatives, since when
 the premise's prejacent is an alternative the conclusion's presupposition fails (p. 134). -/
-theorem not_presup_only68b {q : Set W} (hp : p ∈ C) (hqp : q ⊆ p) (w : W) :
-    ¬ (only68b C q).presup w :=
-  fun h ↦ h.2 ⟨p, hp, hqp⟩
+theorem only68b_eq_zero {q : Set W} (hp : p ∈ C) (hqp : q ⊆ p) (w : W) : only68b C q w = 0 :=
+  Set.indicator_of_notMem (fun h ↦ h.2 ⟨p, hp, hqp⟩) _
 
 end Only
 
@@ -183,11 +193,12 @@ section Description
 
 variable {D : Type*} [Preorder D] (μ : ι → D) (C : W → Set ι) (d : D)
 
+open Classical in
 /-- *The μ-est C exceeds d* presupposes a superlative individual and asserts that every such
 individual exceeds `d`. -/
-def theSuperlativeExceeds : PartialProp W where
-  presup w := ∃ a, (Degree.superlative μ C a).holds w
-  assertion w := ∀ a, (Degree.superlative μ C a).holds w → d < μ a
+noncomputable def theSuperlativeExceeds : W → SignType :=
+  {w | ∃ a, Degree.superlative μ C a w = 1}.indicator
+    fun w ↦ SignType.ofProp (∀ a, Degree.superlative μ C a w = 1 → d < μ a)
 
 /-- The definite-description use is not even Strawson-valid (80). *The tallest girl in the
 school is over four feet* does not Strawson-entail *the tallest girl in the class is over four
@@ -197,7 +208,9 @@ theorem not_isStrawsonDE_theSuperlativeExceeds :
     ¬ IsStrawsonDE (theSuperlativeExceeds (W := Unit) (fun b : Bool ↦ if b then 3 else 5) · 4) :=
   fun h ↦ by
     have := @h (fun _ ↦ {true}) (fun _ ↦ Set.univ) (fun _ _ _ ↦ trivial) ()
-    simp only [theSuperlativeExceeds, Degree.superlative, PartialProp.holds,
+    simp only [theSuperlativeExceeds, Degree.superlative_eq_one_iff,
+      Trivalent.indicator_apply_eq_one_iff, Set.indicator_apply_eq_zero, ne_eq,
+      SignType.ofProp_eq_one_iff, SignType.ofProp_ne_zero, Set.mem_ofPred_eq,
       Set.mem_singleton_iff, Set.mem_univ] at this
     revert this
     decide

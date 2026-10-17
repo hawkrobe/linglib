@@ -904,11 +904,8 @@ import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Semantics.Presupposition.Defs
 import Linglib.Semantics.Presupposition.PhiFeatures
-import Linglib.Semantics.Presupposition.Quantified
 import Linglib.Semantics.Presupposition.TriggerTypology
-import Linglib.Semantics.Presupposition.Trivalent
 import Linglib.Semantics.Quantification.Basic
 import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Quantification.Defs

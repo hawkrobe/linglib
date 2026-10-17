@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Quantifier
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # The presuppositional superlative
@@ -16,15 +16,15 @@ the set comparative.
 
 ## Main definitions
 
-* `Degree.superlative`: the superlative as a partial proposition.
+* `Degree.superlative`: the superlative as a trivalent proposition.
 
 ## Main results
 
-* `Degree.superlative_assertion`: the assertion is the set-standard comparative over the other
+* `Degree.superlative_assertion_iff`: the assertion is the set-standard comparative over the other
   members of the class.
 * `Degree.isAntiAdditive_superlative_assertion`: the assertion is anti-additive in the class.
-* `Degree.holds_superlative_iff`: at a world the superlative holds exactly when `x` is the
-  absolute superlative of the class there.
+* `Degree.superlative_eq_one_iff_absoluteSuperlative`: at a world the superlative is true exactly
+  when `x` is the absolute superlative of the class there.
 
 ## Implementation notes
 
@@ -43,7 +43,7 @@ world-dependent predicate. The degree measure `μ` does not vary with the world;
 
 namespace Degree
 
-open Presupposition Set
+open Set
 
 variable {α D W : Type*}
 
@@ -51,29 +51,34 @@ section Preorder
 
 variable [Preorder D]
 
+open Classical in
 /-- *x is the μ-est of C* presupposes that `x` is in the comparison class and asserts that it
 measures above every other member of the class ([von-fintel-1999]'s (79)). -/
-def superlative (μ : α → D) (C : W → Set α) (x : α) : PartialProp W where
-  presup w := x ∈ C w
-  assertion w := ∀ y ∈ C w, y ≠ x → μ y < μ x
+noncomputable def superlative (μ : α → D) (C : W → Set α) (x : α) : W → SignType :=
+  {w | x ∈ C w}.indicator fun w ↦ SignType.ofProp (∀ y ∈ C w, y ≠ x → μ y < μ x)
 
 variable {μ : α → D} {C : W → Set α} {x : α} {w : W}
 
-@[simp] theorem superlative_presup : (superlative μ C x).presup w ↔ x ∈ C w := Iff.rfl
+@[simp] theorem superlative_eq_zero_iff : superlative μ C x w = 0 ↔ x ∉ C w := by
+  simp [superlative]
+
+@[simp] theorem superlative_eq_one_iff :
+    superlative μ C x w = 1 ↔ x ∈ C w ∧ ∀ y ∈ C w, y ≠ x → μ y < μ x := by
+  simp [superlative]
 
 /-- The assertion is the set-standard comparative of `x` against the degrees of the other
 members of the class. -/
-theorem superlative_assertion :
-    (superlative μ C x).assertion w ↔ x ∈ μ ⁻¹' strictUpperBounds (μ '' (C w \ {x})) := by
-  simp only [superlative, mem_gtOverSet_iff_subset_Iio, subset_def, mem_Iio, forall_mem_image,
-    mem_sdiff, mem_singleton_iff, and_imp]
+theorem superlative_assertion_iff {s : Set α} :
+    (∀ y ∈ s, y ≠ x → μ y < μ x) ↔ x ∈ μ ⁻¹' strictUpperBounds (μ '' (s \ {x})) := by
+  simp only [mem_gtOverSet_iff_subset_Iio, subset_def, mem_Iio, forall_mem_image, mem_sdiff,
+    mem_singleton_iff, and_imp]
 
 /-- The assertion is anti-additive in the comparison class, by the anti-additivity of the
 set-standard comparative ([hoeksema-1983]). -/
 theorem isAntiAdditive_superlative_assertion (μ : α → D) (x : α) :
-    NaturalLogic.IsAntiAdditive fun C : W → Set α ↦ (superlative μ C x).assertion :=
+    NaturalLogic.IsAntiAdditive fun (C : W → Set α) (w : W) ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x :=
   fun C C' ↦ funext fun w ↦ propext <| by
-    simp only [Pi.inf_apply, inf_Prop_eq, superlative_assertion, Pi.sup_apply, sup_eq_union,
+    simp only [Pi.inf_apply, inf_Prop_eq, superlative_assertion_iff, Pi.sup_apply, sup_eq_union,
       union_sdiff_distrib, image_union]
     have h := gtOverSet_isAntiAdditive μ (μ '' (C w \ {x})) (μ '' (C' w \ {x}))
     beta_reduce at h
@@ -82,10 +87,10 @@ theorem isAntiAdditive_superlative_assertion (μ : α → D) (x : α) :
 
 end Preorder
 
-/-- At a world the superlative holds exactly when `x` is the absolute superlative of the class
+/-- At a world the superlative is true exactly when `x` is the absolute superlative of the class
 there ([heim-1999]). -/
-theorem holds_superlative_iff [LinearOrder D] {μ : α → D} {C : W → Set α} {x : α} {w : W} :
-    (superlative μ C x).holds w ↔ AbsoluteSuperlative μ (C w) x :=
-  Iff.rfl
+theorem superlative_eq_one_iff_absoluteSuperlative [LinearOrder D] {μ : α → D} {C : W → Set α}
+    {x : α} {w : W} : superlative μ C x w = 1 ↔ AbsoluteSuperlative μ (C w) x :=
+  superlative_eq_one_iff
 
 end Degree
