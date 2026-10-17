@@ -40,9 +40,8 @@ harmony.
   forms are read onto its two tier alphabets alone, since a segment on neither is invisible to
   both grammars, and a prenasalized stop is read as one onset off the nasal tier: with `m`
   projected, Table 34.7 would ban the paper's own `-somp-el-`, `-tomb-ol-`, and `-lemb-ol-`.
-* The words are CLDF `FormTable` rows. CLDF's grammaticality judgement is a property of
-  examples only, so the starred counterparts the paper prints sit, space-separated, in a custom
-  `Ill_Formed` column of the attested form.
+* The starred counterparts the paper prints are rows of their own, marked ungrammatical, so each
+  harmony theorem accepts the forms of `Forms.all` and rejects those of `Forms.marked`.
 * Table 34.5's `H_r2` prints `*üö` twice and omits `*üo`, which `H_front` bans anyway.
 
 ## References
@@ -87,18 +86,6 @@ private theorem mem_tierGrammar_window (R : V → V → Prop) (a b : V) (n : ℕ
   simp [List.filter_append, TierRel]
 
 end Tier
-
-/-- The words of a space-separated list. Core's `List.splitOn` does not reduce in a module. -/
-def words : List Char → List (List Char)
-  | [] => [[]]
-  | ' ' :: cs => [] :: words cs
-  | c :: cs => match words cs with
-    | w :: ws => (c :: w) :: ws
-    | [] => [[c]]
-
-/-- The ill-formed counterparts the paper prints for a form, in its `Ill_Formed` column. -/
-def illFormed (f : Data.Forms.Form) : List (List Char) :=
-  ((f.column? "Ill_Formed").map (words ·.toList)).getD []
 
 /-! ### Two harmonies on one tier -/
 
@@ -150,9 +137,10 @@ abbrev lokaa : TierStrictlyLocalGrammar 2 (Option LokaaV) := tierGrammar lokaaBa
 
 /-- The (3) forms are accepted and their starred counterparts rejected. -/
 theorem lokaa_rows :
-    ∀ f ∈ Forms.all, f.languageId = "loka1252" →
-      read LokaaV.ofChar f.form.toList ∈ lokaa.language ∧
-        ∀ s ∈ illFormed f, read LokaaV.ofChar s ∉ lokaa.language := by
+    (∀ f ∈ Forms.all, f.languageId = "loka1252" →
+        read LokaaV.ofChar f.form.toList ∈ lokaa.language) ∧
+      ∀ f ∈ Forms.marked, f.languageId = "loka1252" →
+        read LokaaV.ofChar f.form.toList ∉ lokaa.language := by
   decide
 
 /-- **No strictly local grammar captures Lokaa harmony** (§34.2.1). The vowels `e` and `o` agree
@@ -208,9 +196,10 @@ abbrev kirghiz : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar kirg
 
 /-- The (5) forms are accepted and the starred forms of Figure 34.3 rejected. -/
 theorem kirghiz_rows :
-    ∀ f ∈ Forms.all, f.languageId = "kirg1245" →
-      read TurkicV.ofChar f.form.toList ∈ kirghiz.language ∧
-        ∀ s ∈ illFormed f, read TurkicV.ofChar s ∉ kirghiz.language := by
+    (∀ f ∈ Forms.all, f.languageId = "kirg1245" →
+        read TurkicV.ofChar f.form.toList ∈ kirghiz.language) ∧
+      ∀ f ∈ Forms.marked, f.languageId = "kirg1245" →
+        read TurkicV.ofChar f.form.toList ∉ kirghiz.language := by
   decide
 
 /-- In Kirghiz frontness harmony every vowel participates. -/
@@ -271,9 +260,10 @@ abbrev buryat : TierStrictlyLocalGrammar 2 (Option BuryatV) := tierGrammar burya
 /-- The (9) forms are accepted, `ɔr-ʊːl-aːd` because the high causative blocks rounding, and
 their starred counterparts rejected. -/
 theorem buryat_rows :
-    ∀ f ∈ Forms.all, f.languageId = "russ1264" →
-      read BuryatV.ofChar f.form.toList ∈ buryat.language ∧
-        ∀ s ∈ illFormed f, read BuryatV.ofChar s ∉ buryat.language := by
+    (∀ f ∈ Forms.all, f.languageId = "russ1264" →
+        read BuryatV.ofChar f.form.toList ∈ buryat.language) ∧
+      ∀ f ∈ Forms.marked, f.languageId = "russ1264" →
+        read BuryatV.ofChar f.form.toList ∉ buryat.language := by
   decide
 
 /-- In Buryat ATR harmony every tier vowel participates. -/
@@ -317,9 +307,10 @@ instance : DecidableRel yakutBanned := fun _ _ ↦ by unfold yakutBanned; infer_
 abbrev yakut : TierStrictlyLocalGrammar 2 (Option TurkicV) := tierGrammar yakutBanned
 
 theorem yakut_rows :
-    ∀ f ∈ Forms.all, f.languageId = "yaku1245" →
-      read TurkicV.ofChar f.form.toList ∈ yakut.language ∧
-        ∀ s ∈ illFormed f, read TurkicV.ofChar s ∉ yakut.language := by
+    (∀ f ∈ Forms.all, f.languageId = "yaku1245" →
+        read TurkicV.ofChar f.form.toList ∈ yakut.language) ∧
+      ∀ f ∈ Forms.marked, f.languageId = "yaku1245" →
+        read TurkicV.ofChar f.form.toList ∉ yakut.language := by
   decide
 
 /-- **Harmonizing blockers block** (§34.2.2). Deleting the high vowel of `ojum-lar` (14g)
@@ -408,9 +399,10 @@ instance : DecidablePred (· ∈ kikongo) := fun w ↦
 
 /-- The (16) and (18) forms are accepted and the starred forms of Figure 34.6 rejected. -/
 theorem kikongo_rows :
-    ∀ f ∈ Forms.all, f.languageId = "koon1247" →
-      KikongoSeg.parse f.form.toList ∈ kikongo ∧
-        ∀ s ∈ illFormed f, KikongoSeg.parse s ∉ kikongo := by
+    (∀ f ∈ Forms.all, f.languageId = "koon1247" →
+        KikongoSeg.parse f.form.toList ∈ kikongo) ∧
+      ∀ f ∈ Forms.marked, f.languageId = "koon1247" →
+        KikongoSeg.parse f.form.toList ∉ kikongo := by
   decide
 
 /-- Kikongo with a stretch of vowels between two consonants of the nasal tier. -/

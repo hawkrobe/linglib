@@ -1,0 +1,6499 @@
+{
+  "description": "The Slavic declensions of chapter 8, each a column of one of Caha's tables along the Slavic sequence nominative, accusative, genitive, prepositional, dative, instrumental, with the segmentation the tables print.",
+  "CellTable": [
+    {
+      "ID": "nom_sg",
+      "Name": "nominative singular",
+      "Features": "Case=Nom|Number=Sing"
+    },
+    {
+      "ID": "nom_sg_f",
+      "Name": "nominative singular fem",
+      "Features": "Case=Nom|Number=Sing|Gender=Fem"
+    },
+    {
+      "ID": "nom_sg_m",
+      "Name": "nominative singular masc",
+      "Features": "Case=Nom|Number=Sing|Gender=Masc"
+    },
+    {
+      "ID": "nom_sg_n",
+      "Name": "nominative singular neut",
+      "Features": "Case=Nom|Number=Sing|Gender=Neut"
+    },
+    {
+      "ID": "acc_sg",
+      "Name": "accusative singular",
+      "Features": "Case=Acc|Number=Sing"
+    },
+    {
+      "ID": "acc_sg_f",
+      "Name": "accusative singular fem",
+      "Features": "Case=Acc|Number=Sing|Gender=Fem"
+    },
+    {
+      "ID": "acc_sg_m",
+      "Name": "accusative singular masc",
+      "Features": "Case=Acc|Number=Sing|Gender=Masc"
+    },
+    {
+      "ID": "acc_sg_n",
+      "Name": "accusative singular neut",
+      "Features": "Case=Acc|Number=Sing|Gender=Neut"
+    },
+    {
+      "ID": "gen_sg",
+      "Name": "genitive singular",
+      "Features": "Case=Gen|Number=Sing"
+    },
+    {
+      "ID": "gen_sg_f",
+      "Name": "genitive singular fem",
+      "Features": "Case=Gen|Number=Sing|Gender=Fem"
+    },
+    {
+      "ID": "gen_sg_m",
+      "Name": "genitive singular masc",
+      "Features": "Case=Gen|Number=Sing|Gender=Masc"
+    },
+    {
+      "ID": "gen_sg_n",
+      "Name": "genitive singular neut",
+      "Features": "Case=Gen|Number=Sing|Gender=Neut"
+    },
+    {
+      "ID": "prep_sg",
+      "Name": "prepositional singular",
+      "Features": "Case=Loc|Number=Sing"
+    },
+    {
+      "ID": "prep_sg_f",
+      "Name": "prepositional singular fem",
+      "Features": "Case=Loc|Number=Sing|Gender=Fem"
+    },
+    {
+      "ID": "prep_sg_m",
+      "Name": "prepositional singular masc",
+      "Features": "Case=Loc|Number=Sing|Gender=Masc"
+    },
+    {
+      "ID": "prep_sg_n",
+      "Name": "prepositional singular neut",
+      "Features": "Case=Loc|Number=Sing|Gender=Neut"
+    },
+    {
+      "ID": "dat_sg",
+      "Name": "dative singular",
+      "Features": "Case=Dat|Number=Sing"
+    },
+    {
+      "ID": "dat_sg_f",
+      "Name": "dative singular fem",
+      "Features": "Case=Dat|Number=Sing|Gender=Fem"
+    },
+    {
+      "ID": "dat_sg_m",
+      "Name": "dative singular masc",
+      "Features": "Case=Dat|Number=Sing|Gender=Masc"
+    },
+    {
+      "ID": "dat_sg_n",
+      "Name": "dative singular neut",
+      "Features": "Case=Dat|Number=Sing|Gender=Neut"
+    },
+    {
+      "ID": "ins_sg",
+      "Name": "instrumental singular",
+      "Features": "Case=Ins|Number=Sing"
+    },
+    {
+      "ID": "ins_sg_f",
+      "Name": "instrumental singular fem",
+      "Features": "Case=Ins|Number=Sing|Gender=Fem"
+    },
+    {
+      "ID": "ins_sg_m",
+      "Name": "instrumental singular masc",
+      "Features": "Case=Ins|Number=Sing|Gender=Masc"
+    },
+    {
+      "ID": "ins_sg_n",
+      "Name": "instrumental singular neut",
+      "Features": "Case=Ins|Number=Sing|Gender=Neut"
+    },
+    {
+      "ID": "nom_du",
+      "Name": "nominative dual",
+      "Features": "Case=Nom|Number=Dual"
+    },
+    {
+      "ID": "nom_du_m",
+      "Name": "nominative dual masc",
+      "Features": "Case=Nom|Number=Dual|Gender=Masc"
+    },
+    {
+      "ID": "acc_du",
+      "Name": "accusative dual",
+      "Features": "Case=Acc|Number=Dual"
+    },
+    {
+      "ID": "acc_du_m",
+      "Name": "accusative dual masc",
+      "Features": "Case=Acc|Number=Dual|Gender=Masc"
+    },
+    {
+      "ID": "gen_du",
+      "Name": "genitive dual",
+      "Features": "Case=Gen|Number=Dual"
+    },
+    {
+      "ID": "gen_du_m",
+      "Name": "genitive dual masc",
+      "Features": "Case=Gen|Number=Dual|Gender=Masc"
+    },
+    {
+      "ID": "prep_du",
+      "Name": "prepositional dual",
+      "Features": "Case=Loc|Number=Dual"
+    },
+    {
+      "ID": "prep_du_m",
+      "Name": "prepositional dual masc",
+      "Features": "Case=Loc|Number=Dual|Gender=Masc"
+    },
+    {
+      "ID": "dat_du",
+      "Name": "dative dual",
+      "Features": "Case=Dat|Number=Dual"
+    },
+    {
+      "ID": "dat_du_m",
+      "Name": "dative dual masc",
+      "Features": "Case=Dat|Number=Dual|Gender=Masc"
+    },
+    {
+      "ID": "ins_du",
+      "Name": "instrumental dual",
+      "Features": "Case=Ins|Number=Dual"
+    },
+    {
+      "ID": "ins_du_m",
+      "Name": "instrumental dual masc",
+      "Features": "Case=Ins|Number=Dual|Gender=Masc"
+    },
+    {
+      "ID": "nom_pl",
+      "Name": "nominative plural",
+      "Features": "Case=Nom|Number=Plur"
+    },
+    {
+      "ID": "nom_pl_f",
+      "Name": "nominative plural fem",
+      "Features": "Case=Nom|Number=Plur|Gender=Fem"
+    },
+    {
+      "ID": "nom_pl_m",
+      "Name": "nominative plural masc",
+      "Features": "Case=Nom|Number=Plur|Gender=Masc"
+    },
+    {
+      "ID": "nom_pl_n",
+      "Name": "nominative plural neut",
+      "Features": "Case=Nom|Number=Plur|Gender=Neut"
+    },
+    {
+      "ID": "acc_pl",
+      "Name": "accusative plural",
+      "Features": "Case=Acc|Number=Plur"
+    },
+    {
+      "ID": "acc_pl_f",
+      "Name": "accusative plural fem",
+      "Features": "Case=Acc|Number=Plur|Gender=Fem"
+    },
+    {
+      "ID": "acc_pl_m",
+      "Name": "accusative plural masc",
+      "Features": "Case=Acc|Number=Plur|Gender=Masc"
+    },
+    {
+      "ID": "acc_pl_n",
+      "Name": "accusative plural neut",
+      "Features": "Case=Acc|Number=Plur|Gender=Neut"
+    },
+    {
+      "ID": "gen_pl",
+      "Name": "genitive plural",
+      "Features": "Case=Gen|Number=Plur"
+    },
+    {
+      "ID": "gen_pl_f",
+      "Name": "genitive plural fem",
+      "Features": "Case=Gen|Number=Plur|Gender=Fem"
+    },
+    {
+      "ID": "gen_pl_m",
+      "Name": "genitive plural masc",
+      "Features": "Case=Gen|Number=Plur|Gender=Masc"
+    },
+    {
+      "ID": "gen_pl_n",
+      "Name": "genitive plural neut",
+      "Features": "Case=Gen|Number=Plur|Gender=Neut"
+    },
+    {
+      "ID": "prep_pl",
+      "Name": "prepositional plural",
+      "Features": "Case=Loc|Number=Plur"
+    },
+    {
+      "ID": "prep_pl_f",
+      "Name": "prepositional plural fem",
+      "Features": "Case=Loc|Number=Plur|Gender=Fem"
+    },
+    {
+      "ID": "prep_pl_m",
+      "Name": "prepositional plural masc",
+      "Features": "Case=Loc|Number=Plur|Gender=Masc"
+    },
+    {
+      "ID": "prep_pl_n",
+      "Name": "prepositional plural neut",
+      "Features": "Case=Loc|Number=Plur|Gender=Neut"
+    },
+    {
+      "ID": "dat_pl",
+      "Name": "dative plural",
+      "Features": "Case=Dat|Number=Plur"
+    },
+    {
+      "ID": "dat_pl_f",
+      "Name": "dative plural fem",
+      "Features": "Case=Dat|Number=Plur|Gender=Fem"
+    },
+    {
+      "ID": "dat_pl_m",
+      "Name": "dative plural masc",
+      "Features": "Case=Dat|Number=Plur|Gender=Masc"
+    },
+    {
+      "ID": "dat_pl_n",
+      "Name": "dative plural neut",
+      "Features": "Case=Dat|Number=Plur|Gender=Neut"
+    },
+    {
+      "ID": "ins_pl",
+      "Name": "instrumental plural",
+      "Features": "Case=Ins|Number=Plur"
+    },
+    {
+      "ID": "ins_pl_f",
+      "Name": "instrumental plural fem",
+      "Features": "Case=Ins|Number=Plur|Gender=Fem"
+    },
+    {
+      "ID": "ins_pl_m",
+      "Name": "instrumental plural masc",
+      "Features": "Case=Ins|Number=Plur|Gender=Masc"
+    },
+    {
+      "ID": "ins_pl_n",
+      "Name": "instrumental plural neut",
+      "Features": "Case=Ins|Number=Plur|Gender=Neut"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "son",
+      "Name": "son"
+    },
+    {
+      "ID": "city",
+      "Name": "city"
+    },
+    {
+      "ID": "man",
+      "Name": "man"
+    },
+    {
+      "ID": "village",
+      "Name": "village"
+    },
+    {
+      "ID": "heart",
+      "Name": "heart"
+    },
+    {
+      "ID": "sheep",
+      "Name": "sheep"
+    },
+    {
+      "ID": "death",
+      "Name": "death"
+    },
+    {
+      "ID": "i",
+      "Name": "I"
+    },
+    {
+      "ID": "you",
+      "Name": "you"
+    },
+    {
+      "ID": "he_it",
+      "Name": "he, it"
+    },
+    {
+      "ID": "she",
+      "Name": "she"
+    },
+    {
+      "ID": "we",
+      "Name": "we"
+    },
+    {
+      "ID": "they",
+      "Name": "they"
+    },
+    {
+      "ID": "table",
+      "Name": "table"
+    },
+    {
+      "ID": "peach",
+      "Name": "peach"
+    },
+    {
+      "ID": "apple",
+      "Name": "apple"
+    },
+    {
+      "ID": "farmer",
+      "Name": "farmer"
+    },
+    {
+      "ID": "my",
+      "Name": "my"
+    },
+    {
+      "ID": "two",
+      "Name": "two"
+    },
+    {
+      "ID": "we_two",
+      "Name": "we two"
+    },
+    {
+      "ID": "thread",
+      "Name": "thread"
+    },
+    {
+      "ID": "lady",
+      "Name": "lady"
+    },
+    {
+      "ID": "day",
+      "Name": "day"
+    },
+    {
+      "ID": "accountant",
+      "Name": "accountant"
+    },
+    {
+      "ID": "this",
+      "Name": "this"
+    },
+    {
+      "ID": "traveller",
+      "Name": "traveller"
+    },
+    {
+      "ID": "that",
+      "Name": "that"
+    },
+    {
+      "ID": "your",
+      "Name": "your"
+    },
+    {
+      "ID": "window",
+      "Name": "window"
+    },
+    {
+      "ID": "street",
+      "Name": "street"
+    },
+    {
+      "ID": "good",
+      "Name": "good"
+    },
+    {
+      "ID": "bigger",
+      "Name": "bigger"
+    },
+    {
+      "ID": "both",
+      "Name": "both"
+    },
+    {
+      "ID": "machine",
+      "Name": "machine"
+    },
+    {
+      "ID": "bone",
+      "Name": "bone"
+    },
+    {
+      "ID": "villa",
+      "Name": "villa"
+    },
+    {
+      "ID": "michelle",
+      "Name": "Michelle"
+    },
+    {
+      "ID": "ox",
+      "Name": "ox"
+    },
+    {
+      "ID": "boy",
+      "Name": "boy"
+    },
+    {
+      "ID": "sir",
+      "Name": "sir"
+    },
+    {
+      "ID": "our",
+      "Name": "our"
+    },
+    {
+      "ID": "stress",
+      "Name": "stress"
+    },
+    {
+      "ID": "woman",
+      "Name": "woman"
+    },
+    {
+      "ID": "song",
+      "Name": "song"
+    },
+    {
+      "ID": "castle",
+      "Name": "castle"
+    },
+    {
+      "ID": "it",
+      "Name": "it"
+    },
+    {
+      "ID": "five",
+      "Name": "five"
+    },
+    {
+      "ID": "press",
+      "Name": "press"
+    },
+    {
+      "ID": "region",
+      "Name": "region"
+    },
+    {
+      "ID": "big",
+      "Name": "big"
+    },
+    {
+      "ID": "knowledge",
+      "Name": "knowledge"
+    },
+    {
+      "ID": "cashier",
+      "Name": "cashier"
+    },
+    {
+      "ID": "mother",
+      "Name": "mother"
+    },
+    {
+      "ID": "hand",
+      "Name": "hand"
+    },
+    {
+      "ID": "hundred",
+      "Name": "hundred"
+    },
+    {
+      "ID": "endless",
+      "Name": "endless"
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "srp_sin",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "son",
+      "Name": "sîn"
+    },
+    {
+      "ID": "srp_grad",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "city",
+      "Name": "grâd"
+    },
+    {
+      "ID": "srp_muz",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "man",
+      "Name": "muž"
+    },
+    {
+      "ID": "srp_selo",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "village",
+      "Name": "sèlo"
+    },
+    {
+      "ID": "srp_srce",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "heart",
+      "Name": "srce"
+    },
+    {
+      "ID": "srp_ovca",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "sheep",
+      "Name": "òvca"
+    },
+    {
+      "ID": "srp_smrt",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "death",
+      "Name": "smȑt"
+    },
+    {
+      "ID": "srp_ja",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "i",
+      "Name": "ja"
+    },
+    {
+      "ID": "srp_ti",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "you",
+      "Name": "ti"
+    },
+    {
+      "ID": "srp_on",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "he_it",
+      "Name": "on/ono"
+    },
+    {
+      "ID": "srp_ona",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "she",
+      "Name": "ona"
+    },
+    {
+      "ID": "srp_mi",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "we",
+      "Name": "mi"
+    },
+    {
+      "ID": "srp_vi",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "you",
+      "Name": "vi"
+    },
+    {
+      "ID": "srp_oni",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "they",
+      "Name": "oni/ona/one"
+    },
+    {
+      "ID": "slv_miza",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "table",
+      "Name": "mízi"
+    },
+    {
+      "ID": "slv_breskev",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "peach",
+      "Name": "brêskev"
+    },
+    {
+      "ID": "slv_jabolko",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "apple",
+      "Name": "jábolko"
+    },
+    {
+      "ID": "slv_kmet",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "farmer",
+      "Name": "kmèta"
+    },
+    {
+      "ID": "slv_jaz",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "i",
+      "Name": "jàz"
+    },
+    {
+      "ID": "slv_moj",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "my",
+      "Name": "mój"
+    },
+    {
+      "ID": "slv_dva",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "two",
+      "Name": "dvâ"
+    },
+    {
+      "ID": "slv_mi",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "we",
+      "Name": "mî"
+    },
+    {
+      "ID": "slv_midva",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "we_two",
+      "Name": "mîdva"
+    },
+    {
+      "ID": "slv_nit",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "thread",
+      "Name": "nìt"
+    },
+    {
+      "ID": "slv_gospa",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "lady",
+      "Name": "gospá"
+    },
+    {
+      "ID": "slv_dan",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "day",
+      "Name": "dní"
+    },
+    {
+      "ID": "slv_racunovodja",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "accountant",
+      "Name": "računovodja"
+    },
+    {
+      "ID": "slv_ta",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "this",
+      "Name": "ta"
+    },
+    {
+      "ID": "slv_potnik",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "traveller",
+      "Name": "pótnik"
+    },
+    {
+      "ID": "slv_tisti",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "that",
+      "Name": "tîsto"
+    },
+    {
+      "ID": "slv_vas",
+      "Language_ID": "slov1268",
+      "Parameter_ID": "your",
+      "Name": "váše"
+    },
+    {
+      "ID": "ces_okno",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "window",
+      "Name": "okno"
+    },
+    {
+      "ID": "ces_ulice",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "street",
+      "Name": "ulice"
+    },
+    {
+      "ID": "ces_muz",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "man",
+      "Name": "muži"
+    },
+    {
+      "ID": "ces_dobry",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "good",
+      "Name": "dobrý"
+    },
+    {
+      "ID": "ces_vetsi",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bigger",
+      "Name": "větší"
+    },
+    {
+      "ID": "ces_oba",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "both",
+      "Name": "oba"
+    },
+    {
+      "ID": "ces_stroj",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "machine",
+      "Name": "stroj"
+    },
+    {
+      "ID": "ces_kost",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bone",
+      "Name": "kosti"
+    },
+    {
+      "ID": "ces_ten",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "that",
+      "Name": "ten"
+    },
+    {
+      "ID": "ces_vila",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "villa",
+      "Name": "vila"
+    },
+    {
+      "ID": "ces_misa",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "michelle",
+      "Name": "Míša"
+    },
+    {
+      "ID": "ces_vul",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "ox",
+      "Name": "vůl"
+    },
+    {
+      "ID": "ces_hoch",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "boy",
+      "Name": "hoch"
+    },
+    {
+      "ID": "ces_pan",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "sir",
+      "Name": "pán"
+    },
+    {
+      "ID": "ces_my",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "we",
+      "Name": "my"
+    },
+    {
+      "ID": "ces_ona",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "she",
+      "Name": "ona"
+    },
+    {
+      "ID": "ces_nase",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "our",
+      "Name": "náš"
+    },
+    {
+      "ID": "ces_zatez",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "stress",
+      "Name": "zátěž"
+    },
+    {
+      "ID": "ces_zena",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "woman",
+      "Name": "žena"
+    },
+    {
+      "ID": "ces_kluk",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "boy",
+      "Name": "kluk"
+    },
+    {
+      "ID": "ces_pisen",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "song",
+      "Name": "píseň"
+    },
+    {
+      "ID": "ces_hrad",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "castle",
+      "Name": "hrad"
+    },
+    {
+      "ID": "ces_mesto",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "city",
+      "Name": "město"
+    },
+    {
+      "ID": "ces_ono",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "it",
+      "Name": "ono"
+    },
+    {
+      "ID": "ces_oni",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "they",
+      "Name": "oni"
+    },
+    {
+      "ID": "ces_dva",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "two",
+      "Name": "dva"
+    },
+    {
+      "ID": "ces_pet",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "five",
+      "Name": "pět"
+    },
+    {
+      "ID": "slk_ona",
+      "Language_ID": "slov1269",
+      "Parameter_ID": "she",
+      "Name": "ona"
+    },
+    {
+      "ID": "slk_nase",
+      "Language_ID": "slov1269",
+      "Parameter_ID": "our",
+      "Name": "náš"
+    },
+    {
+      "ID": "slk_ulica",
+      "Language_ID": "slov1269",
+      "Parameter_ID": "street",
+      "Name": "ulica"
+    },
+    {
+      "ID": "slk_tlac",
+      "Language_ID": "slov1269",
+      "Parameter_ID": "press",
+      "Name": "tlač"
+    },
+    {
+      "ID": "ukr_kraj",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "region",
+      "Name": "kraj"
+    },
+    {
+      "ID": "ukr_velykyj",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "big",
+      "Name": "velíkıj"
+    },
+    {
+      "ID": "ukr_znannja",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "knowledge",
+      "Name": "znannjá"
+    },
+    {
+      "ID": "ukr_my",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "we",
+      "Name": "mı"
+    },
+    {
+      "ID": "ukr_kasyr",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "cashier",
+      "Name": "kasír"
+    },
+    {
+      "ID": "ukr_maty",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "mother",
+      "Name": "mátı"
+    },
+    {
+      "ID": "ukr_ruka",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "hand",
+      "Name": "ruká"
+    },
+    {
+      "ID": "ukr_ja",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "i",
+      "Name": "ja"
+    },
+    {
+      "ID": "ukr_sto",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "hundred",
+      "Name": "sto"
+    },
+    {
+      "ID": "ukr_bezkrajij",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "endless",
+      "Name": "bezkrajij"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "srp_sin_sg_nom",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "nom_sg",
+      "Form": "sîn",
+      "Morphs": ["sîn"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_sin_sg_acc",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "acc_sg",
+      "Form": "sîna",
+      "Morphs": ["sîna"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_sin_sg_gen",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "gen_sg",
+      "Form": "sîna",
+      "Morphs": ["sîna"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_sin_sg_prep",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "prep_sg",
+      "Form": "sînu",
+      "Morphs": ["sînu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_sin_sg_dat",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "dat_sg",
+      "Form": "sînu",
+      "Morphs": ["sînu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_sin_sg_ins",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "ins_sg",
+      "Form": "sînom",
+      "Morphs": ["sînom"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_grad_sg_nom",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "nom_sg",
+      "Form": "grâd",
+      "Morphs": ["grâd"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_grad_sg_acc",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "acc_sg",
+      "Form": "grâd",
+      "Morphs": ["grâd"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_grad_sg_gen",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "gen_sg",
+      "Form": "grâda",
+      "Morphs": ["grâda"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_grad_sg_prep",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "prep_sg",
+      "Form": "grádu",
+      "Morphs": ["grádu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_grad_sg_dat",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "dat_sg",
+      "Form": "grâdu",
+      "Morphs": ["grâdu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_grad_sg_ins",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "ins_sg",
+      "Form": "grâdom",
+      "Morphs": ["grâdom"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_muz_sg_nom",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "nom_sg",
+      "Form": "muž",
+      "Morphs": ["muž"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_muz_sg_acc",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "acc_sg",
+      "Form": "muža",
+      "Morphs": ["muža"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_muz_sg_gen",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "gen_sg",
+      "Form": "muža",
+      "Morphs": ["muža"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_muz_sg_prep",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "prep_sg",
+      "Form": "mužu",
+      "Morphs": ["mužu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_muz_sg_dat",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "dat_sg",
+      "Form": "mužu",
+      "Morphs": ["mužu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_muz_sg_ins",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "ins_sg",
+      "Form": "mužem",
+      "Morphs": ["mužem"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_selo_sg_nom",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "nom_sg",
+      "Form": "sèlo",
+      "Morphs": ["sèlo"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_selo_sg_acc",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "acc_sg",
+      "Form": "sèlo",
+      "Morphs": ["sèlo"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_selo_sg_gen",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "gen_sg",
+      "Form": "sèla",
+      "Morphs": ["sèla"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_selo_sg_prep",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "prep_sg",
+      "Form": "sèlu",
+      "Morphs": ["sèlu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_selo_sg_dat",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "dat_sg",
+      "Form": "sèlu",
+      "Morphs": ["sèlu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_selo_sg_ins",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "ins_sg",
+      "Form": "sèlom",
+      "Morphs": ["sèlom"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_srce_sg_nom",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "nom_sg",
+      "Form": "srce",
+      "Morphs": ["srce"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_srce_sg_acc",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "acc_sg",
+      "Form": "srce",
+      "Morphs": ["srce"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_srce_sg_gen",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "gen_sg",
+      "Form": "srca",
+      "Morphs": ["srca"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_srce_sg_prep",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "prep_sg",
+      "Form": "srcu",
+      "Morphs": ["srcu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_srce_sg_dat",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "dat_sg",
+      "Form": "srcu",
+      "Morphs": ["srcu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_srce_sg_ins",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "ins_sg",
+      "Form": "srcem",
+      "Morphs": ["srcem"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_ovca_sg_nom",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "nom_sg",
+      "Form": "òvca",
+      "Morphs": ["òvca"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_ovca_sg_acc",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "acc_sg",
+      "Form": "òvcu",
+      "Morphs": ["òvcu"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_ovca_sg_gen",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "gen_sg",
+      "Form": "òvcē",
+      "Morphs": ["òvcē"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_ovca_sg_prep",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "prep_sg",
+      "Form": "òvci",
+      "Morphs": ["òvci"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_ovca_sg_dat",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "dat_sg",
+      "Form": "òvci",
+      "Morphs": ["òvci"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_ovca_sg_ins",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "ins_sg",
+      "Form": "òvcōm",
+      "Morphs": ["òvcōm"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_smrt_sg_nom",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "nom_sg",
+      "Form": "smȑt",
+      "Morphs": ["smȑt"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_smrt_sg_acc",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "acc_sg",
+      "Form": "smȑt",
+      "Morphs": ["smȑt"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_smrt_sg_gen",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "gen_sg",
+      "Form": "smȑti",
+      "Morphs": ["smȑti"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_smrt_sg_prep",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "prep_sg",
+      "Form": "smȑti",
+      "Morphs": ["smȑti"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_smrt_sg_dat",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "dat_sg",
+      "Form": "smȑti",
+      "Morphs": ["smȑti"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_smrt_sg_ins",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "ins_sg",
+      "Form": "smr̀ću",
+      "Morphs": ["smr̀ću"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_sin_pl_nom",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "nom_pl",
+      "Form": "sȉnovi",
+      "Morphs": ["sȉnovi"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_sin_pl_acc",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "acc_pl",
+      "Form": "sȉnove",
+      "Morphs": ["sȉnove"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_sin_pl_gen",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "gen_pl",
+      "Form": "sinóvā",
+      "Morphs": ["sinóvā"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_sin_pl_prep",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "prep_pl",
+      "Form": "sȉnovima",
+      "Morphs": ["sȉnovima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_sin_pl_dat",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "dat_pl",
+      "Form": "sȉnovima",
+      "Morphs": ["sȉnovima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_sin_pl_ins",
+      "Lexeme_ID": "srp_sin",
+      "Cell": "ins_pl",
+      "Form": "sȉnovima",
+      "Morphs": ["sȉnovima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_grad_pl_nom",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "nom_pl",
+      "Form": "grȁdovi",
+      "Morphs": ["grȁdovi"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_grad_pl_acc",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "acc_pl",
+      "Form": "grȁdove",
+      "Morphs": ["grȁdove"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_grad_pl_gen",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "gen_pl",
+      "Form": "gradóvā",
+      "Morphs": ["gradóvā"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_grad_pl_prep",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "prep_pl",
+      "Form": "grȁdovima",
+      "Morphs": ["grȁdovima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_grad_pl_dat",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "dat_pl",
+      "Form": "grȁdovima",
+      "Morphs": ["grȁdovima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_grad_pl_ins",
+      "Lexeme_ID": "srp_grad",
+      "Cell": "ins_pl",
+      "Form": "grȁdovima",
+      "Morphs": ["grȁdovima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_muz_pl_nom",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "nom_pl",
+      "Form": "muževi",
+      "Morphs": ["muževi"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_muz_pl_acc",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "acc_pl",
+      "Form": "muževe",
+      "Morphs": ["muževe"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_muz_pl_gen",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "gen_pl",
+      "Form": "mȕžēvā",
+      "Morphs": ["mȕžēvā"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_muz_pl_prep",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "prep_pl",
+      "Form": "muževima",
+      "Morphs": ["muževima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_muz_pl_dat",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "dat_pl",
+      "Form": "muževima",
+      "Morphs": ["muževima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_muz_pl_ins",
+      "Lexeme_ID": "srp_muz",
+      "Cell": "ins_pl",
+      "Form": "muževima",
+      "Morphs": ["muževima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_selo_pl_nom",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "nom_pl",
+      "Form": "sȅla",
+      "Morphs": ["sȅla"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_selo_pl_acc",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "acc_pl",
+      "Form": "sȅla",
+      "Morphs": ["sȅla"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_selo_pl_gen",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "gen_pl",
+      "Form": "sêlā",
+      "Morphs": ["sêlā"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_selo_pl_prep",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "prep_pl",
+      "Form": "sȅlima",
+      "Morphs": ["sȅlima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_selo_pl_dat",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "dat_pl",
+      "Form": "sȅlima",
+      "Morphs": ["sȅlima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_selo_pl_ins",
+      "Lexeme_ID": "srp_selo",
+      "Cell": "ins_pl",
+      "Form": "sȅlima",
+      "Morphs": ["sȅlima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_srce_pl_nom",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "nom_pl",
+      "Form": "srca",
+      "Morphs": ["srca"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_srce_pl_acc",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "acc_pl",
+      "Form": "srca",
+      "Morphs": ["srca"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_srce_pl_gen",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "gen_pl",
+      "Form": "sr̂cā",
+      "Morphs": ["sr̂cā"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_srce_pl_prep",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "prep_pl",
+      "Form": "srcima",
+      "Morphs": ["srcima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_srce_pl_dat",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "dat_pl",
+      "Form": "srcima",
+      "Morphs": ["srcima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_srce_pl_ins",
+      "Lexeme_ID": "srp_srce",
+      "Cell": "ins_pl",
+      "Form": "srcima",
+      "Morphs": ["srcima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ovca_pl_nom",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "nom_pl",
+      "Form": "ôvce",
+      "Morphs": ["ôvce"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ovca_pl_acc",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "acc_pl",
+      "Form": "ôvce",
+      "Morphs": ["ôvce"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ovca_pl_gen",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "gen_pl",
+      "Form": "ovácā",
+      "Morphs": ["ovácā"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ovca_pl_prep",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "prep_pl",
+      "Form": "óvcama",
+      "Morphs": ["óvcama"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ovca_pl_dat",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "dat_pl",
+      "Form": "óvcama",
+      "Morphs": ["óvcama"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ovca_pl_ins",
+      "Lexeme_ID": "srp_ovca",
+      "Cell": "ins_pl",
+      "Form": "óvcama",
+      "Morphs": ["óvcama"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_smrt_pl_nom",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "nom_pl",
+      "Form": "smȑti",
+      "Morphs": ["smȑti"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_smrt_pl_acc",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "acc_pl",
+      "Form": "smȑti",
+      "Morphs": ["smȑti"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_smrt_pl_gen",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "gen_pl",
+      "Form": "smr̂tī",
+      "Morphs": ["smr̂tī"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_smrt_pl_prep",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "prep_pl",
+      "Form": "smȑtima",
+      "Morphs": ["smȑtima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_smrt_pl_dat",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "dat_pl",
+      "Form": "smȑtima",
+      "Morphs": ["smȑtima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_smrt_pl_ins",
+      "Lexeme_ID": "srp_smrt",
+      "Cell": "ins_pl",
+      "Form": "smȑtima",
+      "Morphs": ["smȑtima"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ja_nom",
+      "Lexeme_ID": "srp_ja",
+      "Cell": "nom_sg",
+      "Form": "ja",
+      "Morphs": ["ja"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ja_acc",
+      "Lexeme_ID": "srp_ja",
+      "Cell": "acc_sg",
+      "Form": "mene",
+      "Morphs": ["mene"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ja_gen",
+      "Lexeme_ID": "srp_ja",
+      "Cell": "gen_sg",
+      "Form": "mene",
+      "Morphs": ["mene"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ja_prep",
+      "Lexeme_ID": "srp_ja",
+      "Cell": "prep_sg",
+      "Form": "meni",
+      "Morphs": ["meni"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ja_dat",
+      "Lexeme_ID": "srp_ja",
+      "Cell": "dat_sg",
+      "Form": "meni",
+      "Morphs": ["meni"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ja_ins",
+      "Lexeme_ID": "srp_ja",
+      "Cell": "ins_sg",
+      "Form": "mnom",
+      "Morphs": ["mnom"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ti_nom",
+      "Lexeme_ID": "srp_ti",
+      "Cell": "nom_sg",
+      "Form": "ti",
+      "Morphs": ["ti"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ti_acc",
+      "Lexeme_ID": "srp_ti",
+      "Cell": "acc_sg",
+      "Form": "tebe",
+      "Morphs": ["tebe"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ti_gen",
+      "Lexeme_ID": "srp_ti",
+      "Cell": "gen_sg",
+      "Form": "tebe",
+      "Morphs": ["tebe"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ti_prep",
+      "Lexeme_ID": "srp_ti",
+      "Cell": "prep_sg",
+      "Form": "tebi",
+      "Morphs": ["tebi"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ti_dat",
+      "Lexeme_ID": "srp_ti",
+      "Cell": "dat_sg",
+      "Form": "tebi",
+      "Morphs": ["tebi"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ti_ins",
+      "Lexeme_ID": "srp_ti",
+      "Cell": "ins_sg",
+      "Form": "tobom",
+      "Morphs": ["tobom"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_on_nom",
+      "Lexeme_ID": "srp_on",
+      "Cell": "nom_sg",
+      "Form": "on/ono",
+      "Morphs": ["on/ono"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_on_acc",
+      "Lexeme_ID": "srp_on",
+      "Cell": "acc_sg",
+      "Form": "njega",
+      "Morphs": ["njega"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_on_gen",
+      "Lexeme_ID": "srp_on",
+      "Cell": "gen_sg",
+      "Form": "njega",
+      "Morphs": ["njega"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_on_prep",
+      "Lexeme_ID": "srp_on",
+      "Cell": "prep_sg",
+      "Form": "njemu",
+      "Morphs": ["njemu"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_on_dat",
+      "Lexeme_ID": "srp_on",
+      "Cell": "dat_sg",
+      "Form": "njemu",
+      "Morphs": ["njemu"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_on_ins",
+      "Lexeme_ID": "srp_on",
+      "Cell": "ins_sg",
+      "Form": "njim",
+      "Morphs": ["njim"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ona_nom",
+      "Lexeme_ID": "srp_ona",
+      "Cell": "nom_sg",
+      "Form": "ona",
+      "Morphs": ["ona"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ona_acc",
+      "Lexeme_ID": "srp_ona",
+      "Cell": "acc_sg",
+      "Form": "nju",
+      "Morphs": ["nju"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ona_gen",
+      "Lexeme_ID": "srp_ona",
+      "Cell": "gen_sg",
+      "Form": "nje",
+      "Morphs": ["nje"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ona_prep",
+      "Lexeme_ID": "srp_ona",
+      "Cell": "prep_sg",
+      "Form": "njoj",
+      "Morphs": ["njoj"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ona_dat",
+      "Lexeme_ID": "srp_ona",
+      "Cell": "dat_sg",
+      "Form": "njoj",
+      "Morphs": ["njoj"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ona_ins",
+      "Lexeme_ID": "srp_ona",
+      "Cell": "ins_sg",
+      "Form": "njom",
+      "Morphs": ["njom"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_mi_nom",
+      "Lexeme_ID": "srp_mi",
+      "Cell": "nom_pl",
+      "Form": "mi",
+      "Morphs": ["mi"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_mi_acc",
+      "Lexeme_ID": "srp_mi",
+      "Cell": "acc_pl",
+      "Form": "nas",
+      "Morphs": ["nas"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_mi_gen",
+      "Lexeme_ID": "srp_mi",
+      "Cell": "gen_pl",
+      "Form": "nas",
+      "Morphs": ["nas"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_mi_prep",
+      "Lexeme_ID": "srp_mi",
+      "Cell": "prep_pl",
+      "Form": "nama",
+      "Morphs": ["nama"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_mi_dat",
+      "Lexeme_ID": "srp_mi",
+      "Cell": "dat_pl",
+      "Form": "nama",
+      "Morphs": ["nama"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_mi_ins",
+      "Lexeme_ID": "srp_mi",
+      "Cell": "ins_pl",
+      "Form": "nama",
+      "Morphs": ["nama"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_vi_nom",
+      "Lexeme_ID": "srp_vi",
+      "Cell": "nom_pl",
+      "Form": "vi",
+      "Morphs": ["vi"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_vi_acc",
+      "Lexeme_ID": "srp_vi",
+      "Cell": "acc_pl",
+      "Form": "vas",
+      "Morphs": ["vas"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_vi_gen",
+      "Lexeme_ID": "srp_vi",
+      "Cell": "gen_pl",
+      "Form": "vas",
+      "Morphs": ["vas"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_vi_prep",
+      "Lexeme_ID": "srp_vi",
+      "Cell": "prep_pl",
+      "Form": "vama",
+      "Morphs": ["vama"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_vi_dat",
+      "Lexeme_ID": "srp_vi",
+      "Cell": "dat_pl",
+      "Form": "vama",
+      "Morphs": ["vama"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_vi_ins",
+      "Lexeme_ID": "srp_vi",
+      "Cell": "ins_pl",
+      "Form": "vama",
+      "Morphs": ["vama"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_oni_nom",
+      "Lexeme_ID": "srp_oni",
+      "Cell": "nom_pl",
+      "Form": "oni/ona/one",
+      "Morphs": ["oni/ona/one"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_oni_acc",
+      "Lexeme_ID": "srp_oni",
+      "Cell": "acc_pl",
+      "Form": "njih",
+      "Morphs": ["njih"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_oni_gen",
+      "Lexeme_ID": "srp_oni",
+      "Cell": "gen_pl",
+      "Form": "njih",
+      "Morphs": ["njih"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_oni_prep",
+      "Lexeme_ID": "srp_oni",
+      "Cell": "prep_pl",
+      "Form": "njima",
+      "Morphs": ["njima"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_oni_dat",
+      "Lexeme_ID": "srp_oni",
+      "Cell": "dat_pl",
+      "Form": "njima",
+      "Morphs": ["njima"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_oni_ins",
+      "Lexeme_ID": "srp_oni",
+      "Cell": "ins_pl",
+      "Form": "njima",
+      "Morphs": ["njima"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "slv_miza_du_nom",
+      "Lexeme_ID": "slv_miza",
+      "Cell": "nom_du",
+      "Form": "mízi",
+      "Morphs": ["míz", "i"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_miza_du_acc",
+      "Lexeme_ID": "slv_miza",
+      "Cell": "acc_du",
+      "Form": "mízi",
+      "Morphs": ["míz", "i"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_miza_du_gen",
+      "Lexeme_ID": "slv_miza",
+      "Cell": "gen_du",
+      "Form": "mîz",
+      "Morphs": ["mîz"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_miza_du_prep",
+      "Lexeme_ID": "slv_miza",
+      "Cell": "prep_du",
+      "Form": "mízah",
+      "Morphs": ["míz", "ah"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_miza_du_dat",
+      "Lexeme_ID": "slv_miza",
+      "Cell": "dat_du",
+      "Form": "mízama",
+      "Morphs": ["míz", "ama"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_miza_du_ins",
+      "Lexeme_ID": "slv_miza",
+      "Cell": "ins_du",
+      "Form": "mízama",
+      "Morphs": ["míz", "ama"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_sg_nom",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "nom_sg",
+      "Form": "brêskev",
+      "Morphs": ["brêskev", "ø"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_sg_acc",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "acc_sg",
+      "Form": "brêskev",
+      "Morphs": ["brêskev", "ø"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_sg_gen",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "gen_sg",
+      "Form": "brêskve",
+      "Morphs": ["brêskv", "e"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_sg_prep",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "prep_sg",
+      "Form": "brêskvi",
+      "Morphs": ["brêskv", "i"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_sg_dat",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "dat_sg",
+      "Form": "brêskvi",
+      "Morphs": ["brêskv", "i"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_sg_ins",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "ins_sg",
+      "Form": "brêskvijo",
+      "Morphs": ["brêskv", "ijo"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_pl_nom",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "nom_pl",
+      "Form": "brêskve",
+      "Morphs": ["brêskv", "e"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_pl_acc",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "acc_pl",
+      "Form": "brêskve",
+      "Morphs": ["brêskv", "e"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_pl_gen",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "gen_pl",
+      "Form": "brêskv",
+      "Morphs": ["brêskv", "ø"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_pl_prep",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "prep_pl",
+      "Form": "brêskvah",
+      "Morphs": ["brêskv", "ah"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_pl_dat",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "dat_pl",
+      "Form": "brêskvam",
+      "Morphs": ["brêskv", "am"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_pl_ins",
+      "Lexeme_ID": "slv_breskev",
+      "Cell": "ins_pl",
+      "Form": "brêskvami",
+      "Morphs": ["brêskv", "ami"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jabolko_sg_nom",
+      "Lexeme_ID": "slv_jabolko",
+      "Cell": "nom_sg",
+      "Form": "jábolko",
+      "Morphs": ["jábolk", "o"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jabolko_sg_acc",
+      "Lexeme_ID": "slv_jabolko",
+      "Cell": "acc_sg",
+      "Form": "jábolko",
+      "Morphs": ["jábolk", "o"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jabolko_sg_gen",
+      "Lexeme_ID": "slv_jabolko",
+      "Cell": "gen_sg",
+      "Form": "jábolka",
+      "Morphs": ["jábolk", "a"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jabolko_sg_prep",
+      "Lexeme_ID": "slv_jabolko",
+      "Cell": "prep_sg",
+      "Form": "jábolku",
+      "Morphs": ["jábolk", "u"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jabolko_sg_dat",
+      "Lexeme_ID": "slv_jabolko",
+      "Cell": "dat_sg",
+      "Form": "jábolku",
+      "Morphs": ["jábolk", "u"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jabolko_sg_ins",
+      "Lexeme_ID": "slv_jabolko",
+      "Cell": "ins_sg",
+      "Form": "jábolkom",
+      "Morphs": ["jábolk", "om"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_du_nom",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "nom_du",
+      "Form": "kmèta",
+      "Morphs": ["kmèt", "a"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_du_acc",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "acc_du",
+      "Form": "kmèta",
+      "Morphs": ["kmèt", "a"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_du_gen",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "gen_du",
+      "Form": "kmêtov",
+      "Morphs": ["kmêt", "ov"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_du_prep",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "prep_du",
+      "Form": "kmētih",
+      "Morphs": ["kmēt", "ih"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_du_dat",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "dat_du",
+      "Form": "kmétoma",
+      "Morphs": ["kmét", "oma"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_du_ins",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "ins_du",
+      "Form": "kmétoma",
+      "Morphs": ["kmét", "oma"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_sg_nom",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "nom_sg",
+      "Form": "kmèt",
+      "Morphs": ["kmèt", "ø"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_sg_acc",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "acc_sg",
+      "Form": "kméta",
+      "Morphs": ["kmét", "a"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_sg_gen",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "gen_sg",
+      "Form": "kméta",
+      "Morphs": ["kmét", "a"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_sg_prep",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "prep_sg",
+      "Form": "kmêtu",
+      "Morphs": ["kmêt", "u"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_sg_dat",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "dat_sg",
+      "Form": "kmétu",
+      "Morphs": ["kmét", "u"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_sg_ins",
+      "Lexeme_ID": "slv_kmet",
+      "Cell": "ins_sg",
+      "Form": "kmétom",
+      "Morphs": ["kmét", "om"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jaz_nom",
+      "Lexeme_ID": "slv_jaz",
+      "Cell": "nom_sg",
+      "Form": "jàz",
+      "Morphs": ["jàz"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jaz_acc",
+      "Lexeme_ID": "slv_jaz",
+      "Cell": "acc_sg",
+      "Form": "mȩ́ne",
+      "Morphs": ["mȩ́n", "e"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jaz_gen",
+      "Lexeme_ID": "slv_jaz",
+      "Cell": "gen_sg",
+      "Form": "mȩ́ne",
+      "Morphs": ["mȩ́n", "e"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jaz_prep",
+      "Lexeme_ID": "slv_jaz",
+      "Cell": "prep_sg",
+      "Form": "mȩ́ni",
+      "Morphs": ["mȩ́n", "i"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jaz_dat",
+      "Lexeme_ID": "slv_jaz",
+      "Cell": "dat_sg",
+      "Form": "mȩ́ni",
+      "Morphs": ["mȩ́n", "i"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jaz_ins",
+      "Lexeme_ID": "slv_jaz",
+      "Cell": "ins_sg",
+      "Form": "menój",
+      "Morphs": ["men", "ój"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_moj_mpl_nom",
+      "Lexeme_ID": "slv_moj",
+      "Cell": "nom_pl_m",
+      "Form": "mo̧ji",
+      "Morphs": ["mo̧j", "i"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_moj_mpl_acc",
+      "Lexeme_ID": "slv_moj",
+      "Cell": "acc_pl_m",
+      "Form": "mo̧ji",
+      "Morphs": ["mo̧j", "i"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_moj_mpl_gen",
+      "Lexeme_ID": "slv_moj",
+      "Cell": "gen_pl_m",
+      "Form": "mo̧jih",
+      "Morphs": ["mo̧j", "ih"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_moj_mpl_prep",
+      "Lexeme_ID": "slv_moj",
+      "Cell": "prep_pl_m",
+      "Form": "mo̧jih",
+      "Morphs": ["mo̧j", "ih"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_moj_mpl_dat",
+      "Lexeme_ID": "slv_moj",
+      "Cell": "dat_pl_m",
+      "Form": "mo̧jim",
+      "Morphs": ["mo̧j", "im"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_moj_mpl_ins",
+      "Lexeme_ID": "slv_moj",
+      "Cell": "ins_pl_m",
+      "Form": "mo̧jimi",
+      "Morphs": ["mo̧j", "imi"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dva_nom",
+      "Lexeme_ID": "slv_dva",
+      "Cell": "nom_du",
+      "Form": "dvâ",
+      "Morphs": ["dv", "â"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dva_acc",
+      "Lexeme_ID": "slv_dva",
+      "Cell": "acc_du",
+      "Form": "dvâ",
+      "Morphs": ["dv", "â"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dva_gen",
+      "Lexeme_ID": "slv_dva",
+      "Cell": "gen_du",
+      "Form": "dvēh",
+      "Morphs": ["dv", "ēh"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dva_prep",
+      "Lexeme_ID": "slv_dva",
+      "Cell": "prep_du",
+      "Form": "dvēh",
+      "Morphs": ["dv", "ēh"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dva_dat",
+      "Lexeme_ID": "slv_dva",
+      "Cell": "dat_du",
+      "Form": "dvēma",
+      "Morphs": ["dv", "ēma"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dva_ins",
+      "Lexeme_ID": "slv_dva",
+      "Cell": "ins_du",
+      "Form": "dvēma",
+      "Morphs": ["dv", "ēma"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_mi_nom",
+      "Lexeme_ID": "slv_mi",
+      "Cell": "nom_pl",
+      "Form": "mî",
+      "Morphs": ["mî"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_mi_acc",
+      "Lexeme_ID": "slv_mi",
+      "Cell": "acc_pl",
+      "Form": "nàs",
+      "Morphs": ["nà", "s"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_mi_gen",
+      "Lexeme_ID": "slv_mi",
+      "Cell": "gen_pl",
+      "Form": "nàs",
+      "Morphs": ["nà", "s"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_mi_prep",
+      "Lexeme_ID": "slv_mi",
+      "Cell": "prep_pl",
+      "Form": "nàs",
+      "Morphs": ["nà", "s"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_mi_dat",
+      "Lexeme_ID": "slv_mi",
+      "Cell": "dat_pl",
+      "Form": "nàm",
+      "Morphs": ["nàm"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_mi_ins",
+      "Lexeme_ID": "slv_mi",
+      "Cell": "ins_pl",
+      "Form": "na̧mi",
+      "Morphs": ["na̧mi"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_midva_nom",
+      "Lexeme_ID": "slv_midva",
+      "Cell": "nom_du",
+      "Form": "mîdva",
+      "Morphs": ["mîdva"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_midva_acc",
+      "Lexeme_ID": "slv_midva",
+      "Cell": "acc_du",
+      "Form": "náju",
+      "Morphs": ["ná", "ju"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_midva_gen",
+      "Lexeme_ID": "slv_midva",
+      "Cell": "gen_du",
+      "Form": "náju",
+      "Morphs": ["ná", "ju"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_midva_prep",
+      "Lexeme_ID": "slv_midva",
+      "Cell": "prep_du",
+      "Form": "náju",
+      "Morphs": ["ná", "ju"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_midva_dat",
+      "Lexeme_ID": "slv_midva",
+      "Cell": "dat_du",
+      "Form": "náma",
+      "Morphs": ["ná", "ma"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_midva_ins",
+      "Lexeme_ID": "slv_midva",
+      "Cell": "ins_du",
+      "Form": "náma",
+      "Morphs": ["ná", "ma"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_nit_sg_nom",
+      "Lexeme_ID": "slv_nit",
+      "Cell": "nom_sg",
+      "Form": "nìt",
+      "Morphs": ["nìt"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_nit_sg_acc",
+      "Lexeme_ID": "slv_nit",
+      "Cell": "acc_sg",
+      "Form": "nìt",
+      "Morphs": ["nìt"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_nit_sg_gen",
+      "Lexeme_ID": "slv_nit",
+      "Cell": "gen_sg",
+      "Form": "níti",
+      "Morphs": ["nít", "i"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_nit_sg_prep",
+      "Lexeme_ID": "slv_nit",
+      "Cell": "prep_sg",
+      "Form": "níti",
+      "Morphs": ["nít", "i"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_nit_sg_dat",
+      "Lexeme_ID": "slv_nit",
+      "Cell": "dat_sg",
+      "Form": "níti",
+      "Morphs": ["nít", "i"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_nit_sg_ins",
+      "Lexeme_ID": "slv_nit",
+      "Cell": "ins_sg",
+      "Form": "nítjo",
+      "Morphs": ["nít", "jo"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_gospa_sg_nom",
+      "Lexeme_ID": "slv_gospa",
+      "Cell": "nom_sg",
+      "Form": "gospá",
+      "Morphs": ["gosp", "á"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_gospa_sg_acc",
+      "Lexeme_ID": "slv_gospa",
+      "Cell": "acc_sg",
+      "Form": "gospó",
+      "Morphs": ["gosp", "ó"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_gospa_sg_gen",
+      "Lexeme_ID": "slv_gospa",
+      "Cell": "gen_sg",
+      "Form": "gospé",
+      "Morphs": ["gosp", "é"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_gospa_sg_prep",
+      "Lexeme_ID": "slv_gospa",
+      "Cell": "prep_sg",
+      "Form": "gospé",
+      "Morphs": ["gosp", "é"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_gospa_sg_dat",
+      "Lexeme_ID": "slv_gospa",
+      "Cell": "dat_sg",
+      "Form": "gospé",
+      "Morphs": ["gosp", "é"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_gospa_sg_ins",
+      "Lexeme_ID": "slv_gospa",
+      "Cell": "ins_sg",
+      "Form": "gospó",
+      "Morphs": ["gosp", "ó"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dan_du_nom",
+      "Lexeme_ID": "slv_dan",
+      "Cell": "nom_du",
+      "Form": "dní",
+      "Morphs": ["dn", "í"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_dan_du_acc",
+      "Lexeme_ID": "slv_dan",
+      "Cell": "acc_du",
+      "Form": "dní",
+      "Morphs": ["dn", "í"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_dan_du_gen",
+      "Lexeme_ID": "slv_dan",
+      "Cell": "gen_du",
+      "Form": "dní",
+      "Morphs": ["dn", "í"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_dan_du_prep",
+      "Lexeme_ID": "slv_dan",
+      "Cell": "prep_du",
+      "Form": "dnéh",
+      "Morphs": ["dn", "éh"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_dan_du_dat",
+      "Lexeme_ID": "slv_dan",
+      "Cell": "dat_du",
+      "Form": "dnéma",
+      "Morphs": ["dn", "éma"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_dan_du_ins",
+      "Lexeme_ID": "slv_dan",
+      "Cell": "ins_du",
+      "Form": "dnéma",
+      "Morphs": ["dn", "éma"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_racunovodja_sg_nom",
+      "Lexeme_ID": "slv_racunovodja",
+      "Cell": "nom_sg",
+      "Form": "računovodja",
+      "Morphs": ["računovod", "ja"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_racunovodja_sg_acc",
+      "Lexeme_ID": "slv_racunovodja",
+      "Cell": "acc_sg",
+      "Form": "računovodja",
+      "Morphs": ["računovod", "ja"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_racunovodja_sg_gen",
+      "Lexeme_ID": "slv_racunovodja",
+      "Cell": "gen_sg",
+      "Form": "računovodja",
+      "Morphs": ["računovod", "ja"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_racunovodja_sg_prep",
+      "Lexeme_ID": "slv_racunovodja",
+      "Cell": "prep_sg",
+      "Form": "računovodju",
+      "Morphs": ["računovod", "ju"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_racunovodja_sg_dat",
+      "Lexeme_ID": "slv_racunovodja",
+      "Cell": "dat_sg",
+      "Form": "računovodju",
+      "Morphs": ["računovod", "ju"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_racunovodja_sg_ins",
+      "Lexeme_ID": "slv_racunovodja",
+      "Cell": "ins_sg",
+      "Form": "računovodjem",
+      "Morphs": ["računovod", "jem"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_ta_n_nom",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "nom_sg_n",
+      "Form": "tô",
+      "Morphs": ["tô"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_n_acc",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "acc_sg_n",
+      "Form": "tô",
+      "Morphs": ["tô"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_n_gen",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "gen_sg_n",
+      "Form": "têga",
+      "Morphs": ["têga"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_n_prep",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "prep_sg_n",
+      "Form": "têm",
+      "Morphs": ["têm"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_n_dat",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "dat_sg_n",
+      "Form": "têmu",
+      "Morphs": ["têmu"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_n_ins",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "ins_sg_n",
+      "Form": "têm",
+      "Morphs": ["têm"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_potnik_pl_nom",
+      "Lexeme_ID": "slv_potnik",
+      "Cell": "nom_pl",
+      "Form": "pótniki",
+      "Morphs": ["pótnik", "i"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_potnik_pl_acc",
+      "Lexeme_ID": "slv_potnik",
+      "Cell": "acc_pl",
+      "Form": "pótnike",
+      "Morphs": ["pótnik", "e"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_potnik_pl_gen",
+      "Lexeme_ID": "slv_potnik",
+      "Cell": "gen_pl",
+      "Form": "pótnikov",
+      "Morphs": ["pótnik", "ov"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_potnik_pl_prep",
+      "Lexeme_ID": "slv_potnik",
+      "Cell": "prep_pl",
+      "Form": "pótnikih",
+      "Morphs": ["pótnik", "ih"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_potnik_pl_dat",
+      "Lexeme_ID": "slv_potnik",
+      "Cell": "dat_pl",
+      "Form": "pótnikom",
+      "Morphs": ["pótnik", "om"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_potnik_pl_ins",
+      "Lexeme_ID": "slv_potnik",
+      "Cell": "ins_pl",
+      "Form": "pótniki",
+      "Morphs": ["pótnik", "i"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_f_nom",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "nom_sg_f",
+      "Form": "tâ",
+      "Morphs": ["tâ"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_f_acc",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "acc_sg_f",
+      "Form": "tô",
+      "Morphs": ["tô"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_f_gen",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "gen_sg_f",
+      "Form": "tê",
+      "Morphs": ["tê"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_f_prep",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "prep_sg_f",
+      "Form": "têj",
+      "Morphs": ["têj"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_f_dat",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "dat_sg_f",
+      "Form": "têj",
+      "Morphs": ["têj"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_f_ins",
+      "Lexeme_ID": "slv_ta",
+      "Cell": "ins_sg_f",
+      "Form": "tô",
+      "Morphs": ["tô"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_tisti_n_nom",
+      "Lexeme_ID": "slv_tisti",
+      "Cell": "nom_sg_n",
+      "Form": "tîsto",
+      "Morphs": ["tîs", "t", "o"],
+      "Source": ["caha-2009[(19)]"]
+    },
+    {
+      "ID": "slv_tisti_n_acc",
+      "Lexeme_ID": "slv_tisti",
+      "Cell": "acc_sg_n",
+      "Form": "tîsto",
+      "Morphs": ["tîs", "t", "o"],
+      "Source": ["caha-2009[(19)]"]
+    },
+    {
+      "ID": "slv_tisti_n_gen",
+      "Lexeme_ID": "slv_tisti",
+      "Cell": "gen_sg_n",
+      "Form": "tîstega",
+      "Morphs": ["tîs", "t", "ega"],
+      "Source": ["caha-2009[(19)]"]
+    },
+    {
+      "ID": "slv_tisti_n_prep",
+      "Lexeme_ID": "slv_tisti",
+      "Cell": "prep_sg_n",
+      "Form": "tîstem",
+      "Morphs": ["tîs", "t", "em"],
+      "Source": ["caha-2009[(19)]"]
+    },
+    {
+      "ID": "slv_tisti_n_dat",
+      "Lexeme_ID": "slv_tisti",
+      "Cell": "dat_sg_n",
+      "Form": "tîstemu",
+      "Morphs": ["tîs", "t", "emu"],
+      "Source": ["caha-2009[(19)]"]
+    },
+    {
+      "ID": "slv_tisti_n_ins",
+      "Lexeme_ID": "slv_tisti",
+      "Cell": "ins_sg_n",
+      "Form": "tîstim",
+      "Morphs": ["tîs", "t", "im"],
+      "Source": ["caha-2009[(19)]"]
+    },
+    {
+      "ID": "slv_vas_n_nom",
+      "Lexeme_ID": "slv_vas",
+      "Cell": "nom_sg_n",
+      "Form": "váše",
+      "Morphs": ["váš", "e"],
+      "Source": ["caha-2009[(20)]"]
+    },
+    {
+      "ID": "slv_vas_n_acc",
+      "Lexeme_ID": "slv_vas",
+      "Cell": "acc_sg_n",
+      "Form": "váše",
+      "Morphs": ["váš", "e"],
+      "Source": ["caha-2009[(20)]"]
+    },
+    {
+      "ID": "slv_vas_n_gen",
+      "Lexeme_ID": "slv_vas",
+      "Cell": "gen_sg_n",
+      "Form": "vášega",
+      "Morphs": ["váš", "ega"],
+      "Source": ["caha-2009[(20)]"]
+    },
+    {
+      "ID": "slv_vas_n_prep",
+      "Lexeme_ID": "slv_vas",
+      "Cell": "prep_sg_n",
+      "Form": "vášem",
+      "Morphs": ["váš", "em"],
+      "Source": ["caha-2009[(20)]"]
+    },
+    {
+      "ID": "slv_vas_n_dat",
+      "Lexeme_ID": "slv_vas",
+      "Cell": "dat_sg_n",
+      "Form": "vášemu",
+      "Morphs": ["váš", "emu"],
+      "Source": ["caha-2009[(20)]"]
+    },
+    {
+      "ID": "slv_vas_n_ins",
+      "Lexeme_ID": "slv_vas",
+      "Cell": "ins_sg_n",
+      "Form": "vášim",
+      "Morphs": ["váš", "im"],
+      "Source": ["caha-2009[(20)]"]
+    },
+    {
+      "ID": "ces_okno_sg_nom",
+      "Lexeme_ID": "ces_okno",
+      "Cell": "nom_sg",
+      "Form": "okno",
+      "Morphs": ["okn", "o"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_okno_sg_acc",
+      "Lexeme_ID": "ces_okno",
+      "Cell": "acc_sg",
+      "Form": "okno",
+      "Morphs": ["okn", "o"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_okno_sg_gen",
+      "Lexeme_ID": "ces_okno",
+      "Cell": "gen_sg",
+      "Form": "okna",
+      "Morphs": ["okn", "a"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_okno_sg_prep",
+      "Lexeme_ID": "ces_okno",
+      "Cell": "prep_sg",
+      "Form": "okně",
+      "Morphs": ["okn", "ě"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_okno_sg_dat",
+      "Lexeme_ID": "ces_okno",
+      "Cell": "dat_sg",
+      "Form": "oknu",
+      "Morphs": ["okn", "u"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_okno_sg_ins",
+      "Lexeme_ID": "ces_okno",
+      "Cell": "ins_sg",
+      "Form": "oknem",
+      "Morphs": ["okn", "em"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_ulice_sg_nom",
+      "Lexeme_ID": "ces_ulice",
+      "Cell": "nom_sg",
+      "Form": "ulice",
+      "Morphs": ["ulic", "e"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_ulice_sg_acc",
+      "Lexeme_ID": "ces_ulice",
+      "Cell": "acc_sg",
+      "Form": "ulici",
+      "Morphs": ["ulic", "i"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_ulice_sg_gen",
+      "Lexeme_ID": "ces_ulice",
+      "Cell": "gen_sg",
+      "Form": "ulice",
+      "Morphs": ["ulic", "e"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_ulice_sg_prep",
+      "Lexeme_ID": "ces_ulice",
+      "Cell": "prep_sg",
+      "Form": "ulici",
+      "Morphs": ["ulic", "i"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_ulice_sg_dat",
+      "Lexeme_ID": "ces_ulice",
+      "Cell": "dat_sg",
+      "Form": "ulici",
+      "Morphs": ["ulic", "i"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_ulice_sg_ins",
+      "Lexeme_ID": "ces_ulice",
+      "Cell": "ins_sg",
+      "Form": "ulicí",
+      "Morphs": ["ulic", "í"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_pl_nom",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "nom_pl",
+      "Form": "muži",
+      "Morphs": ["muž", "i"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_pl_acc",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "acc_pl",
+      "Form": "muže",
+      "Morphs": ["muž", "e"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_pl_gen",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "gen_pl",
+      "Form": "mužů",
+      "Morphs": ["muž", "ů"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_pl_prep",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "prep_pl",
+      "Form": "mužích",
+      "Morphs": ["muž", "ích"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_pl_dat",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "dat_pl",
+      "Form": "mužům",
+      "Morphs": ["muž", "ům"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_pl_ins",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "ins_pl",
+      "Form": "muži",
+      "Morphs": ["muž", "i"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_sg_nom",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "nom_sg",
+      "Form": "muž",
+      "Morphs": ["muž"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_muz_sg_acc",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "acc_sg",
+      "Form": "muže",
+      "Morphs": ["muž", "e"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_muz_sg_gen",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "gen_sg",
+      "Form": "muže",
+      "Morphs": ["muž", "e"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_muz_sg_prep",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "prep_sg",
+      "Form": "muži",
+      "Morphs": ["muž", "i"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_muz_sg_dat",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "dat_sg",
+      "Form": "muži",
+      "Morphs": ["muž", "i"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_muz_sg_ins",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "ins_sg",
+      "Form": "mužem",
+      "Morphs": ["muž", "em"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_fsg_nom",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "nom_sg_f",
+      "Form": "dobrá",
+      "Morphs": ["dobr", "á"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_fsg_acc",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "acc_sg_f",
+      "Form": "dobrou",
+      "Morphs": ["dobr", "ou"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_fsg_gen",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "gen_sg_f",
+      "Form": "dobré",
+      "Morphs": ["dobr", "é"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_fsg_prep",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "prep_sg_f",
+      "Form": "dobré",
+      "Morphs": ["dobr", "é"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_fsg_dat",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "dat_sg_f",
+      "Form": "dobré",
+      "Morphs": ["dobr", "é"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_fsg_ins",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "ins_sg_f",
+      "Form": "dobrou",
+      "Morphs": ["dobr", "ou"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_2_nom",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "nom_pl_m",
+      "Form": "dobrý",
+      "Morphs": ["dobrý"],
+      "Source": ["caha-2009[(24)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_2_acc",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "acc_pl_m",
+      "Form": "dobrý",
+      "Morphs": ["dobrý"],
+      "Source": ["caha-2009[(24)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_2_gen",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "gen_pl_m",
+      "Form": "dobrých",
+      "Morphs": ["dobrý", "ch"],
+      "Source": ["caha-2009[(24)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_2_prep",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "prep_pl_m",
+      "Form": "dobrých",
+      "Morphs": ["dobrý", "ch"],
+      "Source": ["caha-2009[(24)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_2_dat",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "dat_pl_m",
+      "Form": "dobrým",
+      "Morphs": ["dobrý", "m"],
+      "Source": ["caha-2009[(24)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_2_ins",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "ins_pl_m",
+      "Form": "dobrými",
+      "Morphs": ["dobrý", "mi"],
+      "Source": ["caha-2009[(24)]"]
+    },
+    {
+      "ID": "ces_vetsi_msg_nom",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "nom_sg_m",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[(25)]"]
+    },
+    {
+      "ID": "ces_vetsi_msg_acc",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "acc_sg_m",
+      "Form": "většího",
+      "Morphs": ["větš", "ího"],
+      "Source": ["caha-2009[(25)]"]
+    },
+    {
+      "ID": "ces_vetsi_msg_gen",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "gen_sg_m",
+      "Form": "většího",
+      "Morphs": ["větš", "ího"],
+      "Source": ["caha-2009[(25)]"]
+    },
+    {
+      "ID": "ces_vetsi_msg_prep",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "prep_sg_m",
+      "Form": "větším",
+      "Morphs": ["větš", "ím"],
+      "Source": ["caha-2009[(25)]"]
+    },
+    {
+      "ID": "ces_vetsi_msg_dat",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "dat_sg_m",
+      "Form": "většímu",
+      "Morphs": ["větš", "ímu"],
+      "Source": ["caha-2009[(25)]"]
+    },
+    {
+      "ID": "ces_vetsi_msg_ins",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "ins_sg_m",
+      "Form": "větším",
+      "Morphs": ["větš", "ím"],
+      "Source": ["caha-2009[(25)]"]
+    },
+    {
+      "ID": "ces_oba_nom",
+      "Lexeme_ID": "ces_oba",
+      "Cell": "nom_du",
+      "Form": "oba",
+      "Morphs": ["ob", "a"],
+      "Source": ["caha-2009[(26)]"]
+    },
+    {
+      "ID": "ces_oba_acc",
+      "Lexeme_ID": "ces_oba",
+      "Cell": "acc_du",
+      "Form": "oba",
+      "Morphs": ["ob", "a"],
+      "Source": ["caha-2009[(26)]"]
+    },
+    {
+      "ID": "ces_oba_gen",
+      "Lexeme_ID": "ces_oba",
+      "Cell": "gen_du",
+      "Form": "obou",
+      "Morphs": ["ob", "ou"],
+      "Source": ["caha-2009[(26)]"]
+    },
+    {
+      "ID": "ces_oba_prep",
+      "Lexeme_ID": "ces_oba",
+      "Cell": "prep_du",
+      "Form": "obou",
+      "Morphs": ["ob", "ou"],
+      "Source": ["caha-2009[(26)]"]
+    },
+    {
+      "ID": "ces_oba_dat",
+      "Lexeme_ID": "ces_oba",
+      "Cell": "dat_du",
+      "Form": "oběma",
+      "Morphs": ["ob", "ěma"],
+      "Source": ["caha-2009[(26)]"]
+    },
+    {
+      "ID": "ces_oba_ins",
+      "Lexeme_ID": "ces_oba",
+      "Cell": "ins_du",
+      "Form": "oběma",
+      "Morphs": ["ob", "ěma"],
+      "Source": ["caha-2009[(26)]"]
+    },
+    {
+      "ID": "ces_stroj_sg_nom",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "nom_sg",
+      "Form": "stroj",
+      "Morphs": ["stroj", "ø"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_sg_acc",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "acc_sg",
+      "Form": "stroj",
+      "Morphs": ["stroj", "ø"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_sg_gen",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "gen_sg",
+      "Form": "stroje",
+      "Morphs": ["stroj", "e"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_sg_prep",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "prep_sg",
+      "Form": "stroji",
+      "Morphs": ["stroj", "i"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_sg_dat",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "dat_sg",
+      "Form": "stroji",
+      "Morphs": ["stroj", "i"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_sg_ins",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "ins_sg",
+      "Form": "strojem",
+      "Morphs": ["stroj", "em"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_pl_nom",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "nom_pl",
+      "Form": "stroje",
+      "Morphs": ["stroj", "e"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_pl_acc",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "acc_pl",
+      "Form": "stroje",
+      "Morphs": ["stroj", "e"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_pl_gen",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "gen_pl",
+      "Form": "strojů",
+      "Morphs": ["stroj", "ů"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_pl_prep",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "prep_pl",
+      "Form": "strojích",
+      "Morphs": ["stroj", "ích"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_pl_dat",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "dat_pl",
+      "Form": "strojům",
+      "Morphs": ["stroj", "ům"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_pl_ins",
+      "Lexeme_ID": "ces_stroj",
+      "Cell": "ins_pl",
+      "Form": "stroji",
+      "Morphs": ["stroj", "i"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_kost_pl_nom",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "nom_pl",
+      "Form": "kosti",
+      "Morphs": ["kost", "i"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_kost_pl_acc",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "acc_pl",
+      "Form": "kosti",
+      "Morphs": ["kost", "i"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_kost_pl_gen",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "gen_pl",
+      "Form": "kostí",
+      "Morphs": ["kost", "í"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_kost_pl_prep",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "prep_pl",
+      "Form": "kostech",
+      "Morphs": ["kost", "ech"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_kost_pl_dat",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "dat_pl",
+      "Form": "kostem",
+      "Morphs": ["kost", "em"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_kost_pl_ins",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "ins_pl",
+      "Form": "kostmi",
+      "Morphs": ["kost", "mi"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_ty_nom",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "nom_pl_f",
+      "Form": "ty",
+      "Morphs": ["t", "y"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_ty_acc",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "acc_pl_f",
+      "Form": "ty",
+      "Morphs": ["t", "y"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_ty_gen",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "gen_pl_f",
+      "Form": "těch",
+      "Morphs": ["t", "ěch"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_ty_prep",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "prep_pl_f",
+      "Form": "těch",
+      "Morphs": ["t", "ěch"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_ty_dat",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "dat_pl_f",
+      "Form": "těm",
+      "Morphs": ["t", "ěm"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_ty_ins",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "ins_pl_f",
+      "Form": "těmi",
+      "Morphs": ["t", "ěmi"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_vila_sg_nom",
+      "Lexeme_ID": "ces_vila",
+      "Cell": "nom_sg",
+      "Form": "vila",
+      "Morphs": ["vil", "a"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_vila_sg_acc",
+      "Lexeme_ID": "ces_vila",
+      "Cell": "acc_sg",
+      "Form": "vilu",
+      "Morphs": ["vil", "u"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_vila_sg_gen",
+      "Lexeme_ID": "ces_vila",
+      "Cell": "gen_sg",
+      "Form": "vily",
+      "Morphs": ["vil", "y"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_vila_sg_prep",
+      "Lexeme_ID": "ces_vila",
+      "Cell": "prep_sg",
+      "Form": "vile",
+      "Morphs": ["vil", "e"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_vila_sg_dat",
+      "Lexeme_ID": "ces_vila",
+      "Cell": "dat_sg",
+      "Form": "vile",
+      "Morphs": ["vil", "e"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_vila_sg_ins",
+      "Lexeme_ID": "ces_vila",
+      "Cell": "ins_sg",
+      "Form": "vilou",
+      "Morphs": ["vil", "ou"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_misa_sg_nom",
+      "Lexeme_ID": "ces_misa",
+      "Cell": "nom_sg",
+      "Form": "Míša",
+      "Morphs": ["Míš", "a"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_misa_sg_acc",
+      "Lexeme_ID": "ces_misa",
+      "Cell": "acc_sg",
+      "Form": "Míšu",
+      "Morphs": ["Míš", "u"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_misa_sg_gen",
+      "Lexeme_ID": "ces_misa",
+      "Cell": "gen_sg",
+      "Form": "Míši",
+      "Morphs": ["Míš", "i"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_misa_sg_prep",
+      "Lexeme_ID": "ces_misa",
+      "Cell": "prep_sg",
+      "Form": "Míše",
+      "Morphs": ["Míš", "e"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_misa_sg_dat",
+      "Lexeme_ID": "ces_misa",
+      "Cell": "dat_sg",
+      "Form": "Míše",
+      "Morphs": ["Míš", "e"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_misa_sg_ins",
+      "Lexeme_ID": "ces_misa",
+      "Cell": "ins_sg",
+      "Form": "Míšou",
+      "Morphs": ["Míš", "ou"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_vul_pl_nom",
+      "Lexeme_ID": "ces_vul",
+      "Cell": "nom_pl",
+      "Form": "voli",
+      "Morphs": ["vol", "i"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_vul_pl_acc",
+      "Lexeme_ID": "ces_vul",
+      "Cell": "acc_pl",
+      "Form": "voly",
+      "Morphs": ["vol", "y"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_vul_pl_gen",
+      "Lexeme_ID": "ces_vul",
+      "Cell": "gen_pl",
+      "Form": "volů",
+      "Morphs": ["vol", "ů"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_vul_pl_prep",
+      "Lexeme_ID": "ces_vul",
+      "Cell": "prep_pl",
+      "Form": "volech",
+      "Morphs": ["vol", "ech"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_vul_pl_dat",
+      "Lexeme_ID": "ces_vul",
+      "Cell": "dat_pl",
+      "Form": "volům",
+      "Morphs": ["vol", "ům"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_vul_pl_ins",
+      "Lexeme_ID": "ces_vul",
+      "Cell": "ins_pl",
+      "Form": "voly",
+      "Morphs": ["vol", "y"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_hoch_pl_nom",
+      "Lexeme_ID": "ces_hoch",
+      "Cell": "nom_pl",
+      "Form": "hoši",
+      "Morphs": ["hoš", "i"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_hoch_pl_acc",
+      "Lexeme_ID": "ces_hoch",
+      "Cell": "acc_pl",
+      "Form": "hochy",
+      "Morphs": ["hoch", "y"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_hoch_pl_gen",
+      "Lexeme_ID": "ces_hoch",
+      "Cell": "gen_pl",
+      "Form": "hochů",
+      "Morphs": ["hoch", "ů"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_hoch_pl_prep",
+      "Lexeme_ID": "ces_hoch",
+      "Cell": "prep_pl",
+      "Form": "hoších",
+      "Morphs": ["hoš", "ích"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_hoch_pl_dat",
+      "Lexeme_ID": "ces_hoch",
+      "Cell": "dat_pl",
+      "Form": "hochům",
+      "Morphs": ["hoch", "ům"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_hoch_pl_ins",
+      "Lexeme_ID": "ces_hoch",
+      "Cell": "ins_pl",
+      "Form": "hochy",
+      "Morphs": ["hoch", "y"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_pan_sg_nom",
+      "Lexeme_ID": "ces_pan",
+      "Cell": "nom_sg",
+      "Form": "pán",
+      "Morphs": ["pán"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_pan_sg_acc",
+      "Lexeme_ID": "ces_pan",
+      "Cell": "acc_sg",
+      "Form": "pána",
+      "Morphs": ["pán", "a"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_pan_sg_gen",
+      "Lexeme_ID": "ces_pan",
+      "Cell": "gen_sg",
+      "Form": "pána",
+      "Morphs": ["pán", "a"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_pan_sg_prep",
+      "Lexeme_ID": "ces_pan",
+      "Cell": "prep_sg",
+      "Form": "pánovi",
+      "Morphs": ["pán", "ovi"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_pan_sg_dat",
+      "Lexeme_ID": "ces_pan",
+      "Cell": "dat_sg",
+      "Form": "pánovi",
+      "Morphs": ["pán", "ovi"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_pan_sg_ins",
+      "Lexeme_ID": "ces_pan",
+      "Cell": "ins_sg",
+      "Form": "pánem",
+      "Morphs": ["pán", "em"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ten_nom",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "nom_sg_m",
+      "Form": "ten",
+      "Morphs": ["t", "en"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ten_acc",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "acc_sg_m",
+      "Form": "toho",
+      "Morphs": ["t", "oho"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ten_gen",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "gen_sg_m",
+      "Form": "toho",
+      "Morphs": ["t", "oho"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ten_prep",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "prep_sg_m",
+      "Form": "tom",
+      "Morphs": ["t", "om"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ten_dat",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "dat_sg_m",
+      "Form": "tomu",
+      "Morphs": ["t", "omu"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ten_ins",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "ins_sg_m",
+      "Form": "tím",
+      "Morphs": ["t", "ím"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_my_2_nom",
+      "Lexeme_ID": "ces_my",
+      "Cell": "nom_pl",
+      "Form": "my",
+      "Morphs": ["my"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_my_2_acc",
+      "Lexeme_ID": "ces_my",
+      "Cell": "acc_pl",
+      "Form": "nás",
+      "Morphs": ["ná", "s"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_my_2_gen",
+      "Lexeme_ID": "ces_my",
+      "Cell": "gen_pl",
+      "Form": "nás",
+      "Morphs": ["ná", "s"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_my_2_prep",
+      "Lexeme_ID": "ces_my",
+      "Cell": "prep_pl",
+      "Form": "nás",
+      "Morphs": ["ná", "s"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_my_2_dat",
+      "Lexeme_ID": "ces_my",
+      "Cell": "dat_pl",
+      "Form": "nám",
+      "Morphs": ["ná", "m"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_my_2_ins",
+      "Lexeme_ID": "ces_my",
+      "Cell": "ins_pl",
+      "Form": "náma",
+      "Morphs": ["ná", "ma"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ona_nom",
+      "Lexeme_ID": "ces_ona",
+      "Cell": "nom_sg",
+      "Form": "ona",
+      "Morphs": ["ona"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_ona_acc",
+      "Lexeme_ID": "ces_ona",
+      "Cell": "acc_sg",
+      "Form": "ji",
+      "Morphs": ["j", "i"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_ona_gen",
+      "Lexeme_ID": "ces_ona",
+      "Cell": "gen_sg",
+      "Form": "jí",
+      "Morphs": ["j", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_ona_prep",
+      "Lexeme_ID": "ces_ona",
+      "Cell": "prep_sg",
+      "Form": "jí",
+      "Morphs": ["j", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_ona_dat",
+      "Lexeme_ID": "ces_ona",
+      "Cell": "dat_sg",
+      "Form": "jí",
+      "Morphs": ["j", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_ona_ins",
+      "Lexeme_ID": "ces_ona",
+      "Cell": "ins_sg",
+      "Form": "jí",
+      "Morphs": ["j", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_nase_fsg_nom",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "nom_sg_f",
+      "Form": "naše",
+      "Morphs": ["naš", "e"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_nase_fsg_acc",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "acc_sg_f",
+      "Form": "naši",
+      "Morphs": ["naš", "i"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_nase_fsg_gen",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "gen_sg_f",
+      "Form": "naší",
+      "Morphs": ["naš", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_nase_fsg_prep",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "prep_sg_f",
+      "Form": "naší",
+      "Morphs": ["naš", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_nase_fsg_dat",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "dat_sg_f",
+      "Form": "naší",
+      "Morphs": ["naš", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_nase_fsg_ins",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "ins_sg_f",
+      "Form": "naší",
+      "Morphs": ["naš", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zatez_sg_nom",
+      "Lexeme_ID": "ces_zatez",
+      "Cell": "nom_sg",
+      "Form": "zátěž",
+      "Morphs": ["zátěž", "ø"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zatez_sg_acc",
+      "Lexeme_ID": "ces_zatez",
+      "Cell": "acc_sg",
+      "Form": "zátěž",
+      "Morphs": ["zátěž", "ø"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zatez_sg_gen",
+      "Lexeme_ID": "ces_zatez",
+      "Cell": "gen_sg",
+      "Form": "zátěže",
+      "Morphs": ["zátěž", "e"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zatez_sg_prep",
+      "Lexeme_ID": "ces_zatez",
+      "Cell": "prep_sg",
+      "Form": "zátěži",
+      "Morphs": ["zátěž", "i"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zatez_sg_dat",
+      "Lexeme_ID": "ces_zatez",
+      "Cell": "dat_sg",
+      "Form": "zátěži",
+      "Morphs": ["zátěž", "i"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zatez_sg_ins",
+      "Lexeme_ID": "ces_zatez",
+      "Cell": "ins_sg",
+      "Form": "zátěží",
+      "Morphs": ["zátěž", "í"],
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zena_sg_nom",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "nom_sg",
+      "Form": "žena",
+      "Morphs": ["žen", "a"],
+      "Source": ["caha-2009[(44)]"]
+    },
+    {
+      "ID": "ces_zena_sg_acc",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "acc_sg",
+      "Form": "ženu",
+      "Morphs": ["žen", "u"],
+      "Source": ["caha-2009[(44)]"]
+    },
+    {
+      "ID": "ces_zena_sg_gen",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "gen_sg",
+      "Form": "ženy",
+      "Morphs": ["žen", "y"],
+      "Source": ["caha-2009[(44)]"]
+    },
+    {
+      "ID": "ces_zena_sg_prep",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "prep_sg",
+      "Form": "ženě",
+      "Morphs": ["žen", "ě"],
+      "Source": ["caha-2009[(44)]"]
+    },
+    {
+      "ID": "ces_zena_sg_dat",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "dat_sg",
+      "Form": "ženě",
+      "Morphs": ["žen", "ě"],
+      "Source": ["caha-2009[(44)]"]
+    },
+    {
+      "ID": "ces_zena_sg_ins",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "ins_sg",
+      "Form": "ženou",
+      "Morphs": ["žen", "ou"],
+      "Source": ["caha-2009[(44)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_nom",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "nom_pl",
+      "Form": "kluci",
+      "Morphs": ["kluc", "i"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_acc",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "acc_pl",
+      "Form": "kluky",
+      "Morphs": ["kluk", "y"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_gen",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "gen_pl",
+      "Form": "kluků",
+      "Morphs": ["kluk", "ů"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_prep",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "prep_pl",
+      "Form": "klucích",
+      "Morphs": ["kluc", "ích"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_dat",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "dat_pl",
+      "Form": "klukům",
+      "Morphs": ["kluk", "ům"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_ins",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "ins_pl",
+      "Form": "kluky",
+      "Morphs": ["kluk", "y"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_colloquial_nom",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "nom_pl",
+      "Form": "kluci",
+      "Morphs": ["kluc", "i"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_colloquial_acc",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "acc_pl",
+      "Form": "kluky",
+      "Morphs": ["kluk", "y"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_colloquial_gen",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "gen_pl",
+      "Form": "kluků",
+      "Morphs": ["kluk", "ů"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_colloquial_prep",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "prep_pl",
+      "Form": "klukách",
+      "Morphs": ["kluk", "ách"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_colloquial_dat",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "dat_pl",
+      "Form": "klukům",
+      "Morphs": ["kluk", "ům"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_colloquial_ins",
+      "Lexeme_ID": "ces_kluk",
+      "Cell": "ins_pl",
+      "Form": "klukama",
+      "Morphs": ["kluk", "ama"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_muz_pl_colloquial_nom",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "nom_pl",
+      "Form": "muži",
+      "Morphs": ["muž", "i"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_muz_pl_colloquial_acc",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "acc_pl",
+      "Form": "muže",
+      "Morphs": ["muž", "e"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_muz_pl_colloquial_gen",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "gen_pl",
+      "Form": "mužů",
+      "Morphs": ["muž", "ů"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_muz_pl_colloquial_prep",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "prep_pl",
+      "Form": "mužích",
+      "Morphs": ["muž", "ích"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_muz_pl_colloquial_dat",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "dat_pl",
+      "Form": "mužům",
+      "Morphs": ["muž", "ům"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_muz_pl_colloquial_ins",
+      "Lexeme_ID": "ces_muz",
+      "Cell": "ins_pl",
+      "Form": "mužema",
+      "Morphs": ["muž", "ema"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_zena_pl_nom",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "nom_pl",
+      "Form": "ženy",
+      "Morphs": ["žen", "y"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_zena_pl_acc",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "acc_pl",
+      "Form": "ženy",
+      "Morphs": ["žen", "y"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_zena_pl_gen",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "gen_pl",
+      "Form": "žen",
+      "Morphs": ["žen", "ø"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_zena_pl_prep",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "prep_pl",
+      "Form": "ženách",
+      "Morphs": ["žen", "á", "ch"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_zena_pl_dat",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "dat_pl",
+      "Form": "ženám",
+      "Morphs": ["žen", "á", "m"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_zena_pl_ins",
+      "Lexeme_ID": "ces_zena",
+      "Cell": "ins_pl",
+      "Form": "ženami",
+      "Morphs": ["žen", "a", "mi"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_pisen_pl_nom",
+      "Lexeme_ID": "ces_pisen",
+      "Cell": "nom_pl",
+      "Form": "písně",
+      "Morphs": ["písn", "ě"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_pisen_pl_acc",
+      "Lexeme_ID": "ces_pisen",
+      "Cell": "acc_pl",
+      "Form": "písně",
+      "Morphs": ["písn", "ě"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_pisen_pl_gen",
+      "Lexeme_ID": "ces_pisen",
+      "Cell": "gen_pl",
+      "Form": "písní",
+      "Morphs": ["písn", "í"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_pisen_pl_prep",
+      "Lexeme_ID": "ces_pisen",
+      "Cell": "prep_pl",
+      "Form": "písních",
+      "Morphs": ["písn", "í", "ch"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_pisen_pl_dat",
+      "Lexeme_ID": "ces_pisen",
+      "Cell": "dat_pl",
+      "Form": "písním",
+      "Morphs": ["písn", "í", "m"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_pisen_pl_ins",
+      "Lexeme_ID": "ces_pisen",
+      "Cell": "ins_pl",
+      "Form": "písněmi",
+      "Morphs": ["písn", "ě", "mi"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_nom",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "nom_pl_m",
+      "Form": "dobré",
+      "Morphs": ["dobr", "é"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_acc",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "acc_pl_m",
+      "Form": "dobré",
+      "Morphs": ["dobr", "é"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_gen",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "gen_pl_m",
+      "Form": "dobrých",
+      "Morphs": ["dobr", "ý", "ch"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_prep",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "prep_pl_m",
+      "Form": "dobrých",
+      "Morphs": ["dobr", "ý", "ch"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_dat",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "dat_pl_m",
+      "Form": "dobrým",
+      "Morphs": ["dobr", "ý", "m"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_ins",
+      "Lexeme_ID": "ces_dobry",
+      "Cell": "ins_pl_m",
+      "Form": "dobrými",
+      "Morphs": ["dobr", "ý", "mi"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_kost_sg_nom",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "nom_sg",
+      "Form": "kost",
+      "Morphs": ["kost", "ø"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_kost_sg_acc",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "acc_sg",
+      "Form": "kost",
+      "Morphs": ["kost", "ø"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_kost_sg_gen",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "gen_sg",
+      "Form": "kosti",
+      "Morphs": ["kost", "i"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_kost_sg_prep",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "prep_sg",
+      "Form": "kosti",
+      "Morphs": ["kost", "i"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_kost_sg_dat",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "dat_sg",
+      "Form": "kosti",
+      "Morphs": ["kost", "i"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_kost_sg_ins",
+      "Lexeme_ID": "ces_kost",
+      "Cell": "ins_sg",
+      "Form": "kostí",
+      "Morphs": ["kost", "í"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_hrad_sg_nom",
+      "Lexeme_ID": "ces_hrad",
+      "Cell": "nom_sg",
+      "Form": "hrad",
+      "Morphs": ["hrad", "ø"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_hrad_sg_acc",
+      "Lexeme_ID": "ces_hrad",
+      "Cell": "acc_sg",
+      "Form": "hrad",
+      "Morphs": ["hrad", "ø"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_hrad_sg_gen",
+      "Lexeme_ID": "ces_hrad",
+      "Cell": "gen_sg",
+      "Form": "hradu",
+      "Morphs": ["hrad", "u"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_hrad_sg_prep",
+      "Lexeme_ID": "ces_hrad",
+      "Cell": "prep_sg",
+      "Form": "hradu",
+      "Morphs": ["hrad", "u"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_hrad_sg_dat",
+      "Lexeme_ID": "ces_hrad",
+      "Cell": "dat_sg",
+      "Form": "hradu",
+      "Morphs": ["hrad", "u"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_hrad_sg_ins",
+      "Lexeme_ID": "ces_hrad",
+      "Cell": "ins_sg",
+      "Form": "hradem",
+      "Morphs": ["hrad", "em"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_my_nom",
+      "Lexeme_ID": "ces_my",
+      "Cell": "nom_pl",
+      "Form": "my",
+      "Morphs": ["my"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_my_acc",
+      "Lexeme_ID": "ces_my",
+      "Cell": "acc_pl",
+      "Form": "nás",
+      "Morphs": ["ná", "s"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_my_gen",
+      "Lexeme_ID": "ces_my",
+      "Cell": "gen_pl",
+      "Form": "nás",
+      "Morphs": ["ná", "s"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_my_prep",
+      "Lexeme_ID": "ces_my",
+      "Cell": "prep_pl",
+      "Form": "nás",
+      "Morphs": ["ná", "s"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_my_dat",
+      "Lexeme_ID": "ces_my",
+      "Cell": "dat_pl",
+      "Form": "nám",
+      "Morphs": ["ná", "m"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_my_ins",
+      "Lexeme_ID": "ces_my",
+      "Cell": "ins_pl",
+      "Form": "námi",
+      "Morphs": ["ná", "mi"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_mesto_sg_nom",
+      "Lexeme_ID": "ces_mesto",
+      "Cell": "nom_sg",
+      "Form": "město",
+      "Morphs": ["měst", "o"],
+      "Source": ["caha-2009[(56)]"]
+    },
+    {
+      "ID": "ces_mesto_sg_acc",
+      "Lexeme_ID": "ces_mesto",
+      "Cell": "acc_sg",
+      "Form": "město",
+      "Morphs": ["měst", "o"],
+      "Source": ["caha-2009[(56)]"]
+    },
+    {
+      "ID": "ces_mesto_sg_gen",
+      "Lexeme_ID": "ces_mesto",
+      "Cell": "gen_sg",
+      "Form": "města",
+      "Morphs": ["měst", "a"],
+      "Source": ["caha-2009[(56)]"]
+    },
+    {
+      "ID": "ces_mesto_sg_prep",
+      "Lexeme_ID": "ces_mesto",
+      "Cell": "prep_sg",
+      "Form": "městu",
+      "Morphs": ["měst", "u"],
+      "Source": ["caha-2009[(56)]"]
+    },
+    {
+      "ID": "ces_mesto_sg_dat",
+      "Lexeme_ID": "ces_mesto",
+      "Cell": "dat_sg",
+      "Form": "městu",
+      "Morphs": ["měst", "u"],
+      "Source": ["caha-2009[(56)]"]
+    },
+    {
+      "ID": "ces_mesto_sg_ins",
+      "Lexeme_ID": "ces_mesto",
+      "Cell": "ins_sg",
+      "Form": "městem",
+      "Morphs": ["měst", "em"],
+      "Source": ["caha-2009[(56)]"]
+    },
+    {
+      "ID": "ces_vetsi_nsg_nom",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "nom_sg_n",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[(57)]"]
+    },
+    {
+      "ID": "ces_vetsi_nsg_acc",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "acc_sg_n",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[(57)]"]
+    },
+    {
+      "ID": "ces_vetsi_nsg_gen",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "gen_sg_n",
+      "Form": "většího",
+      "Morphs": ["větš", "ího"],
+      "Source": ["caha-2009[(57)]"]
+    },
+    {
+      "ID": "ces_vetsi_nsg_prep",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "prep_sg_n",
+      "Form": "větším",
+      "Morphs": ["větš", "ím"],
+      "Source": ["caha-2009[(57)]"]
+    },
+    {
+      "ID": "ces_vetsi_nsg_dat",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "dat_sg_n",
+      "Form": "většímu",
+      "Morphs": ["větš", "ímu"],
+      "Source": ["caha-2009[(57)]"]
+    },
+    {
+      "ID": "ces_vetsi_nsg_ins",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "ins_sg_n",
+      "Form": "větším",
+      "Morphs": ["větš", "ím"],
+      "Source": ["caha-2009[(57)]"]
+    },
+    {
+      "ID": "ces_ono_nom",
+      "Lexeme_ID": "ces_ono",
+      "Cell": "nom_sg",
+      "Form": "ono",
+      "Morphs": ["ono"],
+      "Source": ["caha-2009[(58)]"]
+    },
+    {
+      "ID": "ces_ono_acc",
+      "Lexeme_ID": "ces_ono",
+      "Cell": "acc_sg",
+      "Form": "je",
+      "Morphs": ["j", "e"],
+      "Source": ["caha-2009[(58)]"]
+    },
+    {
+      "ID": "ces_ono_gen",
+      "Lexeme_ID": "ces_ono",
+      "Cell": "gen_sg",
+      "Form": "jeho",
+      "Morphs": ["j", "eho"],
+      "Source": ["caha-2009[(58)]"]
+    },
+    {
+      "ID": "ces_ono_prep",
+      "Lexeme_ID": "ces_ono",
+      "Cell": "prep_sg",
+      "Form": "jem",
+      "Morphs": ["j", "em"],
+      "Source": ["caha-2009[(58)]"]
+    },
+    {
+      "ID": "ces_ono_dat",
+      "Lexeme_ID": "ces_ono",
+      "Cell": "dat_sg",
+      "Form": "jemu",
+      "Morphs": ["j", "emu"],
+      "Source": ["caha-2009[(58)]"]
+    },
+    {
+      "ID": "ces_ono_ins",
+      "Lexeme_ID": "ces_ono",
+      "Cell": "ins_sg",
+      "Form": "jím",
+      "Morphs": ["j", "ím"],
+      "Source": ["caha-2009[(58)]"]
+    },
+    {
+      "ID": "ces_nase_nsg_nom",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "nom_sg_n",
+      "Form": "naše",
+      "Morphs": ["naš", "e"],
+      "Source": ["caha-2009[(62)]"]
+    },
+    {
+      "ID": "ces_nase_nsg_acc",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "acc_sg_n",
+      "Form": "naše",
+      "Morphs": ["naš", "e"],
+      "Source": ["caha-2009[(62)]"]
+    },
+    {
+      "ID": "ces_nase_nsg_gen",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "gen_sg_n",
+      "Form": "našeho",
+      "Morphs": ["naš", "eho"],
+      "Source": ["caha-2009[(62)]"]
+    },
+    {
+      "ID": "ces_nase_nsg_prep",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "prep_sg_n",
+      "Form": "našem",
+      "Morphs": ["naš", "em"],
+      "Source": ["caha-2009[(62)]"]
+    },
+    {
+      "ID": "ces_nase_nsg_dat",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "dat_sg_n",
+      "Form": "našemu",
+      "Morphs": ["naš", "emu"],
+      "Source": ["caha-2009[(62)]"]
+    },
+    {
+      "ID": "ces_nase_nsg_ins",
+      "Lexeme_ID": "ces_nase",
+      "Cell": "ins_sg_n",
+      "Form": "naším",
+      "Morphs": ["naš", "ím"],
+      "Source": ["caha-2009[(62)]"]
+    },
+    {
+      "ID": "ces_vetsi_fsg_nom",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "nom_sg_f",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[n. 25]"]
+    },
+    {
+      "ID": "ces_vetsi_fsg_acc",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "acc_sg_f",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[n. 25]"]
+    },
+    {
+      "ID": "ces_vetsi_fsg_gen",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "gen_sg_f",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[n. 25]"]
+    },
+    {
+      "ID": "ces_vetsi_fsg_prep",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "prep_sg_f",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[n. 25]"]
+    },
+    {
+      "ID": "ces_vetsi_fsg_dat",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "dat_sg_f",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[n. 25]"]
+    },
+    {
+      "ID": "ces_vetsi_fsg_ins",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "ins_sg_f",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[n. 25]"]
+    },
+    {
+      "ID": "ces_vetsi_npl_nom",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "nom_pl_n",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[(63)]"]
+    },
+    {
+      "ID": "ces_vetsi_npl_acc",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "acc_pl_n",
+      "Form": "větší",
+      "Morphs": ["větš", "í"],
+      "Source": ["caha-2009[(63)]"]
+    },
+    {
+      "ID": "ces_vetsi_npl_gen",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "gen_pl_n",
+      "Form": "větších",
+      "Morphs": ["větš", "ích"],
+      "Source": ["caha-2009[(63)]"]
+    },
+    {
+      "ID": "ces_vetsi_npl_prep",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "prep_pl_n",
+      "Form": "větších",
+      "Morphs": ["větš", "ích"],
+      "Source": ["caha-2009[(63)]"]
+    },
+    {
+      "ID": "ces_vetsi_npl_dat",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "dat_pl_n",
+      "Form": "větším",
+      "Morphs": ["větš", "ím"],
+      "Source": ["caha-2009[(63)]"]
+    },
+    {
+      "ID": "ces_vetsi_npl_ins",
+      "Lexeme_ID": "ces_vetsi",
+      "Cell": "ins_pl_n",
+      "Form": "většími",
+      "Morphs": ["větš", "ími"],
+      "Source": ["caha-2009[(63)]"]
+    },
+    {
+      "ID": "ces_ona_npl_nom",
+      "Lexeme_ID": "ces_oni",
+      "Cell": "nom_pl",
+      "Form": "ona",
+      "Morphs": ["on", "a"],
+      "Source": ["caha-2009[(64)]"]
+    },
+    {
+      "ID": "ces_ona_npl_acc",
+      "Lexeme_ID": "ces_oni",
+      "Cell": "acc_pl",
+      "Form": "je",
+      "Morphs": ["j", "e"],
+      "Source": ["caha-2009[(64)]"]
+    },
+    {
+      "ID": "ces_ona_npl_gen",
+      "Lexeme_ID": "ces_oni",
+      "Cell": "gen_pl",
+      "Form": "jich",
+      "Morphs": ["j", "ich"],
+      "Source": ["caha-2009[(64)]"]
+    },
+    {
+      "ID": "ces_ona_npl_prep",
+      "Lexeme_ID": "ces_oni",
+      "Cell": "prep_pl",
+      "Form": "jich",
+      "Morphs": ["j", "ich"],
+      "Source": ["caha-2009[(64)]"]
+    },
+    {
+      "ID": "ces_ona_npl_dat",
+      "Lexeme_ID": "ces_oni",
+      "Cell": "dat_pl",
+      "Form": "jim",
+      "Morphs": ["j", "im"],
+      "Source": ["caha-2009[(64)]"]
+    },
+    {
+      "ID": "ces_ona_npl_ins",
+      "Lexeme_ID": "ces_oni",
+      "Cell": "ins_pl",
+      "Form": "jimi",
+      "Morphs": ["j", "imi"],
+      "Source": ["caha-2009[(64)]"]
+    },
+    {
+      "ID": "ces_ta_nom",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "nom_sg_f",
+      "Form": "ta",
+      "Morphs": ["t", "a"],
+      "Source": ["caha-2009[n. 26]"]
+    },
+    {
+      "ID": "ces_ta_acc",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "acc_sg_f",
+      "Form": "tu",
+      "Morphs": ["t", "u"],
+      "Source": ["caha-2009[n. 26]"]
+    },
+    {
+      "ID": "ces_ta_gen",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "gen_sg_f",
+      "Form": "té",
+      "Morphs": ["t", "é"],
+      "Source": ["caha-2009[n. 26]"]
+    },
+    {
+      "ID": "ces_ta_prep",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "prep_sg_f",
+      "Form": "té",
+      "Morphs": ["t", "é"],
+      "Source": ["caha-2009[n. 26]"]
+    },
+    {
+      "ID": "ces_ta_dat",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "dat_sg_f",
+      "Form": "té",
+      "Morphs": ["t", "é"],
+      "Source": ["caha-2009[n. 26]"]
+    },
+    {
+      "ID": "ces_ta_ins",
+      "Lexeme_ID": "ces_ten",
+      "Cell": "ins_sg_f",
+      "Form": "tou",
+      "Morphs": ["t", "ou"],
+      "Source": ["caha-2009[n. 26]"]
+    },
+    {
+      "ID": "ces_dva_nom",
+      "Lexeme_ID": "ces_dva",
+      "Cell": "nom_du_m",
+      "Form": "dva",
+      "Morphs": ["dv", "a"],
+      "Source": ["caha-2009[(65)]"]
+    },
+    {
+      "ID": "ces_dva_acc",
+      "Lexeme_ID": "ces_dva",
+      "Cell": "acc_du_m",
+      "Form": "dva",
+      "Morphs": ["dv", "a"],
+      "Source": ["caha-2009[(65)]"]
+    },
+    {
+      "ID": "ces_dva_gen",
+      "Lexeme_ID": "ces_dva",
+      "Cell": "gen_du_m",
+      "Form": "dvou",
+      "Morphs": ["dv", "ou"],
+      "Source": ["caha-2009[(65)]"]
+    },
+    {
+      "ID": "ces_dva_prep",
+      "Lexeme_ID": "ces_dva",
+      "Cell": "prep_du_m",
+      "Form": "dvou",
+      "Morphs": ["dv", "ou"],
+      "Source": ["caha-2009[(65)]"]
+    },
+    {
+      "ID": "ces_dva_dat",
+      "Lexeme_ID": "ces_dva",
+      "Cell": "dat_du_m",
+      "Form": "dvěma",
+      "Morphs": ["dv", "ěma"],
+      "Source": ["caha-2009[(65)]"]
+    },
+    {
+      "ID": "ces_dva_ins",
+      "Lexeme_ID": "ces_dva",
+      "Cell": "ins_du_m",
+      "Form": "dvěma",
+      "Morphs": ["dv", "ěma"],
+      "Source": ["caha-2009[(65)]"]
+    },
+    {
+      "ID": "ces_pet_nom",
+      "Lexeme_ID": "ces_pet",
+      "Cell": "nom_pl",
+      "Form": "pět",
+      "Morphs": ["pět"],
+      "Source": ["caha-2009[(66)]"]
+    },
+    {
+      "ID": "ces_pet_acc",
+      "Lexeme_ID": "ces_pet",
+      "Cell": "acc_pl",
+      "Form": "pět",
+      "Morphs": ["pět"],
+      "Source": ["caha-2009[(66)]"]
+    },
+    {
+      "ID": "ces_pet_gen",
+      "Lexeme_ID": "ces_pet",
+      "Cell": "gen_pl",
+      "Form": "pěti",
+      "Morphs": ["pět", "i"],
+      "Source": ["caha-2009[(66)]"]
+    },
+    {
+      "ID": "ces_pet_prep",
+      "Lexeme_ID": "ces_pet",
+      "Cell": "prep_pl",
+      "Form": "pěti",
+      "Morphs": ["pět", "i"],
+      "Source": ["caha-2009[(66)]"]
+    },
+    {
+      "ID": "ces_pet_dat",
+      "Lexeme_ID": "ces_pet",
+      "Cell": "dat_pl",
+      "Form": "pěti",
+      "Morphs": ["pět", "i"],
+      "Source": ["caha-2009[(66)]"]
+    },
+    {
+      "ID": "ces_pet_ins",
+      "Lexeme_ID": "ces_pet",
+      "Cell": "ins_pl",
+      "Form": "pěti",
+      "Morphs": ["pět", "i"],
+      "Source": ["caha-2009[(66)]"]
+    },
+    {
+      "ID": "slk_ona_nom",
+      "Lexeme_ID": "slk_ona",
+      "Cell": "nom_sg",
+      "Form": "ona",
+      "Morphs": ["ona"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ona_acc",
+      "Lexeme_ID": "slk_ona",
+      "Cell": "acc_sg",
+      "Form": "ju",
+      "Morphs": ["j", "u"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ona_gen",
+      "Lexeme_ID": "slk_ona",
+      "Cell": "gen_sg",
+      "Form": "jej",
+      "Morphs": ["j", "ej"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ona_prep",
+      "Lexeme_ID": "slk_ona",
+      "Cell": "prep_sg",
+      "Form": "jej",
+      "Morphs": ["j", "ej"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ona_dat",
+      "Lexeme_ID": "slk_ona",
+      "Cell": "dat_sg",
+      "Form": "njej",
+      "Morphs": ["nj", "ej"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ona_ins",
+      "Lexeme_ID": "slk_ona",
+      "Cell": "ins_sg",
+      "Form": "njou",
+      "Morphs": ["nj", "ou"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_nase_fsg_nom",
+      "Lexeme_ID": "slk_nase",
+      "Cell": "nom_sg_f",
+      "Form": "naša",
+      "Morphs": ["naš", "a"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_nase_fsg_acc",
+      "Lexeme_ID": "slk_nase",
+      "Cell": "acc_sg_f",
+      "Form": "našu",
+      "Morphs": ["naš", "u"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_nase_fsg_gen",
+      "Lexeme_ID": "slk_nase",
+      "Cell": "gen_sg_f",
+      "Form": "našej",
+      "Morphs": ["naš", "ej"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_nase_fsg_prep",
+      "Lexeme_ID": "slk_nase",
+      "Cell": "prep_sg_f",
+      "Form": "našej",
+      "Morphs": ["naš", "ej"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_nase_fsg_dat",
+      "Lexeme_ID": "slk_nase",
+      "Cell": "dat_sg_f",
+      "Form": "našej",
+      "Morphs": ["naš", "ej"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_nase_fsg_ins",
+      "Lexeme_ID": "slk_nase",
+      "Cell": "ins_sg_f",
+      "Form": "našou",
+      "Morphs": ["naš", "ou"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ulica_sg_nom",
+      "Lexeme_ID": "slk_ulica",
+      "Cell": "nom_sg",
+      "Form": "ulica",
+      "Morphs": ["ulic", "a"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ulica_sg_acc",
+      "Lexeme_ID": "slk_ulica",
+      "Cell": "acc_sg",
+      "Form": "ulicu",
+      "Morphs": ["ulic", "u"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ulica_sg_gen",
+      "Lexeme_ID": "slk_ulica",
+      "Cell": "gen_sg",
+      "Form": "ulice",
+      "Morphs": ["ulic", "e"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ulica_sg_prep",
+      "Lexeme_ID": "slk_ulica",
+      "Cell": "prep_sg",
+      "Form": "ulici",
+      "Morphs": ["ulic", "i"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ulica_sg_dat",
+      "Lexeme_ID": "slk_ulica",
+      "Cell": "dat_sg",
+      "Form": "ulici",
+      "Morphs": ["ulic", "i"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ulica_sg_ins",
+      "Lexeme_ID": "slk_ulica",
+      "Cell": "ins_sg",
+      "Form": "ulicou",
+      "Morphs": ["ulic", "ou"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_tlac_sg_nom",
+      "Lexeme_ID": "slk_tlac",
+      "Cell": "nom_sg",
+      "Form": "tlač",
+      "Morphs": ["tlač", "ø"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_tlac_sg_acc",
+      "Lexeme_ID": "slk_tlac",
+      "Cell": "acc_sg",
+      "Form": "tlač",
+      "Morphs": ["tlač", "ø"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_tlac_sg_gen",
+      "Lexeme_ID": "slk_tlac",
+      "Cell": "gen_sg",
+      "Form": "tlače",
+      "Morphs": ["tlač", "e"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_tlac_sg_prep",
+      "Lexeme_ID": "slk_tlac",
+      "Cell": "prep_sg",
+      "Form": "tlači",
+      "Morphs": ["tlač", "i"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_tlac_sg_dat",
+      "Lexeme_ID": "slk_tlac",
+      "Cell": "dat_sg",
+      "Form": "tlači",
+      "Morphs": ["tlač", "i"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_tlac_sg_ins",
+      "Lexeme_ID": "slk_tlac",
+      "Cell": "ins_sg",
+      "Form": "tlačou",
+      "Morphs": ["tlač", "ou"],
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_nom",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "nom_sg",
+      "Form": "kraj",
+      "Morphs": ["kraj", "ø"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_acc",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "acc_sg",
+      "Form": "kraj",
+      "Morphs": ["kraj", "ø"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_gen",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "gen_sg",
+      "Form": "kráju",
+      "Morphs": ["kráj", "u"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_prep",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "prep_sg",
+      "Form": "krajú",
+      "Morphs": ["kraj", "ú"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_dat",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "dat_sg",
+      "Form": "krájevi",
+      "Morphs": ["kráj", "evi"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_ins",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "ins_sg",
+      "Form": "krájem",
+      "Morphs": ["kráj", "em"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_velykyj_pl_nom",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "nom_pl",
+      "Form": "velíki",
+      "Morphs": ["velík", "i"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_velykyj_pl_acc",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "acc_pl",
+      "Form": "velíki",
+      "Morphs": ["velík", "i"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_velykyj_pl_gen",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "gen_pl",
+      "Form": "velíkıch",
+      "Morphs": ["velík", "ıch"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_velykyj_pl_prep",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "prep_pl",
+      "Form": "velíkıch",
+      "Morphs": ["velík", "ıch"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_velykyj_pl_dat",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "dat_pl",
+      "Form": "velíkım",
+      "Morphs": ["velík", "ım"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_velykyj_pl_ins",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "ins_pl",
+      "Form": "velíkımı",
+      "Morphs": ["velík", "ımı"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_znannja_sg_nom",
+      "Lexeme_ID": "ukr_znannja",
+      "Cell": "nom_sg",
+      "Form": "znannjá",
+      "Morphs": ["znann", "já"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_znannja_sg_acc",
+      "Lexeme_ID": "ukr_znannja",
+      "Cell": "acc_sg",
+      "Form": "znannjá",
+      "Morphs": ["znann", "já"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_znannja_sg_gen",
+      "Lexeme_ID": "ukr_znannja",
+      "Cell": "gen_sg",
+      "Form": "znannjá",
+      "Morphs": ["znann", "já"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_znannja_sg_prep",
+      "Lexeme_ID": "ukr_znannja",
+      "Cell": "prep_sg",
+      "Form": "znanni̇́",
+      "Morphs": ["znann", "i̇́"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_znannja_sg_dat",
+      "Lexeme_ID": "ukr_znannja",
+      "Cell": "dat_sg",
+      "Form": "znannjú",
+      "Morphs": ["znann", "jú"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_znannja_sg_ins",
+      "Lexeme_ID": "ukr_znannja",
+      "Cell": "ins_sg",
+      "Form": "znannjám",
+      "Morphs": ["znann", "jám"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_my_nom",
+      "Lexeme_ID": "ukr_my",
+      "Cell": "nom_pl",
+      "Form": "mı",
+      "Morphs": ["mı"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_my_acc",
+      "Lexeme_ID": "ukr_my",
+      "Cell": "acc_pl",
+      "Form": "nas",
+      "Morphs": ["nas"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_my_gen",
+      "Lexeme_ID": "ukr_my",
+      "Cell": "gen_pl",
+      "Form": "nas",
+      "Morphs": ["nas"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_my_prep",
+      "Lexeme_ID": "ukr_my",
+      "Cell": "prep_pl",
+      "Form": "nas",
+      "Morphs": ["nas"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_my_dat",
+      "Lexeme_ID": "ukr_my",
+      "Cell": "dat_pl",
+      "Form": "nam",
+      "Morphs": ["nam"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_my_ins",
+      "Lexeme_ID": "ukr_my",
+      "Cell": "ins_pl",
+      "Form": "námı",
+      "Morphs": ["námı"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_sg_nom",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "nom_sg",
+      "Form": "kasír",
+      "Morphs": ["kasír", "ø"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_sg_acc",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "acc_sg",
+      "Form": "kasíra",
+      "Morphs": ["kasír", "a"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_sg_gen",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "gen_sg",
+      "Form": "kasíra",
+      "Morphs": ["kasír", "a"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_sg_prep",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "prep_sg",
+      "Form": "kasírovi",
+      "Morphs": ["kasír", "ovi"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_sg_dat",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "dat_sg",
+      "Form": "kasírovi",
+      "Morphs": ["kasír", "ovi"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_sg_ins",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "ins_sg",
+      "Form": "kasírom",
+      "Morphs": ["kasír", "om"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_pl_nom",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "nom_pl",
+      "Form": "kasírı",
+      "Morphs": ["kasír", "ı"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_pl_acc",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "acc_pl",
+      "Form": "kasíriv",
+      "Morphs": ["kasír", "iv"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_pl_gen",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "gen_pl",
+      "Form": "kasíriv",
+      "Morphs": ["kasír", "iv"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_pl_prep",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "prep_pl",
+      "Form": "kasírach",
+      "Morphs": ["kasír", "ach"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_pl_dat",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "dat_pl",
+      "Form": "kasíram",
+      "Morphs": ["kasír", "am"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_pl_ins",
+      "Lexeme_ID": "ukr_kasyr",
+      "Cell": "ins_pl",
+      "Form": "kasíramı",
+      "Morphs": ["kasír", "amı"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_maty_sg_nom",
+      "Lexeme_ID": "ukr_maty",
+      "Cell": "nom_sg",
+      "Form": "mátı",
+      "Morphs": ["mát", "ı"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_maty_sg_acc",
+      "Lexeme_ID": "ukr_maty",
+      "Cell": "acc_sg",
+      "Form": "mátir",
+      "Morphs": ["mát", "ir"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_maty_sg_gen",
+      "Lexeme_ID": "ukr_maty",
+      "Cell": "gen_sg",
+      "Form": "máteri",
+      "Morphs": ["mát", "er", "i"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_maty_sg_prep",
+      "Lexeme_ID": "ukr_maty",
+      "Cell": "prep_sg",
+      "Form": "máteri",
+      "Morphs": ["mát", "er", "i"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_maty_sg_dat",
+      "Lexeme_ID": "ukr_maty",
+      "Cell": "dat_sg",
+      "Form": "máteri",
+      "Morphs": ["mát", "er", "i"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_maty_sg_ins",
+      "Lexeme_ID": "ukr_maty",
+      "Cell": "ins_sg",
+      "Form": "mátirju",
+      "Morphs": ["mát", "ir", "ju"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ruka_sg_nom",
+      "Lexeme_ID": "ukr_ruka",
+      "Cell": "nom_sg",
+      "Form": "ruká",
+      "Morphs": ["ruk", "á"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ruka_sg_acc",
+      "Lexeme_ID": "ukr_ruka",
+      "Cell": "acc_sg",
+      "Form": "rúku",
+      "Morphs": ["rúk", "u"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ruka_sg_gen",
+      "Lexeme_ID": "ukr_ruka",
+      "Cell": "gen_sg",
+      "Form": "rukí",
+      "Morphs": ["ruk", "í"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ruka_sg_prep",
+      "Lexeme_ID": "ukr_ruka",
+      "Cell": "prep_sg",
+      "Form": "ruci̇́",
+      "Morphs": ["ruc", "i̇́"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ruka_sg_dat",
+      "Lexeme_ID": "ukr_ruka",
+      "Cell": "dat_sg",
+      "Form": "ruci̇́",
+      "Morphs": ["ruc", "i̇́"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ruka_sg_ins",
+      "Lexeme_ID": "ukr_ruka",
+      "Cell": "ins_sg",
+      "Form": "rukóju",
+      "Morphs": ["ruk", "óju"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ja_nom",
+      "Lexeme_ID": "ukr_ja",
+      "Cell": "nom_sg",
+      "Form": "ja",
+      "Morphs": ["ja"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ja_acc",
+      "Lexeme_ID": "ukr_ja",
+      "Cell": "acc_sg",
+      "Form": "mené",
+      "Morphs": ["mené"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ja_gen",
+      "Lexeme_ID": "ukr_ja",
+      "Cell": "gen_sg",
+      "Form": "mené",
+      "Morphs": ["mené"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ja_prep",
+      "Lexeme_ID": "ukr_ja",
+      "Cell": "prep_sg",
+      "Form": "meni̇́",
+      "Morphs": ["meni̇́"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ja_dat",
+      "Lexeme_ID": "ukr_ja",
+      "Cell": "dat_sg",
+      "Form": "meni̇́",
+      "Morphs": ["meni̇́"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ja_ins",
+      "Lexeme_ID": "ukr_ja",
+      "Cell": "ins_sg",
+      "Form": "mnóju",
+      "Morphs": ["mnóju"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_nom",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "nom_sg_m",
+      "Form": "velíkıj",
+      "Morphs": ["velík", "ıj"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_acc",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "acc_sg_m",
+      "Form": "velíkıj",
+      "Morphs": ["velík", "ıj"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_gen",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "gen_sg_m",
+      "Form": "velíkogo",
+      "Morphs": ["velík", "ogo"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_prep",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "prep_sg_m",
+      "Form": "velíkomu",
+      "Morphs": ["velík", "omu"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_dat",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "dat_sg_m",
+      "Form": "velíkomu",
+      "Morphs": ["velík", "omu"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_ins",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "ins_sg_m",
+      "Form": "velíkım",
+      "Morphs": ["velík", "ım"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_sto_nom",
+      "Lexeme_ID": "ukr_sto",
+      "Cell": "nom_sg",
+      "Form": "sto",
+      "Morphs": ["st", "o"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_sto_acc",
+      "Lexeme_ID": "ukr_sto",
+      "Cell": "acc_sg",
+      "Form": "sto",
+      "Morphs": ["st", "o"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_sto_gen",
+      "Lexeme_ID": "ukr_sto",
+      "Cell": "gen_sg",
+      "Form": "sta",
+      "Morphs": ["st", "a"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_sto_prep",
+      "Lexeme_ID": "ukr_sto",
+      "Cell": "prep_sg",
+      "Form": "sta",
+      "Morphs": ["st", "a"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_sto_dat",
+      "Lexeme_ID": "ukr_sto",
+      "Cell": "dat_sg",
+      "Form": "sta",
+      "Morphs": ["st", "a"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_sto_ins",
+      "Lexeme_ID": "ukr_sto",
+      "Cell": "ins_sg",
+      "Form": "sta",
+      "Morphs": ["st", "a"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_2_nom",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "nom_sg",
+      "Form": "kraj",
+      "Morphs": ["kraj", "ø"],
+      "Source": ["caha-2009[(70)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_2_acc",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "acc_sg",
+      "Form": "kraj",
+      "Morphs": ["kraj", "ø"],
+      "Source": ["caha-2009[(70)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_2_gen",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "gen_sg",
+      "Form": "kráju",
+      "Morphs": ["kráj", "u"],
+      "Source": ["caha-2009[(70)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_2_prep",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "prep_sg",
+      "Form": "kráji",
+      "Morphs": ["kráj", "i"],
+      "Source": ["caha-2009[(70)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_2_dat",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "dat_sg",
+      "Form": "kráju",
+      "Morphs": ["kráj", "u"],
+      "Source": ["caha-2009[(70)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_2_ins",
+      "Lexeme_ID": "ukr_kraj",
+      "Cell": "ins_sg",
+      "Form": "krájem",
+      "Morphs": ["kráj", "em"],
+      "Source": ["caha-2009[(70)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_nom",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "nom_sg_m",
+      "Form": "bezkrajij",
+      "Morphs": ["bezkraj", "ij"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_acc",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "acc_sg_m",
+      "Form": "bezkrajij",
+      "Morphs": ["bezkraj", "ij"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_gen",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "gen_sg_m",
+      "Form": "bezkrajogo",
+      "Morphs": ["bezkraj", "ogo"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_prep",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "prep_sg_m",
+      "Form": "bezkrajomu",
+      "Morphs": ["bezkraj", "omu"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_dat",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "dat_sg_m",
+      "Form": "bezkrajomu",
+      "Morphs": ["bezkraj", "omu"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_ins",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "ins_sg_m",
+      "Form": "bezkrajim",
+      "Morphs": ["bezkraj", "im"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_2_nom",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "nom_sg_m",
+      "Form": "bezkrajij",
+      "Morphs": ["bezkraj", "ij"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_2_acc",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "acc_sg_m",
+      "Form": "bezkrajij",
+      "Morphs": ["bezkraj", "ij"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_2_gen",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "gen_sg_m",
+      "Form": "bezkrajogo",
+      "Morphs": ["bezkraj", "ogo"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_2_prep",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "prep_sg_m",
+      "Form": "bezkrajim",
+      "Morphs": ["bezkraj", "im"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_2_dat",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "dat_sg_m",
+      "Form": "bezkrajomu",
+      "Morphs": ["bezkraj", "omu"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_2_ins",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Cell": "ins_sg_m",
+      "Form": "bezkrajim",
+      "Morphs": ["bezkraj", "im"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_2_nom",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "nom_sg_m",
+      "Form": "velíkıj",
+      "Morphs": ["velík", "ıj"],
+      "Source": ["caha-2009[(72)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_2_acc",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "acc_sg_m",
+      "Form": "velíkıj",
+      "Morphs": ["velík", "ıj"],
+      "Source": ["caha-2009[(72)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_2_gen",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "gen_sg_m",
+      "Form": "velíkogo",
+      "Morphs": ["velík", "ogo"],
+      "Source": ["caha-2009[(72)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_2_prep",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "prep_sg_m",
+      "Form": "velíkim",
+      "Morphs": ["velík", "im"],
+      "Source": ["caha-2009[(72)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_2_dat",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "dat_sg_m",
+      "Form": "velíkomu",
+      "Morphs": ["velík", "omu"],
+      "Source": ["caha-2009[(72)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_2_ins",
+      "Lexeme_ID": "ukr_velykyj",
+      "Cell": "ins_sg_m",
+      "Form": "velíkım",
+      "Morphs": ["velík", "ım"],
+      "Source": ["caha-2009[(72)]"]
+    }
+  ],
+  "ParadigmTable": [
+    {
+      "ID": "srp_sin_sg",
+      "Lexeme_ID": "srp_sin",
+      "Form_IDs": ["srp_sin_sg_nom", "srp_sin_sg_acc", "srp_sin_sg_gen", "srp_sin_sg_prep", "srp_sin_sg_dat", "srp_sin_sg_ins"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_grad_sg",
+      "Lexeme_ID": "srp_grad",
+      "Form_IDs": ["srp_grad_sg_nom", "srp_grad_sg_acc", "srp_grad_sg_gen", "srp_grad_sg_prep", "srp_grad_sg_dat", "srp_grad_sg_ins"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_muz_sg",
+      "Lexeme_ID": "srp_muz",
+      "Form_IDs": ["srp_muz_sg_nom", "srp_muz_sg_acc", "srp_muz_sg_gen", "srp_muz_sg_prep", "srp_muz_sg_dat", "srp_muz_sg_ins"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_selo_sg",
+      "Lexeme_ID": "srp_selo",
+      "Form_IDs": ["srp_selo_sg_nom", "srp_selo_sg_acc", "srp_selo_sg_gen", "srp_selo_sg_prep", "srp_selo_sg_dat", "srp_selo_sg_ins"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_srce_sg",
+      "Lexeme_ID": "srp_srce",
+      "Form_IDs": ["srp_srce_sg_nom", "srp_srce_sg_acc", "srp_srce_sg_gen", "srp_srce_sg_prep", "srp_srce_sg_dat", "srp_srce_sg_ins"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_ovca_sg",
+      "Lexeme_ID": "srp_ovca",
+      "Form_IDs": ["srp_ovca_sg_nom", "srp_ovca_sg_acc", "srp_ovca_sg_gen", "srp_ovca_sg_prep", "srp_ovca_sg_dat", "srp_ovca_sg_ins"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_smrt_sg",
+      "Lexeme_ID": "srp_smrt",
+      "Form_IDs": ["srp_smrt_sg_nom", "srp_smrt_sg_acc", "srp_smrt_sg_gen", "srp_smrt_sg_prep", "srp_smrt_sg_dat", "srp_smrt_sg_ins"],
+      "Source": ["caha-2009[(9)]"]
+    },
+    {
+      "ID": "srp_sin_pl",
+      "Lexeme_ID": "srp_sin",
+      "Form_IDs": ["srp_sin_pl_nom", "srp_sin_pl_acc", "srp_sin_pl_gen", "srp_sin_pl_prep", "srp_sin_pl_dat", "srp_sin_pl_ins"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_grad_pl",
+      "Lexeme_ID": "srp_grad",
+      "Form_IDs": ["srp_grad_pl_nom", "srp_grad_pl_acc", "srp_grad_pl_gen", "srp_grad_pl_prep", "srp_grad_pl_dat", "srp_grad_pl_ins"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_muz_pl",
+      "Lexeme_ID": "srp_muz",
+      "Form_IDs": ["srp_muz_pl_nom", "srp_muz_pl_acc", "srp_muz_pl_gen", "srp_muz_pl_prep", "srp_muz_pl_dat", "srp_muz_pl_ins"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_selo_pl",
+      "Lexeme_ID": "srp_selo",
+      "Form_IDs": ["srp_selo_pl_nom", "srp_selo_pl_acc", "srp_selo_pl_gen", "srp_selo_pl_prep", "srp_selo_pl_dat", "srp_selo_pl_ins"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_srce_pl",
+      "Lexeme_ID": "srp_srce",
+      "Form_IDs": ["srp_srce_pl_nom", "srp_srce_pl_acc", "srp_srce_pl_gen", "srp_srce_pl_prep", "srp_srce_pl_dat", "srp_srce_pl_ins"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ovca_pl",
+      "Lexeme_ID": "srp_ovca",
+      "Form_IDs": ["srp_ovca_pl_nom", "srp_ovca_pl_acc", "srp_ovca_pl_gen", "srp_ovca_pl_prep", "srp_ovca_pl_dat", "srp_ovca_pl_ins"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_smrt_pl",
+      "Lexeme_ID": "srp_smrt",
+      "Form_IDs": ["srp_smrt_pl_nom", "srp_smrt_pl_acc", "srp_smrt_pl_gen", "srp_smrt_pl_prep", "srp_smrt_pl_dat", "srp_smrt_pl_ins"],
+      "Source": ["caha-2009[(10)]"]
+    },
+    {
+      "ID": "srp_ja",
+      "Lexeme_ID": "srp_ja",
+      "Form_IDs": ["srp_ja_nom", "srp_ja_acc", "srp_ja_gen", "srp_ja_prep", "srp_ja_dat", "srp_ja_ins"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ti",
+      "Lexeme_ID": "srp_ti",
+      "Form_IDs": ["srp_ti_nom", "srp_ti_acc", "srp_ti_gen", "srp_ti_prep", "srp_ti_dat", "srp_ti_ins"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_on",
+      "Lexeme_ID": "srp_on",
+      "Form_IDs": ["srp_on_nom", "srp_on_acc", "srp_on_gen", "srp_on_prep", "srp_on_dat", "srp_on_ins"],
+      "Comment": "the table prints on ono in the nominative, one column for 3m/n.sg",
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_ona",
+      "Lexeme_ID": "srp_ona",
+      "Form_IDs": ["srp_ona_nom", "srp_ona_acc", "srp_ona_gen", "srp_ona_prep", "srp_ona_dat", "srp_ona_ins"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_mi",
+      "Lexeme_ID": "srp_mi",
+      "Form_IDs": ["srp_mi_nom", "srp_mi_acc", "srp_mi_gen", "srp_mi_prep", "srp_mi_dat", "srp_mi_ins"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_vi",
+      "Lexeme_ID": "srp_vi",
+      "Form_IDs": ["srp_vi_nom", "srp_vi_acc", "srp_vi_gen", "srp_vi_prep", "srp_vi_dat", "srp_vi_ins"],
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "srp_oni",
+      "Lexeme_ID": "srp_oni",
+      "Form_IDs": ["srp_oni_nom", "srp_oni_acc", "srp_oni_gen", "srp_oni_prep", "srp_oni_dat", "srp_oni_ins"],
+      "Comment": "the table prints on-i / -a / -e in the nominative",
+      "Source": ["caha-2009[(12)]"]
+    },
+    {
+      "ID": "slv_miza_du",
+      "Lexeme_ID": "slv_miza",
+      "Form_IDs": ["slv_miza_du_nom", "slv_miza_du_acc", "slv_miza_du_gen", "slv_miza_du_prep", "slv_miza_du_dat", "slv_miza_du_ins"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_sg",
+      "Lexeme_ID": "slv_breskev",
+      "Form_IDs": ["slv_breskev_sg_nom", "slv_breskev_sg_acc", "slv_breskev_sg_gen", "slv_breskev_sg_prep", "slv_breskev_sg_dat", "slv_breskev_sg_ins"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_breskev_pl",
+      "Lexeme_ID": "slv_breskev",
+      "Form_IDs": ["slv_breskev_pl_nom", "slv_breskev_pl_acc", "slv_breskev_pl_gen", "slv_breskev_pl_prep", "slv_breskev_pl_dat", "slv_breskev_pl_ins"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jabolko_sg",
+      "Lexeme_ID": "slv_jabolko",
+      "Form_IDs": ["slv_jabolko_sg_nom", "slv_jabolko_sg_acc", "slv_jabolko_sg_gen", "slv_jabolko_sg_prep", "slv_jabolko_sg_dat", "slv_jabolko_sg_ins"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_du",
+      "Lexeme_ID": "slv_kmet",
+      "Form_IDs": ["slv_kmet_du_nom", "slv_kmet_du_acc", "slv_kmet_du_gen", "slv_kmet_du_prep", "slv_kmet_du_dat", "slv_kmet_du_ins"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_kmet_sg",
+      "Lexeme_ID": "slv_kmet",
+      "Form_IDs": ["slv_kmet_sg_nom", "slv_kmet_sg_acc", "slv_kmet_sg_gen", "slv_kmet_sg_prep", "slv_kmet_sg_dat", "slv_kmet_sg_ins"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_jaz",
+      "Lexeme_ID": "slv_jaz",
+      "Form_IDs": ["slv_jaz_nom", "slv_jaz_acc", "slv_jaz_gen", "slv_jaz_prep", "slv_jaz_dat", "slv_jaz_ins"],
+      "Source": ["caha-2009[(14)]"]
+    },
+    {
+      "ID": "slv_moj_mpl",
+      "Lexeme_ID": "slv_moj",
+      "Form_IDs": ["slv_moj_mpl_nom", "slv_moj_mpl_acc", "slv_moj_mpl_gen", "slv_moj_mpl_prep", "slv_moj_mpl_dat", "slv_moj_mpl_ins"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dva",
+      "Lexeme_ID": "slv_dva",
+      "Form_IDs": ["slv_dva_nom", "slv_dva_acc", "slv_dva_gen", "slv_dva_prep", "slv_dva_dat", "slv_dva_ins"],
+      "Comment": "the column heading is 'both'",
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_mi",
+      "Lexeme_ID": "slv_mi",
+      "Form_IDs": ["slv_mi_nom", "slv_mi_acc", "slv_mi_gen", "slv_mi_prep", "slv_mi_dat", "slv_mi_ins"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_midva",
+      "Lexeme_ID": "slv_midva",
+      "Form_IDs": ["slv_midva_nom", "slv_midva_acc", "slv_midva_gen", "slv_midva_prep", "slv_midva_dat", "slv_midva_ins"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_nit_sg",
+      "Lexeme_ID": "slv_nit",
+      "Form_IDs": ["slv_nit_sg_nom", "slv_nit_sg_acc", "slv_nit_sg_gen", "slv_nit_sg_prep", "slv_nit_sg_dat", "slv_nit_sg_ins"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_gospa_sg",
+      "Lexeme_ID": "slv_gospa",
+      "Form_IDs": ["slv_gospa_sg_nom", "slv_gospa_sg_acc", "slv_gospa_sg_gen", "slv_gospa_sg_prep", "slv_gospa_sg_dat", "slv_gospa_sg_ins"],
+      "Source": ["caha-2009[(16)]"]
+    },
+    {
+      "ID": "slv_dan_du",
+      "Lexeme_ID": "slv_dan",
+      "Form_IDs": ["slv_dan_du_nom", "slv_dan_du_acc", "slv_dan_du_gen", "slv_dan_du_prep", "slv_dan_du_dat", "slv_dan_du_ins"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_racunovodja_sg",
+      "Lexeme_ID": "slv_racunovodja",
+      "Form_IDs": ["slv_racunovodja_sg_nom", "slv_racunovodja_sg_acc", "slv_racunovodja_sg_gen", "slv_racunovodja_sg_prep", "slv_racunovodja_sg_dat", "slv_racunovodja_sg_ins"],
+      "Source": ["caha-2009[(17)]"]
+    },
+    {
+      "ID": "slv_ta_n",
+      "Lexeme_ID": "slv_ta",
+      "Form_IDs": ["slv_ta_n_nom", "slv_ta_n_acc", "slv_ta_n_gen", "slv_ta_n_prep", "slv_ta_n_dat", "slv_ta_n_ins"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_potnik_pl",
+      "Lexeme_ID": "slv_potnik",
+      "Form_IDs": ["slv_potnik_pl_nom", "slv_potnik_pl_acc", "slv_potnik_pl_gen", "slv_potnik_pl_prep", "slv_potnik_pl_dat", "slv_potnik_pl_ins"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_ta_f",
+      "Lexeme_ID": "slv_ta",
+      "Form_IDs": ["slv_ta_f_nom", "slv_ta_f_acc", "slv_ta_f_gen", "slv_ta_f_prep", "slv_ta_f_dat", "slv_ta_f_ins"],
+      "Source": ["caha-2009[(18)]"]
+    },
+    {
+      "ID": "slv_tisti_n",
+      "Lexeme_ID": "slv_tisti",
+      "Form_IDs": ["slv_tisti_n_nom", "slv_tisti_n_acc", "slv_tisti_n_gen", "slv_tisti_n_prep", "slv_tisti_n_dat", "slv_tisti_n_ins"],
+      "Source": ["caha-2009[(19)]"]
+    },
+    {
+      "ID": "slv_vas_n",
+      "Lexeme_ID": "slv_vas",
+      "Form_IDs": ["slv_vas_n_nom", "slv_vas_n_acc", "slv_vas_n_gen", "slv_vas_n_prep", "slv_vas_n_dat", "slv_vas_n_ins"],
+      "Source": ["caha-2009[(20)]"]
+    },
+    {
+      "ID": "ces_okno_sg",
+      "Lexeme_ID": "ces_okno",
+      "Form_IDs": ["ces_okno_sg_nom", "ces_okno_sg_acc", "ces_okno_sg_gen", "ces_okno_sg_prep", "ces_okno_sg_dat", "ces_okno_sg_ins"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_ulice_sg",
+      "Lexeme_ID": "ces_ulice",
+      "Form_IDs": ["ces_ulice_sg_nom", "ces_ulice_sg_acc", "ces_ulice_sg_gen", "ces_ulice_sg_prep", "ces_ulice_sg_dat", "ces_ulice_sg_ins"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_pl",
+      "Lexeme_ID": "ces_muz",
+      "Form_IDs": ["ces_muz_pl_nom", "ces_muz_pl_acc", "ces_muz_pl_gen", "ces_muz_pl_prep", "ces_muz_pl_dat", "ces_muz_pl_ins"],
+      "Source": ["caha-2009[(22)]"]
+    },
+    {
+      "ID": "ces_muz_sg",
+      "Lexeme_ID": "ces_muz",
+      "Form_IDs": ["ces_muz_sg_nom", "ces_muz_sg_acc", "ces_muz_sg_gen", "ces_muz_sg_prep", "ces_muz_sg_dat", "ces_muz_sg_ins"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_fsg",
+      "Lexeme_ID": "ces_dobry",
+      "Form_IDs": ["ces_dobry_fsg_nom", "ces_dobry_fsg_acc", "ces_dobry_fsg_gen", "ces_dobry_fsg_prep", "ces_dobry_fsg_dat", "ces_dobry_fsg_ins"],
+      "Source": ["caha-2009[(23)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl_2",
+      "Lexeme_ID": "ces_dobry",
+      "Form_IDs": ["ces_dobry_mpl_2_nom", "ces_dobry_mpl_2_acc", "ces_dobry_mpl_2_gen", "ces_dobry_mpl_2_prep", "ces_dobry_mpl_2_dat", "ces_dobry_mpl_2_ins"],
+      "Source": ["caha-2009[(24)]"]
+    },
+    {
+      "ID": "ces_vetsi_msg",
+      "Lexeme_ID": "ces_vetsi",
+      "Form_IDs": ["ces_vetsi_msg_nom", "ces_vetsi_msg_acc", "ces_vetsi_msg_gen", "ces_vetsi_msg_prep", "ces_vetsi_msg_dat", "ces_vetsi_msg_ins"],
+      "Source": ["caha-2009[(25)]"]
+    },
+    {
+      "ID": "ces_oba",
+      "Lexeme_ID": "ces_oba",
+      "Form_IDs": ["ces_oba_nom", "ces_oba_acc", "ces_oba_gen", "ces_oba_prep", "ces_oba_dat", "ces_oba_ins"],
+      "Source": ["caha-2009[(26)]"]
+    },
+    {
+      "ID": "ces_stroj_sg",
+      "Lexeme_ID": "ces_stroj",
+      "Form_IDs": ["ces_stroj_sg_nom", "ces_stroj_sg_acc", "ces_stroj_sg_gen", "ces_stroj_sg_prep", "ces_stroj_sg_dat", "ces_stroj_sg_ins"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_stroj_pl",
+      "Lexeme_ID": "ces_stroj",
+      "Form_IDs": ["ces_stroj_pl_nom", "ces_stroj_pl_acc", "ces_stroj_pl_gen", "ces_stroj_pl_prep", "ces_stroj_pl_dat", "ces_stroj_pl_ins"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_kost_pl",
+      "Lexeme_ID": "ces_kost",
+      "Form_IDs": ["ces_kost_pl_nom", "ces_kost_pl_acc", "ces_kost_pl_gen", "ces_kost_pl_prep", "ces_kost_pl_dat", "ces_kost_pl_ins"],
+      "Comment": "the column heading is 'castle, pl.'",
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_ty",
+      "Lexeme_ID": "ces_ten",
+      "Form_IDs": ["ces_ty_nom", "ces_ty_acc", "ces_ty_gen", "ces_ty_prep", "ces_ty_dat", "ces_ty_ins"],
+      "Source": ["caha-2009[(30)]"]
+    },
+    {
+      "ID": "ces_vila_sg",
+      "Lexeme_ID": "ces_vila",
+      "Form_IDs": ["ces_vila_sg_nom", "ces_vila_sg_acc", "ces_vila_sg_gen", "ces_vila_sg_prep", "ces_vila_sg_dat", "ces_vila_sg_ins"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_misa_sg",
+      "Lexeme_ID": "ces_misa",
+      "Form_IDs": ["ces_misa_sg_nom", "ces_misa_sg_acc", "ces_misa_sg_gen", "ces_misa_sg_prep", "ces_misa_sg_dat", "ces_misa_sg_ins"],
+      "Source": ["caha-2009[(31)]"]
+    },
+    {
+      "ID": "ces_vul_pl",
+      "Lexeme_ID": "ces_vul",
+      "Form_IDs": ["ces_vul_pl_nom", "ces_vul_pl_acc", "ces_vul_pl_gen", "ces_vul_pl_prep", "ces_vul_pl_dat", "ces_vul_pl_ins"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_hoch_pl",
+      "Lexeme_ID": "ces_hoch",
+      "Form_IDs": ["ces_hoch_pl_nom", "ces_hoch_pl_acc", "ces_hoch_pl_gen", "ces_hoch_pl_prep", "ces_hoch_pl_dat", "ces_hoch_pl_ins"],
+      "Source": ["caha-2009[(35)]"]
+    },
+    {
+      "ID": "ces_pan_sg",
+      "Lexeme_ID": "ces_pan",
+      "Form_IDs": ["ces_pan_sg_nom", "ces_pan_sg_acc", "ces_pan_sg_gen", "ces_pan_sg_prep", "ces_pan_sg_dat", "ces_pan_sg_ins"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ten",
+      "Lexeme_ID": "ces_ten",
+      "Form_IDs": ["ces_ten_nom", "ces_ten_acc", "ces_ten_gen", "ces_ten_prep", "ces_ten_dat", "ces_ten_ins"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_my_2",
+      "Lexeme_ID": "ces_my",
+      "Form_IDs": ["ces_my_2_nom", "ces_my_2_acc", "ces_my_2_gen", "ces_my_2_prep", "ces_my_2_dat", "ces_my_2_ins"],
+      "Source": ["caha-2009[(39)]"]
+    },
+    {
+      "ID": "ces_ona",
+      "Lexeme_ID": "ces_ona",
+      "Form_IDs": ["ces_ona_nom", "ces_ona_acc", "ces_ona_gen", "ces_ona_prep", "ces_ona_dat", "ces_ona_ins"],
+      "Comment": "the table prints the nominative (ona)/Ø: the strong pronoun ona, the weak one null (note 15)",
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_nase_fsg",
+      "Lexeme_ID": "ces_nase",
+      "Form_IDs": ["ces_nase_fsg_nom", "ces_nase_fsg_acc", "ces_nase_fsg_gen", "ces_nase_fsg_prep", "ces_nase_fsg_dat", "ces_nase_fsg_ins"],
+      "Comment": "the table indexes the endings as pronominal (1)",
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zatez_sg",
+      "Lexeme_ID": "ces_zatez",
+      "Form_IDs": ["ces_zatez_sg_nom", "ces_zatez_sg_acc", "ces_zatez_sg_gen", "ces_zatez_sg_prep", "ces_zatez_sg_dat", "ces_zatez_sg_ins"],
+      "Comment": "the table indexes the endings as nominal (2)",
+      "Source": ["caha-2009[(41)]"]
+    },
+    {
+      "ID": "ces_zena_sg",
+      "Lexeme_ID": "ces_zena",
+      "Form_IDs": ["ces_zena_sg_nom", "ces_zena_sg_acc", "ces_zena_sg_gen", "ces_zena_sg_prep", "ces_zena_sg_dat", "ces_zena_sg_ins"],
+      "Source": ["caha-2009[(44)]"]
+    },
+    {
+      "ID": "ces_kluk_pl",
+      "Lexeme_ID": "ces_kluk",
+      "Form_IDs": ["ces_kluk_pl_nom", "ces_kluk_pl_acc", "ces_kluk_pl_gen", "ces_kluk_pl_prep", "ces_kluk_pl_dat", "ces_kluk_pl_ins"],
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_kluk_pl_colloquial",
+      "Lexeme_ID": "ces_kluk",
+      "Form_IDs": ["ces_kluk_pl_colloquial_nom", "ces_kluk_pl_colloquial_acc", "ces_kluk_pl_colloquial_gen", "ces_kluk_pl_colloquial_prep", "ces_kluk_pl_colloquial_dat", "ces_kluk_pl_colloquial_ins"],
+      "Comment": "colloquial, beside the literary paradigm",
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_muz_pl_colloquial",
+      "Lexeme_ID": "ces_muz",
+      "Form_IDs": ["ces_muz_pl_colloquial_nom", "ces_muz_pl_colloquial_acc", "ces_muz_pl_colloquial_gen", "ces_muz_pl_colloquial_prep", "ces_muz_pl_colloquial_dat", "ces_muz_pl_colloquial_ins"],
+      "Comment": "colloquial, beside the literary paradigm",
+      "Source": ["caha-2009[(49)]"]
+    },
+    {
+      "ID": "ces_zena_pl",
+      "Lexeme_ID": "ces_zena",
+      "Form_IDs": ["ces_zena_pl_nom", "ces_zena_pl_acc", "ces_zena_pl_gen", "ces_zena_pl_prep", "ces_zena_pl_dat", "ces_zena_pl_ins"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_pisen_pl",
+      "Lexeme_ID": "ces_pisen",
+      "Form_IDs": ["ces_pisen_pl_nom", "ces_pisen_pl_acc", "ces_pisen_pl_gen", "ces_pisen_pl_prep", "ces_pisen_pl_dat", "ces_pisen_pl_ins"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_dobry_mpl",
+      "Lexeme_ID": "ces_dobry",
+      "Form_IDs": ["ces_dobry_mpl_nom", "ces_dobry_mpl_acc", "ces_dobry_mpl_gen", "ces_dobry_mpl_prep", "ces_dobry_mpl_dat", "ces_dobry_mpl_ins"],
+      "Source": ["caha-2009[(51)]"]
+    },
+    {
+      "ID": "ces_kost_sg",
+      "Lexeme_ID": "ces_kost",
+      "Form_IDs": ["ces_kost_sg_nom", "ces_kost_sg_acc", "ces_kost_sg_gen", "ces_kost_sg_prep", "ces_kost_sg_dat", "ces_kost_sg_ins"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_hrad_sg",
+      "Lexeme_ID": "ces_hrad",
+      "Form_IDs": ["ces_hrad_sg_nom", "ces_hrad_sg_acc", "ces_hrad_sg_gen", "ces_hrad_sg_prep", "ces_hrad_sg_dat", "ces_hrad_sg_ins"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_my",
+      "Lexeme_ID": "ces_my",
+      "Form_IDs": ["ces_my_nom", "ces_my_acc", "ces_my_gen", "ces_my_prep", "ces_my_dat", "ces_my_ins"],
+      "Source": ["caha-2009[(55)]"]
+    },
+    {
+      "ID": "ces_mesto_sg",
+      "Lexeme_ID": "ces_mesto",
+      "Form_IDs": ["ces_mesto_sg_nom", "ces_mesto_sg_acc", "ces_mesto_sg_gen", "ces_mesto_sg_prep", "ces_mesto_sg_dat", "ces_mesto_sg_ins"],
+      "Source": ["caha-2009[(56)]"]
+    },
+    {
+      "ID": "ces_vetsi_nsg",
+      "Lexeme_ID": "ces_vetsi",
+      "Form_IDs": ["ces_vetsi_nsg_nom", "ces_vetsi_nsg_acc", "ces_vetsi_nsg_gen", "ces_vetsi_nsg_prep", "ces_vetsi_nsg_dat", "ces_vetsi_nsg_ins"],
+      "Source": ["caha-2009[(57)]"]
+    },
+    {
+      "ID": "ces_ono",
+      "Lexeme_ID": "ces_ono",
+      "Form_IDs": ["ces_ono_nom", "ces_ono_acc", "ces_ono_gen", "ces_ono_prep", "ces_ono_dat", "ces_ono_ins"],
+      "Comment": "the table prints (j-e) ono in the nominative",
+      "Source": ["caha-2009[(58)]"]
+    },
+    {
+      "ID": "ces_nase_nsg",
+      "Lexeme_ID": "ces_nase",
+      "Form_IDs": ["ces_nase_nsg_nom", "ces_nase_nsg_acc", "ces_nase_nsg_gen", "ces_nase_nsg_prep", "ces_nase_nsg_dat", "ces_nase_nsg_ins"],
+      "Source": ["caha-2009[(62)]"]
+    },
+    {
+      "ID": "ces_vetsi_fsg",
+      "Lexeme_ID": "ces_vetsi",
+      "Form_IDs": ["ces_vetsi_fsg_nom", "ces_vetsi_fsg_acc", "ces_vetsi_fsg_gen", "ces_vetsi_fsg_prep", "ces_vetsi_fsg_dat", "ces_vetsi_fsg_ins"],
+      "Comment": "note 25 (i)",
+      "Source": ["caha-2009[n. 25]"]
+    },
+    {
+      "ID": "ces_vetsi_npl",
+      "Lexeme_ID": "ces_vetsi",
+      "Form_IDs": ["ces_vetsi_npl_nom", "ces_vetsi_npl_acc", "ces_vetsi_npl_gen", "ces_vetsi_npl_prep", "ces_vetsi_npl_dat", "ces_vetsi_npl_ins"],
+      "Source": ["caha-2009[(63)]"]
+    },
+    {
+      "ID": "ces_ona_npl",
+      "Lexeme_ID": "ces_oni",
+      "Form_IDs": ["ces_ona_npl_nom", "ces_ona_npl_acc", "ces_ona_npl_gen", "ces_ona_npl_prep", "ces_ona_npl_dat", "ces_ona_npl_ins"],
+      "Comment": "the table prints (j-e) on-a in the nominative",
+      "Source": ["caha-2009[(64)]"]
+    },
+    {
+      "ID": "ces_ta",
+      "Lexeme_ID": "ces_ten",
+      "Form_IDs": ["ces_ta_nom", "ces_ta_acc", "ces_ta_gen", "ces_ta_prep", "ces_ta_dat", "ces_ta_ins"],
+      "Comment": "note 26 (ii); the column heading is 'that, pl. m.', but the forms are feminine singular",
+      "Source": ["caha-2009[n. 26]"]
+    },
+    {
+      "ID": "ces_dva",
+      "Lexeme_ID": "ces_dva",
+      "Form_IDs": ["ces_dva_nom", "ces_dva_acc", "ces_dva_gen", "ces_dva_prep", "ces_dva_dat", "ces_dva_ins"],
+      "Source": ["caha-2009[(65)]"]
+    },
+    {
+      "ID": "ces_pet",
+      "Lexeme_ID": "ces_pet",
+      "Form_IDs": ["ces_pet_nom", "ces_pet_acc", "ces_pet_gen", "ces_pet_prep", "ces_pet_dat", "ces_pet_ins"],
+      "Comment": "the column heading gives no number",
+      "Source": ["caha-2009[(66)]"]
+    },
+    {
+      "ID": "slk_ona",
+      "Lexeme_ID": "slk_ona",
+      "Form_IDs": ["slk_ona_nom", "slk_ona_acc", "slk_ona_gen", "slk_ona_prep", "slk_ona_dat", "slk_ona_ins"],
+      "Comment": "the table prints the nominative (ona)/Ø",
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_nase_fsg",
+      "Lexeme_ID": "slk_nase",
+      "Form_IDs": ["slk_nase_fsg_nom", "slk_nase_fsg_acc", "slk_nase_fsg_gen", "slk_nase_fsg_prep", "slk_nase_fsg_dat", "slk_nase_fsg_ins"],
+      "Comment": "the table indexes the endings as pronominal (1)",
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_ulica_sg",
+      "Lexeme_ID": "slk_ulica",
+      "Form_IDs": ["slk_ulica_sg_nom", "slk_ulica_sg_acc", "slk_ulica_sg_gen", "slk_ulica_sg_prep", "slk_ulica_sg_dat", "slk_ulica_sg_ins"],
+      "Comment": "the table indexes the nominative and accusative endings as pronominal (1), the others as nominal (2)",
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "slk_tlac_sg",
+      "Lexeme_ID": "slk_tlac",
+      "Form_IDs": ["slk_tlac_sg_nom", "slk_tlac_sg_acc", "slk_tlac_sg_gen", "slk_tlac_sg_prep", "slk_tlac_sg_dat", "slk_tlac_sg_ins"],
+      "Comment": "the table indexes the endings as nominal (2)",
+      "Source": ["caha-2009[(42)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg",
+      "Lexeme_ID": "ukr_kraj",
+      "Form_IDs": ["ukr_kraj_sg_nom", "ukr_kraj_sg_acc", "ukr_kraj_sg_gen", "ukr_kraj_sg_prep", "ukr_kraj_sg_dat", "ukr_kraj_sg_ins"],
+      "Comment": "the first of two declensions of 'region' (70)",
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_velykyj_pl",
+      "Lexeme_ID": "ukr_velykyj",
+      "Form_IDs": ["ukr_velykyj_pl_nom", "ukr_velykyj_pl_acc", "ukr_velykyj_pl_gen", "ukr_velykyj_pl_prep", "ukr_velykyj_pl_dat", "ukr_velykyj_pl_ins"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_znannja_sg",
+      "Lexeme_ID": "ukr_znannja",
+      "Form_IDs": ["ukr_znannja_sg_nom", "ukr_znannja_sg_acc", "ukr_znannja_sg_gen", "ukr_znannja_sg_prep", "ukr_znannja_sg_dat", "ukr_znannja_sg_ins"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_my",
+      "Lexeme_ID": "ukr_my",
+      "Form_IDs": ["ukr_my_nom", "ukr_my_acc", "ukr_my_gen", "ukr_my_prep", "ukr_my_dat", "ukr_my_ins"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_sg",
+      "Lexeme_ID": "ukr_kasyr",
+      "Form_IDs": ["ukr_kasyr_sg_nom", "ukr_kasyr_sg_acc", "ukr_kasyr_sg_gen", "ukr_kasyr_sg_prep", "ukr_kasyr_sg_dat", "ukr_kasyr_sg_ins"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_kasyr_pl",
+      "Lexeme_ID": "ukr_kasyr",
+      "Form_IDs": ["ukr_kasyr_pl_nom", "ukr_kasyr_pl_acc", "ukr_kasyr_pl_gen", "ukr_kasyr_pl_prep", "ukr_kasyr_pl_dat", "ukr_kasyr_pl_ins"],
+      "Source": ["caha-2009[(68)]"]
+    },
+    {
+      "ID": "ukr_maty_sg",
+      "Lexeme_ID": "ukr_maty",
+      "Form_IDs": ["ukr_maty_sg_nom", "ukr_maty_sg_acc", "ukr_maty_sg_gen", "ukr_maty_sg_prep", "ukr_maty_sg_dat", "ukr_maty_sg_ins"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ruka_sg",
+      "Lexeme_ID": "ukr_ruka",
+      "Form_IDs": ["ukr_ruka_sg_nom", "ukr_ruka_sg_acc", "ukr_ruka_sg_gen", "ukr_ruka_sg_prep", "ukr_ruka_sg_dat", "ukr_ruka_sg_ins"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_ja",
+      "Lexeme_ID": "ukr_ja",
+      "Form_IDs": ["ukr_ja_nom", "ukr_ja_acc", "ukr_ja_gen", "ukr_ja_prep", "ukr_ja_dat", "ukr_ja_ins"],
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg",
+      "Lexeme_ID": "ukr_velykyj",
+      "Form_IDs": ["ukr_velykyj_msg_nom", "ukr_velykyj_msg_acc", "ukr_velykyj_msg_gen", "ukr_velykyj_msg_prep", "ukr_velykyj_msg_dat", "ukr_velykyj_msg_ins"],
+      "Comment": "the text prints velík-ij in (69)",
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_sto",
+      "Lexeme_ID": "ukr_sto",
+      "Form_IDs": ["ukr_sto_nom", "ukr_sto_acc", "ukr_sto_gen", "ukr_sto_prep", "ukr_sto_dat", "ukr_sto_ins"],
+      "Comment": "the column heading is '100, m.in./f./n.'",
+      "Source": ["caha-2009[(69)]"]
+    },
+    {
+      "ID": "ukr_kraj_sg_2",
+      "Lexeme_ID": "ukr_kraj",
+      "Form_IDs": ["ukr_kraj_sg_2_nom", "ukr_kraj_sg_2_acc", "ukr_kraj_sg_2_gen", "ukr_kraj_sg_2_prep", "ukr_kraj_sg_2_dat", "ukr_kraj_sg_2_ins"],
+      "Comment": "the second column of (70), the variant Caha leaves open",
+      "Source": ["caha-2009[(70)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Form_IDs": ["ukr_bezkrajij_msg_nom", "ukr_bezkrajij_msg_acc", "ukr_bezkrajij_msg_gen", "ukr_bezkrajij_msg_prep", "ukr_bezkrajij_msg_dat", "ukr_bezkrajij_msg_ins"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_bezkrajij_msg_2",
+      "Lexeme_ID": "ukr_bezkrajij",
+      "Form_IDs": ["ukr_bezkrajij_msg_2_nom", "ukr_bezkrajij_msg_2_acc", "ukr_bezkrajij_msg_2_gen", "ukr_bezkrajij_msg_2_prep", "ukr_bezkrajij_msg_2_dat", "ukr_bezkrajij_msg_2_ins"],
+      "Source": ["caha-2009[(71)]"]
+    },
+    {
+      "ID": "ukr_velykyj_msg_2",
+      "Lexeme_ID": "ukr_velykyj",
+      "Form_IDs": ["ukr_velykyj_msg_2_nom", "ukr_velykyj_msg_2_acc", "ukr_velykyj_msg_2_gen", "ukr_velykyj_msg_2_prep", "ukr_velykyj_msg_2_dat", "ukr_velykyj_msg_2_ins"],
+      "Source": ["caha-2009[(72)]"]
+    }
+  ]
+}

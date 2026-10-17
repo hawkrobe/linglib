@@ -1,0 +1,4151 @@
+{
+  "description": "The suppletive adjectival triples of Table 4.1 and quantifier triples of Table 4.2, with the Karelian triple of (170): positive, comparative and superlative forms as printed, each triple with the root classes Bobaljik assigns its grades. A triple counts once however many languages share it (section 1.3). Table 4.2 prints 38 triples; the text gives 39 (pp. 124, 126).",
+  "CellTable": [
+    {
+      "ID": "positive",
+      "Name": "positive",
+      "Features": "Degree=Pos"
+    },
+    {
+      "ID": "comparative",
+      "Name": "comparative",
+      "Features": "Degree=Cmp"
+    },
+    {
+      "ID": "superlative",
+      "Name": "superlative",
+      "Features": "Degree=Sup"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "good",
+      "Name": "good"
+    },
+    {
+      "ID": "bad",
+      "Name": "bad"
+    },
+    {
+      "ID": "big",
+      "Name": "big"
+    },
+    {
+      "ID": "small",
+      "Name": "small"
+    },
+    {
+      "ID": "old",
+      "Name": "old"
+    },
+    {
+      "ID": "near",
+      "Name": "near"
+    },
+    {
+      "ID": "strong",
+      "Name": "strong"
+    },
+    {
+      "ID": "many_much",
+      "Name": "many, much"
+    },
+    {
+      "ID": "few",
+      "Name": "few"
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "eng_good",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "good",
+      "Name": "good"
+    },
+    {
+      "ID": "swe_good",
+      "Language_ID": "swed1254",
+      "Parameter_ID": "good",
+      "Name": "bra"
+    },
+    {
+      "ID": "got_good",
+      "Language_ID": "goth1244",
+      "Parameter_ID": "good",
+      "Name": "gôd"
+    },
+    {
+      "ID": "cim_good",
+      "Language_ID": "tred1238",
+      "Parameter_ID": "good",
+      "Name": "guot"
+    },
+    {
+      "ID": "ces_good",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "good",
+      "Name": "dobrý"
+    },
+    {
+      "ID": "hbs_good",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "good",
+      "Name": "dobar"
+    },
+    {
+      "ID": "sorb_good",
+      "Language_ID": "sorb1249",
+      "Parameter_ID": "good",
+      "Name": "dobry"
+    },
+    {
+      "ID": "ukr_good_dobr",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "good",
+      "Name": "dobryj"
+    },
+    {
+      "ID": "ukr_good_harn",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "good",
+      "Name": "harnyj"
+    },
+    {
+      "ID": "rus_good",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "good",
+      "Name": "xorošij"
+    },
+    {
+      "ID": "lat_good",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "good",
+      "Name": "bonus"
+    },
+    {
+      "ID": "cym_good",
+      "Language_ID": "wels1247",
+      "Parameter_ID": "good",
+      "Name": "da"
+    },
+    {
+      "ID": "sga_good",
+      "Language_ID": "oldi1246",
+      "Parameter_ID": "good",
+      "Name": "maith"
+    },
+    {
+      "ID": "bre_good",
+      "Language_ID": "bret1244",
+      "Parameter_ID": "good",
+      "Name": "mat"
+    },
+    {
+      "ID": "grc_good",
+      "Language_ID": "anci1242",
+      "Parameter_ID": "good",
+      "Name": "agathós"
+    },
+    {
+      "ID": "san_good",
+      "Language_ID": "sans1269",
+      "Parameter_ID": "good",
+      "Name": "praśásyas"
+    },
+    {
+      "ID": "kho_good",
+      "Language_ID": "khot1251",
+      "Parameter_ID": "good",
+      "Name": "śśära"
+    },
+    {
+      "ID": "pal_good",
+      "Language_ID": "pahl1241",
+      "Parameter_ID": "good",
+      "Name": "xōb"
+    },
+    {
+      "ID": "fas_good",
+      "Language_ID": "west2369",
+      "Parameter_ID": "good",
+      "Name": "xub"
+    },
+    {
+      "ID": "eus_good",
+      "Language_ID": "basq1248",
+      "Parameter_ID": "good",
+      "Name": "on"
+    },
+    {
+      "ID": "fin_good",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "good",
+      "Name": "hyvä"
+    },
+    {
+      "ID": "sjd_good",
+      "Language_ID": "kild1236",
+      "Parameter_ID": "good",
+      "Name": "š’ig’"
+    },
+    {
+      "ID": "kat_good",
+      "Language_ID": "nucl1302",
+      "Parameter_ID": "good",
+      "Name": "k’argii"
+    },
+    {
+      "ID": "sva_good",
+      "Language_ID": "svan1243",
+      "Parameter_ID": "good",
+      "Name": "ezär"
+    },
+    {
+      "ID": "chr_good",
+      "Language_ID": "cher1273",
+      "Parameter_ID": "good",
+      "Name": "osda"
+    },
+    {
+      "ID": "eng_bad",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "bad",
+      "Name": "bad"
+    },
+    {
+      "ID": "goh_bad",
+      "Language_ID": "oldh1241",
+      "Parameter_ID": "bad",
+      "Name": "ubil"
+    },
+    {
+      "ID": "non_bad_vandr",
+      "Language_ID": "oldn1244",
+      "Parameter_ID": "bad",
+      "Name": "vándr"
+    },
+    {
+      "ID": "non_bad_illr",
+      "Language_ID": "oldn1244",
+      "Parameter_ID": "bad",
+      "Name": "íllr"
+    },
+    {
+      "ID": "dan_bad",
+      "Language_ID": "dani1285",
+      "Parameter_ID": "bad",
+      "Name": "slem"
+    },
+    {
+      "ID": "fao_bad",
+      "Language_ID": "faro1244",
+      "Parameter_ID": "bad",
+      "Name": "ringur"
+    },
+    {
+      "ID": "swe_bad",
+      "Language_ID": "swed1254",
+      "Parameter_ID": "bad",
+      "Name": "dålig"
+    },
+    {
+      "ID": "yid_bad",
+      "Language_ID": "east2295",
+      "Parameter_ID": "bad",
+      "Name": "šlext"
+    },
+    {
+      "ID": "pol_bad",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "bad",
+      "Name": "zły"
+    },
+    {
+      "ID": "ces_bad",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bad",
+      "Name": "špatný"
+    },
+    {
+      "ID": "ukr_bad",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "bad",
+      "Name": "pohanyj"
+    },
+    {
+      "ID": "bel_bad_drenn",
+      "Language_ID": "bela1254",
+      "Parameter_ID": "bad",
+      "Name": "drènny"
+    },
+    {
+      "ID": "bel_bad_blah",
+      "Language_ID": "bela1254",
+      "Parameter_ID": "bad",
+      "Name": "blahi"
+    },
+    {
+      "ID": "hbs_bad",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "bad",
+      "Name": "loš"
+    },
+    {
+      "ID": "rus_bad",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "bad",
+      "Name": "ploxoj"
+    },
+    {
+      "ID": "lat_bad",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "bad",
+      "Name": "malus"
+    },
+    {
+      "ID": "sga_bad",
+      "Language_ID": "oldi1246",
+      "Parameter_ID": "bad",
+      "Name": "olc"
+    },
+    {
+      "ID": "cym_bad",
+      "Language_ID": "wels1247",
+      "Parameter_ID": "bad",
+      "Name": "drwg"
+    },
+    {
+      "ID": "bre_bad",
+      "Language_ID": "bret1244",
+      "Parameter_ID": "bad",
+      "Name": "fall"
+    },
+    {
+      "ID": "grc_bad",
+      "Language_ID": "anci1242",
+      "Parameter_ID": "bad",
+      "Name": "kakós"
+    },
+    {
+      "ID": "got_big",
+      "Language_ID": "goth1244",
+      "Parameter_ID": "big",
+      "Name": "mikils"
+    },
+    {
+      "ID": "ces_big",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "big",
+      "Name": "velký"
+    },
+    {
+      "ID": "ukr_big",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "big",
+      "Name": "velykyj"
+    },
+    {
+      "ID": "pol_big",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "big",
+      "Name": "duży"
+    },
+    {
+      "ID": "cym_big",
+      "Language_ID": "wels1247",
+      "Parameter_ID": "big",
+      "Name": "mawr"
+    },
+    {
+      "ID": "pal_big",
+      "Language_ID": "pahl1241",
+      "Parameter_ID": "big",
+      "Name": "wazurg"
+    },
+    {
+      "ID": "sva_big",
+      "Language_ID": "svan1243",
+      "Parameter_ID": "big",
+      "Name": "d͜zɣəd"
+    },
+    {
+      "ID": "got_small",
+      "Language_ID": "goth1244",
+      "Parameter_ID": "small",
+      "Name": "leitils"
+    },
+    {
+      "ID": "ang_small",
+      "Language_ID": "olde1238",
+      "Parameter_ID": "small",
+      "Name": "lýtel"
+    },
+    {
+      "ID": "dan_small",
+      "Language_ID": "dani1285",
+      "Parameter_ID": "small",
+      "Name": "små"
+    },
+    {
+      "ID": "hbs_small",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "small",
+      "Name": "mali"
+    },
+    {
+      "ID": "lat_small",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "small",
+      "Name": "parvus"
+    },
+    {
+      "ID": "cym_small",
+      "Language_ID": "wels1247",
+      "Parameter_ID": "small",
+      "Name": "bach"
+    },
+    {
+      "ID": "grc_small",
+      "Language_ID": "anci1242",
+      "Parameter_ID": "small",
+      "Name": "mikrós"
+    },
+    {
+      "ID": "pal_small",
+      "Language_ID": "pahl1241",
+      "Parameter_ID": "small",
+      "Name": "kōdag"
+    },
+    {
+      "ID": "non_old",
+      "Language_ID": "oldn1244",
+      "Parameter_ID": "old",
+      "Name": "gamall"
+    },
+    {
+      "ID": "cym_near",
+      "Language_ID": "wels1247",
+      "Parameter_ID": "near",
+      "Name": "agos"
+    },
+    {
+      "ID": "cym_strong",
+      "Language_ID": "wels1247",
+      "Parameter_ID": "strong",
+      "Name": "cryf"
+    },
+    {
+      "ID": "eng_many",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "many_much",
+      "Name": "many"
+    },
+    {
+      "ID": "eng_much",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "many_much",
+      "Name": "much"
+    },
+    {
+      "ID": "eng_lot",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "many_much",
+      "Name": "(a) lot"
+    },
+    {
+      "ID": "deu_many",
+      "Language_ID": "stan1295",
+      "Parameter_ID": "many_much",
+      "Name": "viel"
+    },
+    {
+      "ID": "fao_many",
+      "Language_ID": "faro1244",
+      "Parameter_ID": "many_much",
+      "Name": "nógvur"
+    },
+    {
+      "ID": "afr_many_party",
+      "Language_ID": "afri1274",
+      "Parameter_ID": "many_much",
+      "Name": "party"
+    },
+    {
+      "ID": "afr_many_baie",
+      "Language_ID": "afri1274",
+      "Parameter_ID": "many_much",
+      "Name": "baie"
+    },
+    {
+      "ID": "yid_many",
+      "Language_ID": "east2295",
+      "Parameter_ID": "many_much",
+      "Name": "sakh"
+    },
+    {
+      "ID": "dan_many",
+      "Language_ID": "dani1285",
+      "Parameter_ID": "many_much",
+      "Name": "mange"
+    },
+    {
+      "ID": "ces_many",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "many_much",
+      "Name": "mnoho"
+    },
+    {
+      "ID": "rus_many",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "many_much",
+      "Name": "mnogo"
+    },
+    {
+      "ID": "bul_many",
+      "Language_ID": "bulg1262",
+      "Parameter_ID": "many_much",
+      "Name": "mnogo"
+    },
+    {
+      "ID": "pol_many",
+      "Language_ID": "poli1260",
+      "Parameter_ID": "many_much",
+      "Name": "wiele"
+    },
+    {
+      "ID": "hbs_many",
+      "Language_ID": "sout1528",
+      "Parameter_ID": "many_much",
+      "Name": "puno"
+    },
+    {
+      "ID": "ukr_many_bahato",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "many_much",
+      "Name": "baháto"
+    },
+    {
+      "ID": "ukr_many_duze",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "many_much",
+      "Name": "dúže"
+    },
+    {
+      "ID": "lav_many",
+      "Language_ID": "latv1249",
+      "Parameter_ID": "many_much",
+      "Name": "daudz"
+    },
+    {
+      "ID": "lat_many",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "many_much",
+      "Name": "mult"
+    },
+    {
+      "ID": "bre_many",
+      "Language_ID": "bret1244",
+      "Parameter_ID": "many_much",
+      "Name": "kalz"
+    },
+    {
+      "ID": "cym_many",
+      "Language_ID": "wels1247",
+      "Parameter_ID": "many_much",
+      "Name": "llawer"
+    },
+    {
+      "ID": "grc_many",
+      "Language_ID": "anci1242",
+      "Parameter_ID": "many_much",
+      "Name": "polús"
+    },
+    {
+      "ID": "hye_many",
+      "Language_ID": "nucl1235",
+      "Parameter_ID": "many_much",
+      "Name": "šaterë"
+    },
+    {
+      "ID": "fas_many_xele",
+      "Language_ID": "west2369",
+      "Parameter_ID": "many_much",
+      "Name": "xele"
+    },
+    {
+      "ID": "fas_many_ziad",
+      "Language_ID": "west2369",
+      "Parameter_ID": "many_much",
+      "Name": "ziad"
+    },
+    {
+      "ID": "eus_many",
+      "Language_ID": "basq1248",
+      "Parameter_ID": "many_much",
+      "Name": "asko"
+    },
+    {
+      "ID": "fin_many_monet",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "many_much",
+      "Name": "monet"
+    },
+    {
+      "ID": "fin_many_paljon",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "many_much",
+      "Name": "paljon"
+    },
+    {
+      "ID": "krl_many",
+      "Language_ID": "kare1335",
+      "Parameter_ID": "many_much",
+      "Name": "äijä"
+    },
+    {
+      "ID": "hun_many",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "many_much",
+      "Name": "sok"
+    },
+    {
+      "ID": "kat_many",
+      "Language_ID": "nucl1302",
+      "Parameter_ID": "many_much",
+      "Name": "bevri"
+    },
+    {
+      "ID": "kbd_many",
+      "Language_ID": "kaba1278",
+      "Parameter_ID": "many_much",
+      "Name": "kwad"
+    },
+    {
+      "ID": "eng_few",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "few",
+      "Name": "(a) little"
+    },
+    {
+      "ID": "afr_few",
+      "Language_ID": "afri1274",
+      "Parameter_ID": "few",
+      "Name": "weinig"
+    },
+    {
+      "ID": "fry_few",
+      "Language_ID": "west2354",
+      "Parameter_ID": "few",
+      "Name": "(en) bytsje"
+    },
+    {
+      "ID": "ukr_few",
+      "Language_ID": "ukra1253",
+      "Parameter_ID": "few",
+      "Name": "troxi"
+    },
+    {
+      "ID": "lat_few",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "few",
+      "Name": "paucus"
+    },
+    {
+      "ID": "grc_few",
+      "Language_ID": "anci1242",
+      "Parameter_ID": "few",
+      "Name": "olígos"
+    },
+    {
+      "ID": "krl_many_onego",
+      "Language_ID": "kare1335",
+      "Parameter_ID": "many_much",
+      "Name": "äijy"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "eng_good_positive",
+      "Lexeme_ID": "eng_good",
+      "Cell": "positive",
+      "Form": "good",
+      "Morphs": ["good"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eng_good_comparative",
+      "Lexeme_ID": "eng_good",
+      "Cell": "comparative",
+      "Form": "better",
+      "Morphs": ["bett", "er"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eng_good_superlative",
+      "Lexeme_ID": "eng_good",
+      "Cell": "superlative",
+      "Form": "best",
+      "Morphs": ["be", "st"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "swe_good_positive",
+      "Lexeme_ID": "swe_good",
+      "Cell": "positive",
+      "Form": "bra",
+      "Morphs": ["bra"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "swe_good_comparative",
+      "Lexeme_ID": "swe_good",
+      "Cell": "comparative",
+      "Form": "bättre",
+      "Morphs": ["bätt", "re"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "swe_good_superlative",
+      "Lexeme_ID": "swe_good",
+      "Cell": "superlative",
+      "Form": "bäst",
+      "Morphs": ["bä", "st"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_good_positive",
+      "Lexeme_ID": "got_good",
+      "Cell": "positive",
+      "Form": "gôd",
+      "Morphs": ["gôd"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_good_comparative",
+      "Lexeme_ID": "got_good",
+      "Cell": "comparative",
+      "Form": "sêlra",
+      "Morphs": ["sêl", "ra"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_good_superlative",
+      "Lexeme_ID": "got_good",
+      "Cell": "superlative",
+      "Form": "sêlost",
+      "Morphs": ["sêl", "ost"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cim_good_positive",
+      "Lexeme_ID": "cim_good",
+      "Cell": "positive",
+      "Form": "guot",
+      "Morphs": ["guot"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cim_good_comparative",
+      "Lexeme_ID": "cim_good",
+      "Cell": "comparative",
+      "Form": "ƀegur",
+      "Morphs": ["ƀeg", "ur"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cim_good_superlative",
+      "Lexeme_ID": "cim_good",
+      "Cell": "superlative",
+      "Form": "ƀegurste",
+      "Morphs": ["ƀeg", "ur", "ste"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_good_positive",
+      "Lexeme_ID": "ces_good",
+      "Cell": "positive",
+      "Form": "dobrý",
+      "Morphs": ["dobr", "ý"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_good_comparative",
+      "Lexeme_ID": "ces_good",
+      "Cell": "comparative",
+      "Form": "lepší",
+      "Morphs": ["lep", "ší"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_good_superlative",
+      "Lexeme_ID": "ces_good",
+      "Cell": "superlative",
+      "Form": "nejlepší",
+      "Morphs": ["nej", "lep", "ší"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_good_positive",
+      "Lexeme_ID": "hbs_good",
+      "Cell": "positive",
+      "Form": "dobar",
+      "Morphs": ["dobar"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_good_comparative",
+      "Lexeme_ID": "hbs_good",
+      "Cell": "comparative",
+      "Form": "bolji",
+      "Morphs": ["bol", "ji"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_good_superlative",
+      "Lexeme_ID": "hbs_good",
+      "Cell": "superlative",
+      "Form": "najbolji",
+      "Morphs": ["naj", "bol", "ji"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sorb_good_positive",
+      "Lexeme_ID": "sorb_good",
+      "Cell": "positive",
+      "Form": "dobry",
+      "Morphs": ["dobr", "y"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sorb_good_comparative",
+      "Lexeme_ID": "sorb_good",
+      "Cell": "comparative",
+      "Form": "redliši",
+      "Morphs": ["redl", "iši"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_good_dobr_positive",
+      "Lexeme_ID": "ukr_good_dobr",
+      "Cell": "positive",
+      "Form": "dobryj",
+      "Morphs": ["dobr", "yj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_good_dobr_comparative",
+      "Lexeme_ID": "ukr_good_dobr",
+      "Cell": "comparative",
+      "Form": "kraščyj",
+      "Morphs": ["krašč", "yj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_good_dobr_superlative",
+      "Lexeme_ID": "ukr_good_dobr",
+      "Cell": "superlative",
+      "Form": "najkraščyj",
+      "Morphs": ["naj", "krašč", "yj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_good_harn_positive",
+      "Lexeme_ID": "ukr_good_harn",
+      "Cell": "positive",
+      "Form": "harnyj",
+      "Morphs": ["harn", "yj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_good_harn_comparative",
+      "Lexeme_ID": "ukr_good_harn",
+      "Cell": "comparative",
+      "Form": "kraščyj",
+      "Morphs": ["krašč", "yj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_good_harn_superlative",
+      "Lexeme_ID": "ukr_good_harn",
+      "Cell": "superlative",
+      "Form": "najkraščyj",
+      "Morphs": ["naj", "krašč", "yj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "rus_good_positive",
+      "Lexeme_ID": "rus_good",
+      "Cell": "positive",
+      "Form": "xorošij",
+      "Morphs": ["xoroš", "ij"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "rus_good_comparative",
+      "Lexeme_ID": "rus_good",
+      "Cell": "comparative",
+      "Form": "lučše",
+      "Morphs": ["luč", "še"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "rus_good_superlative",
+      "Lexeme_ID": "rus_good",
+      "Cell": "superlative",
+      "Form": "nailučšij",
+      "Morphs": ["nai", "luč", "š", "ij"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_good_positive",
+      "Lexeme_ID": "lat_good",
+      "Cell": "positive",
+      "Form": "bonus",
+      "Morphs": ["bon", "us"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_good_comparative",
+      "Lexeme_ID": "lat_good",
+      "Cell": "comparative",
+      "Form": "melior",
+      "Morphs": ["mel", "ior"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_good_superlative",
+      "Lexeme_ID": "lat_good",
+      "Cell": "superlative",
+      "Form": "optimus",
+      "Morphs": ["opt", "imus"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_good_positive",
+      "Lexeme_ID": "cym_good",
+      "Cell": "positive",
+      "Form": "da",
+      "Morphs": ["da"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_good_comparative",
+      "Lexeme_ID": "cym_good",
+      "Cell": "comparative",
+      "Form": "gwell",
+      "Morphs": ["gwell"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_good_superlative",
+      "Lexeme_ID": "cym_good",
+      "Cell": "superlative",
+      "Form": "gorau",
+      "Morphs": ["gor", "au"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sga_good_positive",
+      "Lexeme_ID": "sga_good",
+      "Cell": "positive",
+      "Form": "maith",
+      "Morphs": ["maith"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sga_good_comparative",
+      "Lexeme_ID": "sga_good",
+      "Cell": "comparative",
+      "Form": "ferr",
+      "Morphs": ["ferr"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sga_good_superlative",
+      "Lexeme_ID": "sga_good",
+      "Cell": "superlative",
+      "Form": "dech",
+      "Morphs": ["dech"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bre_good_positive",
+      "Lexeme_ID": "bre_good",
+      "Cell": "positive",
+      "Form": "mat",
+      "Morphs": ["mat"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bre_good_comparative",
+      "Lexeme_ID": "bre_good",
+      "Cell": "comparative",
+      "Form": "gwell(oc’h)",
+      "Morphs": ["gwell", "(oc’h)"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bre_good_superlative",
+      "Lexeme_ID": "bre_good",
+      "Cell": "superlative",
+      "Form": "gwellañ",
+      "Morphs": ["gwell", "añ"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_positive",
+      "Lexeme_ID": "grc_good",
+      "Cell": "positive",
+      "Form": "agathós",
+      "Morphs": ["agath", "ós"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_comparative",
+      "Lexeme_ID": "grc_good",
+      "Cell": "comparative",
+      "Form": "ameínōn",
+      "Morphs": ["ameín", "ōn"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_superlative",
+      "Lexeme_ID": "grc_good",
+      "Cell": "superlative",
+      "Form": "(phéristos)",
+      "Morphs": ["(phér", "ist", "os)"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_comparative_2",
+      "Lexeme_ID": "grc_good",
+      "Cell": "comparative",
+      "Form": "areíōn",
+      "Morphs": ["areí", "ōn"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_superlative_2",
+      "Lexeme_ID": "grc_good",
+      "Cell": "superlative",
+      "Form": "áristos",
+      "Morphs": ["ár", "ist", "os"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_comparative_3",
+      "Lexeme_ID": "grc_good",
+      "Cell": "comparative",
+      "Form": "beltíōn",
+      "Morphs": ["belt", "íōn"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_superlative_3",
+      "Lexeme_ID": "grc_good",
+      "Cell": "superlative",
+      "Form": "béltistos",
+      "Morphs": ["bélt", "ist", "os"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_comparative_4",
+      "Lexeme_ID": "grc_good",
+      "Cell": "comparative",
+      "Form": "kreíssōn",
+      "Morphs": ["kreíss", "ōn"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_superlative_4",
+      "Lexeme_ID": "grc_good",
+      "Cell": "superlative",
+      "Form": "krátistos",
+      "Morphs": ["krát", "ist", "os"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_comparative_5",
+      "Lexeme_ID": "grc_good",
+      "Cell": "comparative",
+      "Form": "lóïon",
+      "Morphs": ["ló", "ïon"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_good_superlative_5",
+      "Lexeme_ID": "grc_good",
+      "Cell": "superlative",
+      "Form": "lõistos",
+      "Morphs": ["lõ", "ist", "os"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "san_good_positive",
+      "Lexeme_ID": "san_good",
+      "Cell": "positive",
+      "Form": "praśásyas",
+      "Morphs": ["pra", "śásya", "s"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "san_good_comparative",
+      "Lexeme_ID": "san_good",
+      "Cell": "comparative",
+      "Form": "śréyān",
+      "Morphs": ["śré", "yān"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "san_good_superlative",
+      "Lexeme_ID": "san_good",
+      "Cell": "superlative",
+      "Form": "śréṣṭhas",
+      "Morphs": ["śré", "ṣṭhas"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "san_good_comparative_2",
+      "Lexeme_ID": "san_good",
+      "Cell": "comparative",
+      "Form": "jyāyān",
+      "Morphs": ["jyā", "yān"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "san_good_superlative_2",
+      "Lexeme_ID": "san_good",
+      "Cell": "superlative",
+      "Form": "jyēṣṭhas",
+      "Morphs": ["jyē", "ṣṭhas"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "kho_good_positive",
+      "Lexeme_ID": "kho_good",
+      "Cell": "positive",
+      "Form": "śśära",
+      "Morphs": ["śśära-"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "kho_good_comparative",
+      "Lexeme_ID": "kho_good",
+      "Cell": "comparative",
+      "Form": "hastara",
+      "Morphs": ["has", "tara"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "kho_good_superlative",
+      "Lexeme_ID": "kho_good",
+      "Cell": "superlative",
+      "Form": "hastama",
+      "Morphs": ["has", "tama"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_good_positive",
+      "Lexeme_ID": "pal_good",
+      "Cell": "positive",
+      "Form": "xōb",
+      "Morphs": ["xōb"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_good_comparative",
+      "Lexeme_ID": "pal_good",
+      "Cell": "comparative",
+      "Form": "weh/wahīy",
+      "Morphs": ["weh/wah", "īy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_good_superlative",
+      "Lexeme_ID": "pal_good",
+      "Cell": "superlative",
+      "Form": "pahlom",
+      "Morphs": ["pahl", "om"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_good_superlative_2",
+      "Lexeme_ID": "pal_good",
+      "Cell": "superlative",
+      "Form": "pāšom",
+      "Morphs": ["pāš", "om"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fas_good_positive",
+      "Lexeme_ID": "fas_good",
+      "Cell": "positive",
+      "Form": "xub",
+      "Morphs": ["xub"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fas_good_comparative",
+      "Lexeme_ID": "fas_good",
+      "Cell": "comparative",
+      "Form": "behtær",
+      "Morphs": ["beh", "tær"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fas_good_superlative",
+      "Lexeme_ID": "fas_good",
+      "Cell": "superlative",
+      "Form": "behtærin",
+      "Morphs": ["beh", "tær", "in"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eus_good_positive",
+      "Lexeme_ID": "eus_good",
+      "Cell": "positive",
+      "Form": "on",
+      "Morphs": ["on"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eus_good_comparative",
+      "Lexeme_ID": "eus_good",
+      "Cell": "comparative",
+      "Form": "hobe",
+      "Morphs": ["hobe"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eus_good_superlative",
+      "Lexeme_ID": "eus_good",
+      "Cell": "superlative",
+      "Form": "hoberen",
+      "Morphs": ["hobe", "ren"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eus_good_superlative_2",
+      "Lexeme_ID": "eus_good",
+      "Cell": "superlative",
+      "Form": "onen",
+      "Morphs": ["on", "en"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fin_good_positive",
+      "Lexeme_ID": "fin_good",
+      "Cell": "positive",
+      "Form": "hyvä",
+      "Morphs": ["hyvä"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fin_good_comparative",
+      "Lexeme_ID": "fin_good",
+      "Cell": "comparative",
+      "Form": "parempi",
+      "Morphs": ["pare", "mpi"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fin_good_superlative",
+      "Lexeme_ID": "fin_good",
+      "Cell": "superlative",
+      "Form": "parhain",
+      "Morphs": ["parha", "i", "n"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sjd_good_positive",
+      "Lexeme_ID": "sjd_good",
+      "Cell": "positive",
+      "Form": "š’ig’",
+      "Morphs": ["š’ig’"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sjd_good_comparative",
+      "Lexeme_ID": "sjd_good",
+      "Cell": "comparative",
+      "Form": "pɛr’amp",
+      "Morphs": ["pɛr’a", "mp"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sjd_good_superlative",
+      "Lexeme_ID": "sjd_good",
+      "Cell": "superlative",
+      "Form": "pɛr’mus",
+      "Morphs": ["pɛr’", "mus"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "kat_good_positive",
+      "Lexeme_ID": "kat_good",
+      "Cell": "positive",
+      "Form": "k’argii",
+      "Morphs": ["k’argi", "i"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "kat_good_comparative",
+      "Lexeme_ID": "kat_good",
+      "Cell": "comparative",
+      "Form": "umǰobesi",
+      "Morphs": ["u", "mǰob", "es", "i"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "kat_good_superlative",
+      "Lexeme_ID": "kat_good",
+      "Cell": "superlative",
+      "Form": "saumǰobeso",
+      "Morphs": ["sa", "u", "mǰob", "es", "o"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "kat_good_comparative_2",
+      "Lexeme_ID": "kat_good",
+      "Cell": "comparative",
+      "Form": "uk’etesi",
+      "Morphs": ["u", "k’et", "es", "i"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "kat_good_superlative_2",
+      "Lexeme_ID": "kat_good",
+      "Cell": "superlative",
+      "Form": "sauk’eteso",
+      "Morphs": ["sa", "u", "k’et", "es", "o"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sva_good_positive",
+      "Lexeme_ID": "sva_good",
+      "Cell": "positive",
+      "Form": "ezär",
+      "Morphs": ["ezär"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sva_good_comparative",
+      "Lexeme_ID": "sva_good",
+      "Cell": "comparative",
+      "Form": "xoča",
+      "Morphs": ["xo", "č", "a"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sva_good_comparative_2",
+      "Lexeme_ID": "sva_good",
+      "Cell": "comparative",
+      "Form": "xočēl",
+      "Morphs": ["xo", "č", "ēl"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sva_good_superlative",
+      "Lexeme_ID": "sva_good",
+      "Cell": "superlative",
+      "Form": "mačēne",
+      "Morphs": ["ma", "č", "ēne"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "chr_good_positive",
+      "Lexeme_ID": "chr_good",
+      "Cell": "positive",
+      "Form": "osda",
+      "Morphs": ["osda"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "chr_good_comparative",
+      "Lexeme_ID": "chr_good",
+      "Cell": "comparative",
+      "Form": "dajehla",
+      "Morphs": ["dajehla"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "chr_good_superlative",
+      "Lexeme_ID": "chr_good",
+      "Cell": "superlative",
+      "Form": "widajehlʌ̃ʔi",
+      "Morphs": ["wi", "dajehl", "ʌ̃ʔi"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eng_bad_positive",
+      "Lexeme_ID": "eng_bad",
+      "Cell": "positive",
+      "Form": "bad",
+      "Morphs": ["bad"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eng_bad_comparative",
+      "Lexeme_ID": "eng_bad",
+      "Cell": "comparative",
+      "Form": "worse",
+      "Morphs": ["worse"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eng_bad_superlative",
+      "Lexeme_ID": "eng_bad",
+      "Cell": "superlative",
+      "Form": "worst",
+      "Morphs": ["wors", "t"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "goh_bad_positive",
+      "Lexeme_ID": "goh_bad",
+      "Cell": "positive",
+      "Form": "ubil",
+      "Morphs": ["ubil"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "goh_bad_comparative",
+      "Lexeme_ID": "goh_bad",
+      "Cell": "comparative",
+      "Form": "wirsiro",
+      "Morphs": ["wirsi", "ro"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "goh_bad_superlative",
+      "Lexeme_ID": "goh_bad",
+      "Cell": "superlative",
+      "Form": "wirsisto",
+      "Morphs": ["wirsi", "sto"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_bad_vandr_positive",
+      "Lexeme_ID": "non_bad_vandr",
+      "Cell": "positive",
+      "Form": "vándr",
+      "Morphs": ["vándr"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_bad_vandr_comparative",
+      "Lexeme_ID": "non_bad_vandr",
+      "Cell": "comparative",
+      "Form": "verre",
+      "Morphs": ["ver", "re"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_bad_vandr_superlative",
+      "Lexeme_ID": "non_bad_vandr",
+      "Cell": "superlative",
+      "Form": "verstr",
+      "Morphs": ["ver", "str"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_bad_illr_positive",
+      "Lexeme_ID": "non_bad_illr",
+      "Cell": "positive",
+      "Form": "íllr",
+      "Morphs": ["íllr"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_bad_illr_comparative",
+      "Lexeme_ID": "non_bad_illr",
+      "Cell": "comparative",
+      "Form": "verre",
+      "Morphs": ["ver", "re"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_bad_illr_superlative",
+      "Lexeme_ID": "non_bad_illr",
+      "Cell": "superlative",
+      "Form": "verstr",
+      "Morphs": ["ver", "str"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "dan_bad_positive",
+      "Lexeme_ID": "dan_bad",
+      "Cell": "positive",
+      "Form": "slem",
+      "Morphs": ["slem"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "dan_bad_comparative",
+      "Lexeme_ID": "dan_bad",
+      "Cell": "comparative",
+      "Form": "værre",
+      "Morphs": ["vær", "re"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "dan_bad_superlative",
+      "Lexeme_ID": "dan_bad",
+      "Cell": "superlative",
+      "Form": "værst",
+      "Morphs": ["vær", "st"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fao_bad_positive",
+      "Lexeme_ID": "fao_bad",
+      "Cell": "positive",
+      "Form": "ringur",
+      "Morphs": ["ringur"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fao_bad_comparative",
+      "Lexeme_ID": "fao_bad",
+      "Cell": "comparative",
+      "Form": "verri",
+      "Morphs": ["ver", "ri"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "fao_bad_superlative",
+      "Lexeme_ID": "fao_bad",
+      "Cell": "superlative",
+      "Form": "verstur",
+      "Morphs": ["ver", "st", "ur"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "swe_bad_positive",
+      "Lexeme_ID": "swe_bad",
+      "Cell": "positive",
+      "Form": "dålig",
+      "Morphs": ["dålig"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "swe_bad_comparative",
+      "Lexeme_ID": "swe_bad",
+      "Cell": "comparative",
+      "Form": "värre",
+      "Morphs": ["vär", "re"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "swe_bad_superlative",
+      "Lexeme_ID": "swe_bad",
+      "Cell": "superlative",
+      "Form": "värst",
+      "Morphs": ["vär", "st"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "swe_bad_comparative_2",
+      "Lexeme_ID": "swe_bad",
+      "Cell": "comparative",
+      "Form": "sämre",
+      "Morphs": ["säm", "re"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "swe_bad_superlative_2",
+      "Lexeme_ID": "swe_bad",
+      "Cell": "superlative",
+      "Form": "sämst",
+      "Morphs": ["säm", "st"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "yid_bad_positive",
+      "Lexeme_ID": "yid_bad",
+      "Cell": "positive",
+      "Form": "šlext",
+      "Morphs": ["šlext"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "yid_bad_comparative",
+      "Lexeme_ID": "yid_bad",
+      "Cell": "comparative",
+      "Form": "erger",
+      "Morphs": ["erg", "er"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "yid_bad_superlative",
+      "Lexeme_ID": "yid_bad",
+      "Cell": "superlative",
+      "Form": "ergst",
+      "Morphs": ["erg", "st"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pol_bad_positive",
+      "Lexeme_ID": "pol_bad",
+      "Cell": "positive",
+      "Form": "zły",
+      "Morphs": ["zł", "y"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pol_bad_comparative",
+      "Lexeme_ID": "pol_bad",
+      "Cell": "comparative",
+      "Form": "gorszy",
+      "Morphs": ["gor", "szy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pol_bad_superlative",
+      "Lexeme_ID": "pol_bad",
+      "Cell": "superlative",
+      "Form": "najgorszy",
+      "Morphs": ["naj", "gor", "szy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_bad_positive",
+      "Lexeme_ID": "ces_bad",
+      "Cell": "positive",
+      "Form": "špatný",
+      "Morphs": ["špatn", "ý"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_bad_comparative",
+      "Lexeme_ID": "ces_bad",
+      "Cell": "comparative",
+      "Form": "horší",
+      "Morphs": ["hor", "ší"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_bad_superlative",
+      "Lexeme_ID": "ces_bad",
+      "Cell": "superlative",
+      "Form": "nejhorší",
+      "Morphs": ["nej", "hor", "ší"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_bad_positive",
+      "Lexeme_ID": "ukr_bad",
+      "Cell": "positive",
+      "Form": "pohanyj",
+      "Morphs": ["pohan", "yj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_bad_comparative",
+      "Lexeme_ID": "ukr_bad",
+      "Cell": "comparative",
+      "Form": "hiršyj",
+      "Morphs": ["hir", "šyj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_bad_superlative",
+      "Lexeme_ID": "ukr_bad",
+      "Cell": "superlative",
+      "Form": "najhiršyj",
+      "Morphs": ["naj", "hir", "šyj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bel_bad_drenn_positive",
+      "Lexeme_ID": "bel_bad_drenn",
+      "Cell": "positive",
+      "Form": "drènny",
+      "Morphs": ["drènn", "y"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bel_bad_drenn_comparative",
+      "Lexeme_ID": "bel_bad_drenn",
+      "Cell": "comparative",
+      "Form": "horšy",
+      "Morphs": ["hor", "šy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bel_bad_drenn_superlative",
+      "Lexeme_ID": "bel_bad_drenn",
+      "Cell": "superlative",
+      "Form": "najhoršy",
+      "Morphs": ["naj", "hor", "šy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bel_bad_blah_positive",
+      "Lexeme_ID": "bel_bad_blah",
+      "Cell": "positive",
+      "Form": "blahi",
+      "Morphs": ["blah", "i"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bel_bad_blah_comparative",
+      "Lexeme_ID": "bel_bad_blah",
+      "Cell": "comparative",
+      "Form": "horšy",
+      "Morphs": ["hor", "šy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bel_bad_blah_superlative",
+      "Lexeme_ID": "bel_bad_blah",
+      "Cell": "superlative",
+      "Form": "najhoršy",
+      "Morphs": ["naj", "hor", "šy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_bad_positive",
+      "Lexeme_ID": "hbs_bad",
+      "Cell": "positive",
+      "Form": "loš",
+      "Morphs": ["loš"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_bad_comparative",
+      "Lexeme_ID": "hbs_bad",
+      "Cell": "comparative",
+      "Form": "gori",
+      "Morphs": ["gor", "i"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_bad_superlative",
+      "Lexeme_ID": "hbs_bad",
+      "Cell": "superlative",
+      "Form": "najgori",
+      "Morphs": ["naj", "gor", "i"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "rus_bad_positive",
+      "Lexeme_ID": "rus_bad",
+      "Cell": "positive",
+      "Form": "ploxoj",
+      "Morphs": ["plox", "oj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "rus_bad_comparative",
+      "Lexeme_ID": "rus_bad",
+      "Cell": "comparative",
+      "Form": "xuže",
+      "Morphs": ["xuž", "e"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "rus_bad_superlative",
+      "Lexeme_ID": "rus_bad",
+      "Cell": "superlative",
+      "Form": "naixudšij",
+      "Morphs": ["nai", "xud", "š", "ij"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_bad_positive",
+      "Lexeme_ID": "lat_bad",
+      "Cell": "positive",
+      "Form": "malus",
+      "Morphs": ["malus"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_bad_comparative",
+      "Lexeme_ID": "lat_bad",
+      "Cell": "comparative",
+      "Form": "pējor",
+      "Morphs": ["pēj", "or"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_bad_superlative",
+      "Lexeme_ID": "lat_bad",
+      "Cell": "superlative",
+      "Form": "pessimus",
+      "Morphs": ["pe", "ssimus"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sga_bad_positive",
+      "Lexeme_ID": "sga_bad",
+      "Cell": "positive",
+      "Form": "olc",
+      "Morphs": ["olc"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sga_bad_comparative",
+      "Lexeme_ID": "sga_bad",
+      "Cell": "comparative",
+      "Form": "messa",
+      "Morphs": ["messa"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sga_bad_superlative",
+      "Lexeme_ID": "sga_bad",
+      "Cell": "superlative",
+      "Form": "messam",
+      "Morphs": ["messa", "m"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_bad_positive",
+      "Lexeme_ID": "cym_bad",
+      "Cell": "positive",
+      "Form": "drwg",
+      "Morphs": ["drwg"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_bad_comparative",
+      "Lexeme_ID": "cym_bad",
+      "Cell": "comparative",
+      "Form": "gwaeth",
+      "Morphs": ["gwaeth"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_bad_superlative",
+      "Lexeme_ID": "cym_bad",
+      "Cell": "superlative",
+      "Form": "gwaethaf",
+      "Morphs": ["gwaeth", "af"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bre_bad_positive",
+      "Lexeme_ID": "bre_bad",
+      "Cell": "positive",
+      "Form": "fall",
+      "Morphs": ["fall"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bre_bad_comparative",
+      "Lexeme_ID": "bre_bad",
+      "Cell": "comparative",
+      "Form": "gwash(oc’h)",
+      "Morphs": ["gwash", "(oc’h)"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "bre_bad_superlative",
+      "Lexeme_ID": "bre_bad",
+      "Cell": "superlative",
+      "Form": "gwashañ",
+      "Morphs": ["gwash", "añ"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_bad_positive",
+      "Lexeme_ID": "grc_bad",
+      "Cell": "positive",
+      "Form": "kakós",
+      "Morphs": ["kak", "ós"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_bad_comparative",
+      "Lexeme_ID": "grc_bad",
+      "Cell": "comparative",
+      "Form": "cheírōn",
+      "Morphs": ["cheír", "ōn"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_bad_superlative",
+      "Lexeme_ID": "grc_bad",
+      "Cell": "superlative",
+      "Form": "cheíristos",
+      "Morphs": ["cheír", "ist", "os"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_bad_comparative_2",
+      "Lexeme_ID": "grc_bad",
+      "Cell": "comparative",
+      "Form": "héssōn",
+      "Morphs": ["héssōn"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_bad_superlative_2",
+      "Lexeme_ID": "grc_bad",
+      "Cell": "superlative",
+      "Form": "hékistos",
+      "Morphs": ["hék", "ist", "os"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_big_positive",
+      "Lexeme_ID": "got_big",
+      "Cell": "positive",
+      "Form": "mikils",
+      "Morphs": ["mikil", "s"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_big_comparative",
+      "Lexeme_ID": "got_big",
+      "Cell": "comparative",
+      "Form": "maiza",
+      "Morphs": ["mai", "za"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_big_superlative",
+      "Lexeme_ID": "got_big",
+      "Cell": "superlative",
+      "Form": "maists",
+      "Morphs": ["mai", "sts"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_big_positive",
+      "Lexeme_ID": "ces_big",
+      "Cell": "positive",
+      "Form": "velký",
+      "Morphs": ["velk", "ý"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_big_comparative",
+      "Lexeme_ID": "ces_big",
+      "Cell": "comparative",
+      "Form": "větší",
+      "Morphs": ["vět", "ší"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ces_big_superlative",
+      "Lexeme_ID": "ces_big",
+      "Cell": "superlative",
+      "Form": "největší",
+      "Morphs": ["nej", "vět", "ší"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_big_positive",
+      "Lexeme_ID": "ukr_big",
+      "Cell": "positive",
+      "Form": "velykyj",
+      "Morphs": ["velyk", "yj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_big_comparative",
+      "Lexeme_ID": "ukr_big",
+      "Cell": "comparative",
+      "Form": "bil’šyj",
+      "Morphs": ["bil’", "šyj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ukr_big_superlative",
+      "Lexeme_ID": "ukr_big",
+      "Cell": "superlative",
+      "Form": "najbil’šyj",
+      "Morphs": ["naj", "bil’", "šyj"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pol_big_positive",
+      "Lexeme_ID": "pol_big",
+      "Cell": "positive",
+      "Form": "duży",
+      "Morphs": ["duż", "y"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pol_big_comparative",
+      "Lexeme_ID": "pol_big",
+      "Cell": "comparative",
+      "Form": "większy",
+      "Morphs": ["więk", "szy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pol_big_superlative",
+      "Lexeme_ID": "pol_big",
+      "Cell": "superlative",
+      "Form": "największy",
+      "Morphs": ["naj", "więk", "szy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_big_positive",
+      "Lexeme_ID": "cym_big",
+      "Cell": "positive",
+      "Form": "mawr",
+      "Morphs": ["mawr"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_big_comparative",
+      "Lexeme_ID": "cym_big",
+      "Cell": "comparative",
+      "Form": "mwy",
+      "Morphs": ["mwy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_big_superlative",
+      "Lexeme_ID": "cym_big",
+      "Cell": "superlative",
+      "Form": "mwyaf",
+      "Morphs": ["mwy", "af"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_big_positive",
+      "Lexeme_ID": "pal_big",
+      "Cell": "positive",
+      "Form": "wazurg",
+      "Morphs": ["wazurg"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_big_comparative",
+      "Lexeme_ID": "pal_big",
+      "Cell": "comparative",
+      "Form": "meh/mahīy",
+      "Morphs": ["meh/mah", "īy"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_big_superlative",
+      "Lexeme_ID": "pal_big",
+      "Cell": "superlative",
+      "Form": "mahist",
+      "Morphs": ["mah", "ist"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sva_big_positive",
+      "Lexeme_ID": "sva_big",
+      "Cell": "positive",
+      "Form": "d͜zɣəd",
+      "Morphs": ["d͜zɣəd"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sva_big_comparative",
+      "Lexeme_ID": "sva_big",
+      "Cell": "comparative",
+      "Form": "xoša",
+      "Morphs": ["xo", "š", "a"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sva_big_comparative_2",
+      "Lexeme_ID": "sva_big",
+      "Cell": "comparative",
+      "Form": "xošēl",
+      "Morphs": ["xo", "š", "ēl"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "sva_big_superlative",
+      "Lexeme_ID": "sva_big",
+      "Cell": "superlative",
+      "Form": "mašēne",
+      "Morphs": ["ma", "š", "ēne"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_small_positive",
+      "Lexeme_ID": "got_small",
+      "Cell": "positive",
+      "Form": "leitils",
+      "Morphs": ["leitils"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_small_comparative",
+      "Lexeme_ID": "got_small",
+      "Cell": "comparative",
+      "Form": "minniza",
+      "Morphs": ["minn", "iza"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "got_small_superlative",
+      "Lexeme_ID": "got_small",
+      "Cell": "superlative",
+      "Form": "minnists",
+      "Morphs": ["minn", "ists"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ang_small_positive",
+      "Lexeme_ID": "ang_small",
+      "Cell": "positive",
+      "Form": "lýtel",
+      "Morphs": ["lýtel"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ang_small_comparative",
+      "Lexeme_ID": "ang_small",
+      "Cell": "comparative",
+      "Form": "læssa",
+      "Morphs": ["læssa"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "ang_small_superlative",
+      "Lexeme_ID": "ang_small",
+      "Cell": "superlative",
+      "Form": "læst",
+      "Morphs": ["læ", "st"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "dan_small_positive",
+      "Lexeme_ID": "dan_small",
+      "Cell": "positive",
+      "Form": "små",
+      "Morphs": ["små"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "dan_small_comparative",
+      "Lexeme_ID": "dan_small",
+      "Cell": "comparative",
+      "Form": "mindre",
+      "Morphs": ["mind", "re"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "dan_small_superlative",
+      "Lexeme_ID": "dan_small",
+      "Cell": "superlative",
+      "Form": "mindst",
+      "Morphs": ["mind", "st"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_small_positive",
+      "Lexeme_ID": "hbs_small",
+      "Cell": "positive",
+      "Form": "mali",
+      "Morphs": ["mali"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_small_positive_2",
+      "Lexeme_ID": "hbs_small",
+      "Cell": "positive",
+      "Form": "malen",
+      "Morphs": ["malen"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_small_comparative",
+      "Lexeme_ID": "hbs_small",
+      "Cell": "comparative",
+      "Form": "manji",
+      "Morphs": ["man", "ji"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "hbs_small_superlative",
+      "Lexeme_ID": "hbs_small",
+      "Cell": "superlative",
+      "Form": "najmanji",
+      "Morphs": ["naj", "man", "ji"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_small_positive",
+      "Lexeme_ID": "lat_small",
+      "Cell": "positive",
+      "Form": "parvus",
+      "Morphs": ["parvus"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_small_positive_2",
+      "Lexeme_ID": "lat_small",
+      "Cell": "positive",
+      "Form": "paulum",
+      "Morphs": ["paulum"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_small_comparative",
+      "Lexeme_ID": "lat_small",
+      "Cell": "comparative",
+      "Form": "minor",
+      "Morphs": ["min", "or"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "lat_small_superlative",
+      "Lexeme_ID": "lat_small",
+      "Cell": "superlative",
+      "Form": "minimus",
+      "Morphs": ["min", "imus"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_small_positive",
+      "Lexeme_ID": "cym_small",
+      "Cell": "positive",
+      "Form": "bach",
+      "Morphs": ["bach"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_small_comparative",
+      "Lexeme_ID": "cym_small",
+      "Cell": "comparative",
+      "Form": "llai",
+      "Morphs": ["llai"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_small_superlative",
+      "Lexeme_ID": "cym_small",
+      "Cell": "superlative",
+      "Form": "lleiaf",
+      "Morphs": ["llei", "af"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_small_positive",
+      "Lexeme_ID": "grc_small",
+      "Cell": "positive",
+      "Form": "mikrós",
+      "Morphs": ["mikr", "ós"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_small_comparative",
+      "Lexeme_ID": "grc_small",
+      "Cell": "comparative",
+      "Form": "meíōn",
+      "Morphs": ["meí", "ōn"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_small_superlative",
+      "Lexeme_ID": "grc_small",
+      "Cell": "superlative",
+      "Form": "meĩstos",
+      "Morphs": ["meĩ", "st", "os"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_small_comparative_2",
+      "Lexeme_ID": "grc_small",
+      "Cell": "comparative",
+      "Form": "elássōn",
+      "Morphs": ["eláss", "ōn"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "grc_small_superlative_2",
+      "Lexeme_ID": "grc_small",
+      "Cell": "superlative",
+      "Form": "elachistos",
+      "Morphs": ["elach", "ist", "os"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_small_positive",
+      "Lexeme_ID": "pal_small",
+      "Cell": "positive",
+      "Form": "kōdag",
+      "Morphs": ["kōdag"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_small_comparative",
+      "Lexeme_ID": "pal_small",
+      "Cell": "comparative",
+      "Form": "keh",
+      "Morphs": ["keh"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "pal_small_superlative",
+      "Lexeme_ID": "pal_small",
+      "Cell": "superlative",
+      "Form": "kasišts",
+      "Morphs": ["kas", "išts"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_old_positive",
+      "Lexeme_ID": "non_old",
+      "Cell": "positive",
+      "Form": "gamall",
+      "Morphs": ["gamall"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_old_comparative",
+      "Lexeme_ID": "non_old",
+      "Cell": "comparative",
+      "Form": "ellre",
+      "Morphs": ["ell", "re"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "non_old_superlative",
+      "Lexeme_ID": "non_old",
+      "Cell": "superlative",
+      "Form": "ellztr",
+      "Morphs": ["ell", "ztr"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_near_positive",
+      "Lexeme_ID": "cym_near",
+      "Cell": "positive",
+      "Form": "agos",
+      "Morphs": ["agos"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_near_comparative",
+      "Lexeme_ID": "cym_near",
+      "Cell": "comparative",
+      "Form": "nes",
+      "Morphs": ["nes"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_near_superlative",
+      "Lexeme_ID": "cym_near",
+      "Cell": "superlative",
+      "Form": "nesaf",
+      "Morphs": ["nes", "af"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_strong_positive",
+      "Lexeme_ID": "cym_strong",
+      "Cell": "positive",
+      "Form": "cryf",
+      "Morphs": ["cryf"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_strong_comparative",
+      "Lexeme_ID": "cym_strong",
+      "Cell": "comparative",
+      "Form": "trech",
+      "Morphs": ["trech"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "cym_strong_superlative",
+      "Lexeme_ID": "cym_strong",
+      "Cell": "superlative",
+      "Form": "trechaf",
+      "Morphs": ["trech", "af"],
+      "Source": ["bobaljik-2012[Table 4.1]"]
+    },
+    {
+      "ID": "eng_many_positive",
+      "Lexeme_ID": "eng_many",
+      "Cell": "positive",
+      "Form": "many",
+      "Morphs": ["many"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_many_comparative",
+      "Lexeme_ID": "eng_many",
+      "Cell": "comparative",
+      "Form": "more",
+      "Morphs": ["mo", "re"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_many_superlative",
+      "Lexeme_ID": "eng_many",
+      "Cell": "superlative",
+      "Form": "most",
+      "Morphs": ["mo", "st"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_much_positive",
+      "Lexeme_ID": "eng_much",
+      "Cell": "positive",
+      "Form": "much",
+      "Morphs": ["much"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_much_comparative",
+      "Lexeme_ID": "eng_much",
+      "Cell": "comparative",
+      "Form": "more",
+      "Morphs": ["mo", "re"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_much_superlative",
+      "Lexeme_ID": "eng_much",
+      "Cell": "superlative",
+      "Form": "most",
+      "Morphs": ["mo", "st"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_lot_positive",
+      "Lexeme_ID": "eng_lot",
+      "Cell": "positive",
+      "Form": "(a) lot",
+      "Morphs": ["(a) lot"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_lot_comparative",
+      "Lexeme_ID": "eng_lot",
+      "Cell": "comparative",
+      "Form": "more",
+      "Morphs": ["mo", "re"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_lot_superlative",
+      "Lexeme_ID": "eng_lot",
+      "Cell": "superlative",
+      "Form": "most",
+      "Morphs": ["mo", "st"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "deu_many_positive",
+      "Lexeme_ID": "deu_many",
+      "Cell": "positive",
+      "Form": "viel",
+      "Morphs": ["viel"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "deu_many_comparative",
+      "Lexeme_ID": "deu_many",
+      "Cell": "comparative",
+      "Form": "mehr",
+      "Morphs": ["me", "hr"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "deu_many_superlative",
+      "Lexeme_ID": "deu_many",
+      "Cell": "superlative",
+      "Form": "meist",
+      "Morphs": ["mei", "st"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fao_many_positive",
+      "Lexeme_ID": "fao_many",
+      "Cell": "positive",
+      "Form": "nógvur",
+      "Morphs": ["nógv", "ur"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fao_many_comparative",
+      "Lexeme_ID": "fao_many",
+      "Cell": "comparative",
+      "Form": "meiri",
+      "Morphs": ["mei", "ri"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fao_many_superlative",
+      "Lexeme_ID": "fao_many",
+      "Cell": "superlative",
+      "Form": "mestur",
+      "Morphs": ["me", "st", "ur"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_many_party_positive",
+      "Lexeme_ID": "afr_many_party",
+      "Cell": "positive",
+      "Form": "party",
+      "Morphs": ["party"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_many_party_comparative",
+      "Lexeme_ID": "afr_many_party",
+      "Cell": "comparative",
+      "Form": "meer",
+      "Morphs": ["me", "er"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_many_party_superlative",
+      "Lexeme_ID": "afr_many_party",
+      "Cell": "superlative",
+      "Form": "meeste",
+      "Morphs": ["mee", "ste"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_many_baie_positive",
+      "Lexeme_ID": "afr_many_baie",
+      "Cell": "positive",
+      "Form": "baie",
+      "Morphs": ["baie"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_many_baie_comparative",
+      "Lexeme_ID": "afr_many_baie",
+      "Cell": "comparative",
+      "Form": "meer",
+      "Morphs": ["me", "er"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_many_baie_superlative",
+      "Lexeme_ID": "afr_many_baie",
+      "Cell": "superlative",
+      "Form": "meeste",
+      "Morphs": ["mee", "ste"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "yid_many_positive",
+      "Lexeme_ID": "yid_many",
+      "Cell": "positive",
+      "Form": "sakh",
+      "Morphs": ["sakh"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "yid_many_comparative",
+      "Lexeme_ID": "yid_many",
+      "Cell": "comparative",
+      "Form": "mer",
+      "Morphs": ["me", "r"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "yid_many_superlative",
+      "Lexeme_ID": "yid_many",
+      "Cell": "superlative",
+      "Form": "merste",
+      "Morphs": ["me", "r", "ste"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "dan_many_positive",
+      "Lexeme_ID": "dan_many",
+      "Cell": "positive",
+      "Form": "mange",
+      "Morphs": ["mange"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "dan_many_comparative",
+      "Lexeme_ID": "dan_many",
+      "Cell": "comparative",
+      "Form": "flere",
+      "Morphs": ["fle", "re"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "dan_many_superlative",
+      "Lexeme_ID": "dan_many",
+      "Cell": "superlative",
+      "Form": "flest",
+      "Morphs": ["fle", "st"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ces_many_positive",
+      "Lexeme_ID": "ces_many",
+      "Cell": "positive",
+      "Form": "mnoho",
+      "Morphs": ["mnoho"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ces_many_comparative",
+      "Lexeme_ID": "ces_many",
+      "Cell": "comparative",
+      "Form": "více",
+      "Morphs": ["víc", "e"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ces_many_superlative",
+      "Lexeme_ID": "ces_many",
+      "Cell": "superlative",
+      "Form": "nejvíce",
+      "Morphs": ["nej", "víc", "e"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "rus_many_positive",
+      "Lexeme_ID": "rus_many",
+      "Cell": "positive",
+      "Form": "mnogo",
+      "Morphs": ["mnogo"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "rus_many_comparative",
+      "Lexeme_ID": "rus_many",
+      "Cell": "comparative",
+      "Form": "bol’še",
+      "Morphs": ["bol’š", "e"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "rus_many_superlative",
+      "Lexeme_ID": "rus_many",
+      "Cell": "superlative",
+      "Form": "najbo’lšij",
+      "Morphs": ["naj", "bo’lš", "ij"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "bul_many_positive",
+      "Lexeme_ID": "bul_many",
+      "Cell": "positive",
+      "Form": "mnogo",
+      "Morphs": ["mnogo"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "bul_many_comparative",
+      "Lexeme_ID": "bul_many",
+      "Cell": "comparative",
+      "Form": "poveče",
+      "Morphs": ["po", "več", "e"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "bul_many_superlative",
+      "Lexeme_ID": "bul_many",
+      "Cell": "superlative",
+      "Form": "najmnogo",
+      "Morphs": ["naj", "mnogo"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "pol_many_positive",
+      "Lexeme_ID": "pol_many",
+      "Cell": "positive",
+      "Form": "wiele",
+      "Morphs": ["wiele"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "pol_many_comparative",
+      "Lexeme_ID": "pol_many",
+      "Cell": "comparative",
+      "Form": "więcej",
+      "Morphs": ["więc", "ej"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "pol_many_superlative",
+      "Lexeme_ID": "pol_many",
+      "Cell": "superlative",
+      "Form": "najwięcej",
+      "Morphs": ["naj", "więc", "ej"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "hbs_many_positive",
+      "Lexeme_ID": "hbs_many",
+      "Cell": "positive",
+      "Form": "puno",
+      "Morphs": ["puno"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "hbs_many_comparative",
+      "Lexeme_ID": "hbs_many",
+      "Cell": "comparative",
+      "Form": "veće",
+      "Morphs": ["već", "e"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "hbs_many_superlative",
+      "Lexeme_ID": "hbs_many",
+      "Cell": "superlative",
+      "Form": "najveće",
+      "Morphs": ["naj", "već", "e"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_many_bahato_positive",
+      "Lexeme_ID": "ukr_many_bahato",
+      "Cell": "positive",
+      "Form": "baháto",
+      "Morphs": ["baháto"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_many_bahato_comparative",
+      "Lexeme_ID": "ukr_many_bahato",
+      "Cell": "comparative",
+      "Form": "bil’šyj",
+      "Morphs": ["bil’", "šyj"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_many_bahato_superlative",
+      "Lexeme_ID": "ukr_many_bahato",
+      "Cell": "superlative",
+      "Form": "najbil’šyj",
+      "Morphs": ["naj", "bil’", "šyj"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_many_duze_positive",
+      "Lexeme_ID": "ukr_many_duze",
+      "Cell": "positive",
+      "Form": "dúže",
+      "Morphs": ["dúže"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_many_duze_comparative",
+      "Lexeme_ID": "ukr_many_duze",
+      "Cell": "comparative",
+      "Form": "bil’šyj",
+      "Morphs": ["bil’", "šyj"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_many_duze_superlative",
+      "Lexeme_ID": "ukr_many_duze",
+      "Cell": "superlative",
+      "Form": "najbil’šyj",
+      "Morphs": ["naj", "bil’", "šyj"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lav_many_positive",
+      "Lexeme_ID": "lav_many",
+      "Cell": "positive",
+      "Form": "daudz",
+      "Morphs": ["daudz"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lav_many_comparative",
+      "Lexeme_ID": "lav_many",
+      "Cell": "comparative",
+      "Form": "vairâk",
+      "Morphs": ["vair", "âk"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lav_many_superlative",
+      "Lexeme_ID": "lav_many",
+      "Cell": "superlative",
+      "Form": "visvairâk",
+      "Morphs": ["vis", "vair", "âk"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lat_many_positive",
+      "Lexeme_ID": "lat_many",
+      "Cell": "positive",
+      "Form": "mult",
+      "Morphs": ["mult-"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lat_many_comparative",
+      "Lexeme_ID": "lat_many",
+      "Cell": "comparative",
+      "Form": "plūs",
+      "Morphs": ["plū", "s"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lat_many_superlative",
+      "Lexeme_ID": "lat_many",
+      "Cell": "superlative",
+      "Form": "plūrimus",
+      "Morphs": ["plūr", "imu", "s"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "bre_many_positive",
+      "Lexeme_ID": "bre_many",
+      "Cell": "positive",
+      "Form": "kalz",
+      "Morphs": ["kalz"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "bre_many_comparative",
+      "Lexeme_ID": "bre_many",
+      "Cell": "comparative",
+      "Form": "mui(oc’h)",
+      "Morphs": ["mui", "(oc’h)"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "bre_many_superlative",
+      "Lexeme_ID": "bre_many",
+      "Cell": "superlative",
+      "Form": "muiañ",
+      "Morphs": ["mui", "añ"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "cym_many_positive",
+      "Lexeme_ID": "cym_many",
+      "Cell": "positive",
+      "Form": "llawer",
+      "Morphs": ["llawer"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "cym_many_comparative",
+      "Lexeme_ID": "cym_many",
+      "Cell": "comparative",
+      "Form": "mwy",
+      "Morphs": ["mwy"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "cym_many_superlative",
+      "Lexeme_ID": "cym_many",
+      "Cell": "superlative",
+      "Form": "mwyaf",
+      "Morphs": ["mwy", "af"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "grc_many_positive",
+      "Lexeme_ID": "grc_many",
+      "Cell": "positive",
+      "Form": "polús",
+      "Morphs": ["pol", "ús"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "grc_many_comparative",
+      "Lexeme_ID": "grc_many",
+      "Cell": "comparative",
+      "Form": "pleíōn",
+      "Morphs": ["ple", "íōn"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "grc_many_superlative",
+      "Lexeme_ID": "grc_many",
+      "Cell": "superlative",
+      "Form": "pleĩstos",
+      "Morphs": ["ple", "ĩst", "os"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "hye_many_positive",
+      "Lexeme_ID": "hye_many",
+      "Cell": "positive",
+      "Form": "šaterë",
+      "Morphs": ["šat", "erë"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "hye_many_comparative",
+      "Lexeme_ID": "hye_many",
+      "Cell": "comparative",
+      "Form": "aveli",
+      "Morphs": ["aveli"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "hye_many_superlative",
+      "Lexeme_ID": "hye_many",
+      "Cell": "superlative",
+      "Form": "amenašat",
+      "Morphs": ["amena", "šat"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fas_many_xele_positive",
+      "Lexeme_ID": "fas_many_xele",
+      "Cell": "positive",
+      "Form": "xele",
+      "Morphs": ["xele"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fas_many_xele_comparative",
+      "Lexeme_ID": "fas_many_xele",
+      "Cell": "comparative",
+      "Form": "beš(tar)",
+      "Morphs": ["beš", "(tar)"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fas_many_xele_superlative",
+      "Lexeme_ID": "fas_many_xele",
+      "Cell": "superlative",
+      "Form": "beštarin",
+      "Morphs": ["beš", "tar", "in"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fas_many_ziad_positive",
+      "Lexeme_ID": "fas_many_ziad",
+      "Cell": "positive",
+      "Form": "ziad",
+      "Morphs": ["ziad"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fas_many_ziad_comparative",
+      "Lexeme_ID": "fas_many_ziad",
+      "Cell": "comparative",
+      "Form": "beš(tar)",
+      "Morphs": ["beš", "(tar)"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fas_many_ziad_superlative",
+      "Lexeme_ID": "fas_many_ziad",
+      "Cell": "superlative",
+      "Form": "beštarin",
+      "Morphs": ["beš", "tar", "in"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eus_many_positive",
+      "Lexeme_ID": "eus_many",
+      "Cell": "positive",
+      "Form": "asko",
+      "Morphs": ["asko"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eus_many_comparative",
+      "Lexeme_ID": "eus_many",
+      "Cell": "comparative",
+      "Form": "gehiago",
+      "Morphs": ["gehi", "ago"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eus_many_superlative",
+      "Lexeme_ID": "eus_many",
+      "Cell": "superlative",
+      "Form": "gehien",
+      "Morphs": ["gehi", "en"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fin_many_monet_positive",
+      "Lexeme_ID": "fin_many_monet",
+      "Cell": "positive",
+      "Form": "monet",
+      "Morphs": ["monet"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fin_many_monet_comparative",
+      "Lexeme_ID": "fin_many_monet",
+      "Cell": "comparative",
+      "Form": "useammat",
+      "Morphs": ["usea", "mmat"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fin_many_monet_superlative",
+      "Lexeme_ID": "fin_many_monet",
+      "Cell": "superlative",
+      "Form": "useimmat",
+      "Morphs": ["use", "i", "mmat"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fin_many_paljon_positive",
+      "Lexeme_ID": "fin_many_paljon",
+      "Cell": "positive",
+      "Form": "paljon",
+      "Morphs": ["paljon"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fin_many_paljon_comparative",
+      "Lexeme_ID": "fin_many_paljon",
+      "Cell": "comparative",
+      "Form": "enemmän",
+      "Morphs": ["ene", "mmän"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fin_many_paljon_superlative",
+      "Lexeme_ID": "fin_many_paljon",
+      "Cell": "superlative",
+      "Form": "eniten",
+      "Morphs": ["en", "iten"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "krl_many_positive",
+      "Lexeme_ID": "krl_many",
+      "Cell": "positive",
+      "Form": "äijä",
+      "Morphs": ["äijä"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "krl_many_comparative",
+      "Lexeme_ID": "krl_many",
+      "Cell": "comparative",
+      "Form": "enämpi",
+      "Morphs": ["enä", "mpi"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "krl_many_superlative",
+      "Lexeme_ID": "krl_many",
+      "Cell": "superlative",
+      "Form": "äijin",
+      "Morphs": ["äij", "in"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "krl_many_superlative_questionnaire",
+      "Lexeme_ID": "krl_many",
+      "Cell": "superlative",
+      "Form": "äijin",
+      "Morphs": ["äij", "in"],
+      "Judgment": "ungrammatical",
+      "Comment": "none of the seven respondents to the 2009 questionnaire gave äijin as the superlative of 'many' or recognized it when asked; four gave enin",
+      "Source": ["bobaljik-2012[p. 130]"]
+    },
+    {
+      "ID": "hun_many_positive",
+      "Lexeme_ID": "hun_many",
+      "Cell": "positive",
+      "Form": "sok",
+      "Morphs": ["sok"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "hun_many_comparative",
+      "Lexeme_ID": "hun_many",
+      "Cell": "comparative",
+      "Form": "több",
+      "Morphs": ["tö", "bb"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "hun_many_superlative",
+      "Lexeme_ID": "hun_many",
+      "Cell": "superlative",
+      "Form": "legtöbb",
+      "Morphs": ["leg", "tö", "bb"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "kat_many_positive",
+      "Lexeme_ID": "kat_many",
+      "Cell": "positive",
+      "Form": "bevri",
+      "Morphs": ["bevri"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "kat_many_comparative",
+      "Lexeme_ID": "kat_many",
+      "Cell": "comparative",
+      "Form": "met’i",
+      "Morphs": ["met’", "i"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "kat_many_superlative",
+      "Lexeme_ID": "kat_many",
+      "Cell": "superlative",
+      "Form": "umet’esi",
+      "Morphs": ["u", "met’", "es", "i"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "kbd_many_positive",
+      "Lexeme_ID": "kbd_many",
+      "Cell": "positive",
+      "Form": "kwad",
+      "Morphs": ["kwad"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "kbd_many_positive_2",
+      "Lexeme_ID": "kbd_many",
+      "Cell": "positive",
+      "Form": "ba",
+      "Morphs": ["ba"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "kbd_many_comparative",
+      "Lexeme_ID": "kbd_many",
+      "Cell": "comparative",
+      "Form": "nax",
+      "Morphs": ["nax"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "kbd_many_superlative",
+      "Lexeme_ID": "kbd_many",
+      "Cell": "superlative",
+      "Form": "naxdeda",
+      "Morphs": ["nax", "deda"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_few_positive",
+      "Lexeme_ID": "eng_few",
+      "Cell": "positive",
+      "Form": "(a) little",
+      "Morphs": ["(a) little"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_few_comparative",
+      "Lexeme_ID": "eng_few",
+      "Cell": "comparative",
+      "Form": "less",
+      "Morphs": ["less"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "eng_few_superlative",
+      "Lexeme_ID": "eng_few",
+      "Cell": "superlative",
+      "Form": "least",
+      "Morphs": ["leas", "t"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_few_positive",
+      "Lexeme_ID": "afr_few",
+      "Cell": "positive",
+      "Form": "weinig",
+      "Morphs": ["weinig"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_few_comparative",
+      "Lexeme_ID": "afr_few",
+      "Cell": "comparative",
+      "Form": "minder",
+      "Morphs": ["mind", "er"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "afr_few_superlative",
+      "Lexeme_ID": "afr_few",
+      "Cell": "superlative",
+      "Form": "mindste",
+      "Morphs": ["mind", "ste"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fry_few_positive",
+      "Lexeme_ID": "fry_few",
+      "Cell": "positive",
+      "Form": "(en) bytsje",
+      "Morphs": ["(en) bytsje"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fry_few_comparative",
+      "Lexeme_ID": "fry_few",
+      "Cell": "comparative",
+      "Form": "minder",
+      "Morphs": ["mind", "er"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "fry_few_superlative",
+      "Lexeme_ID": "fry_few",
+      "Cell": "superlative",
+      "Form": "minst",
+      "Morphs": ["minst"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_few_positive",
+      "Lexeme_ID": "ukr_few",
+      "Cell": "positive",
+      "Form": "troxi",
+      "Morphs": ["troxi"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_few_comparative",
+      "Lexeme_ID": "ukr_few",
+      "Cell": "comparative",
+      "Form": "menše",
+      "Morphs": ["men", "še"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "ukr_few_superlative",
+      "Lexeme_ID": "ukr_few",
+      "Cell": "superlative",
+      "Form": "najmenšij",
+      "Morphs": ["naj", "men", "šij"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lat_few_positive",
+      "Lexeme_ID": "lat_few",
+      "Cell": "positive",
+      "Form": "paucus",
+      "Morphs": ["paucus"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lat_few_comparative",
+      "Lexeme_ID": "lat_few",
+      "Cell": "comparative",
+      "Form": "minor",
+      "Morphs": ["min", "or"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "lat_few_superlative",
+      "Lexeme_ID": "lat_few",
+      "Cell": "superlative",
+      "Form": "minimus",
+      "Morphs": ["min", "imus"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "grc_few_positive",
+      "Lexeme_ID": "grc_few",
+      "Cell": "positive",
+      "Form": "olígos",
+      "Morphs": ["olíg", "os"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "grc_few_comparative",
+      "Lexeme_ID": "grc_few",
+      "Cell": "comparative",
+      "Form": "héssōn",
+      "Morphs": ["héss", "ōn"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "grc_few_superlative",
+      "Lexeme_ID": "grc_few",
+      "Cell": "superlative",
+      "Form": "hékistos",
+      "Morphs": ["hék", "ist", "os"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "grc_few_comparative_2",
+      "Lexeme_ID": "grc_few",
+      "Cell": "comparative",
+      "Form": "meíōn",
+      "Morphs": ["meí", "ōn"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "grc_few_superlative_2",
+      "Lexeme_ID": "grc_few",
+      "Cell": "superlative",
+      "Form": "meĩstos",
+      "Morphs": ["meĩ", "st", "os"],
+      "Source": ["bobaljik-2012[Table 4.2]"]
+    },
+    {
+      "ID": "krl_many_onego_positive",
+      "Lexeme_ID": "krl_many_onego",
+      "Cell": "positive",
+      "Form": "äijy",
+      "Morphs": ["äijy"],
+      "Source": ["bobaljik-2012[(170)]"]
+    },
+    {
+      "ID": "krl_many_onego_comparative",
+      "Lexeme_ID": "krl_many_onego",
+      "Cell": "comparative",
+      "Form": "enämbi",
+      "Morphs": ["enä", "mbi"],
+      "Source": ["bobaljik-2012[(170)]"]
+    },
+    {
+      "ID": "krl_many_onego_superlative",
+      "Lexeme_ID": "krl_many_onego",
+      "Cell": "superlative",
+      "Form": "enin",
+      "Morphs": ["en", "in"],
+      "Source": ["bobaljik-2012[(170)]"]
+    }
+  ],
+  "RootClassTable": [
+    {
+      "ID": "eng_good",
+      "Lexeme_ID": "eng_good",
+      "Form_IDs": ["eng_good_positive", "eng_good_comparative", "eng_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "other Germanic",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "swe_good",
+      "Lexeme_ID": "swe_good",
+      "Form_IDs": ["swe_good_positive", "swe_good_comparative", "swe_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Norwegian",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "got_good",
+      "Lexeme_ID": "got_good",
+      "Form_IDs": ["got_good_positive", "got_good_comparative", "got_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "cim_good",
+      "Lexeme_ID": "cim_good",
+      "Form_IDs": ["cim_good_positive", "cim_good_comparative", "cim_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "Giazza is in the Tredici Comuni; Glottocode of Tredici Comuni Cimbrian",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "ces_good",
+      "Lexeme_ID": "ces_good",
+      "Form_IDs": ["ces_good_positive", "ces_good_comparative", "ces_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Polish",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "hbs_good",
+      "Lexeme_ID": "hbs_good",
+      "Form_IDs": ["hbs_good_positive", "hbs_good_comparative", "hbs_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Slovenian",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "sorb_good",
+      "Lexeme_ID": "sorb_good",
+      "Form_IDs": ["sorb_good_positive", "sorb_good_comparative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "footnote a: the source gives no superlative; Sorbian superlatives prefix naj- to the comparative. The book does not say which Sorbian; Glottocode of the family",
+      "Source": ["bobaljik-2012[Table 4.1, note a]"]
+    },
+    {
+      "ID": "ukr_good_dobr",
+      "Lexeme_ID": "ukr_good_dobr",
+      "Form_IDs": ["ukr_good_dobr_positive", "ukr_good_dobr_comparative", "ukr_good_dobr_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "ukr_good_harn",
+      "Lexeme_ID": "ukr_good_harn",
+      "Form_IDs": ["ukr_good_harn_positive", "ukr_good_harn_comparative", "ukr_good_harn_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "rus_good",
+      "Lexeme_ID": "rus_good",
+      "Form_IDs": ["rus_good_positive", "rus_good_comparative", "rus_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "lat_good",
+      "Lexeme_ID": "lat_good",
+      "Form_IDs": ["lat_good_positive", "lat_good_comparative", "lat_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "C"},
+      "Comment": "footnote b: Romance keeps the comparatives but no synthetic superlative",
+      "Source": ["bobaljik-2012[(31a)]"]
+    },
+    {
+      "ID": "cym_good",
+      "Lexeme_ID": "cym_good",
+      "Form_IDs": ["cym_good_positive", "cym_good_comparative", "cym_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "C"},
+      "Source": ["bobaljik-2012[(31b)]"]
+    },
+    {
+      "ID": "sga_good",
+      "Lexeme_ID": "sga_good",
+      "Form_IDs": ["sga_good_positive", "sga_good_comparative", "sga_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "C"},
+      "Comment": "footnote c: the later Goidelic languages lack a distinct superlative",
+      "Source": ["bobaljik-2012[(31c)]"]
+    },
+    {
+      "ID": "bre_good",
+      "Lexeme_ID": "bre_good",
+      "Form_IDs": ["bre_good_positive", "bre_good_comparative", "bre_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "grc_good_amein",
+      "Lexeme_ID": "grc_good",
+      "Form_IDs": ["grc_good_positive", "grc_good_comparative", "grc_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "C"},
+      "Comment": "footnote d (footnote 2 of the chapter): the two defective triples counted as one ABC triple, perhaps unwisely",
+      "Source": ["bobaljik-2012[p. 112]"]
+    },
+    {
+      "ID": "grc_good_arei",
+      "Lexeme_ID": "grc_good",
+      "Form_IDs": ["grc_good_positive", "grc_good_comparative_2", "grc_good_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "grc_good_belt",
+      "Lexeme_ID": "grc_good",
+      "Form_IDs": ["grc_good_positive", "grc_good_comparative_3", "grc_good_superlative_3"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "grc_good_kreiss",
+      "Lexeme_ID": "grc_good",
+      "Form_IDs": ["grc_good_positive", "grc_good_comparative_4", "grc_good_superlative_4"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "grc_good_lo",
+      "Lexeme_ID": "grc_good",
+      "Form_IDs": ["grc_good_positive", "grc_good_comparative_5", "grc_good_superlative_5"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "san_good_sre",
+      "Lexeme_ID": "san_good",
+      "Form_IDs": ["san_good_positive", "san_good_comparative", "san_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "san_good_jya",
+      "Lexeme_ID": "san_good",
+      "Form_IDs": ["san_good_positive", "san_good_comparative_2", "san_good_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "kho_good",
+      "Lexeme_ID": "kho_good",
+      "Form_IDs": ["kho_good_positive", "kho_good_comparative", "kho_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "pal_good",
+      "Lexeme_ID": "pal_good",
+      "Form_IDs": ["pal_good_positive", "pal_good_comparative", "pal_good_superlative", "pal_good_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "C"},
+      "Comment": "the comparative is printed weh/wah-īy and kept as printed",
+      "Source": ["bobaljik-2012[(31d)]"]
+    },
+    {
+      "ID": "fas_good",
+      "Lexeme_ID": "fas_good",
+      "Form_IDs": ["fas_good_positive", "fas_good_comparative", "fas_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "eus_good_hobe",
+      "Lexeme_ID": "eus_good",
+      "Form_IDs": ["eus_good_positive", "eus_good_comparative", "eus_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "eus_good_on",
+      "Lexeme_ID": "eus_good",
+      "Form_IDs": ["eus_good_positive", "eus_good_comparative", "eus_good_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "A"},
+      "Comment": "the one problematic ABA, a doublet in some varieties (section 4.1.2)",
+      "Source": ["bobaljik-2012[(143)]"]
+    },
+    {
+      "ID": "fin_good",
+      "Lexeme_ID": "fin_good",
+      "Form_IDs": ["fin_good_positive", "fin_good_comparative", "fin_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "other Fennic",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "sjd_good",
+      "Lexeme_ID": "sjd_good",
+      "Form_IDs": ["sjd_good_positive", "sjd_good_comparative", "sjd_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "kat_good_mjob",
+      "Lexeme_ID": "kat_good",
+      "Form_IDs": ["kat_good_positive", "kat_good_comparative", "kat_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "footnote e: k’argi-i formed a regular comparative in Old Georgian",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "kat_good_ket",
+      "Lexeme_ID": "kat_good",
+      "Form_IDs": ["kat_good_positive", "kat_good_comparative_2", "kat_good_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "sva_good",
+      "Lexeme_ID": "sva_good",
+      "Form_IDs": ["sva_good_positive", "sva_good_comparative", "sva_good_comparative_2", "sva_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "footnote f: the xo-...-a forms are used with a positive sense and may not belong here",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "chr_good",
+      "Lexeme_ID": "chr_good",
+      "Form_IDs": ["chr_good_positive", "chr_good_comparative", "chr_good_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "eng_bad",
+      "Lexeme_ID": "eng_bad",
+      "Form_IDs": ["eng_bad_positive", "eng_bad_comparative", "eng_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "goh_bad",
+      "Lexeme_ID": "goh_bad",
+      "Form_IDs": ["goh_bad_positive", "goh_bad_comparative", "goh_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Old English",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "non_bad_vandr",
+      "Lexeme_ID": "non_bad_vandr",
+      "Form_IDs": ["non_bad_vandr_positive", "non_bad_vandr_comparative", "non_bad_vandr_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "other Scandinavian",
+      "Comment": "Old Icelandic coded as Old Norse",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "non_bad_illr",
+      "Lexeme_ID": "non_bad_illr",
+      "Form_IDs": ["non_bad_illr_positive", "non_bad_illr_comparative", "non_bad_illr_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "other Scandinavian",
+      "Comment": "Old Icelandic coded as Old Norse",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "dan_bad",
+      "Lexeme_ID": "dan_bad",
+      "Form_IDs": ["dan_bad_positive", "dan_bad_comparative", "dan_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "fao_bad",
+      "Lexeme_ID": "fao_bad",
+      "Form_IDs": ["fao_bad_positive", "fao_bad_comparative", "fao_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "swe_bad_var",
+      "Lexeme_ID": "swe_bad",
+      "Form_IDs": ["swe_bad_positive", "swe_bad_comparative", "swe_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Norwegian",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "swe_bad_sam",
+      "Lexeme_ID": "swe_bad",
+      "Form_IDs": ["swe_bad_positive", "swe_bad_comparative_2", "swe_bad_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "yid_bad",
+      "Lexeme_ID": "yid_bad",
+      "Form_IDs": ["yid_bad_positive", "yid_bad_comparative", "yid_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "Yiddish coded as Eastern Yiddish",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "pol_bad",
+      "Lexeme_ID": "pol_bad",
+      "Form_IDs": ["pol_bad_positive", "pol_bad_comparative", "pol_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "other Slavic",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "ces_bad",
+      "Lexeme_ID": "ces_bad",
+      "Form_IDs": ["ces_bad_positive", "ces_bad_comparative", "ces_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "ukr_bad",
+      "Lexeme_ID": "ukr_bad",
+      "Form_IDs": ["ukr_bad_positive", "ukr_bad_comparative", "ukr_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "bel_bad_drenn",
+      "Lexeme_ID": "bel_bad_drenn",
+      "Form_IDs": ["bel_bad_drenn_positive", "bel_bad_drenn_comparative", "bel_bad_drenn_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "bel_bad_blah",
+      "Lexeme_ID": "bel_bad_blah",
+      "Form_IDs": ["bel_bad_blah_positive", "bel_bad_blah_comparative", "bel_bad_blah_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "hbs_bad",
+      "Lexeme_ID": "hbs_bad",
+      "Form_IDs": ["hbs_bad_positive", "hbs_bad_comparative", "hbs_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "rus_bad",
+      "Lexeme_ID": "rus_bad",
+      "Form_IDs": ["rus_bad_positive", "rus_bad_comparative", "rus_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "lat_bad",
+      "Lexeme_ID": "lat_bad",
+      "Form_IDs": ["lat_bad_positive", "lat_bad_comparative", "lat_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "sga_bad",
+      "Lexeme_ID": "sga_bad",
+      "Form_IDs": ["sga_bad_positive", "sga_bad_comparative", "sga_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "cym_bad",
+      "Lexeme_ID": "cym_bad",
+      "Form_IDs": ["cym_bad_positive", "cym_bad_comparative", "cym_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "bre_bad",
+      "Lexeme_ID": "bre_bad",
+      "Form_IDs": ["bre_bad_positive", "bre_bad_comparative", "bre_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "grc_bad_cheir",
+      "Lexeme_ID": "grc_bad",
+      "Form_IDs": ["grc_bad_positive", "grc_bad_comparative", "grc_bad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "footnote g: Modern Greek keeps the comparative, with a periphrastic superlative",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "grc_bad_hess",
+      "Lexeme_ID": "grc_bad",
+      "Form_IDs": ["grc_bad_positive", "grc_bad_comparative_2", "grc_bad_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "footnote h: some sources give further doublets",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "got_big",
+      "Lexeme_ID": "got_big",
+      "Form_IDs": ["got_big_positive", "got_big_comparative", "got_big_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Old Germanic, Icelandic",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "ces_big",
+      "Lexeme_ID": "ces_big",
+      "Form_IDs": ["ces_big_positive", "ces_big_comparative", "ces_big_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "other Slavic",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "ukr_big",
+      "Lexeme_ID": "ukr_big",
+      "Form_IDs": ["ukr_big_positive", "ukr_big_comparative", "ukr_big_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "pol_big",
+      "Lexeme_ID": "pol_big",
+      "Form_IDs": ["pol_big_positive", "pol_big_comparative", "pol_big_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "cym_big",
+      "Lexeme_ID": "cym_big",
+      "Form_IDs": ["cym_big_positive", "cym_big_comparative", "cym_big_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "footnote i: possibly irregular rather than suppletive",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "pal_big",
+      "Lexeme_ID": "pal_big",
+      "Form_IDs": ["pal_big_positive", "pal_big_comparative", "pal_big_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "footnote j: no Old Persian comparative of 'great' is attested; the comparative is printed meh/mah-īy and kept as printed",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "sva_big",
+      "Lexeme_ID": "sva_big",
+      "Form_IDs": ["sva_big_positive", "sva_big_comparative", "sva_big_comparative_2", "sva_big_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "got_small",
+      "Lexeme_ID": "got_small",
+      "Form_IDs": ["got_small_positive", "got_small_comparative", "got_small_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Old High German, Scandinavian",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "ang_small",
+      "Lexeme_ID": "ang_small",
+      "Form_IDs": ["ang_small_positive", "ang_small_comparative", "ang_small_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "dan_small",
+      "Lexeme_ID": "dan_small",
+      "Form_IDs": ["dan_small_positive", "dan_small_comparative", "dan_small_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Norwegian",
+      "Comment": "footnote k: små is a suppletive plural for singular lille",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "hbs_small",
+      "Lexeme_ID": "hbs_small",
+      "Form_IDs": ["hbs_small_positive", "hbs_small_positive_2", "hbs_small_comparative", "hbs_small_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "other Slavic",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "lat_small",
+      "Lexeme_ID": "lat_small",
+      "Form_IDs": ["lat_small_positive", "lat_small_positive_2", "lat_small_comparative", "lat_small_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "cym_small",
+      "Lexeme_ID": "cym_small",
+      "Form_IDs": ["cym_small_positive", "cym_small_comparative", "cym_small_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Old Irish",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "grc_small_mei",
+      "Lexeme_ID": "grc_small",
+      "Form_IDs": ["grc_small_positive", "grc_small_comparative", "grc_small_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "grc_small_elass",
+      "Lexeme_ID": "grc_small",
+      "Form_IDs": ["grc_small_positive", "grc_small_comparative_2", "grc_small_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "pal_small",
+      "Lexeme_ID": "pal_small",
+      "Form_IDs": ["pal_small_positive", "pal_small_comparative", "pal_small_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "footnote l: the superlative is the Parthian form",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "non_old",
+      "Lexeme_ID": "non_old",
+      "Form_IDs": ["non_old_positive", "non_old_comparative", "non_old_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Scandinavian",
+      "Comment": "Old Icelandic coded as Old Norse",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "cym_near",
+      "Lexeme_ID": "cym_near",
+      "Form_IDs": ["cym_near_positive", "cym_near_comparative", "cym_near_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Old Irish",
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "cym_strong",
+      "Lexeme_ID": "cym_strong",
+      "Form_IDs": ["cym_strong_positive", "cym_strong_comparative", "cym_strong_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 109]"]
+    },
+    {
+      "ID": "eng_many",
+      "Lexeme_ID": "eng_many",
+      "Form_IDs": ["eng_many_positive", "eng_many_comparative", "eng_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Scandinavian",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "eng_much",
+      "Lexeme_ID": "eng_much",
+      "Form_IDs": ["eng_much_positive", "eng_much_comparative", "eng_much_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Scandinavian",
+      "Comment": "note a: the cognates of many and much pattern differently across Germanic",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "eng_lot",
+      "Lexeme_ID": "eng_lot",
+      "Form_IDs": ["eng_lot_positive", "eng_lot_comparative", "eng_lot_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "note b: a lot of has replaced much as the mass positive in many contexts",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "deu_many",
+      "Lexeme_ID": "deu_many",
+      "Form_IDs": ["deu_many_positive", "deu_many_comparative", "deu_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "other Germanic",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "fao_many",
+      "Lexeme_ID": "fao_many",
+      "Form_IDs": ["fao_many_positive", "fao_many_comparative", "fao_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "afr_many_party",
+      "Lexeme_ID": "afr_many_party",
+      "Form_IDs": ["afr_many_party_positive", "afr_many_party_comparative", "afr_many_party_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "afr_many_baie",
+      "Lexeme_ID": "afr_many_baie",
+      "Form_IDs": ["afr_many_baie_positive", "afr_many_baie_comparative", "afr_many_baie_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "yid_many",
+      "Lexeme_ID": "yid_many",
+      "Form_IDs": ["yid_many_positive", "yid_many_comparative", "yid_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "dan_many",
+      "Lexeme_ID": "dan_many",
+      "Form_IDs": ["dan_many_positive", "dan_many_comparative", "dan_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Scandinavian",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "ces_many",
+      "Lexeme_ID": "ces_many",
+      "Form_IDs": ["ces_many_positive", "ces_many_comparative", "ces_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Serbo-Croatian",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "rus_many",
+      "Lexeme_ID": "rus_many",
+      "Form_IDs": ["rus_many_positive", "rus_many_comparative", "rus_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "the superlative is printed naj-bo’lš-ij",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "bul_many",
+      "Lexeme_ID": "bul_many",
+      "Form_IDs": ["bul_many_positive", "bul_many_comparative", "bul_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "A"},
+      "Cognates": "Macedonian",
+      "Comment": "an apparent ABA; po and naj are freestanding particles, so the superlative is periphrastic (pp. 126-128)",
+      "Source": ["bobaljik-2012[(165c)]"]
+    },
+    {
+      "ID": "pol_many",
+      "Lexeme_ID": "pol_many",
+      "Form_IDs": ["pol_many_positive", "pol_many_comparative", "pol_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "hbs_many",
+      "Lexeme_ID": "hbs_many",
+      "Form_IDs": ["hbs_many_positive", "hbs_many_comparative", "hbs_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "ukr_many_bahato",
+      "Lexeme_ID": "ukr_many_bahato",
+      "Form_IDs": ["ukr_many_bahato_positive", "ukr_many_bahato_comparative", "ukr_many_bahato_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "ukr_many_duze",
+      "Lexeme_ID": "ukr_many_duze",
+      "Form_IDs": ["ukr_many_duze_positive", "ukr_many_duze_comparative", "ukr_many_duze_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "lav_many",
+      "Lexeme_ID": "lav_many",
+      "Form_IDs": ["lav_many_positive", "lav_many_comparative", "lav_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "lat_many",
+      "Lexeme_ID": "lat_many",
+      "Form_IDs": ["lat_many_positive", "lat_many_comparative", "lat_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "bre_many",
+      "Lexeme_ID": "bre_many",
+      "Form_IDs": ["bre_many_positive", "bre_many_comparative", "bre_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "cym_many",
+      "Lexeme_ID": "cym_many",
+      "Form_IDs": ["cym_many_positive", "cym_many_comparative", "cym_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "grc_many",
+      "Lexeme_ID": "grc_many",
+      "Form_IDs": ["grc_many_positive", "grc_many_comparative", "grc_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "hye_many",
+      "Lexeme_ID": "hye_many",
+      "Form_IDs": ["hye_many_positive", "hye_many_comparative", "hye_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "A"},
+      "Comment": "an apparent ABA; amena- is a compound with amen 'all', not a superlative prefix (pp. 128-129). Armenian taken as Eastern Armenian, the sources Appendix C lists",
+      "Source": ["bobaljik-2012[(165b)]"]
+    },
+    {
+      "ID": "fas_many_xele",
+      "Lexeme_ID": "fas_many_xele",
+      "Form_IDs": ["fas_many_xele_positive", "fas_many_xele_comparative", "fas_many_xele_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "fas_many_ziad",
+      "Lexeme_ID": "fas_many_ziad",
+      "Form_IDs": ["fas_many_ziad_positive", "fas_many_ziad_comparative", "fas_many_ziad_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "eus_many",
+      "Lexeme_ID": "eus_many",
+      "Form_IDs": ["eus_many_positive", "eus_many_comparative", "eus_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "note c: if Basque -en is not a true superlative, the triple is not relevant",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "fin_many_monet",
+      "Lexeme_ID": "fin_many_monet",
+      "Form_IDs": ["fin_many_monet_positive", "fin_many_monet_comparative", "fin_many_monet_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "fin_many_paljon",
+      "Lexeme_ID": "fin_many_paljon",
+      "Form_IDs": ["fin_many_paljon_positive", "fin_many_paljon_comparative", "fin_many_paljon_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "krl_many",
+      "Lexeme_ID": "krl_many",
+      "Form_IDs": ["krl_many_positive", "krl_many_comparative", "krl_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "A"},
+      "Comment": "an apparent ABA, from Zajkov (1999, 51); no respondent of the 2009 questionnaire gave or recognized äijin (pp. 129-131)",
+      "Source": ["bobaljik-2012[(165a)]"]
+    },
+    {
+      "ID": "hun_many",
+      "Lexeme_ID": "hun_many",
+      "Form_IDs": ["hun_many_positive", "hun_many_comparative", "hun_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "kat_many",
+      "Lexeme_ID": "kat_many",
+      "Form_IDs": ["kat_many_positive", "kat_many_comparative", "kat_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "note d: 'more' lacks comparative morphology, and 'most' has comparative rather than superlative morphology",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "kbd_many",
+      "Lexeme_ID": "kbd_many",
+      "Form_IDs": ["kbd_many_positive", "kbd_many_positive_2", "kbd_many_comparative", "kbd_many_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "eng_few",
+      "Lexeme_ID": "eng_few",
+      "Form_IDs": ["eng_few_positive", "eng_few_comparative", "eng_few_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "afr_few",
+      "Lexeme_ID": "afr_few",
+      "Form_IDs": ["afr_few_positive", "afr_few_comparative", "afr_few_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Dutch",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "fry_few",
+      "Lexeme_ID": "fry_few",
+      "Form_IDs": ["fry_few_positive", "fry_few_comparative", "fry_few_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "Frisian taken as West Frisian, the language of Tiersma (1985), the source Appendix C lists",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "ukr_few",
+      "Lexeme_ID": "ukr_few",
+      "Form_IDs": ["ukr_few_positive", "ukr_few_comparative", "ukr_few_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Cognates": "Slovenian",
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "lat_few",
+      "Lexeme_ID": "lat_few",
+      "Form_IDs": ["lat_few_positive", "lat_few_comparative", "lat_few_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "grc_few_hess",
+      "Lexeme_ID": "grc_few",
+      "Form_IDs": ["grc_few_positive", "grc_few_comparative", "grc_few_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "grc_few_mei",
+      "Lexeme_ID": "grc_few",
+      "Form_IDs": ["grc_few_positive", "grc_few_comparative_2", "grc_few_superlative_2"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Source": ["bobaljik-2012[p. 126]"]
+    },
+    {
+      "ID": "krl_many_onego",
+      "Lexeme_ID": "krl_many_onego",
+      "Form_IDs": ["krl_many_onego_positive", "krl_many_onego_comparative", "krl_many_onego_superlative"],
+      "Classes": {"positive": "A", "comparative": "B", "superlative": "B"},
+      "Comment": "from the online Karelian-Russian-Finnish dictionary (as of October 2010); four of seven questionnaire respondents gave enin (pp. 129-130)",
+      "Source": ["bobaljik-2012[(170)]"]
+    }
+  ]
+}

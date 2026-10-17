@@ -166,45 +166,65 @@ structure Word where
   stem : List Segment
   endings : List (Σ σ, Nominal.Exponent σ)
 
-/-- The case endings, the nominative having none. -/
-def caseLabels : List (String × Option Finnish.Case) :=
-  [("nom", none), ("gen", some .gen), ("acc", some .acc), ("part", some .part),
-    ("ine", some .ine), ("ela", some .ela), ("ill", some .ill), ("ade", some .ade),
-    ("abl", some .abl), ("all", some .all), ("ess", some .ess), ("transl", some .transl),
-    ("com", some .com), ("abess", some .abess), ("inst", some .instr)]
+/-- The case ending of a case, the nominative having none. -/
+def caseEnding : UD.Case → Option (Option Finnish.Case)
+  | .Nom => some none
+  | .Gen => some (some .gen)
+  | .Acc => some (some .acc)
+  | .Par => some (some .part)
+  | .Ine => some (some .ine)
+  | .Ela => some (some .ela)
+  | .Ill => some (some .ill)
+  | .Ade => some (some .ade)
+  | .Abl => some (some .abl)
+  | .All => some (some .all)
+  | .Ess => some (some .ess)
+  | .Tra => some (some .transl)
+  | .Com => some (some .com)
+  | .Abe => some (some .abess)
+  | .Ins => some (some .instr)
+  | _ => none
 
-def possessorLabels : List (String × Agreement.Bundle) :=
-  [("1sg", .personNumber .first .singular), ("2sg", .personNumber .second .singular),
-   ("3sg", .personNumber .third .singular),
-    ("1pl", .personNumber .first .plural), ("2pl", .personNumber .second .plural),
-    ("3pl", .personNumber .third .plural)]
+/-- The agreement of a possessive suffix. -/
+def possessorOf : Forms.Possessor → Agreement.Bundle
+  | .sg1 => .personNumber .first .singular
+  | .sg2 => .personNumber .second .singular
+  | .sg3 => .personNumber .third .singular
+  | .pl1 => .personNumber .first .plural
+  | .pl2 => .personNumber .second .plural
+  | .pl3 => .personNumber .third .plural
 
-def infinitiveLabels : List (String × Infinitive) := [("a", .a), ("e", .e), ("ma", .ma)]
+/-- The infinitive of the tables' label. -/
+def infinitiveOf : Forms.Infinitive → Infinitive
+  | .a => .a
+  | .e => .e
+  | .ma => .ma
 
-def numberLabels : List (String × Nominal.Exponent .number) :=
-  [("t", .nominativePlural), ("i", .plural)]
+/-- The clitic of the tables' label. -/
+def cliticOf : Forms.Clitic → Clitic
+  | .kO => .kO
+  | .kin => .kin
+  | .hAn => .hAn
+  | .kAAn => .kAAn
 
-def cliticLabels : List (String × Clitic) :=
-  [("kO", .kO), ("kin", .kin), ("kAAn", .kAAn), ("hAn", .hAn), ("pA", .pA)]
+/-- The plural exponent of a cell, *-t* in the nominative and *-i-* in the other cases. -/
+def numberOf (c : Forms.Cell) : Option (Nominal.Exponent .number) :=
+  match (c.number : Option UD.Number), (c.case_ : Option UD.Case) with
+  | some .Plur, some .Nom => some .nominativePlural
+  | some .Plur, _ => some .plural
+  | _, _ => none
 
 /-- The phonemes a word writes, a capital as its small letter. -/
 def spell (w : String) : Option (List Segment) := (w.toList.map Char.toLower).mapM ofChar
 
-/-- The value of a column that may be empty, read through a table. -/
-def optionalColumn {α : Type} (f : Form) (key : String) (table : List (String × α)) :
-    Option (Option α) :=
-  match f.column? key with
-  | none | some "" => some none
-  | some v => (List.lookup v table).map some
-
-/-- A word from a form's segmentation and columns. -/
-def Word.ofForm (f : Form) : Option Word := do
+/-- A word from a form's segmentation and cell. -/
+def Word.ofForm (f : Form Forms.Cell) : Option Word := do
   let stem ← f.segments.head?.bind spell
-  let inf ← optionalColumn f "Infinitive" infinitiveLabels
-  let num ← optionalColumn f "Number" numberLabels
-  let c ← f.columnAs? "Case" caseLabels
-  let p ← optionalColumn f "Possessor" possessorLabels
-  let k ← optionalColumn f "Clitic" cliticLabels
+  let c ← (f.cell.case_ : Option UD.Case).bind caseEnding
+  let inf := (f.cell.infinitive : Option Forms.Infinitive).map infinitiveOf
+  let num := numberOf f.cell
+  let p := (f.cell.possessor : Option Forms.Possessor).map possessorOf
+  let k := (f.cell.clitic : Option Forms.Clitic).map cliticOf
   some ⟨stem, (inf.map (⟨_, .infinitive ·⟩)).toList ++ (num.map (⟨_, ·⟩)).toList ++
     (c.map (⟨_, .case ·⟩)).toList ++ (p.map (⟨_, .possessive ·⟩)).toList ++
     (k.map (⟨_, .clitic ·⟩)).toList⟩

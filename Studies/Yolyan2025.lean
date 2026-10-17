@@ -284,21 +284,22 @@ def toneOf : Char → Option BTone
   | 'a' | 'e' | 'i' | 'o' | 'u' | 'à' | 'è' | 'ì' | 'ò' | 'ù' => some .L
   | _ => none
 
-/-- `ofForm f` is the tones of the underlying and of the surface form of the word `f`, one per
-vowel, when the two have as many vowels. -/
-def ofForm (f : Data.Forms.Form) : Option (List BTone × List BTone) :=
-  let u := ((f.column? "Underlying").getD "").toList.filterMap toneOf
-  let s := f.form.toList.filterMap toneOf
+/-- `ofAnalysis a` is the tones of the underlying and of the surface form of the word `a`
+analyses, one per vowel, when the two have as many vowels. -/
+def ofAnalysis (a : Forms.Analysis) : Option (List BTone × List BTone) :=
+  let u := a.underlying.toList.filterMap toneOf
+  let s := a.form.form.toList.filterMap toneOf
   if u.length = s.length then some (u, s) else none
 
 /-- Bemba spreading takes the tones of each word of Example 2.11 to its surface tones. In (a) the
 initial high spreads to the end of the word, and in (b) a following high bounds the spread to the
 next two tone-bearing units. -/
-theorem bemba_map_forms : ∀ f ∈ Forms.all, ∀ p ∈ ofForm f, bemba.map p.1 = p.2 := by decide
+theorem bemba_map_forms : ∀ a ∈ Forms.analyses, ∀ p ∈ ofAnalysis a, bemba.map p.1 = p.2 := by
+  decide
 
 /-- All words of Example 2.11 but the second of (b), whose surface lengthens a vowel, keep their
 number of vowels. -/
-example : (Forms.all.filterMap ofForm).length = 4 := by decide
+example : (Forms.analyses.filterMap ofAnalysis).length = 4 := by decide
 
 /-- In the lone-trigger flank word the middle surfaces, since the initial H is the last H and
 the unbounded spread reaches it. -/

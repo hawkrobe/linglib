@@ -1,198 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "jardine2016a_8_kikopo",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "cup",
-      "Form": "kikópo",
-      "Segments": ["k", "i", "k", "ó", "p", "o"],
-      "Comment": "",
-      "Source": ["jardine-2016a[(8)]"],
-      "Underlying": "/ki-kópo/",
-      "UnderlyingTones": "OHO",
-      "SurfaceTones": "OHO"
-    },
-    {
-      "ID": "jardine2016a_8_kisiki",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "log",
-      "Form": "kisikî",
-      "Segments": ["k", "i", "s", "i", "k", "î"],
-      "Comment": "",
-      "Source": ["jardine-2016a[(8)]"],
-      "Underlying": "/ki-sikí/",
-      "UnderlyingTones": "OOH",
-      "SurfaceTones": "OOH"
-    },
-    {
-      "ID": "jardine2016a_8_kitabo",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "book",
-      "Form": "kitabo",
-      "Segments": ["k", "i", "t", "a", "b", "o"],
-      "Comment": "",
-      "Source": ["jardine-2016a[(8)]"],
-      "Underlying": "/ki-tabo/",
-      "UnderlyingTones": "OOO",
-      "SurfaceTones": "OOO"
-    },
-    {
-      "ID": "jardine2016a_8_mutunda",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "seller",
-      "Form": "mutunda",
-      "Segments": ["m", "u", "t", "u", "n", "d", "a"],
-      "Comment": "",
-      "Source": ["jardine-2016a[(8)]"],
-      "Underlying": "/mu-tund-a/",
-      "UnderlyingTones": "OOO",
-      "SurfaceTones": "OOO"
-    },
-    {
-      "ID": "jardine2016a_8_mutema",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "chopper",
-      "Form": "mutéma",
-      "Segments": ["m", "u", "t", "é", "m", "a"],
-      "Comment": "",
-      "Source": ["jardine-2016a[(8)]"],
-      "Underlying": "/mu-tém-a/",
-      "UnderlyingTones": "OHO",
-      "SurfaceTones": "OHO"
-    },
-    {
-      "ID": "jardine2016a_9a",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "cup_seller",
-      "Form": "mutunda-bikópo",
-      "Segments": ["m", "u", "t", "u", "n", "d", "a", "+", "b", "i", "k", "ó", "p", "o"],
-      "Comment": "A toneless noun and a H-toned noun are pronounced as in isolation.",
-      "Source": ["jardine-2016a[(9a)]"],
-      "Underlying": "/mu-tund-a+bi-kópo/",
-      "UnderlyingTones": "OOOOHO",
-      "SurfaceTones": "OOOOHO"
-    },
-    {
-      "ID": "jardine2016a_9b",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "log_chopper",
-      "Form": "mutémá-bísíkî",
-      "Segments": ["m", "u", "t", "é", "m", "á", "+", "b", "í", "s", "í", "k", "î"],
-      "Comment": "A plateau over three unspecified TBUs.",
-      "Source": ["jardine-2016a[(9b)]"],
-      "Underlying": "/mu-tém-a+bi-sikí/",
-      "UnderlyingTones": "OHOOOH",
-      "SurfaceTones": "OHHHHH"
-    },
-    {
-      "ID": "jardine2016a_10b",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "we_were_seen_by_walusimbi",
-      "Form": "tw-áá-láb-wá wálúsimbi",
-      "Segments": ["t", "w", "+", "á", "á", "+", "l", "á", "b", "+", "w", "á", "_", "w", "á", "l", "ú", "s", "i", "m", "b", "i"],
-      "Comment": "The noun and the verb form a phonological phrase, criterion (6c).",
-      "Source": ["jardine-2016a[(10b)]"],
-      "Underlying": "/tw-áa-láb-w-a walúsimbi/",
-      "UnderlyingTones": "HHHOOHOO",
-      "SurfaceTones": "HHHHHHOO"
-    },
-    {
-      "ID": "jardine2016a_12a",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "we_saw_those_of_walusimbi",
-      "Form": "tw-áá-láb-á byáá-wálúsimbi",
-      "Segments": ["t", "w", "+", "á", "á", "+", "l", "á", "b", "+", "á", "_", "b", "y", "á", "á", "+", "w", "á", "l", "ú", "s", "i", "m", "b", "i"],
-      "Comment": "",
-      "Source": ["jardine-2016a[(12a)]"],
-      "Underlying": "/tw-áa-láb-a byaa=walúsimbi/",
-      "UnderlyingTones": "HHHOOOOHOO",
-      "SurfaceTones": "HHHHHHHHOO"
-    },
-    {
-      "ID": "jardine2016a_12b",
-      "Language_ID": "gand1255",
-      "Parameter_ID": "we_went_with_those_of_walusimbi",
-      "Form": "tw-áá-génd-á ná=byáá=bá=wálúsimbi",
-      "Segments": ["t", "w", "+", "á", "á", "+", "g", "é", "n", "d", "+", "á", "_", "n", "á", "+", "b", "y", "á", "á", "+", "b", "á", "+", "w", "á", "l", "ú", "s", "i", "m", "b", "i"],
-      "Comment": "A six-TBU span of toneless TBUs, triggers five TBUs from their targets on each side.",
-      "Source": ["jardine-2016a[(12b)]"],
-      "Underlying": "/tw-áa-génd-a na=byaa=ba=walúsimbi/",
-      "UnderlyingTones": "HHHOOOOOOHOO",
-      "SurfaceTones": "HHHHHHHHHHOO"
-    },
-    {
-      "ID": "jardine2016a_18b",
-      "Language_ID": "zulu1248",
-      "Parameter_ID": "no_gloss_18b",
-      "Form": "ámákhósꜜánà",
-      "Segments": ["á", "m", "á", "k", "h", "ó", "s", "ꜜ", "á", "n", "à"],
-      "Comment": "The two Hs do not fuse; the second is downstepped.",
-      "Source": ["jardine-2016a[(18b)]"],
-      "Underlying": "/ámàkhòsánà/",
-      "UnderlyingTones": "HOOHO",
-      "SurfaceTones": "HHHHO"
-    },
-    {
-      "ID": "jardine2016a_21a",
-      "Language_ID": "sara1340",
-      "Parameter_ID": "the_handsome_person",
-      "Form": "dí hánsò sëmbë",
-      "Segments": ["d", "í", "_", "h", "á", "n", "s", "ò", "_", "s", "ë", "m", "b", "ë"],
-      "Comment": "No second H: the final /o/ of /hánso/ stays low.",
-      "Source": ["jardine-2016a[(21a)]"],
-      "Underlying": "/dí hánso sëmbë/",
-      "UnderlyingTones": "HHOOO",
-      "SurfaceTones": "HHOOO"
-    },
-    {
-      "ID": "jardine2016a_21b",
-      "Language_ID": "sara1340",
-      "Parameter_ID": "the_handsome_man",
-      "Form": "dí hánsó wómì",
-      "Segments": ["d", "í", "_", "h", "á", "n", "s", "ó", "_", "w", "ó", "m", "ì"],
-      "Comment": "",
-      "Source": ["jardine-2016a[(21b)]"],
-      "Underlying": "/dí hánso wómi/",
-      "UnderlyingTones": "HHOHO",
-      "SurfaceTones": "HHHHO"
-    },
-    {
-      "ID": "jardine2016a_21c",
-      "Language_ID": "sara1340",
-      "Parameter_ID": "the_handsome_woman",
-      "Form": "dí hánsó mújêë",
-      "Segments": ["d", "í", "_", "h", "á", "n", "s", "ó", "_", "m", "ú", "j", "ê", "ë"],
-      "Comment": "Plateauing over two TBUs.",
-      "Source": ["jardine-2016a[(21c)]"],
-      "Underlying": "/dí hánso mujêE/",
-      "UnderlyingTones": "HHOOHO",
-      "SurfaceTones": "HHHHHO"
-    },
-    {
-      "ID": "jardine2016a_21d",
-      "Language_ID": "sara1340",
-      "Parameter_ID": "the_iguana_there_has_eggs",
-      "Form": "dí wájámáká=dé á óbo",
-      "Segments": ["d", "í", "_", "w", "á", "j", "á", "m", "á", "k", "á", "+", "d", "é", "_", "á", "_", "ó", "b", "o"],
-      "Comment": "",
-      "Source": ["jardine-2016a[(21d)]"],
-      "Underlying": "/dí wajamáka=dé á óbo/",
-      "UnderlyingTones": "HOOHOHHHO",
-      "SurfaceTones": "HHHHHHHHO"
-    },
-    {
-      "ID": "jardine2016a_21e",
-      "Language_ID": "sara1340",
-      "Parameter_ID": "the_strong_american_man",
-      "Form": "tàángá ámêêká wómì",
-      "Segments": ["t", "à", "á", "n", "g", "á", "_", "á", "m", "ê", "ê", "k", "á", "_", "w", "ó", "m", "ì"],
-      "Comment": "The domain from /taánga/: a plateau over four TBUs, the final /a/ of /taánga/ and the first three vowels of /amEEká/; the determiner /dí/ precedes it outside the domain.",
-      "Source": ["jardine-2016a[(21e)]"],
-      "Underlying": "/taánga amEEká wómi/",
-      "UnderlyingTones": "OHOOOOHHO",
-      "SurfaceTones": "OHHHHHHHO"
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "cup",
@@ -273,6 +79,325 @@
       "ID": "the_strong_american_man",
       "Name": "(the) strong American man",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "cup",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "cup"
+    },
+    {
+      "ID": "log",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "log"
+    },
+    {
+      "ID": "book",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "book"
+    },
+    {
+      "ID": "seller",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "seller"
+    },
+    {
+      "ID": "chopper",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "chopper"
+    },
+    {
+      "ID": "cup_seller",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "cup_seller"
+    },
+    {
+      "ID": "log_chopper",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "log_chopper"
+    },
+    {
+      "ID": "we_were_seen_by_walusimbi",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "we_were_seen_by_walusimbi"
+    },
+    {
+      "ID": "we_saw_those_of_walusimbi",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "we_saw_those_of_walusimbi"
+    },
+    {
+      "ID": "we_went_with_those_of_walusimbi",
+      "Language_ID": "gand1255",
+      "Parameter_ID": "we_went_with_those_of_walusimbi"
+    },
+    {
+      "ID": "no_gloss_18b",
+      "Language_ID": "zulu1248",
+      "Parameter_ID": "no_gloss_18b"
+    },
+    {
+      "ID": "the_handsome_person",
+      "Language_ID": "sara1340",
+      "Parameter_ID": "the_handsome_person"
+    },
+    {
+      "ID": "the_handsome_man",
+      "Language_ID": "sara1340",
+      "Parameter_ID": "the_handsome_man"
+    },
+    {
+      "ID": "the_handsome_woman",
+      "Language_ID": "sara1340",
+      "Parameter_ID": "the_handsome_woman"
+    },
+    {
+      "ID": "the_iguana_there_has_eggs",
+      "Language_ID": "sara1340",
+      "Parameter_ID": "the_iguana_there_has_eggs"
+    },
+    {
+      "ID": "the_strong_american_man",
+      "Language_ID": "sara1340",
+      "Parameter_ID": "the_strong_american_man"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "jardine2016a_8_kikopo",
+      "Lexeme_ID": "cup",
+      "Form": "kikópo",
+      "Segments": ["k", "i", "k", "ó", "p", "o"],
+      "Source": ["jardine-2016a[(8)]"]
+    },
+    {
+      "ID": "jardine2016a_8_kisiki",
+      "Lexeme_ID": "log",
+      "Form": "kisikî",
+      "Segments": ["k", "i", "s", "i", "k", "î"],
+      "Source": ["jardine-2016a[(8)]"]
+    },
+    {
+      "ID": "jardine2016a_8_kitabo",
+      "Lexeme_ID": "book",
+      "Form": "kitabo",
+      "Segments": ["k", "i", "t", "a", "b", "o"],
+      "Source": ["jardine-2016a[(8)]"]
+    },
+    {
+      "ID": "jardine2016a_8_mutunda",
+      "Lexeme_ID": "seller",
+      "Form": "mutunda",
+      "Segments": ["m", "u", "t", "u", "n", "d", "a"],
+      "Source": ["jardine-2016a[(8)]"]
+    },
+    {
+      "ID": "jardine2016a_8_mutema",
+      "Lexeme_ID": "chopper",
+      "Form": "mutéma",
+      "Segments": ["m", "u", "t", "é", "m", "a"],
+      "Source": ["jardine-2016a[(8)]"]
+    },
+    {
+      "ID": "jardine2016a_9a",
+      "Lexeme_ID": "cup_seller",
+      "Form": "mutunda-bikópo",
+      "Segments": ["m", "u", "t", "u", "n", "d", "a", "+", "b", "i", "k", "ó", "p", "o"],
+      "Comment": "A toneless noun and a H-toned noun are pronounced as in isolation.",
+      "Source": ["jardine-2016a[(9a)]"]
+    },
+    {
+      "ID": "jardine2016a_9b",
+      "Lexeme_ID": "log_chopper",
+      "Form": "mutémá-bísíkî",
+      "Segments": ["m", "u", "t", "é", "m", "á", "+", "b", "í", "s", "í", "k", "î"],
+      "Comment": "A plateau over three unspecified TBUs.",
+      "Source": ["jardine-2016a[(9b)]"]
+    },
+    {
+      "ID": "jardine2016a_10b",
+      "Lexeme_ID": "we_were_seen_by_walusimbi",
+      "Form": "tw-áá-láb-wá wálúsimbi",
+      "Segments": ["t", "w", "+", "á", "á", "+", "l", "á", "b", "+", "w", "á", "_", "w", "á", "l", "ú", "s", "i", "m", "b", "i"],
+      "Comment": "The noun and the verb form a phonological phrase, criterion (6c).",
+      "Source": ["jardine-2016a[(10b)]"]
+    },
+    {
+      "ID": "jardine2016a_12a",
+      "Lexeme_ID": "we_saw_those_of_walusimbi",
+      "Form": "tw-áá-láb-á byáá-wálúsimbi",
+      "Segments": ["t", "w", "+", "á", "á", "+", "l", "á", "b", "+", "á", "_", "b", "y", "á", "á", "+", "w", "á", "l", "ú", "s", "i", "m", "b", "i"],
+      "Source": ["jardine-2016a[(12a)]"]
+    },
+    {
+      "ID": "jardine2016a_12b",
+      "Lexeme_ID": "we_went_with_those_of_walusimbi",
+      "Form": "tw-áá-génd-á ná=byáá=bá=wálúsimbi",
+      "Segments": ["t", "w", "+", "á", "á", "+", "g", "é", "n", "d", "+", "á", "_", "n", "á", "+", "b", "y", "á", "á", "+", "b", "á", "+", "w", "á", "l", "ú", "s", "i", "m", "b", "i"],
+      "Comment": "A six-TBU span of toneless TBUs, triggers five TBUs from their targets on each side.",
+      "Source": ["jardine-2016a[(12b)]"]
+    },
+    {
+      "ID": "jardine2016a_18b",
+      "Lexeme_ID": "no_gloss_18b",
+      "Form": "ámákhósꜜánà",
+      "Segments": ["á", "m", "á", "k", "h", "ó", "s", "ꜜ", "á", "n", "à"],
+      "Comment": "The two Hs do not fuse; the second is downstepped.",
+      "Source": ["jardine-2016a[(18b)]"]
+    },
+    {
+      "ID": "jardine2016a_21a",
+      "Lexeme_ID": "the_handsome_person",
+      "Form": "dí hánsò sëmbë",
+      "Segments": ["d", "í", "_", "h", "á", "n", "s", "ò", "_", "s", "ë", "m", "b", "ë"],
+      "Comment": "No second H: the final /o/ of /hánso/ stays low.",
+      "Source": ["jardine-2016a[(21a)]"]
+    },
+    {
+      "ID": "jardine2016a_21b",
+      "Lexeme_ID": "the_handsome_man",
+      "Form": "dí hánsó wómì",
+      "Segments": ["d", "í", "_", "h", "á", "n", "s", "ó", "_", "w", "ó", "m", "ì"],
+      "Source": ["jardine-2016a[(21b)]"]
+    },
+    {
+      "ID": "jardine2016a_21c",
+      "Lexeme_ID": "the_handsome_woman",
+      "Form": "dí hánsó mújêë",
+      "Segments": ["d", "í", "_", "h", "á", "n", "s", "ó", "_", "m", "ú", "j", "ê", "ë"],
+      "Comment": "Plateauing over two TBUs.",
+      "Source": ["jardine-2016a[(21c)]"]
+    },
+    {
+      "ID": "jardine2016a_21d",
+      "Lexeme_ID": "the_iguana_there_has_eggs",
+      "Form": "dí wájámáká=dé á óbo",
+      "Segments": ["d", "í", "_", "w", "á", "j", "á", "m", "á", "k", "á", "+", "d", "é", "_", "á", "_", "ó", "b", "o"],
+      "Source": ["jardine-2016a[(21d)]"]
+    },
+    {
+      "ID": "jardine2016a_21e",
+      "Lexeme_ID": "the_strong_american_man",
+      "Form": "tàángá ámêêká wómì",
+      "Segments": ["t", "à", "á", "n", "g", "á", "_", "á", "m", "ê", "ê", "k", "á", "_", "w", "ó", "m", "ì"],
+      "Comment": "The domain from /taánga/: a plateau over four TBUs, the final /a/ of /taánga/ and the first three vowels of /amEEká/; the determiner /dí/ precedes it outside the domain.",
+      "Source": ["jardine-2016a[(21e)]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Underlying",
+      "Lean": "underlying",
+      "Type": "String"
+    },
+    {
+      "Name": "UnderlyingTones",
+      "Lean": "underlyingTones",
+      "Type": "String"
+    },
+    {
+      "Name": "SurfaceTones",
+      "Lean": "surfaceTones",
+      "Type": "String"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "jardine2016a_8_kikopo",
+      "Underlying": "/ki-kópo/",
+      "UnderlyingTones": "OHO",
+      "SurfaceTones": "OHO"
+    },
+    {
+      "Form_ID": "jardine2016a_8_kisiki",
+      "Underlying": "/ki-sikí/",
+      "UnderlyingTones": "OOH",
+      "SurfaceTones": "OOH"
+    },
+    {
+      "Form_ID": "jardine2016a_8_kitabo",
+      "Underlying": "/ki-tabo/",
+      "UnderlyingTones": "OOO",
+      "SurfaceTones": "OOO"
+    },
+    {
+      "Form_ID": "jardine2016a_8_mutunda",
+      "Underlying": "/mu-tund-a/",
+      "UnderlyingTones": "OOO",
+      "SurfaceTones": "OOO"
+    },
+    {
+      "Form_ID": "jardine2016a_8_mutema",
+      "Underlying": "/mu-tém-a/",
+      "UnderlyingTones": "OHO",
+      "SurfaceTones": "OHO"
+    },
+    {
+      "Form_ID": "jardine2016a_9a",
+      "Underlying": "/mu-tund-a+bi-kópo/",
+      "UnderlyingTones": "OOOOHO",
+      "SurfaceTones": "OOOOHO"
+    },
+    {
+      "Form_ID": "jardine2016a_9b",
+      "Underlying": "/mu-tém-a+bi-sikí/",
+      "UnderlyingTones": "OHOOOH",
+      "SurfaceTones": "OHHHHH"
+    },
+    {
+      "Form_ID": "jardine2016a_10b",
+      "Underlying": "/tw-áa-láb-w-a walúsimbi/",
+      "UnderlyingTones": "HHHOOHOO",
+      "SurfaceTones": "HHHHHHOO"
+    },
+    {
+      "Form_ID": "jardine2016a_12a",
+      "Underlying": "/tw-áa-láb-a byaa=walúsimbi/",
+      "UnderlyingTones": "HHHOOOOHOO",
+      "SurfaceTones": "HHHHHHHHOO"
+    },
+    {
+      "Form_ID": "jardine2016a_12b",
+      "Underlying": "/tw-áa-génd-a na=byaa=ba=walúsimbi/",
+      "UnderlyingTones": "HHHOOOOOOHOO",
+      "SurfaceTones": "HHHHHHHHHHOO"
+    },
+    {
+      "Form_ID": "jardine2016a_18b",
+      "Underlying": "/ámàkhòsánà/",
+      "UnderlyingTones": "HOOHO",
+      "SurfaceTones": "HHHHO"
+    },
+    {
+      "Form_ID": "jardine2016a_21a",
+      "Underlying": "/dí hánso sëmbë/",
+      "UnderlyingTones": "HHOOO",
+      "SurfaceTones": "HHOOO"
+    },
+    {
+      "Form_ID": "jardine2016a_21b",
+      "Underlying": "/dí hánso wómi/",
+      "UnderlyingTones": "HHOHO",
+      "SurfaceTones": "HHHHO"
+    },
+    {
+      "Form_ID": "jardine2016a_21c",
+      "Underlying": "/dí hánso mujêE/",
+      "UnderlyingTones": "HHOOHO",
+      "SurfaceTones": "HHHHHO"
+    },
+    {
+      "Form_ID": "jardine2016a_21d",
+      "Underlying": "/dí wajamáka=dé á óbo/",
+      "UnderlyingTones": "HOOHOHHHO",
+      "SurfaceTones": "HHHHHHHHO"
+    },
+    {
+      "Form_ID": "jardine2016a_21e",
+      "Underlying": "/taánga amEEká wómi/",
+      "UnderlyingTones": "OHOOOOHHO",
+      "SurfaceTones": "OHHHHHHHO"
     }
   ]
 }

@@ -6,51 +6,59 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.Examples.Schema
+public import Linglib.Data.UD.Features
+public import Linglib.Data.UD.UPOS
 public import Linglib.Core.Order.Flat
 
 /-!
-# CLDF word forms
+# Word forms
 
-This file defines the rows of a paper's word-level data, aligned with the Wordlist module of the
-Cross-Linguistic Data Formats of Forkel and colleagues, version 1.3, and the lookups a study
-makes on them. It is the morphological counterpart of `Data/Examples/`: the datum is a word and
-its parts rather than an utterance and its gloss.
+This file defines the rows of a paper's word-level data: the lexemes, the form of a lexeme in a
+cell, the relations, paradigms and root classes a source asserts over forms. The rows follow the
+Wordlist module of the Cross-Linguistic Data Formats and the Paralex standard for lexicons of
+inflected forms, which shares its column names. It is the morphological counterpart of
+`Data/Examples/`: the datum is a word and its parts rather than an utterance and its gloss.
 
 ## Main definitions
 
-* `Data.Forms.Form`: a row of the `FormTable`, a form of a language expressing a concept, with
-  its segmentation.
-* `Data.Forms.FormRelation`: a row of the `FormRelationTable`, a linglib extension table for the
-  paradigmatic pairs a paper asserts between forms (a stem and its past, an adjective and its
-  comparative, a base and its reduplicant); CLDF has no standard component for these and permits
-  custom tables.
-* `Data.Forms.Form.slots`: the segments as a slot-indexed item on the flat carrier.
-* `Data.Forms.Form.column?`, `Data.Forms.Form.columnAs?`: the value of a custom column, as
-  printed or read through a table of labels.
-* `Data.Forms.matching`: every form of a list that expresses a concept and carries given values
-  in given custom columns.
+* `Data.Forms.Lexeme`: a row of the `LexemeTable`, a word of a language by the concept it
+  expresses.
+* `Data.Forms.Form`: a row of the `FormTable`, the form of a lexeme in a cell, with the source's
+  segmentation and its judgment of the form.
+* `Data.Forms.FormRelation`: a row of the `FormRelationTable`, a relation a source asserts from
+  one form to another.
+* `Data.Forms.Paradigm`: a row of the `ParadigmTable`, the forms a source gives a lexeme as one
+  column of its table.
+* `Data.Forms.RootClasses`: a row of the `RootClassTable`, a source's judgment that the cells of
+  a paradigm divide into classes sharing a root.
 
 ## Implementation notes
 
-* Per-paper data lives in `Linglib/Data/Forms/{AuthorYear}.json`, an object whose keys are CLDF
-  table names holding arrays of rows under the CLDF column names, and is compiled by
-  `scripts/gen_forms.py` into `Linglib/Data/Forms/{AuthorYear}.lean`, declaring
-  `namespace {AuthorYear}.Forms` with a `def` for each form, their list `all`, and `relations`.
-* A row carries the columns that theorems read. The `Comment` column and the `ParameterTable`
-  are the source's record, as the unread keys of `Data/Examples/` are: the generator validates
-  them, and that every `Parameter_ID` names a concept of the `ParameterTable`.
-* A relation carries its two forms rather than their identifiers: the generator resolves the
-  `Form_ID` and `Target_ID` foreign keys, so a study reads a relation's forms without a lookup.
-* `Language_ID` is a Glottocode rather than a foreign key into a `LanguageTable`, as in
-  `Data/Examples/`. `Source` follows the CLDF reference syntax `bibkey[label]` in JSON and is
-  parsed into `SourceRef` values.
-* `Segments` is the paper's own tokenization of the form, which may be coarser than a
-  phonemic segmentation: a long vowel as one segment, or a residue the paper treats as one
-  variable.
-* CLDF lets any table carry custom columns. A form's are kept as `columns`, name-value pairs
-  under the column names of the JSON, for the per-form codes a paper assigns (a case, a
-  canonicity judgment, a tone class).
-* Identifiers follow the CLDF `id` format `[a-zA-Z0-9_-]+`, enforced by the generator.
+* Per-paper data lives in `Linglib/Data/Forms/{AuthorYear}.json` and is compiled by
+  `scripts/gen_forms.py` into `{AuthorYear}.lean`, declaring `namespace {AuthorYear}.Forms`: a
+  `Cell` type, the lexemes, forms, relations, paradigms and root classes, the lists `all` of the
+  forms the sources accept and `marked` of the others, and an `Analysis` table.
+* A cell is a bundle of features. Universal Dependencies features are typed by
+  `UD.MorphFeatures`; a dataset whose cells need features UD lacks extends it with generated
+  enumerations, so `Form` is parametric in its cell type and `Form.map` changes it.
+* A form carries the source's judgment of it in its cell, CLDF's `grammaticalityJudgement`: a
+  form a source rejects is a row of its own, so disagreeing sources sit side by side.
+* `segments` is the source's tokenization of the form into sound segments, at the source's
+  granularity; `morphs` is the morph segmentation the source prints, `ø` marking a null exponent.
+* Root identity is a judgment rather than a function of the forms: *better* and *best* share a
+  root that no identity of strings shows, so a source's classes are rows of their own.
+* What a paper's theory assigns to a form, such as an underlying representation, a root or a
+  class, is that paper's parse and goes to the generated `Analysis` table, never to the form.
+  The generator resolves every reference to an analysis, as it resolves every reference to a
+  form: each form `x` has its analysis `x.analysis`, and a dataset with relations and analyses
+  has its relations over the analyses too, so no study joins rows by identifier.
+* Comments, the `ParameterTable` and the cognates a source lists are its record: the generator
+  validates them and does not emit them.
+
+## TODO
+
+* Cite the paper that introduces the Paralex standard (Beniamine and colleagues, 2023) once its
+  bibliographic record is verified.
 
 ## References
 
@@ -62,68 +70,108 @@ its parts rather than an utterance and its gloss.
 
 namespace Data.Forms
 
-/-- A `Form` is a row of a CLDF `FormTable`, a word form of a language expressing a concept,
-with its segmentation. -/
-structure Form where
+/-- A `Lexeme` is a row of the `LexemeTable`, a word of a language, by the concept it expresses
+and its citation form. -/
+structure Lexeme where
   /-- The `ID` column holds a stable identifier keyed to the paper. -/
   id : String
   /-- The `Language_ID` column holds the Glottocode of the language. -/
   languageId : Glottocode
-  /-- The `Parameter_ID` column names the concept the form expresses. -/
+  /-- The `Variety` column names the variety, where the source distinguishes varieties of one
+  Glottolog languoid. -/
+  variety : String := ""
+  /-- The `Parameter_ID` column names the concept the lexeme expresses. -/
   parameterId : String
+  /-- The `Name` column holds the citation form, where the source gives one. -/
+  label : String := ""
+  /-- The `POS` column holds the part of speech, where the source gives one. -/
+  pos : Flat UD.UPOS := ⊥
+  deriving DecidableEq, Repr
+
+/-- A `Form C` is a row of the `FormTable`, the form of a lexeme in a cell of type `C`, with the
+source's segmentation and its judgment of the form. -/
+structure Form (C : Type*) where
+  /-- The `ID` column holds a stable identifier keyed to the paper. -/
+  id : String
+  /-- The lexeme the `Lexeme_ID` column names. -/
+  lexeme : Lexeme
+  /-- The cell the `Cell` column names. -/
+  cell : C
   /-- The `Form` column holds the written form. -/
   form : String
-  /-- The `Segments` column holds the form's segmentation. -/
-  segments : List String
+  /-- The `Segments` column holds the form's sound segments. -/
+  segments : List String := []
+  /-- The `Morphs` column holds the form's morphs as the source segments it. -/
+  morphs : List String := []
+  /-- The `Judgment` column holds the source's mark on the form in its cell. -/
+  judgment : Judgment := .acceptable
   /-- The `Source` column holds the references, each a bibkey with a locator. -/
   source : List SourceRef := []
-  /-- The custom columns of the table hold further values of the form, by column name. -/
-  columns : List (String × String) := []
   deriving DecidableEq, Repr
 
 namespace Form
 
-variable (f : Form) (name : String)
+variable {C D E : Type*}
+
+/-- The Glottocode of the form's language. -/
+abbrev languageId (f : Form C) : Glottocode := f.lexeme.languageId
+
+/-- The concept the form expresses. -/
+abbrev parameterId (f : Form C) : String := f.lexeme.parameterId
+
+/-- `f.map g` is `f` with its cell read through `g`. -/
+def map (g : C → D) (f : Form C) : Form D := { f with cell := g f.cell }
+
+@[simp] theorem map_id (f : Form C) : f.map _root_.id = f := rfl
+
+@[simp] theorem map_map (g : C → D) (h : D → E) (f : Form C) :
+    (f.map g).map h = f.map (h ∘ g) := rfl
 
 /-- `f.slots` reads the segments of `f` as a slot-indexed item on the flat carrier, the shape
 the schemas of `Morphology/ConstructionMorphology/` match. -/
-def slots (i : Fin f.segments.length) : Flat String := ↑f.segments[i]
-
-/-- `f.column? name` is the value of `f` in the custom column `name`, if `f` has one. -/
-def column? : Option String := f.columns.lookup name
-
-/-- `f.columnAs? name table` is the entry of `table` under the value of `f` in the custom column
-`name`, if `f` has that column and `table` lists its value. -/
-def columnAs? {α : Type*} (table : List (String × α)) : Option α :=
-  (f.column? name).bind (List.lookup · table)
+def slots (f : Form C) (i : Fin f.segments.length) : Flat String := ↑f.segments[i]
 
 end Form
 
-/-- `matching forms pid cols` is the list of every form in `forms` that expresses the concept
-`pid` and has the value `v` in the custom column `c` for each pair `(c, v)` of `cols`, in the
-order of `forms`; a cell a paper fills with two alternants yields both. -/
-def matching (forms : List Form) (pid : String) (cols : List (String × String)) : List Form :=
-  forms.filter fun f ↦ f.parameterId == pid && cols.all fun c ↦ f.column? c.1 == some c.2
-
-@[simp]
-theorem mem_matching {forms : List Form} {pid : String} {cols : List (String × String)}
-    {f : Form} : f ∈ matching forms pid cols ↔
-      f ∈ forms ∧ f.parameterId = pid ∧ ∀ c ∈ cols, f.column? c.1 = some c.2 := by
-  simp [matching]
-
-/-- A `FormRelation` is a row of the `FormRelationTable`, a paradigmatic relation that a paper
-asserts from one form to another, named by the paper's term for it. -/
-structure FormRelation where
+/-- A `FormRelation α` is a row of the `FormRelationTable`, a relation that a source asserts from
+one form to another, named by its term for it, with each form given as an `α`: the form itself,
+or its analysis. -/
+structure FormRelation (α : Type*) where
   /-- The `ID` column holds the relation's identifier. -/
   id : String
   /-- The form that the `Form_ID` column names. -/
-  form : Form
+  form : α
   /-- The form that the `Target_ID` column names. -/
-  target : Form
-  /-- The `Relation` column holds the paper's name for the relation. -/
+  target : α
+  /-- The `Relation` column holds the source's name for the relation. -/
   relation : String
   /-- The `Source` column holds the references, each a bibkey with a locator. -/
   source : List SourceRef := []
   deriving DecidableEq, Repr
+
+/-- A `Paradigm C` is a row of the `ParadigmTable`, the forms a source gives a lexeme as one
+column of its table, at most one to a cell. -/
+structure Paradigm (C : Type*) where
+  /-- The `ID` column holds a stable identifier keyed to the paper. -/
+  id : String
+  /-- The lexeme whose forms these are. -/
+  lexeme : Lexeme
+  /-- The forms that the `Form_IDs` column names. -/
+  forms : List (Form C)
+  /-- The `Source` column holds the references, each a bibkey with a locator. -/
+  source : List SourceRef := []
+  deriving DecidableEq, Repr
+
+/-- A `RootClasses C` is a row of the `RootClassTable`, a source's judgment that the cells of a
+paradigm divide into classes of cells whose forms share a root, each cell with the index of its
+class. -/
+structure RootClasses (C : Type*) extends Paradigm C where
+  /-- The class of each cell, `A` as `0`, `B` as `1`, and so on. -/
+  classes : List (C × ℕ)
+  deriving DecidableEq, Repr
+
+/-- `r.classOf c` is the class of the cell `c` in the judgment `r`, if `r` classes `c`. -/
+def RootClasses.classOf {C : Type*} [DecidableEq C] (r : RootClasses C) (c : C) : Option ℕ :=
+  r.classes.lookup c
 
 end Data.Forms

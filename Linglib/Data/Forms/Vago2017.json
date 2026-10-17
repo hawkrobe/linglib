@@ -1,136 +1,20 @@
 {
-  "FormTable": [
-    {
-      "ID": "vago2017_hordonk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "our_barrel",
-      "Form": "hordónk",
-      "Segments": ["h", "o", "r", "d", "ó", "n", "k"],
-      "Comment": "",
-      "Source": ["vago-2017[Table 1]"],
-      "Left": "hordó",
-      "LeftKind": "root",
-      "Right": "unk",
-      "RightKind": "suffix",
-      "Deleted": "second",
-      "Hierarchy": "regular"
-    },
-    {
-      "ID": "vago2017_erdesz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "forester",
-      "Form": "erdész",
-      "Segments": ["e", "r", "d", "é", "sz"],
-      "Comment": "",
-      "Source": ["vago-2017[(7a), Table 2]"],
-      "Left": "erdő",
-      "LeftKind": "root",
-      "Right": "ész",
-      "RightKind": "suffix",
-      "Deleted": "first",
-      "Hierarchy": "v1Deletion"
-    },
-    {
-      "ID": "vago2017_eszperantoul",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "in_esperanto",
-      "Form": "eszperantóul",
-      "Segments": ["e", "sz", "p", "e", "r", "a", "n", "t", "ó", "u", "l"],
-      "Comment": "",
-      "Source": ["vago-2017[Table 3]"],
-      "Left": "eszperantó",
-      "LeftKind": "root",
-      "Right": "ul",
-      "RightKind": "suffix",
-      "Deleted": "none",
-      "Hierarchy": "noDeletion"
-    },
-    {
-      "ID": "vago2017_tanulnunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "we_have_to_study",
-      "Form": "tanulnunk",
-      "Segments": ["t", "a", "n", "u", "l", "n", "u", "n", "k"],
-      "Comment": "",
-      "Source": ["vago-2017[(20c), Table 4]"],
-      "Before": "tanul",
-      "BeforeKind": "root",
-      "Left": "ni",
-      "LeftKind": "suffix",
-      "Right": "unk",
-      "RightKind": "suffix",
-      "Deleted": "first",
-      "Hierarchy": "v1Deletion"
-    },
-    {
-      "ID": "vago2017_hoznank",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "we_would_bring",
-      "Form": "hoznánk",
-      "Segments": ["h", "o", "z", "n", "á", "n", "k"],
-      "Comment": "",
-      "Source": ["vago-2017[(17), (21a)]"],
-      "Before": "hoz",
-      "BeforeKind": "root",
-      "Left": "ná",
-      "LeftKind": "suffix",
-      "Right": "unk",
-      "RightKind": "suffix",
-      "Deleted": "second",
-      "Hierarchy": "regular"
-    },
-    {
-      "ID": "vago2017_kapujan",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "on_his_gate",
-      "Form": "kapuján",
-      "Segments": ["k", "a", "p", "u", "j", "á", "n"],
-      "Comment": "",
-      "Source": ["vago-2017[(18a), (21b)]"],
-      "Before": "kapu",
-      "BeforeKind": "root",
-      "Left": "já",
-      "LeftKind": "suffix",
-      "Right": "on",
-      "RightKind": "suffix",
-      "Deleted": "second",
-      "Hierarchy": "regular"
-    },
-    {
-      "ID": "vago2017_kapuink",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "our_gates",
-      "Form": "kapuink",
-      "Segments": ["k", "a", "p", "u", "i", "n", "k"],
-      "Comment": "",
-      "Source": ["vago-2017[(18b), (23a)]"],
-      "Before": "kapu",
-      "BeforeKind": "root",
-      "Left": "i",
-      "LeftKind": "suffix",
-      "Right": "unk",
-      "RightKind": "suffix",
-      "Deleted": "second",
-      "Hierarchy": "regular"
-    },
-    {
-      "ID": "vago2017_nyomozonk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "our_detective",
-      "Form": "nyomozónk",
-      "Segments": ["ny", "o", "m", "o", "z", "ó", "n", "k"],
-      "Comment": "",
-      "Source": ["vago-2017[(19), (23b)]"],
-      "Before": "nyomoz",
-      "BeforeKind": "root",
-      "Left": "ó",
-      "LeftKind": "suffix",
-      "Right": "unk",
-      "RightKind": "suffix",
-      "Deleted": "second",
-      "Hierarchy": "regular"
-    }
-  ],
+  "Types": {
+    "Kind": [
+      {"Value": "root", "Lean": "root", "Description": "a root"},
+      {"Value": "suffix", "Lean": "suffix", "Description": "a suffix"}
+    ],
+    "Deleted": [
+      {"Value": "none", "Lean": "neither", "Description": "neither vowel"},
+      {"Value": "first", "Lean": "first", "Description": "the first vowel"},
+      {"Value": "second", "Lean": "second", "Description": "the second vowel"}
+    ],
+    "Hierarchy": [
+      {"Value": "regular", "Lean": "regular", "Description": "the regular hierarchy"},
+      {"Value": "v1Deletion", "Lean": "v1Deletion", "Description": "the hierarchy deleting the first vowel"},
+      {"Value": "noDeletion", "Lean": "noDeletion", "Description": "the hierarchy deleting neither vowel"}
+    ]
+  },
   "ParameterTable": [
     {
       "ID": "our_barrel",
@@ -171,6 +55,232 @@
       "ID": "our_detective",
       "Name": "our detective",
       "Description": "1pl possessive of nyomozó 'detective'"
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "our_barrel",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "our_barrel"
+    },
+    {
+      "ID": "forester",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "forester"
+    },
+    {
+      "ID": "in_esperanto",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "in_esperanto"
+    },
+    {
+      "ID": "we_have_to_study",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "we_have_to_study"
+    },
+    {
+      "ID": "we_would_bring",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "we_would_bring"
+    },
+    {
+      "ID": "on_his_gate",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "on_his_gate"
+    },
+    {
+      "ID": "our_gates",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "our_gates"
+    },
+    {
+      "ID": "our_detective",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "our_detective"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "vago2017_hordonk",
+      "Lexeme_ID": "our_barrel",
+      "Form": "hordónk",
+      "Segments": ["h", "o", "r", "d", "ó", "n", "k"],
+      "Source": ["vago-2017[Table 1]"]
+    },
+    {
+      "ID": "vago2017_erdesz",
+      "Lexeme_ID": "forester",
+      "Form": "erdész",
+      "Segments": ["e", "r", "d", "é", "sz"],
+      "Source": ["vago-2017[(7a), Table 2]"]
+    },
+    {
+      "ID": "vago2017_eszperantoul",
+      "Lexeme_ID": "in_esperanto",
+      "Form": "eszperantóul",
+      "Segments": ["e", "sz", "p", "e", "r", "a", "n", "t", "ó", "u", "l"],
+      "Source": ["vago-2017[Table 3]"]
+    },
+    {
+      "ID": "vago2017_tanulnunk",
+      "Lexeme_ID": "we_have_to_study",
+      "Form": "tanulnunk",
+      "Segments": ["t", "a", "n", "u", "l", "n", "u", "n", "k"],
+      "Source": ["vago-2017[(20c), Table 4]"]
+    },
+    {
+      "ID": "vago2017_hoznank",
+      "Lexeme_ID": "we_would_bring",
+      "Form": "hoznánk",
+      "Segments": ["h", "o", "z", "n", "á", "n", "k"],
+      "Source": ["vago-2017[(17), (21a)]"]
+    },
+    {
+      "ID": "vago2017_kapujan",
+      "Lexeme_ID": "on_his_gate",
+      "Form": "kapuján",
+      "Segments": ["k", "a", "p", "u", "j", "á", "n"],
+      "Source": ["vago-2017[(18a), (21b)]"]
+    },
+    {
+      "ID": "vago2017_kapuink",
+      "Lexeme_ID": "our_gates",
+      "Form": "kapuink",
+      "Segments": ["k", "a", "p", "u", "i", "n", "k"],
+      "Source": ["vago-2017[(18b), (23a)]"]
+    },
+    {
+      "ID": "vago2017_nyomozonk",
+      "Lexeme_ID": "our_detective",
+      "Form": "nyomozónk",
+      "Segments": ["ny", "o", "m", "o", "z", "ó", "n", "k"],
+      "Source": ["vago-2017[(19), (23b)]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Left",
+      "Lean": "left",
+      "Type": "String"
+    },
+    {
+      "Name": "LeftKind",
+      "Lean": "leftKind",
+      "Type": "Kind"
+    },
+    {
+      "Name": "Right",
+      "Lean": "right",
+      "Type": "String"
+    },
+    {
+      "Name": "RightKind",
+      "Lean": "rightKind",
+      "Type": "Kind"
+    },
+    {
+      "Name": "Before",
+      "Lean": "before",
+      "Type": "String"
+    },
+    {
+      "Name": "BeforeKind",
+      "Lean": "beforeKind",
+      "Type": "Kind"
+    },
+    {
+      "Name": "Deleted",
+      "Lean": "deleted",
+      "Type": "Deleted"
+    },
+    {
+      "Name": "Hierarchy",
+      "Lean": "hierarchy",
+      "Type": "Hierarchy"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "vago2017_hordonk",
+      "Left": "hordó",
+      "LeftKind": "root",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    },
+    {
+      "Form_ID": "vago2017_erdesz",
+      "Left": "erdő",
+      "LeftKind": "root",
+      "Right": "ész",
+      "RightKind": "suffix",
+      "Deleted": "first",
+      "Hierarchy": "v1Deletion"
+    },
+    {
+      "Form_ID": "vago2017_eszperantoul",
+      "Left": "eszperantó",
+      "LeftKind": "root",
+      "Right": "ul",
+      "RightKind": "suffix",
+      "Deleted": "none",
+      "Hierarchy": "noDeletion"
+    },
+    {
+      "Form_ID": "vago2017_tanulnunk",
+      "Left": "ni",
+      "LeftKind": "suffix",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Before": "tanul",
+      "BeforeKind": "root",
+      "Deleted": "first",
+      "Hierarchy": "v1Deletion"
+    },
+    {
+      "Form_ID": "vago2017_hoznank",
+      "Left": "ná",
+      "LeftKind": "suffix",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Before": "hoz",
+      "BeforeKind": "root",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    },
+    {
+      "Form_ID": "vago2017_kapujan",
+      "Left": "já",
+      "LeftKind": "suffix",
+      "Right": "on",
+      "RightKind": "suffix",
+      "Before": "kapu",
+      "BeforeKind": "root",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    },
+    {
+      "Form_ID": "vago2017_kapuink",
+      "Left": "i",
+      "LeftKind": "suffix",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Before": "kapu",
+      "BeforeKind": "root",
+      "Deleted": "second",
+      "Hierarchy": "regular"
+    },
+    {
+      "Form_ID": "vago2017_nyomozonk",
+      "Left": "ó",
+      "LeftKind": "suffix",
+      "Right": "unk",
+      "RightKind": "suffix",
+      "Before": "nyomoz",
+      "BeforeKind": "root",
+      "Deleted": "second",
+      "Hierarchy": "regular"
     }
   ]
 }

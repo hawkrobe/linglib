@@ -60,10 +60,10 @@ namespace Stump2012
 
 open Morphology Data.Forms
 
-/-- `attested pid cols` is the segmentation of the first attested form with parameter `pid` and
-column values `cols`, or the empty list when there is none. -/
-def attested (pid : String) (cols : List (String × String)) : List String :=
-  ((matching Forms.all pid cols).head?.map Form.segments).getD []
+/-- `attested pid c` is the segmentation of the first attested form with parameter `pid` in the
+cell `c`, or the empty list when there is none. -/
+def attested (pid : String) (c : Forms.Cell) : List String :=
+  ((Forms.all.find? fun f ↦ f.parameterId == pid && f.cell == c).map (·.segments)).getD []
 
 /-- `Agr` lists the six person-number agreement values that the Latin verb paradigms share. -/
 inductive Agr
@@ -75,9 +75,20 @@ inductive Agr
   | p3
   deriving DecidableEq, Fintype, Repr
 
-/-- `Agr.code` gives the agreement code that the forms data uses. -/
-def Agr.code : Agr → String
-  | .s1 => "s1" | .s2 => "s2" | .s3 => "s3" | .p1 => "p1" | .p2 => "p2" | .p3 => "p3"
+/-- The person of an agreement value. -/
+def Agr.person : Agr → UD.Person
+  | .s1 | .p1 => .first
+  | .s2 | .p2 => .second
+  | .s3 | .p3 => .third
+
+/-- The number of an agreement value. -/
+def Agr.number : Agr → UD.Number
+  | .s1 | .s2 | .s3 => .Sing
+  | .p1 | .p2 | .p3 => .Plur
+
+/-- `a.cell c` is the cell `c` with the person and number of the agreement value `a`. -/
+def Agr.cell (a : Agr) (c : Forms.Cell := {}) : Forms.Cell :=
+  { c with person := ↑a.person, number := ↑a.number }
 
 /-- `System` splits the Latin verb cells into present-system and perfect-system cells. -/
 inductive System
@@ -85,9 +96,6 @@ inductive System
   | perf
   deriving DecidableEq, Fintype, Repr
 
-def System.code : System → String
-  | .pres => "pres"
-  | .perf => "perf"
 
 /-! ### Breton HERVEZ: the canonical baseline -/
 
@@ -144,7 +152,7 @@ def coepisseLinkage : Linkage CoepLex CoepStem SysCell SysCell where
 /-- `perfEnding a` is the perfect ending for the agreement `a`, read off FERRE's perfect form
 of (41) after its stem `tul`. -/
 def perfEnding (a : Agr) : List String :=
-  (attested "carry" [("System", "perf"), ("Agr", a.code)]).drop 3
+  (attested "carry" (a.cell { system := ↑Forms.System.perf })).drop 3
 
 /-- A form cell of `coep` realizes as the stem followed by the perfect ending. -/
 def coepRealize : CoepStem → SysCell → List String
@@ -161,7 +169,7 @@ theorem coepisse_present_no_realization :
 paper's (17) lists, with FERRE's perfect endings. -/
 theorem coepisse_perfect_realized (a : Agr) :
     coepisseLinkage.realized coepRealize .coepisse ⟨.perf, a⟩ =
-      {(attested "begin" [("System", "perf"), ("Agr", a.code)], ⟨.perf, a⟩)} := by
+      {(attested "begin" (a.cell { system := ↑Forms.System.perf }), ⟨.perf, a⟩)} := by
   revert a; decide
 
 /-- COEPISSE keeps a single stem, so it is stem-invariant. -/
@@ -196,17 +204,19 @@ inductive Case
   | abl
   deriving DecidableEq, Fintype, Repr
 
-def Case.code : Case → String
-  | .nom => "nom" | .gen => "gen" | .dat => "dat" | .acc => "acc" | .abl => "abl"
+/-- `c.ud` is the case `c` in the forms data. -/
+def Case.ud : Case → UD.Case
+  | .nom => .Nom | .gen => .Gen | .dat => .Dat | .acc => .Acc | .abl => .Abl
 
 inductive Num
   | sg
   | pl
   deriving DecidableEq, Fintype, Repr
 
-def Num.code : Num → String
-  | .sg => "sg"
-  | .pl => "pl"
+/-- `n.ud` is the number `n` in the forms data. -/
+def Num.ud : Num → UD.Number
+  | .sg => .Sing
+  | .pl => .Plur
 
 /-- A BELLUM content cell pairs a case with a number. -/
 structure BellumCell where
@@ -235,7 +245,7 @@ def bellumLinkage : Linkage BellumLex BellumStem BellumCell BellumCell where
 /-- `bellRealize` reads the realization of each form cell of `bell` off the attested forms,
 the paper's (22). -/
 def bellRealize : BellumStem → BellumCell → List String
-  | _, σ => attested "war" [("Case", σ.case.code), ("Number", σ.num.code)]
+  | _, σ => attested "war" { case_ := ↑σ.case.ud, number := ↑σ.num.ud }
 
 /-- The nominative and accusative singular share a form correspondent, a directional
 syncretism. -/
@@ -257,7 +267,7 @@ theorem bellum_nom_acc_realize_eq :
 /-- The nominative singular realizes through the accusative form cell. -/
 theorem bellum_nom_realizes_acc :
     bellumLinkage.realized bellRealize .bellum ⟨.nom, .sg⟩ =
-      {(attested "war" [("Case", "acc"), ("Number", "sg")], ⟨.acc, .sg⟩)} := by
+      {(attested "war" { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing }, ⟨.acc, .sg⟩)} := by
   decide
 
 /-- BELLUM's linkage is not injective, since syncretism is a failure of injectivity. -/
@@ -285,9 +295,10 @@ inductive Voice
   | passive
   deriving DecidableEq, Fintype, Repr
 
-def Voice.code : Voice → String
-  | .active => "act"
-  | .passive => "pass"
+/-- `v.ud` is the voice `v` in the forms data. -/
+def Voice.ud : Voice → UD.Voice
+  | .active => .Act
+  | .passive => .Pass
 
 /-- A finite content cell pairs a voice with an agreement feature. -/
 structure VCell where
@@ -314,7 +325,7 @@ def latinLinkage : Linkage LatinVerb VerbStem VCell VCell where
 /-- `personalEnding v a` is the personal ending for the voice `v` and the agreement `a`, read
 off LAUDĀRE's forms of (28) after its stem. -/
 def personalEnding (v : Voice) (a : Agr) : List String :=
-  (attested "praise" [("Voice", v.code), ("Agr", a.code)]).drop 4
+  (attested "praise" (a.cell { voice := ↑v.ud })).drop 4
 
 /-- A form cell realizes as its stem followed by the ending of the form cell's voice. -/
 def verbRealize : VerbStem → VCell → List String
@@ -335,16 +346,16 @@ theorem hortari_active_realized_by_passive (a : Agr) :
 paper's (28) lists. -/
 theorem hortari_realizes_hortor (a : Agr) :
     latinLinkage.realized verbRealize .hortari ⟨.active, a⟩ =
-      {(attested "urge" [("Voice", "pass"), ("Agr", a.code)], ⟨.passive, a⟩)} := by
+      {(attested "urge" (a.cell { voice := ↑UD.Voice.Pass }), ⟨.passive, a⟩)} := by
   revert a; decide
 
 /-- On the same active content cell, LAUDĀRE realizes through an active form cell and HORTĀRĪ
 through a passive one. -/
 theorem depon_vs_regular (a : Agr) :
     latinLinkage.realized verbRealize .laudare ⟨.active, a⟩ =
-        {(attested "praise" [("Voice", "act"), ("Agr", a.code)], ⟨.active, a⟩)} ∧
+        {(attested "praise" (a.cell { voice := ↑UD.Voice.Act }), ⟨.active, a⟩)} ∧
       latinLinkage.realized verbRealize .hortari ⟨.active, a⟩ =
-        {(attested "urge" [("Voice", "pass"), ("Agr", a.code)], ⟨.passive, a⟩)} := by
+        {(attested "urge" (a.cell { voice := ↑UD.Voice.Pass }), ⟨.passive, a⟩)} := by
   revert a; decide
 
 /-- Deponency compounds with defectiveness, since the passive content cells of HORTĀRĪ lack a
@@ -382,9 +393,10 @@ inductive PersNum
   | p2sg
   deriving DecidableEq, Fintype, Repr
 
-def PersNum.code : PersNum → String
-  | .p1sg => "p1sg"
-  | .p2sg => "p2sg"
+/-- `pn.cell` is the cell of the person-number property `pn` in the forms data. -/
+def PersNum.cell : PersNum → Forms.Cell
+  | .p1sg => { person := ↑UD.Person.first, number := ↑UD.Number.Sing }
+  | .p2sg => { person := ↑UD.Person.second, number := ↑UD.Number.Sing }
 
 /-- A form property set of a Hungarian case stem is a case, the property set that a faithful
 correspondent of a case content cell would carry, or a person-number set. -/
@@ -426,7 +438,7 @@ def enLinkage : Linkage Pron CaseStem HuCase HuProp where
 /-- A person-number form cell of a case stem realizes as the inflected postposition of
 (36). -/
 def enRealize : CaseStem → HuProp → List String
-  | z, .agr pn => attested z.pid [("PersNum", pn.code)]
+  | z, .agr pn => attested z.pid pn.cell
   | _, _ => []
 
 /-- The inessive of ÉN corresponds to the 1sg form cell of *benn*, the paper's (38). -/
@@ -451,9 +463,9 @@ theorem en_pm_lexeme_sensitive :
 /-- The inessive of ÉN and of TE realize as the first and second person forms of *benn*. -/
 theorem inessive_realizes :
     enLinkage.realized enRealize .en .inessive =
-        {(attested "benn" [("PersNum", "p1sg")], .agr .p1sg)} ∧
+        {(attested "benn" PersNum.p1sg.cell, .agr .p1sg)} ∧
       enLinkage.realized enRealize .te .inessive =
-        {(attested "benn" [("PersNum", "p2sg")], .agr .p2sg)} := by
+        {(attested "benn" PersNum.p2sg.cell, .agr .p2sg)} := by
   decide
 
 end Hungarian
@@ -531,8 +543,8 @@ def thurfaLinkage : Linkage ThurfaLex ThurfaStem TCell TCell where
 /-- In the realizations of (46), the strong stem at a past form cell gives the present forms
 and the weak stem the past forms. -/
 def thurfaRealize : ThurfaStem → TCell → List String
-  | .strong, τ => attested "need" [("Tense", "pres"), ("Agr", τ.agr.code)]
-  | .weak, τ => attested "need" [("Tense", "past"), ("Agr", τ.agr.code)]
+  | .strong, τ => attested "need" (τ.agr.cell { tense := ↑UD.Tense.Pres })
+  | .weak, τ => attested "need" (τ.agr.cell { tense := ↑UD.Tense.Past })
 
 /-- ÞURFA is suppletive because its present and past draw on different stems. -/
 theorem thurfa_suppletive : thurfaLinkage.IsSuppletive .thurfa := by decide
@@ -549,9 +561,9 @@ theorem thurfa_suppletive_and_unfaithful :
 cell, and the past content cell as *þurfta* through the weak stem. -/
 theorem thurfa_realizes :
     thurfaLinkage.realized thurfaRealize .thurfa ⟨.pres, .s1⟩ =
-        {(attested "need" [("Tense", "pres"), ("Agr", "s1")], ⟨.past, .s1⟩)} ∧
+        {(attested "need" (Agr.s1.cell { tense := ↑UD.Tense.Pres }), ⟨.past, .s1⟩)} ∧
       thurfaLinkage.realized thurfaRealize .thurfa ⟨.past, .s1⟩ =
-        {(attested "need" [("Tense", "past"), ("Agr", "s1")], ⟨.past, .s1⟩)} := by
+        {(attested "need" (Agr.s1.cell { tense := ↑UD.Tense.Past }), ⟨.past, .s1⟩)} := by
   decide
 
 end Thurfa

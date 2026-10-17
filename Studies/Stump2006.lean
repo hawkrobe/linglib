@@ -130,16 +130,35 @@ open Morphology Data.Forms Finset
 Czech inventory with a number, gender being constant within a paradigm. -/
 abbrev CzCell : Type := Czech.Declension.Cell
 
-/-- `caseLabels` reads the case codes of the forms data as cases. -/
-def caseLabels : List (String × Case) :=
-  [("nom", .nom), ("gen", .gen), ("dat", .dat), ("acc", .acc), ("voc", .voc), ("loc", .loc),
-    ("ins", .inst), ("abl", .abl)]
+/-- `caseOf c` reads a case of the forms data as a case. -/
+def caseOf : UD.Case → Option Case
+  | .Nom => some .nom
+  | .Gen => some .gen
+  | .Dat => some .dat
+  | .Acc => some .acc
+  | .Voc => some .voc
+  | .Loc => some .loc
+  | .Ins => some .inst
+  | .Abl => some .abl
+  | _ => none
 
-/-- `numberLabels` reads the number codes of the forms data as numbers. -/
-def numberLabels : List (String × Number) := [("sg", .singular), ("du", .dual), ("pl", .plural)]
+/-- `numberOf n` reads a number of the forms data as a number. -/
+def numberOf : UD.Number → Option Number
+  | .Sing => some .singular
+  | .Dual => some .dual
+  | .Plur => some .plural
+  | _ => none
+
+/-- The case of a form's cell. -/
+def caseOfForm (f : Form Forms.Cell) : Option Case :=
+  (f.cell.case_ : Option UD.Case).bind caseOf
+
+/-- The number of a form's cell. -/
+def numberOfForm (f : Form Forms.Cell) : Option Number :=
+  (f.cell.number : Option UD.Number).bind numberOf
 
 /-- `czForms` are the Czech rows of the forms data, those of Tables 1, 6 and 8. -/
-def czForms : List Form := Forms.all.filter (·.languageId == "czec1258")
+def czForms : List (Form Forms.Cell) := Forms.all.filter (·.languageId == "czec1258")
 
 /-- The Czech nouns of Tables 1, 6 and 8 are POKOJ 'room', PRAMEN 'spring', MOST 'bridge',
 ŽENA 'woman', PŘEDSEDA 'president', FILOSOF 'philosopher', SLUHA 'servant', FILOLOG
@@ -166,9 +185,8 @@ def CzNoun.paramId : CzNoun → String
 whose case code decodes to the comparative value of the cell's case and whose number code to its
 number, so a cell with two alternants has two. -/
 def attested (l : CzNoun) (σ : CzCell) : Finset (List String) :=
-  ((czForms.filter fun f ↦ f.parameterId == l.paramId &&
-      f.columnAs? "Case" caseLabels == some σ.case.label &&
-      f.columnAs? "Number" numberLabels == some σ.number).map Form.segments).toFinset
+  ((czForms.filter fun f ↦ f.parameterId == l.paramId && caseOfForm f == some σ.case.label &&
+      numberOfForm f == some σ.number).map (·.segments)).toFinset
 
 /-- Every cell has an attested form, so no statement about the attested forms holds for want
 of a row. -/
@@ -977,10 +995,10 @@ inductive SktGender
   | neut
   deriving DecidableEq, Fintype, Repr
 
-/-- `g.code` is the code of the gender `g` in the forms data. -/
-def SktGender.code : SktGender → String
-  | .masc => "masc"
-  | .neut => "neut"
+/-- `g.ud` is the gender `g` in the forms data. -/
+def SktGender.ud : SktGender → UD.Gender
+  | .masc => .Masc
+  | .neut => .Neut
 
 /-- The Sanskrit declensions considered are the neuter a-stem declension of HṚD(AYA)'s *hṛdaya*
 (Table 4), the general consonant-stem declension, followed by HṚD(AYA)'s *hṛd* and by every stem
@@ -1118,17 +1136,18 @@ def strength (g : SktGender) (σ : SktCell) : Strength :=
 /-- `weak g` is the set of weak property sets of a lexeme of gender `g`. -/
 def weak (g : SktGender) : Finset SktCell := {σ | strength g σ = .weak}
 
-/-- `sktForms` are the Sanskrit rows of the forms data, those of Tables 9 and 10. -/
-def sktForms : List Form := Forms.all.filter (·.languageId == "sans1269")
+/-- A Sanskrit row expresses the concept `pid` in the gender `g` at the cell `σ`. -/
+def SktRow (pid : String) (g : SktGender) (σ : SktCell) (f : Form Forms.Cell) : Bool :=
+  f.languageId == "sans1269" && f.parameterId == pid && f.cell.gender = ↑g.ud &&
+    caseOfForm f == some σ.1.1 && numberOfForm f == some σ.2.1
 
 /-- `sktRows pid g σ` are the Sanskrit rows expressing the concept `pid` in the gender `g` at the
-cell `σ`. -/
-def sktRows (pid : String) (g : SktGender) (σ : SktCell) : List Form :=
-  (matching sktForms pid [("Gender", g.code)]).filter fun f ↦
-    f.columnAs? "Case" caseLabels == some σ.1.1 && f.columnAs? "Number" numberLabels == some σ.2.1
+cell `σ`, those of Tables 9 and 10. -/
+def sktRows (pid : String) (g : SktGender) (σ : SktCell) : List (Form Forms.Cell) :=
+  Forms.all.filter (SktRow pid g σ)
 
 /-- The ending of a row is what follows its stem alternant, nothing for a bare stem. -/
-def endingOf (f : Form) : List String := f.segments.drop 1
+def endingOf (f : Form Forms.Cell) : List String := f.segments.drop 1
 
 /-- `d.exemplar` is the concept whose rows exemplify the declension `d`, PRATYAÑC 'westerly' for
 the general consonant-stem declension and, for the neuter an-stem and as-stem declensions, NĀMAN
@@ -1264,12 +1283,16 @@ def SktLex.paramId : SktLex → String
   | .pratyancM | .pratyancN => "westerly"
   | .ahan => "day"
 
-/-- `l.rows σ` are the rows of the forms data for the cell `σ` of `l`. -/
-def SktLex.rows (l : SktLex) (σ : SktCell) : List Form := sktRows l.paramId (sktEntry l).gender σ
+/-- `l.analyses σ` are the paper's analyses of the rows of the forms data for the cell `σ` of
+`l`. -/
+def SktLex.analyses (l : SktLex) (σ : SktCell) : List Forms.Analysis :=
+  Forms.analyses.filter (SktRow l.paramId (sktEntry l).gender σ ·.form)
 
-/-- `gradeLabels` reads the grade codes of the forms data as grades. -/
-def gradeLabels : List (String × Grade) :=
-  [("strong", .strong), ("middle", .middle), ("weakest", .weakest)]
+/-- `gradeOf g` reads a grade of the paper's analysis as a grade. -/
+def gradeOf : Forms.Grade → Grade
+  | .strong => .strong
+  | .middle => .middle
+  | .weakest => .weakest
 
 /-- Every lexeme's Weakest coradical has one exemplar row at each cell, so the vowel test of
 (20a) never fails for want of a row. -/
@@ -1283,12 +1306,12 @@ theorem rule20a_lt_rule20b : ∀ l, ∀ a ∈ rule20a (sktEntry l), ∀ b ∈ ru
 /-- The rules (19) and (20a,b) give every cell of PRATYAÑC's masculine and neuter paradigms the
 grade that Table 9 (p. 294) shades it with, each cell having one row. -/
 theorem rules_match_table9 : ∀ l ∈ [SktLex.pratyancM, .pratyancN], ∀ σ,
-    (l.rows σ).map (·.columnAs? "Grade" gradeLabels) = [some (grade l σ)] := by decide
+    (l.analyses σ).map (·.grade.map gradeOf) = [some (grade l σ)] := by decide
 
 /-- The rules give every cell of AHAN the stem that Table 10 (p. 296) and p. 295 build it on,
 each cell having one row. -/
 theorem rules_match_table10 : ∀ σ,
-    (SktLex.ahan.rows σ).map (·.column? "Stem") = [some (sktStem .ahan σ).form] := by decide
+    (SktLex.ahan.analyses σ).map (·.stem) = [some (sktStem .ahan σ).form] := by decide
 
 /-! ### Heteroclisis from stem alternation -/
 

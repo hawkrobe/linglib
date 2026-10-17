@@ -3,12 +3,10 @@ module
 public import Linglib.Data.Forms.Schema
 
 /-!
-# `Lucy1994` — CLDF form data
+# `Lucy1994`: word forms
 
-Auto-generated from `Linglib/Data/Forms/Lucy1994.json` by
-`scripts/gen_forms.py`. Do not edit by hand; edit the JSON and re-run the
-generator. Consumers import this module; declarations live in
-`namespace Lucy1994.Forms`.
+Auto-generated from `Linglib/Data/Forms/Lucy1994.json` by `scripts/gen_forms.py`. Do not edit by
+hand; edit the JSON and re-run the generator. Declarations live in `namespace Lucy1994.Forms`.
 -/
 
 @[expose] public section
@@ -17,629 +15,841 @@ namespace Lucy1994.Forms
 
 open Data.Forms
 
-def AFCT : Form :=
+/-- A cell of the source's tables, by its Universal Dependencies features. -/
+abbrev Cell := UD.MorphFeatures
+
+def Lexemes.afct : Lexeme :=
+  { id := "afct", languageId := "yuca1254", parameterId := "AFCT" }
+
+def Lexemes.root : Lexeme :=
+  { id := "root", languageId := "yuca1254", parameterId := "ROOT" }
+
+def Lexemes.caus : Lexeme :=
+  { id := "caus", languageId := "yuca1254", parameterId := "CAUS" }
+
+def Lexemes.pos : Lexeme :=
+  { id := "pos", languageId := "yuca1254", parameterId := "POS" }
+
+def Lexemes.jump : Lexeme :=
+  { id := "jump", languageId := "yuca1254", parameterId := "jump" }
+
+def Lexemes.jump_over : Lexeme :=
+  { id := "jump_over", languageId := "yuca1254", parameterId := "jump-over" }
+
+def Lexemes.write : Lexeme :=
+  { id := "write", languageId := "yuca1254", parameterId := "write" }
+
+def Lexemes.sweep : Lexeme :=
+  { id := "sweep", languageId := "yuca1254", parameterId := "sweep" }
+
+def Lexemes.smile : Lexeme :=
+  { id := "smile", languageId := "yuca1254", parameterId := "smile" }
+
+def Lexemes.weed : Lexeme :=
+  { id := "weed", languageId := "yuca1254", parameterId := "weed" }
+
+def Lexemes.carry : Lexeme :=
+  { id := "carry", languageId := "yuca1254", parameterId := "carry" }
+
+def Lexemes.carry_tr : Lexeme :=
+  { id := "carry_tr", languageId := "yuca1254", parameterId := "carry-tr" }
+
+def Lexemes.cut : Lexeme :=
+  { id := "cut", languageId := "yuca1254", parameterId := "cut" }
+
+def Lexemes.measure : Lexeme :=
+  { id := "measure", languageId := "yuca1254", parameterId := "measure" }
+
+def Lexemes.whip : Lexeme :=
+  { id := "whip", languageId := "yuca1254", parameterId := "whip" }
+
+def Lexemes.punch : Lexeme :=
+  { id := "punch", languageId := "yuca1254", parameterId := "punch" }
+
+def Lexemes.awaken : Lexeme :=
+  { id := "awaken", languageId := "yuca1254", parameterId := "awaken" }
+
+def Lexemes.wake_someone : Lexeme :=
+  { id := "wake_someone", languageId := "yuca1254", parameterId := "wake-someone" }
+
+def Lexemes.fall_asleep : Lexeme :=
+  { id := "fall_asleep", languageId := "yuca1254", parameterId := "fall-asleep" }
+
+def Lexemes.put_to_sleep : Lexeme :=
+  { id := "put_to_sleep", languageId := "yuca1254", parameterId := "put-to-sleep" }
+
+def Lexemes.be_born : Lexeme :=
+  { id := "be_born", languageId := "yuca1254", parameterId := "be-born" }
+
+def Lexemes.give_birth : Lexeme :=
+  { id := "give_birth", languageId := "yuca1254", parameterId := "give-birth" }
+
+def Lexemes.die : Lexeme :=
+  { id := "die", languageId := "yuca1254", parameterId := "die" }
+
+def Lexemes.kill : Lexeme :=
+  { id := "kill", languageId := "yuca1254", parameterId := "kill" }
+
+def Lexemes.forget : Lexeme :=
+  { id := "forget", languageId := "yuca1254", parameterId := "forget" }
+
+def Lexemes.distract : Lexeme :=
+  { id := "distract", languageId := "yuca1254", parameterId := "distract" }
+
+def Lexemes.remember : Lexeme :=
+  { id := "remember", languageId := "yuca1254", parameterId := "remember" }
+
+def Lexemes.remind : Lexeme :=
+  { id := "remind", languageId := "yuca1254", parameterId := "remind" }
+
+def Lexemes.begin_activity : Lexeme :=
+  { id := "begin_activity", languageId := "yuca1254", parameterId := "begin-activity" }
+
+def Lexemes.cause_to_begin : Lexeme :=
+  { id := "cause_to_begin", languageId := "yuca1254", parameterId := "cause-to-begin" }
+
+def Lexemes.stop : Lexeme :=
+  { id := "stop", languageId := "yuca1254", parameterId := "stop" }
+
+def Lexemes.cause_to_stop : Lexeme :=
+  { id := "cause_to_stop", languageId := "yuca1254", parameterId := "cause-to-stop" }
+
+def Lexemes.begin : Lexeme :=
+  { id := "begin", languageId := "yuca1254", parameterId := "begin" }
+
+def Lexemes.cause_to_start : Lexeme :=
+  { id := "cause_to_start", languageId := "yuca1254", parameterId := "cause-to-start" }
+
+def Lexemes.cease : Lexeme :=
+  { id := "cease", languageId := "yuca1254", parameterId := "cease" }
+
+def Lexemes.revoke : Lexeme :=
+  { id := "revoke", languageId := "yuca1254", parameterId := "revoke" }
+
+def Lexemes.rest : Lexeme :=
+  { id := "rest", languageId := "yuca1254", parameterId := "rest" }
+
+def Lexemes.rest_tr : Lexeme :=
+  { id := "rest_tr", languageId := "yuca1254", parameterId := "rest-tr" }
+
+def Lexemes.remain : Lexeme :=
+  { id := "remain", languageId := "yuca1254", parameterId := "remain" }
+
+def Lexemes.abandon : Lexeme :=
+  { id := "abandon", languageId := "yuca1254", parameterId := "abandon" }
+
+def Lexemes.pass_by : Lexeme :=
+  { id := "pass_by", languageId := "yuca1254", parameterId := "pass-by" }
+
+def Lexemes.transport : Lexeme :=
+  { id := "transport", languageId := "yuca1254", parameterId := "transport" }
+
+def Lexemes.move : Lexeme :=
+  { id := "move", languageId := "yuca1254", parameterId := "move" }
+
+def Lexemes.cause_to_move : Lexeme :=
+  { id := "cause_to_move", languageId := "yuca1254", parameterId := "cause-to-move" }
+
+def Lexemes.go : Lexeme :=
+  { id := "go", languageId := "yuca1254", parameterId := "go" }
+
+def Lexemes.take : Lexeme :=
+  { id := "take", languageId := "yuca1254", parameterId := "take" }
+
+def Lexemes.come : Lexeme :=
+  { id := "come", languageId := "yuca1254", parameterId := "come" }
+
+def Lexemes.bring : Lexeme :=
+  { id := "bring", languageId := "yuca1254", parameterId := "bring" }
+
+def Lexemes.arrive_here : Lexeme :=
+  { id := "arrive_here", languageId := "yuca1254", parameterId := "arrive-here" }
+
+def Lexemes.bring_here : Lexeme :=
+  { id := "bring_here", languageId := "yuca1254", parameterId := "bring-here" }
+
+def Lexemes.enter : Lexeme :=
+  { id := "enter", languageId := "yuca1254", parameterId := "enter" }
+
+def Lexemes.move_in : Lexeme :=
+  { id := "move_in", languageId := "yuca1254", parameterId := "move-in" }
+
+def Lexemes.fall : Lexeme :=
+  { id := "fall", languageId := "yuca1254", parameterId := "fall" }
+
+def Lexemes.fell : Lexeme :=
+  { id := "fell", languageId := "yuca1254", parameterId := "fell" }
+
+def Lexemes.rise : Lexeme :=
+  { id := "rise", languageId := "yuca1254", parameterId := "rise" }
+
+def Lexemes.raise : Lexeme :=
+  { id := "raise", languageId := "yuca1254", parameterId := "raise" }
+
+def Lexemes.ascend : Lexeme :=
+  { id := "ascend", languageId := "yuca1254", parameterId := "ascend" }
+
+def Lexemes.raise_2 : Lexeme :=
+  { id := "raise_2", languageId := "yuca1254", parameterId := "raise-2" }
+
+def Lexemes.bend : Lexeme :=
+  { id := "bend", languageId := "yuca1254", parameterId := "bend" }
+
+def Lexemes.bend_tr : Lexeme :=
+  { id := "bend_tr", languageId := "yuca1254", parameterId := "bend-tr" }
+
+def Lexemes.become_bent : Lexeme :=
+  { id := "become_bent", languageId := "yuca1254", parameterId := "become-bent" }
+
+def Lexemes.lie_down : Lexeme :=
+  { id := "lie_down", languageId := "yuca1254", parameterId := "lie-down" }
+
+def AFCT : Form Cell :=
   { id := "lucy1994_AFCT"
-    languageId := "yuca1254"
-    parameterId := "AFCT"
+    lexeme := Lexemes.afct
+    cell := {}
     form := "=t"
     segments := ["=t"]
     source := [
       ⟨"lucy-1994", "(1a)"⟩
     ] }
 
-def ROOT : Form :=
+def ROOT : Form Cell :=
   { id := "lucy1994_ROOT"
-    languageId := "yuca1254"
-    parameterId := "ROOT"
+    lexeme := Lexemes.root
+    cell := {}
     form := "=∅"
     segments := ["=∅"]
     source := [
       ⟨"lucy-1994", "(1b)"⟩
     ] }
 
-def CAUS : Form :=
+def CAUS : Form Cell :=
   { id := "lucy1994_CAUS"
-    languageId := "yuca1254"
-    parameterId := "CAUS"
+    lexeme := Lexemes.caus
+    cell := {}
     form := "=s"
     segments := ["=s"]
     source := [
       ⟨"lucy-1994", "(1c)"⟩
     ] }
 
-def POS : Form :=
+def POS : Form Cell :=
   { id := "lucy1994_POS"
-    languageId := "yuca1254"
-    parameterId := "POS"
+    lexeme := Lexemes.pos
+    cell := {}
     form := "=lah"
     segments := ["=lah"]
     source := [
       ⟨"lucy-1994", "(5)"⟩
     ] }
 
-def siit : Form :=
+def siit : Form Cell :=
   { id := "lucy1994_siit"
-    languageId := "yuca1254"
-    parameterId := "jump"
+    lexeme := Lexemes.jump
+    cell := {}
     form := "síit'"
     segments := ["síit'"]
     source := [
       ⟨"lucy-1994", "(1a)"⟩
     ] }
 
-def siit_t : Form :=
+def siit_t : Form Cell :=
   { id := "lucy1994_siit_t"
-    languageId := "yuca1254"
-    parameterId := "jump-over"
+    lexeme := Lexemes.jump_over
+    cell := {}
     form := "síit'=t"
     segments := ["síit'", "=t"]
     source := [
       ⟨"lucy-1994", "(1a)"⟩
     ] }
 
-def tziib : Form :=
+def tziib : Form Cell :=
   { id := "lucy1994_tziib"
-    languageId := "yuca1254"
-    parameterId := "write"
+    lexeme := Lexemes.write
+    cell := {}
     form := "¢'iib'"
     segments := ["¢'iib'"]
     source := [
       ⟨"lucy-1994", "p. 629"⟩
     ] }
 
-def miis : Form :=
+def miis : Form Cell :=
   { id := "lucy1994_miis"
-    languageId := "yuca1254"
-    parameterId := "sweep"
+    lexeme := Lexemes.sweep
+    cell := {}
     form := "mìis"
     segments := ["mìis"]
     source := [
       ⟨"lucy-1994", "p. 629"⟩
     ] }
 
-def cheh : Form :=
+def cheh : Form Cell :=
   { id := "lucy1994_cheh"
-    languageId := "yuca1254"
-    parameterId := "smile"
+    lexeme := Lexemes.smile
+    cell := {}
     form := "čé'eh"
     segments := ["čé'eh"]
     source := [
       ⟨"lucy-1994", "p. 629"⟩
     ] }
 
-def paak : Form :=
+def paak : Form Cell :=
   { id := "lucy1994_paak"
-    languageId := "yuca1254"
-    parameterId := "weed"
+    lexeme := Lexemes.weed
+    cell := {}
     form := "páak"
     segments := ["páak"]
     source := [
       ⟨"lucy-1994", "p. 629"⟩
     ] }
 
-def kuc : Form :=
+def kuc : Form Cell :=
   { id := "lucy1994_kuc"
-    languageId := "yuca1254"
-    parameterId := "carry"
+    lexeme := Lexemes.carry
+    cell := {}
     form := "kuč"
     segments := ["kuč"]
     source := [
       ⟨"lucy-1994", "(1b)"⟩
     ] }
 
-def kuc_0 : Form :=
+def kuc_0 : Form Cell :=
   { id := "lucy1994_kuc_0"
-    languageId := "yuca1254"
-    parameterId := "carry-tr"
+    lexeme := Lexemes.carry_tr
+    cell := {}
     form := "kuč=∅"
     segments := ["kuč", "=∅"]
     source := [
       ⟨"lucy-1994", "(1b)"⟩
     ] }
 
-def kos : Form :=
+def kos : Form Cell :=
   { id := "lucy1994_kos"
-    languageId := "yuca1254"
-    parameterId := "cut"
+    lexeme := Lexemes.cut
+    cell := {}
     form := "k'os"
     segments := ["k'os"]
     source := [
       ⟨"lucy-1994", "p. 629"⟩
     ] }
 
-def pis : Form :=
+def pis : Form Cell :=
   { id := "lucy1994_pis"
-    languageId := "yuca1254"
-    parameterId := "measure"
+    lexeme := Lexemes.measure
+    cell := {}
     form := "p'is"
     segments := ["p'is"]
     source := [
       ⟨"lucy-1994", "p. 629"⟩
     ] }
 
-def hats : Form :=
+def hats : Form Cell :=
   { id := "lucy1994_hats"
-    languageId := "yuca1254"
-    parameterId := "whip"
+    lexeme := Lexemes.whip
+    cell := {}
     form := "ha¢"
     segments := ["ha¢"]
     source := [
       ⟨"lucy-1994", "p. 629"⟩
     ] }
 
-def los : Form :=
+def los : Form Cell :=
   { id := "lucy1994_los"
-    languageId := "yuca1254"
-    parameterId := "punch"
+    lexeme := Lexemes.punch
+    cell := {}
     form := "loš"
     segments := ["loš"]
     source := [
       ⟨"lucy-1994", "p. 629"⟩
     ] }
 
-def ah : Form :=
+def ah : Form Cell :=
   { id := "lucy1994_ah"
-    languageId := "yuca1254"
-    parameterId := "awaken"
+    lexeme := Lexemes.awaken
+    cell := {}
     form := "'ah"
     segments := ["'ah"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def ah_s : Form :=
+def ah_s : Form Cell :=
   { id := "lucy1994_ah_s"
-    languageId := "yuca1254"
-    parameterId := "wake-someone"
+    lexeme := Lexemes.wake_someone
+    cell := {}
     form := "'ah=s"
     segments := ["'ah", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def wen : Form :=
+def wen : Form Cell :=
   { id := "lucy1994_wen"
-    languageId := "yuca1254"
-    parameterId := "fall-asleep"
+    lexeme := Lexemes.fall_asleep
+    cell := {}
     form := "wen"
     segments := ["wen"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def wen_s : Form :=
+def wen_s : Form Cell :=
   { id := "lucy1994_wen_s"
-    languageId := "yuca1254"
-    parameterId := "put-to-sleep"
+    lexeme := Lexemes.put_to_sleep
+    cell := {}
     form := "ween=s"
     segments := ["ween", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def siih : Form :=
+def siih : Form Cell :=
   { id := "lucy1994_siih"
-    languageId := "yuca1254"
-    parameterId := "be-born"
+    lexeme := Lexemes.be_born
+    cell := {}
     form := "siih"
     segments := ["siih"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def siih_s : Form :=
+def siih_s : Form Cell :=
   { id := "lucy1994_siih_s"
-    languageId := "yuca1254"
-    parameterId := "give-birth"
+    lexeme := Lexemes.give_birth
+    cell := {}
     form := "siih=s"
     segments := ["siih", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def kiim : Form :=
+def kiim : Form Cell :=
   { id := "lucy1994_kiim"
-    languageId := "yuca1254"
-    parameterId := "die"
+    lexeme := Lexemes.die
+    cell := {}
     form := "kíim"
     segments := ["kíim"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def kiim_s : Form :=
+def kiim_s : Form Cell :=
   { id := "lucy1994_kiim_s"
-    languageId := "yuca1254"
-    parameterId := "kill"
+    lexeme := Lexemes.kill
+    cell := {}
     form := "kíim=s"
     segments := ["kíim", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def tuub : Form :=
+def tuub : Form Cell :=
   { id := "lucy1994_tuub"
-    languageId := "yuca1254"
-    parameterId := "forget"
+    lexeme := Lexemes.forget
+    cell := {}
     form := "tú'ub'"
     segments := ["tú'ub'"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def tuub_s : Form :=
+def tuub_s : Form Cell :=
   { id := "lucy1994_tuub_s"
-    languageId := "yuca1254"
-    parameterId := "distract"
+    lexeme := Lexemes.distract
+    cell := {}
     form := "tú'ub'=s"
     segments := ["tú'ub'", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def kaah : Form :=
+def kaah : Form Cell :=
   { id := "lucy1994_kaah"
-    languageId := "yuca1254"
-    parameterId := "remember"
+    lexeme := Lexemes.remember
+    cell := {}
     form := "k'a'ah"
     segments := ["k'a'ah"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def kaah_s : Form :=
+def kaah_s : Form Cell :=
   { id := "lucy1994_kaah_s"
-    languageId := "yuca1254"
-    parameterId := "remind"
+    lexeme := Lexemes.remind
+    cell := {}
     form := "k'á'ah=s"
     segments := ["k'á'ah", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def chuun : Form :=
+def chuun : Form Cell :=
   { id := "lucy1994_chuun"
-    languageId := "yuca1254"
-    parameterId := "begin-activity"
+    lexeme := Lexemes.begin_activity
+    cell := {}
     form := "ču'un"
     segments := ["ču'un"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def chuun_s : Form :=
+def chuun_s : Form Cell :=
   { id := "lucy1994_chuun_s"
-    languageId := "yuca1254"
-    parameterId := "cause-to-begin"
+    lexeme := Lexemes.cause_to_begin
+    cell := {}
     form := "ču'un=s"
     segments := ["ču'un", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def chen : Form :=
+def chen : Form Cell :=
   { id := "lucy1994_chen"
-    languageId := "yuca1254"
-    parameterId := "stop"
+    lexeme := Lexemes.stop
+    cell := {}
     form := "č'en"
     segments := ["č'en"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def chen_s : Form :=
+def chen_s : Form Cell :=
   { id := "lucy1994_chen_s"
-    languageId := "yuca1254"
-    parameterId := "cause-to-stop"
+    lexeme := Lexemes.cause_to_stop
+    cell := {}
     form := "č'en=s"
     segments := ["č'en", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def hoop : Form :=
+def hoop : Form Cell :=
   { id := "lucy1994_hoop"
-    languageId := "yuca1254"
-    parameterId := "begin"
+    lexeme := Lexemes.begin
+    cell := {}
     form := "hó'op'"
     segments := ["hó'op'"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def hoop_s : Form :=
+def hoop_s : Form Cell :=
   { id := "lucy1994_hoop_s"
-    languageId := "yuca1254"
-    parameterId := "cause-to-start"
+    lexeme := Lexemes.cause_to_start
+    cell := {}
     form := "hó'op'=s"
     segments := ["hó'op'", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def haaw : Form :=
+def haaw : Form Cell :=
   { id := "lucy1994_haaw"
-    languageId := "yuca1254"
-    parameterId := "cease"
+    lexeme := Lexemes.cease
+    cell := {}
     form := "háaw"
     segments := ["háaw"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def haaw_s : Form :=
+def haaw_s : Form Cell :=
   { id := "lucy1994_haaw_s"
-    languageId := "yuca1254"
-    parameterId := "revoke"
+    lexeme := Lexemes.revoke
+    cell := {}
     form := "háaw=s"
     segments := ["háaw", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def heel : Form :=
+def heel : Form Cell :=
   { id := "lucy1994_heel"
-    languageId := "yuca1254"
-    parameterId := "rest"
+    lexeme := Lexemes.rest
+    cell := {}
     form := "hé'el"
     segments := ["hé'el"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def heel_s : Form :=
+def heel_s : Form Cell :=
   { id := "lucy1994_heel_s"
-    languageId := "yuca1254"
-    parameterId := "rest-tr"
+    lexeme := Lexemes.rest_tr
+    cell := {}
     form := "hé'e(l)=s"
     segments := ["hé'e(l)", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def paat : Form :=
+def paat : Form Cell :=
   { id := "lucy1994_paat"
-    languageId := "yuca1254"
-    parameterId := "remain"
+    lexeme := Lexemes.remain
+    cell := {}
     form := "p'át"
     segments := ["p'át"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def paat_s : Form :=
+def paat_s : Form Cell :=
   { id := "lucy1994_paat_s"
-    languageId := "yuca1254"
-    parameterId := "abandon"
+    lexeme := Lexemes.abandon
+    cell := {}
     form := "p'át=s"
     segments := ["p'át", "=s"]
     source := [
       ⟨"lucy-1994", "(2)"⟩
     ] }
 
-def maan : Form :=
+def maan : Form Cell :=
   { id := "lucy1994_maan"
-    languageId := "yuca1254"
-    parameterId := "pass-by"
+    lexeme := Lexemes.pass_by
+    cell := {}
     form := "máan"
     segments := ["máan"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def maan_s : Form :=
+def maan_s : Form Cell :=
   { id := "lucy1994_maan_s"
-    languageId := "yuca1254"
-    parameterId := "transport"
+    lexeme := Lexemes.transport
+    cell := {}
     form := "maan=s"
     segments := ["maan", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def peek : Form :=
+def peek : Form Cell :=
   { id := "lucy1994_peek"
-    languageId := "yuca1254"
-    parameterId := "move"
+    lexeme := Lexemes.move
+    cell := {}
     form := "péek"
     segments := ["péek"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def peek_s : Form :=
+def peek_s : Form Cell :=
   { id := "lucy1994_peek_s"
-    languageId := "yuca1254"
-    parameterId := "cause-to-move"
+    lexeme := Lexemes.cause_to_move
+    cell := {}
     form := "pek=s"
     segments := ["pek", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def bin : Form :=
+def bin : Form Cell :=
   { id := "lucy1994_bin"
-    languageId := "yuca1254"
-    parameterId := "go"
+    lexeme := Lexemes.go
+    cell := {}
     form := "b'in"
     segments := ["b'in"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def bin_s : Form :=
+def bin_s : Form Cell :=
   { id := "lucy1994_bin_s"
-    languageId := "yuca1254"
-    parameterId := "take"
+    lexeme := Lexemes.take
+    cell := {}
     form := "bi(n)=s"
     segments := ["bi(n)", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def taal : Form :=
+def taal : Form Cell :=
   { id := "lucy1994_taal"
-    languageId := "yuca1254"
-    parameterId := "come"
+    lexeme := Lexemes.come
+    cell := {}
     form := "tàal"
     segments := ["tàal"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def taal_s : Form :=
+def taal_s : Form Cell :=
   { id := "lucy1994_taal_s"
-    languageId := "yuca1254"
-    parameterId := "bring"
+    lexeme := Lexemes.bring
+    cell := {}
     form := "taa(l)=s"
     segments := ["taa(l)", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def uul : Form :=
+def uul : Form Cell :=
   { id := "lucy1994_uul"
-    languageId := "yuca1254"
-    parameterId := "arrive-here"
+    lexeme := Lexemes.arrive_here
+    cell := {}
     form := "'ú'ul"
     segments := ["'ú'ul"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def uul_s : Form :=
+def uul_s : Form Cell :=
   { id := "lucy1994_uul_s"
-    languageId := "yuca1254"
-    parameterId := "bring-here"
+    lexeme := Lexemes.bring_here
+    cell := {}
     form := "'u'uh=s"
     segments := ["'u'uh", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def ok : Form :=
+def ok : Form Cell :=
   { id := "lucy1994_ok"
-    languageId := "yuca1254"
-    parameterId := "enter"
+    lexeme := Lexemes.enter
+    cell := {}
     form := "'ok"
     segments := ["'ok"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def ok_s : Form :=
+def ok_s : Form Cell :=
   { id := "lucy1994_ok_s"
-    languageId := "yuca1254"
-    parameterId := "move-in"
+    lexeme := Lexemes.move_in
+    cell := {}
     form := "'ook=s"
     segments := ["'ook", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def luub : Form :=
+def luub : Form Cell :=
   { id := "lucy1994_luub"
-    languageId := "yuca1254"
-    parameterId := "fall"
+    lexeme := Lexemes.fall
+    cell := {}
     form := "lúub'"
     segments := ["lúub'"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def luub_s : Form :=
+def luub_s : Form Cell :=
   { id := "lucy1994_luub_s"
-    languageId := "yuca1254"
-    parameterId := "fell"
+    lexeme := Lexemes.fell
+    cell := {}
     form := "luub'=s"
     segments := ["luub'", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def liik : Form :=
+def liik : Form Cell :=
   { id := "lucy1994_liik"
-    languageId := "yuca1254"
-    parameterId := "rise"
+    lexeme := Lexemes.rise
+    cell := {}
     form := "líik'"
     segments := ["líik'"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def liik_s : Form :=
+def liik_s : Form Cell :=
   { id := "lucy1994_liik_s"
-    languageId := "yuca1254"
-    parameterId := "raise"
+    lexeme := Lexemes.raise
+    cell := {}
     form := "lii(k)'=s"
     segments := ["lii(k)'", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def naak : Form :=
+def naak : Form Cell :=
   { id := "lucy1994_naak"
-    languageId := "yuca1254"
-    parameterId := "ascend"
+    lexeme := Lexemes.ascend
+    cell := {}
     form := "ná'ak"
     segments := ["ná'ak"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def naak_s : Form :=
+def naak_s : Form Cell :=
   { id := "lucy1994_naak_s"
-    languageId := "yuca1254"
-    parameterId := "raise-2"
+    lexeme := Lexemes.raise_2
+    cell := {}
     form := "na'ak=s"
     segments := ["na'ak", "=s"]
     source := [
       ⟨"lucy-1994", "(4)"⟩
     ] }
 
-def cin : Form :=
+def cin : Form Cell :=
   { id := "lucy1994_cin"
-    languageId := "yuca1254"
-    parameterId := "bend"
+    lexeme := Lexemes.bend
+    cell := {}
     form := "čin"
     segments := ["čin"]
     source := [
       ⟨"lucy-1994", "(5)"⟩
     ] }
 
-def cin_0 : Form :=
+def cin_0 : Form Cell :=
   { id := "lucy1994_cin_0"
-    languageId := "yuca1254"
-    parameterId := "bend-tr"
+    lexeme := Lexemes.bend_tr
+    cell := {}
     form := "čin=∅"
     segments := ["čin", "=∅"]
     source := [
       ⟨"lucy-1994", "(6)"⟩
     ] }
 
-def cin_lah : Form :=
+def cin_lah : Form Cell :=
   { id := "lucy1994_cin_lah"
-    languageId := "yuca1254"
-    parameterId := "become-bent"
+    lexeme := Lexemes.become_bent
+    cell := {}
     form := "čin=lah"
     segments := ["čin", "=lah"]
     source := [
       ⟨"lucy-1994", "(5c)"⟩
     ] }
 
-def cil : Form :=
+def cil : Form Cell :=
   { id := "lucy1994_cil"
-    languageId := "yuca1254"
-    parameterId := "lie-down"
+    lexeme := Lexemes.lie_down
+    cell := {}
     form := "čil"
     segments := ["čil"]
     source := [
       ⟨"lucy-1994", "(7)"⟩
     ] }
 
-def all : List Form := [AFCT, ROOT, CAUS, POS, siit, siit_t, tziib, miis, cheh, paak, kuc, kuc_0, kos, pis, hats, los, ah, ah_s, wen, wen_s, siih, siih_s, kiim, kiim_s, tuub, tuub_s, kaah, kaah_s, chuun, chuun_s, chen, chen_s, hoop, hoop_s, haaw, haaw_s, heel, heel_s, paat, paat_s, maan, maan_s, peek, peek_s, bin, bin_s, taal, taal_s, uul, uul_s, ok, ok_s, luub, luub_s, liik, liik_s, naak, naak_s, cin, cin_0, cin_lah, cil]
+/-- Every lexeme of the data. -/
+def lexemes : List Lexeme := [Lexemes.afct, Lexemes.root, Lexemes.caus, Lexemes.pos, Lexemes.jump,
+  Lexemes.jump_over, Lexemes.write, Lexemes.sweep, Lexemes.smile, Lexemes.weed, Lexemes.carry,
+  Lexemes.carry_tr, Lexemes.cut, Lexemes.measure, Lexemes.whip, Lexemes.punch, Lexemes.awaken,
+  Lexemes.wake_someone, Lexemes.fall_asleep, Lexemes.put_to_sleep, Lexemes.be_born,
+  Lexemes.give_birth, Lexemes.die, Lexemes.kill, Lexemes.forget, Lexemes.distract, Lexemes.remember,
+  Lexemes.remind, Lexemes.begin_activity, Lexemes.cause_to_begin, Lexemes.stop,
+  Lexemes.cause_to_stop, Lexemes.begin, Lexemes.cause_to_start, Lexemes.cease, Lexemes.revoke,
+  Lexemes.rest, Lexemes.rest_tr, Lexemes.remain, Lexemes.abandon, Lexemes.pass_by,
+  Lexemes.transport, Lexemes.move, Lexemes.cause_to_move, Lexemes.go, Lexemes.take, Lexemes.come,
+  Lexemes.bring, Lexemes.arrive_here, Lexemes.bring_here, Lexemes.enter, Lexemes.move_in,
+  Lexemes.fall, Lexemes.fell, Lexemes.rise, Lexemes.raise, Lexemes.ascend, Lexemes.raise_2,
+  Lexemes.bend, Lexemes.bend_tr, Lexemes.become_bent, Lexemes.lie_down]
 
-def relations : List FormRelation := [
+/-- Every form the sources accept. -/
+def all : List (Form Cell) := [AFCT, ROOT, CAUS, POS, siit, siit_t, tziib, miis, cheh, paak, kuc,
+  kuc_0, kos, pis, hats, los, ah, ah_s, wen, wen_s, siih, siih_s, kiim, kiim_s, tuub, tuub_s, kaah,
+  kaah_s, chuun, chuun_s, chen, chen_s, hoop, hoop_s, haaw, haaw_s, heel, heel_s, paat, paat_s,
+  maan, maan_s, peek, peek_s, bin, bin_s, taal, taal_s, uul, uul_s, ok, ok_s, luub, luub_s, liik,
+  liik_s, naak, naak_s, cin, cin_0, cin_lah, cil]
+
+/-- Every form a source marks, as marginal, questionable, unacceptable or ungrammatical. -/
+def marked : List (Form Cell) := []
+
+/-- Every relation the sources assert between forms. -/
+def relations : List (FormRelation (Form Cell)) := [
   { id := "lucy1994_siit_t", form := siit, target := siit_t, relation := "affective", source := [
       ⟨"lucy-1994", "(1a)"⟩
     ] },
@@ -741,7 +951,6 @@ def relations : List FormRelation := [
     ] },
   { id := "lucy1994_cil_lah", form := cil, target := POS, relation := "positional", source := [
       ⟨"lucy-1994", "(7)"⟩
-    ] }
-]
+    ] }]
 
 end Lucy1994.Forms

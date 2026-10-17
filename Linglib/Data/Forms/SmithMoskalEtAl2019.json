@@ -1,306 +1,10 @@
 {
-  "FormTable": [
-    {
-      "ID": "smithmoskaletal2019_wardaman_3sg_abs",
-      "Language_ID": "ward1246",
-      "Parameter_ID": "3sg_abs",
-      "Form": "narnaj",
-      "Segments": ["narnaj"],
-      "Comment": "AAB without syncretism: the ergative carries a case suffix the absolutive lacks, the dative is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 25]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_wardaman_3sg_erg",
-      "Language_ID": "ward1246",
-      "Parameter_ID": "3sg_erg",
-      "Form": "narnaj-(j)i",
-      "Segments": ["narnaj", "(j)i"],
-      "Comment": "AAB without syncretism: the ergative carries a case suffix the absolutive lacks, the dative is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 25]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_wardaman_3sg_dat",
-      "Language_ID": "ward1246",
-      "Parameter_ID": "3sg_dat",
-      "Form": "gunga",
-      "Segments": ["gunga"],
-      "Comment": "AAB without syncretism: the ergative carries a case suffix the absolutive lacks, the dative is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 25]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_khinalugh_2sg_abs",
-      "Language_ID": "khin1240",
-      "Parameter_ID": "2sg_abs",
-      "Form": "vɨ",
-      "Segments": ["vɨ"],
-      "Comment": "AAB without syncretism: the ergative is irregular relative to the absolutive, the dative is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 24]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_khinalugh_2sg_erg",
-      "Language_ID": "khin1240",
-      "Parameter_ID": "2sg_erg",
-      "Form": "va",
-      "Segments": ["va"],
-      "Comment": "AAB without syncretism: the ergative is irregular relative to the absolutive, the dative is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 24]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_khinalugh_2sg_dat",
-      "Language_ID": "khin1240",
-      "Parameter_ID": "2sg_dat",
-      "Form": "oX(ɨr)",
-      "Segments": ["oX(ɨr)"],
-      "Comment": "AAB without syncretism: the ergative is irregular relative to the absolutive, the dative is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 24]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_archi_2sg_abs",
-      "Language_ID": "arch1244",
-      "Parameter_ID": "2sg_abs",
-      "Form": "un",
-      "Segments": ["un"],
-      "Comment": "syncretic {A=A}B: the absolutive and the ergative are identical, a two-way contrast the paper does not count as AAB",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 20]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_archi_2sg_erg",
-      "Language_ID": "arch1244",
-      "Parameter_ID": "2sg_erg",
-      "Form": "un",
-      "Segments": ["un"],
-      "Comment": "syncretic {A=A}B: the absolutive and the ergative are identical, a two-way contrast the paper does not count as AAB",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 20]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_archi_2sg_dat",
-      "Language_ID": "arch1244",
-      "Parameter_ID": "2sg_dat",
-      "Form": "wa-s",
-      "Segments": ["wa", "s"],
-      "Comment": "syncretic {A=A}B: the absolutive and the ergative are identical, a two-way contrast the paper does not count as AAB",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 20]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_icelandic_1sg_nom",
-      "Language_ID": "icel1247",
-      "Parameter_ID": "1sg_nom",
-      "Form": "ég",
-      "Segments": ["ég"],
-      "Comment": "ABB, the rules (15): an accusative-conditioned m- and an elsewhere ég",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 6]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_icelandic_1sg_acc",
-      "Language_ID": "icel1247",
-      "Parameter_ID": "1sg_acc",
-      "Form": "mig",
-      "Segments": ["mig"],
-      "Comment": "ABB, the rules (15): an accusative-conditioned m- and an elsewhere ég",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 6]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_icelandic_1sg_dat",
-      "Language_ID": "icel1247",
-      "Parameter_ID": "1sg_dat",
-      "Form": "mér",
-      "Segments": ["mér"],
-      "Comment": "ABB, the rules (15): an accusative-conditioned m- and an elsewhere ég",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 6]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_russian_1sg_nom",
-      "Language_ID": "russ1263",
-      "Parameter_ID": "1sg_nom",
-      "Form": "ja",
-      "Segments": ["ja"],
-      "Comment": "the inherited Indo-European ABB",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 10]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_russian_1sg_acc",
-      "Language_ID": "russ1263",
-      "Parameter_ID": "1sg_acc",
-      "Form": "menja",
-      "Segments": ["menja"],
-      "Comment": "the inherited Indo-European ABB",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 10]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_russian_1sg_dat",
-      "Language_ID": "russ1263",
-      "Parameter_ID": "1sg_dat",
-      "Form": "mnje",
-      "Segments": ["mnje"],
-      "Comment": "the inherited Indo-European ABB",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 10]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_lezgian_1sg_abs",
-      "Language_ID": "lezg1247",
-      "Parameter_ID": "1sg_abs",
-      "Form": "zun",
-      "Segments": ["zun"],
-      "Comment": "AAA on a constant z(a)-base",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 11]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_lezgian_1sg_erg",
-      "Language_ID": "lezg1247",
-      "Parameter_ID": "1sg_erg",
-      "Form": "za",
-      "Segments": ["za"],
-      "Comment": "AAA on a constant z(a)-base",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 11]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_lezgian_1sg_dat",
-      "Language_ID": "lezg1247",
-      "Parameter_ID": "1sg_dat",
-      "Form": "zaz",
-      "Segments": ["zaz"],
-      "Comment": "AAA on a constant z(a)-base",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 11]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_awtuw_1_sg",
-      "Language_ID": "awtu1239",
-      "Parameter_ID": "1_sg",
-      "Form": "wan",
-      "Segments": ["wan"],
-      "Comment": "ABB: the plural and the dual share a suppletive n-base",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 33]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_awtuw_1_pl",
-      "Language_ID": "awtu1239",
-      "Parameter_ID": "1_pl",
-      "Form": "nom",
-      "Segments": ["nom"],
-      "Comment": "ABB: the plural and the dual share a suppletive n-base",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 33]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_awtuw_1_dl",
-      "Language_ID": "awtu1239",
-      "Parameter_ID": "1_dl",
-      "Form": "nan",
-      "Segments": ["nan"],
-      "Comment": "ABB: the plural and the dual share a suppletive n-base",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 33]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_yagua_2_sg",
-      "Language_ID": "yagu1244",
-      "Parameter_ID": "2_sg",
-      "Form": "jiy",
-      "Segments": ["jiy"],
-      "Comment": "AAB for number: the plural contains the singular base, the dual is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_yagua_2_pl",
-      "Language_ID": "yagu1244",
-      "Parameter_ID": "2_pl",
-      "Form": "jiryéy",
-      "Segments": ["jiryéy"],
-      "Comment": "AAB for number: the plural contains the singular base, the dual is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_yagua_2_dl",
-      "Language_ID": "yagu1244",
-      "Parameter_ID": "2_dl",
-      "Form": "sááda",
-      "Segments": ["sááda"],
-      "Comment": "AAB for number: the plural contains the singular base, the dual is suppletive",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_wambaya_1incl_sg",
-      "Language_ID": "wamb1258",
-      "Parameter_ID": "1incl_sg",
-      "Form": "ngawu(rniji)",
-      "Segments": ["ngawu(rniji)"],
-      "Comment": "AAB for number",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_wambaya_1incl_pl",
-      "Language_ID": "wamb1258",
-      "Parameter_ID": "1incl_pl",
-      "Form": "ngurruwani",
-      "Segments": ["ngurruwani"],
-      "Comment": "AAB for number",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_wambaya_1incl_dl",
-      "Language_ID": "wamb1258",
-      "Parameter_ID": "1incl_dl",
-      "Form": "mrindiyani",
-      "Segments": ["mrindiyani"],
-      "Comment": "AAB for number",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "B"
-    },
-    {
-      "ID": "smithmoskaletal2019_dehu_3m_sg",
-      "Language_ID": "dehu1237",
-      "Parameter_ID": "3m_sg",
-      "Form": "angeice",
-      "Segments": ["angeice"],
-      "Comment": "AAB for number",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_dehu_3m_pl",
-      "Language_ID": "dehu1237",
-      "Parameter_ID": "3m_pl",
-      "Form": "angate",
-      "Segments": ["angate"],
-      "Comment": "AAB for number",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "A"
-    },
-    {
-      "ID": "smithmoskaletal2019_dehu_3m_dl",
-      "Language_ID": "dehu1237",
-      "Parameter_ID": "3m_dl",
-      "Form": "nyido",
-      "Segments": ["nyido"],
-      "Comment": "AAB for number",
-      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"],
-      "Base": "B"
-    }
-  ],
+  "Types": {
+    "Base": [
+      {"Value": "A", "Lean": "a", "Description": "the base of the first cell"},
+      {"Value": "B", "Lean": "b", "Description": "a second base"}
+    ]
+  },
   "ParameterTable": [
     {
       "ID": "3sg_abs",
@@ -416,6 +120,529 @@
       "ID": "3m_dl",
       "Name": "3M pronoun, dual",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "x_3sg_abs",
+      "Language_ID": "ward1246",
+      "Parameter_ID": "3sg_abs"
+    },
+    {
+      "ID": "x_3sg_erg",
+      "Language_ID": "ward1246",
+      "Parameter_ID": "3sg_erg"
+    },
+    {
+      "ID": "x_3sg_dat",
+      "Language_ID": "ward1246",
+      "Parameter_ID": "3sg_dat"
+    },
+    {
+      "ID": "x_2sg_abs",
+      "Language_ID": "khin1240",
+      "Parameter_ID": "2sg_abs"
+    },
+    {
+      "ID": "x_2sg_erg",
+      "Language_ID": "khin1240",
+      "Parameter_ID": "2sg_erg"
+    },
+    {
+      "ID": "x_2sg_dat",
+      "Language_ID": "khin1240",
+      "Parameter_ID": "2sg_dat"
+    },
+    {
+      "ID": "x_2sg_abs_arch1244",
+      "Language_ID": "arch1244",
+      "Parameter_ID": "2sg_abs"
+    },
+    {
+      "ID": "x_2sg_erg_arch1244",
+      "Language_ID": "arch1244",
+      "Parameter_ID": "2sg_erg"
+    },
+    {
+      "ID": "x_2sg_dat_arch1244",
+      "Language_ID": "arch1244",
+      "Parameter_ID": "2sg_dat"
+    },
+    {
+      "ID": "x_1sg_nom",
+      "Language_ID": "icel1247",
+      "Parameter_ID": "1sg_nom"
+    },
+    {
+      "ID": "x_1sg_acc",
+      "Language_ID": "icel1247",
+      "Parameter_ID": "1sg_acc"
+    },
+    {
+      "ID": "x_1sg_dat",
+      "Language_ID": "icel1247",
+      "Parameter_ID": "1sg_dat"
+    },
+    {
+      "ID": "x_1sg_nom_russ1263",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "1sg_nom"
+    },
+    {
+      "ID": "x_1sg_acc_russ1263",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "1sg_acc"
+    },
+    {
+      "ID": "x_1sg_dat_russ1263",
+      "Language_ID": "russ1263",
+      "Parameter_ID": "1sg_dat"
+    },
+    {
+      "ID": "x_1sg_abs",
+      "Language_ID": "lezg1247",
+      "Parameter_ID": "1sg_abs"
+    },
+    {
+      "ID": "x_1sg_erg",
+      "Language_ID": "lezg1247",
+      "Parameter_ID": "1sg_erg"
+    },
+    {
+      "ID": "x_1sg_dat_lezg1247",
+      "Language_ID": "lezg1247",
+      "Parameter_ID": "1sg_dat"
+    },
+    {
+      "ID": "x_1_sg",
+      "Language_ID": "awtu1239",
+      "Parameter_ID": "1_sg"
+    },
+    {
+      "ID": "x_1_pl",
+      "Language_ID": "awtu1239",
+      "Parameter_ID": "1_pl"
+    },
+    {
+      "ID": "x_1_dl",
+      "Language_ID": "awtu1239",
+      "Parameter_ID": "1_dl"
+    },
+    {
+      "ID": "x_2_sg",
+      "Language_ID": "yagu1244",
+      "Parameter_ID": "2_sg"
+    },
+    {
+      "ID": "x_2_pl",
+      "Language_ID": "yagu1244",
+      "Parameter_ID": "2_pl"
+    },
+    {
+      "ID": "x_2_dl",
+      "Language_ID": "yagu1244",
+      "Parameter_ID": "2_dl"
+    },
+    {
+      "ID": "x_1incl_sg",
+      "Language_ID": "wamb1258",
+      "Parameter_ID": "1incl_sg"
+    },
+    {
+      "ID": "x_1incl_pl",
+      "Language_ID": "wamb1258",
+      "Parameter_ID": "1incl_pl"
+    },
+    {
+      "ID": "x_1incl_dl",
+      "Language_ID": "wamb1258",
+      "Parameter_ID": "1incl_dl"
+    },
+    {
+      "ID": "x_3m_sg",
+      "Language_ID": "dehu1237",
+      "Parameter_ID": "3m_sg"
+    },
+    {
+      "ID": "x_3m_pl",
+      "Language_ID": "dehu1237",
+      "Parameter_ID": "3m_pl"
+    },
+    {
+      "ID": "x_3m_dl",
+      "Language_ID": "dehu1237",
+      "Parameter_ID": "3m_dl"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "smithmoskaletal2019_wardaman_3sg_abs",
+      "Lexeme_ID": "x_3sg_abs",
+      "Form": "narnaj",
+      "Segments": ["narnaj"],
+      "Comment": "AAB without syncretism: the ergative carries a case suffix the absolutive lacks, the dative is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 25]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_wardaman_3sg_erg",
+      "Lexeme_ID": "x_3sg_erg",
+      "Form": "narnaj-(j)i",
+      "Segments": ["narnaj", "(j)i"],
+      "Comment": "AAB without syncretism: the ergative carries a case suffix the absolutive lacks, the dative is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 25]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_wardaman_3sg_dat",
+      "Lexeme_ID": "x_3sg_dat",
+      "Form": "gunga",
+      "Segments": ["gunga"],
+      "Comment": "AAB without syncretism: the ergative carries a case suffix the absolutive lacks, the dative is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 25]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_khinalugh_2sg_abs",
+      "Lexeme_ID": "x_2sg_abs",
+      "Form": "vɨ",
+      "Segments": ["vɨ"],
+      "Comment": "AAB without syncretism: the ergative is irregular relative to the absolutive, the dative is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 24]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_khinalugh_2sg_erg",
+      "Lexeme_ID": "x_2sg_erg",
+      "Form": "va",
+      "Segments": ["va"],
+      "Comment": "AAB without syncretism: the ergative is irregular relative to the absolutive, the dative is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 24]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_khinalugh_2sg_dat",
+      "Lexeme_ID": "x_2sg_dat",
+      "Form": "oX(ɨr)",
+      "Segments": ["oX(ɨr)"],
+      "Comment": "AAB without syncretism: the ergative is irregular relative to the absolutive, the dative is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 24]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_archi_2sg_abs",
+      "Lexeme_ID": "x_2sg_abs_arch1244",
+      "Form": "un",
+      "Segments": ["un"],
+      "Comment": "syncretic {A=A}B: the absolutive and the ergative are identical, a two-way contrast the paper does not count as AAB",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 20]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_archi_2sg_erg",
+      "Lexeme_ID": "x_2sg_erg_arch1244",
+      "Form": "un",
+      "Segments": ["un"],
+      "Comment": "syncretic {A=A}B: the absolutive and the ergative are identical, a two-way contrast the paper does not count as AAB",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 20]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_archi_2sg_dat",
+      "Lexeme_ID": "x_2sg_dat_arch1244",
+      "Form": "wa-s",
+      "Segments": ["wa", "s"],
+      "Comment": "syncretic {A=A}B: the absolutive and the ergative are identical, a two-way contrast the paper does not count as AAB",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 20]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_icelandic_1sg_nom",
+      "Lexeme_ID": "x_1sg_nom",
+      "Form": "ég",
+      "Segments": ["ég"],
+      "Comment": "ABB, the rules (15): an accusative-conditioned m- and an elsewhere ég",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 6]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_icelandic_1sg_acc",
+      "Lexeme_ID": "x_1sg_acc",
+      "Form": "mig",
+      "Segments": ["mig"],
+      "Comment": "ABB, the rules (15): an accusative-conditioned m- and an elsewhere ég",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 6]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_icelandic_1sg_dat",
+      "Lexeme_ID": "x_1sg_dat",
+      "Form": "mér",
+      "Segments": ["mér"],
+      "Comment": "ABB, the rules (15): an accusative-conditioned m- and an elsewhere ég",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 6]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_russian_1sg_nom",
+      "Lexeme_ID": "x_1sg_nom_russ1263",
+      "Form": "ja",
+      "Segments": ["ja"],
+      "Comment": "the inherited Indo-European ABB",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 10]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_russian_1sg_acc",
+      "Lexeme_ID": "x_1sg_acc_russ1263",
+      "Form": "menja",
+      "Segments": ["menja"],
+      "Comment": "the inherited Indo-European ABB",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 10]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_russian_1sg_dat",
+      "Lexeme_ID": "x_1sg_dat_russ1263",
+      "Form": "mnje",
+      "Segments": ["mnje"],
+      "Comment": "the inherited Indo-European ABB",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 10]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_lezgian_1sg_abs",
+      "Lexeme_ID": "x_1sg_abs",
+      "Form": "zun",
+      "Segments": ["zun"],
+      "Comment": "AAA on a constant z(a)-base",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 11]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_lezgian_1sg_erg",
+      "Lexeme_ID": "x_1sg_erg",
+      "Form": "za",
+      "Segments": ["za"],
+      "Comment": "AAA on a constant z(a)-base",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 11]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_lezgian_1sg_dat",
+      "Lexeme_ID": "x_1sg_dat_lezg1247",
+      "Form": "zaz",
+      "Segments": ["zaz"],
+      "Comment": "AAA on a constant z(a)-base",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 11]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_awtuw_1_sg",
+      "Lexeme_ID": "x_1_sg",
+      "Form": "wan",
+      "Segments": ["wan"],
+      "Comment": "ABB: the plural and the dual share a suppletive n-base",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 33]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_awtuw_1_pl",
+      "Lexeme_ID": "x_1_pl",
+      "Form": "nom",
+      "Segments": ["nom"],
+      "Comment": "ABB: the plural and the dual share a suppletive n-base",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 33]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_awtuw_1_dl",
+      "Lexeme_ID": "x_1_dl",
+      "Form": "nan",
+      "Segments": ["nan"],
+      "Comment": "ABB: the plural and the dual share a suppletive n-base",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 33]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_yagua_2_sg",
+      "Lexeme_ID": "x_2_sg",
+      "Form": "jiy",
+      "Segments": ["jiy"],
+      "Comment": "AAB for number: the plural contains the singular base, the dual is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_yagua_2_pl",
+      "Lexeme_ID": "x_2_pl",
+      "Form": "jiryéy",
+      "Segments": ["jiryéy"],
+      "Comment": "AAB for number: the plural contains the singular base, the dual is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_yagua_2_dl",
+      "Lexeme_ID": "x_2_dl",
+      "Form": "sááda",
+      "Segments": ["sááda"],
+      "Comment": "AAB for number: the plural contains the singular base, the dual is suppletive",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_wambaya_1incl_sg",
+      "Lexeme_ID": "x_1incl_sg",
+      "Form": "ngawu(rniji)",
+      "Segments": ["ngawu(rniji)"],
+      "Comment": "AAB for number",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_wambaya_1incl_pl",
+      "Lexeme_ID": "x_1incl_pl",
+      "Form": "ngurruwani",
+      "Segments": ["ngurruwani"],
+      "Comment": "AAB for number",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_wambaya_1incl_dl",
+      "Lexeme_ID": "x_1incl_dl",
+      "Form": "mrindiyani",
+      "Segments": ["mrindiyani"],
+      "Comment": "AAB for number",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_dehu_3m_sg",
+      "Lexeme_ID": "x_3m_sg",
+      "Form": "angeice",
+      "Segments": ["angeice"],
+      "Comment": "AAB for number",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_dehu_3m_pl",
+      "Lexeme_ID": "x_3m_pl",
+      "Form": "angate",
+      "Segments": ["angate"],
+      "Comment": "AAB for number",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    },
+    {
+      "ID": "smithmoskaletal2019_dehu_3m_dl",
+      "Lexeme_ID": "x_3m_dl",
+      "Form": "nyido",
+      "Segments": ["nyido"],
+      "Comment": "AAB for number",
+      "Source": ["smith-moskal-xu-kang-bobaljik-2019[Table 46]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Base",
+      "Lean": "base",
+      "Type": "Base"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "smithmoskaletal2019_wardaman_3sg_abs",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_wardaman_3sg_erg",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_wardaman_3sg_dat",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_khinalugh_2sg_abs",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_khinalugh_2sg_erg",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_khinalugh_2sg_dat",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_archi_2sg_abs",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_archi_2sg_erg",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_archi_2sg_dat",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_icelandic_1sg_nom",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_icelandic_1sg_acc",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_icelandic_1sg_dat",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_russian_1sg_nom",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_russian_1sg_acc",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_russian_1sg_dat",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_lezgian_1sg_abs",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_lezgian_1sg_erg",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_lezgian_1sg_dat",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_awtuw_1_sg",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_awtuw_1_pl",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_awtuw_1_dl",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_yagua_2_sg",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_yagua_2_pl",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_yagua_2_dl",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_wambaya_1incl_sg",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_wambaya_1incl_pl",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_wambaya_1incl_dl",
+      "Base": "B"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_dehu_3m_sg",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_dehu_3m_pl",
+      "Base": "A"
+    },
+    {
+      "Form_ID": "smithmoskaletal2019_dehu_3m_dl",
+      "Base": "B"
     }
   ]
 }

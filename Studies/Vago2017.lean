@@ -202,29 +202,37 @@ structure Example where
   hierarchy : Hierarchy
   deletion : Finset ElidedVowel
 
-/-- The morph kinds a row names. -/
-def kinds : List (String × Morph.Kind) := [("root", .root), ("suffix", .bound .after .affix)]
+/-- The morph kind of the paper's label. -/
+def kindOf : Forms.Kind → Morph.Kind
+  | .root => .root
+  | .suffix => .bound .after .affix
 
-/-- The example a row of the data records. -/
-def example? (f : Data.Forms.Form) : Option Example := do
-  let left ← f.column? "Left"
-  let right ← f.column? "Right"
-  let l ← Hungarian.transcribe? left
-  let r ← Hungarian.transcribe? right
-  let c ← context? (f.columnAs? "BeforeKind" kinds) (← f.columnAs? "LeftKind" kinds)
-    (← f.columnAs? "RightKind" kinds) l r
-  pure ⟨c, Hungarian.longPositions left ∪ (Hungarian.longPositions right).image (· + l.length),
-    ← Hungarian.transcribe? ((f.column? "Before").getD ""),
-    ← f.columnAs? "Hierarchy"
-      [("regular", .regular), ("v1Deletion", .v1Deletion), ("noDeletion", .noDeletion)],
-    ← f.columnAs? "Deleted" [("none", ∅), ("first", {.first}), ("second", {.second})]⟩
+/-- The hierarchy of the paper's label. -/
+def hierarchyOf : Forms.Hierarchy → Hierarchy
+  | .regular => .regular
+  | .v1Deletion => .v1Deletion
+  | .noDeletion => .noDeletion
+
+/-- The deleted vowels of the paper's label. -/
+def deletionOf : Forms.Deleted → Finset ElidedVowel
+  | .neither => ∅
+  | .first => {.first}
+  | .second => {.second}
+
+/-- The example the paper's analysis of a form records. -/
+def example? (a : Forms.Analysis) : Option Example := do
+  let l ← Hungarian.transcribe? a.left
+  let r ← Hungarian.transcribe? a.right
+  let c ← context? (a.beforeKind.map kindOf) (kindOf a.leftKind) (kindOf a.rightKind) l r
+  pure ⟨c, Hungarian.longPositions a.left ∪ (Hungarian.longPositions a.right).image (· + l.length),
+    ← Hungarian.transcribe? (a.before.getD ""), hierarchyOf a.hierarchy, deletionOf a.deleted⟩
 
 /-- For every example, the tableau of its candidates under the hierarchy of its suffix selects the
 attested deletion, and the form it gives, after the morph before it, spells the attested form. -/
 theorem tableaux :
-    ∀ f ∈ Forms.all, ∃ x ∈ example? f,
+    ∀ a ∈ Forms.analyses, ∃ x ∈ example? a,
       (tableau x.context x.long x.hierarchy.order).optimal = {x.deletion} ∧
-        some (x.before ++ resolve x.context x.deletion) = Hungarian.transcribe? f.form := by
+        some (x.before ++ resolve x.context x.deletion) = Hungarian.transcribe? a.form.form := by
   decide +kernel
 
 /-! ### The ranking that deletes the first vowel -/
@@ -234,7 +242,7 @@ def con (x : Example) : ConstraintSet (Finset ElidedVowel) Con :=
   fun i D ↦ marks x.context x.long D i
 
 /-- The example erdő-ész of Table 2. -/
-def erdesz : Example := (example? Forms.erdesz).get (by decide +kernel)
+def erdesz : Example := (example? Forms.erdesz.analysis).get (by decide +kernel)
 
 private theorem con_erdesz_lt_iff (i : Con) :
     con erdesz i {.first} < con erdesz i ∅ ↔ i = .starVV := by

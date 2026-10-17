@@ -1,132 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "booij2019_xabbaaz",
-      "Language_ID": "nort3139",
-      "Parameter_ID": "baker",
-      "Form": "xabbaaz",
-      "Segments": ["x", "a", "b", "b", "aa", "z"],
-      "Comment": "occupation noun of the template C₁aC₂C₂aaC₃ (2); a long vowel is one segment",
-      "Source": ["booij-2019[(1)]"]
-    },
-    {
-      "ID": "booij2019_xaddaam",
-      "Language_ID": "nort3139",
-      "Parameter_ID": "servant",
-      "Form": "xaddaam",
-      "Segments": ["x", "a", "d", "d", "aa", "m"],
-      "Comment": "occupation noun of the template C₁aC₂C₂aaC₃ (2); a long vowel is one segment",
-      "Source": ["booij-2019[(1)]"]
-    },
-    {
-      "ID": "booij2019_bawwaab",
-      "Language_ID": "nort3139",
-      "Parameter_ID": "doorkeeper",
-      "Form": "bawwaab",
-      "Segments": ["b", "a", "w", "w", "aa", "b"],
-      "Comment": "occupation noun of the template C₁aC₂C₂aaC₃ (2); a long vowel is one segment",
-      "Source": ["booij-2019[(1)]"]
-    },
-    {
-      "ID": "booij2019_sammaak",
-      "Language_ID": "nort3139",
-      "Parameter_ID": "fish_seller",
-      "Form": "sammaak",
-      "Segments": ["s", "a", "m", "m", "aa", "k"],
-      "Comment": "occupation noun of the template C₁aC₂C₂aaC₃ (2); a long vowel is one segment",
-      "Source": ["booij-2019[(1)]"]
-    },
-    {
-      "ID": "booij2019_tamu",
-      "Language_ID": "java1254",
-      "Parameter_ID": "guest",
-      "Form": "tamu",
-      "Segments": ["t", "amu"],
-      "Comment": "base of the reduplication (13); the residue after the initial consonant is one segment, the paper's variable y",
-      "Source": ["booij-2019[(12)]"]
-    },
-    {
-      "ID": "booij2019_tetamu",
-      "Language_ID": "java1254",
-      "Parameter_ID": "to_visit",
-      "Form": "tətamu",
-      "Segments": ["t", "ə", "t", "amu"],
-      "Comment": "partial reduplication (13): the initial consonant copied, then the schwa",
-      "Source": ["booij-2019[(12)]"]
-    },
-    {
-      "ID": "booij2019_jawah",
-      "Language_ID": "java1254",
-      "Parameter_ID": "rain",
-      "Form": "jawah",
-      "Segments": ["j", "awah"],
-      "Comment": "base of the reduplication (13)",
-      "Source": ["booij-2019[(12)]"]
-    },
-    {
-      "ID": "booij2019_jejawah",
-      "Language_ID": "java1254",
-      "Parameter_ID": "to_play_in_the_rain",
-      "Form": "jəjawah",
-      "Segments": ["j", "ə", "j", "awah"],
-      "Comment": "partial reduplication (13)",
-      "Source": ["booij-2019[(12)]"]
-    },
-    {
-      "ID": "booij2019_geni",
-      "Language_ID": "java1254",
-      "Parameter_ID": "fire",
-      "Form": "gəni",
-      "Segments": ["g", "əni"],
-      "Comment": "base of the reduplication (13)",
-      "Source": ["booij-2019[(12)]"]
-    },
-    {
-      "ID": "booij2019_gegeni",
-      "Language_ID": "java1254",
-      "Parameter_ID": "to_warm_oneself_by_the_fire",
-      "Form": "gəgəni",
-      "Segments": ["g", "ə", "g", "əni"],
-      "Comment": "partial reduplication (13)",
-      "Source": ["booij-2019[(12)]"]
-    },
-    {
-      "ID": "booij2019_kibiir",
-      "Language_ID": "egyp1253",
-      "Parameter_ID": "big",
-      "Form": "kibiir",
-      "Segments": ["k", "i", "b", "ii", "r"],
-      "Comment": "adjective of the template C₁VC₂VC₃ (16)",
-      "Source": ["booij-2019[(15)]"]
-    },
-    {
-      "ID": "booij2019_akbar",
-      "Language_ID": "egyp1253",
-      "Parameter_ID": "bigger",
-      "Form": "akbar",
-      "Segments": ["a", "k", "b", "a", "r"],
-      "Comment": "comparative of the template aC₁C₂aC₃ (16)",
-      "Source": ["booij-2019[(15)]"]
-    },
-    {
-      "ID": "booij2019_tixiin",
-      "Language_ID": "egyp1253",
-      "Parameter_ID": "fat",
-      "Form": "tixiin",
-      "Segments": ["t", "i", "x", "ii", "n"],
-      "Comment": "adjective of the template C₁VC₂VC₃ (16)",
-      "Source": ["booij-2019[(15)]"]
-    },
-    {
-      "ID": "booij2019_atxan",
-      "Language_ID": "egyp1253",
-      "Parameter_ID": "fatter",
-      "Form": "atxan",
-      "Segments": ["a", "t", "x", "a", "n"],
-      "Comment": "comparative of the template aC₁C₂aC₃ (16)",
-      "Source": ["booij-2019[(15)]"]
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "baker",
@@ -197,6 +69,192 @@
       "ID": "fatter",
       "Name": "fatter",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "baker",
+      "Language_ID": "nort3139",
+      "Parameter_ID": "baker"
+    },
+    {
+      "ID": "servant",
+      "Language_ID": "nort3139",
+      "Parameter_ID": "servant"
+    },
+    {
+      "ID": "doorkeeper",
+      "Language_ID": "nort3139",
+      "Parameter_ID": "doorkeeper"
+    },
+    {
+      "ID": "fish_seller",
+      "Language_ID": "nort3139",
+      "Parameter_ID": "fish_seller"
+    },
+    {
+      "ID": "guest",
+      "Language_ID": "java1254",
+      "Parameter_ID": "guest"
+    },
+    {
+      "ID": "to_visit",
+      "Language_ID": "java1254",
+      "Parameter_ID": "to_visit"
+    },
+    {
+      "ID": "rain",
+      "Language_ID": "java1254",
+      "Parameter_ID": "rain"
+    },
+    {
+      "ID": "to_play_in_the_rain",
+      "Language_ID": "java1254",
+      "Parameter_ID": "to_play_in_the_rain"
+    },
+    {
+      "ID": "fire",
+      "Language_ID": "java1254",
+      "Parameter_ID": "fire"
+    },
+    {
+      "ID": "to_warm_oneself_by_the_fire",
+      "Language_ID": "java1254",
+      "Parameter_ID": "to_warm_oneself_by_the_fire"
+    },
+    {
+      "ID": "big",
+      "Language_ID": "egyp1253",
+      "Parameter_ID": "big"
+    },
+    {
+      "ID": "bigger",
+      "Language_ID": "egyp1253",
+      "Parameter_ID": "bigger"
+    },
+    {
+      "ID": "fat",
+      "Language_ID": "egyp1253",
+      "Parameter_ID": "fat"
+    },
+    {
+      "ID": "fatter",
+      "Language_ID": "egyp1253",
+      "Parameter_ID": "fatter"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "booij2019_xabbaaz",
+      "Lexeme_ID": "baker",
+      "Form": "xabbaaz",
+      "Segments": ["x", "a", "b", "b", "aa", "z"],
+      "Comment": "occupation noun of the template C₁aC₂C₂aaC₃ (2); a long vowel is one segment",
+      "Source": ["booij-2019[(1)]"]
+    },
+    {
+      "ID": "booij2019_xaddaam",
+      "Lexeme_ID": "servant",
+      "Form": "xaddaam",
+      "Segments": ["x", "a", "d", "d", "aa", "m"],
+      "Comment": "occupation noun of the template C₁aC₂C₂aaC₃ (2); a long vowel is one segment",
+      "Source": ["booij-2019[(1)]"]
+    },
+    {
+      "ID": "booij2019_bawwaab",
+      "Lexeme_ID": "doorkeeper",
+      "Form": "bawwaab",
+      "Segments": ["b", "a", "w", "w", "aa", "b"],
+      "Comment": "occupation noun of the template C₁aC₂C₂aaC₃ (2); a long vowel is one segment",
+      "Source": ["booij-2019[(1)]"]
+    },
+    {
+      "ID": "booij2019_sammaak",
+      "Lexeme_ID": "fish_seller",
+      "Form": "sammaak",
+      "Segments": ["s", "a", "m", "m", "aa", "k"],
+      "Comment": "occupation noun of the template C₁aC₂C₂aaC₃ (2); a long vowel is one segment",
+      "Source": ["booij-2019[(1)]"]
+    },
+    {
+      "ID": "booij2019_tamu",
+      "Lexeme_ID": "guest",
+      "Form": "tamu",
+      "Segments": ["t", "amu"],
+      "Comment": "base of the reduplication (13); the residue after the initial consonant is one segment, the paper's variable y",
+      "Source": ["booij-2019[(12)]"]
+    },
+    {
+      "ID": "booij2019_tetamu",
+      "Lexeme_ID": "to_visit",
+      "Form": "tətamu",
+      "Segments": ["t", "ə", "t", "amu"],
+      "Comment": "partial reduplication (13): the initial consonant copied, then the schwa",
+      "Source": ["booij-2019[(12)]"]
+    },
+    {
+      "ID": "booij2019_jawah",
+      "Lexeme_ID": "rain",
+      "Form": "jawah",
+      "Segments": ["j", "awah"],
+      "Comment": "base of the reduplication (13)",
+      "Source": ["booij-2019[(12)]"]
+    },
+    {
+      "ID": "booij2019_jejawah",
+      "Lexeme_ID": "to_play_in_the_rain",
+      "Form": "jəjawah",
+      "Segments": ["j", "ə", "j", "awah"],
+      "Comment": "partial reduplication (13)",
+      "Source": ["booij-2019[(12)]"]
+    },
+    {
+      "ID": "booij2019_geni",
+      "Lexeme_ID": "fire",
+      "Form": "gəni",
+      "Segments": ["g", "əni"],
+      "Comment": "base of the reduplication (13)",
+      "Source": ["booij-2019[(12)]"]
+    },
+    {
+      "ID": "booij2019_gegeni",
+      "Lexeme_ID": "to_warm_oneself_by_the_fire",
+      "Form": "gəgəni",
+      "Segments": ["g", "ə", "g", "əni"],
+      "Comment": "partial reduplication (13)",
+      "Source": ["booij-2019[(12)]"]
+    },
+    {
+      "ID": "booij2019_kibiir",
+      "Lexeme_ID": "big",
+      "Form": "kibiir",
+      "Segments": ["k", "i", "b", "ii", "r"],
+      "Comment": "adjective of the template C₁VC₂VC₃ (16)",
+      "Source": ["booij-2019[(15)]"]
+    },
+    {
+      "ID": "booij2019_akbar",
+      "Lexeme_ID": "bigger",
+      "Form": "akbar",
+      "Segments": ["a", "k", "b", "a", "r"],
+      "Comment": "comparative of the template aC₁C₂aC₃ (16)",
+      "Source": ["booij-2019[(15)]"]
+    },
+    {
+      "ID": "booij2019_tixiin",
+      "Lexeme_ID": "fat",
+      "Form": "tixiin",
+      "Segments": ["t", "i", "x", "ii", "n"],
+      "Comment": "adjective of the template C₁VC₂VC₃ (16)",
+      "Source": ["booij-2019[(15)]"]
+    },
+    {
+      "ID": "booij2019_atxan",
+      "Lexeme_ID": "fatter",
+      "Form": "atxan",
+      "Segments": ["a", "t", "x", "a", "n"],
+      "Comment": "comparative of the template aC₁C₂aC₃ (16)",
+      "Source": ["booij-2019[(15)]"]
     }
   ],
   "FormRelationTable": [

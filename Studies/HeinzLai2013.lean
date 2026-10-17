@@ -92,15 +92,15 @@ def ofLetter : Char → Seg
   | 'o' | 'u' => .plus
   | _ => .inert
 
-/-- `ofForm f` is the underlying and the surface string of the word `f`, read off its
-`Underlying` column without the slashes and the morpheme boundary, and off its segments. -/
-def ofForm (f : Data.Forms.Form) : List Seg × List Seg :=
-  ((((f.column? "Underlying").getD "").toList.filter fun c ↦ c != '/' && c != '-').map ofLetter,
-    f.segments.map fun s ↦ (s.toList.headD ' ' |> ofLetter))
+/-- `ofAnalysis a` is the underlying and the surface string of the word `a` analyses, read off
+its underlying form without the slashes and the morpheme boundary, and off its segments. -/
+def ofAnalysis (a : Forms.Analysis) : List Seg × List Seg :=
+  ((a.underlying.toList.filter fun c ↦ c != '/' && c != '-').map ofLetter,
+    a.form.segments.map fun s ↦ (s.toList.headD ' ' |> ofLetter))
 
 /-- Progressive harmony takes the underlying form of each Turkish genitive of Table 2 to its
 surface form. -/
-theorem ph_forms : ∀ f ∈ Forms.all, ph.run (ofForm f).1 = (ofForm f).2 := by
+theorem ph_forms : ∀ a ∈ Forms.analyses, ph.run (ofAnalysis a).1 = (ofAnalysis a).2 := by
   decide
 
 /-! ### Sour grapes -/

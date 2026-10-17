@@ -1,2062 +1,450 @@
 {
-  "FormTable": [
-    {
-      "ID": "karlsson2017_auto",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "auto",
-      "Segments": ["auto"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_auton",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "auton",
-      "Segments": ["auto", "n"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_hanet",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "him_her",
-      "Form": "hänet",
-      "Segments": ["häne", "t"],
-      "Comment": "The accusative ending is confined to the personal pronouns.",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "acc",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_maitoa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "milk",
-      "Form": "maitoa",
-      "Segments": ["maito", "a"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_vetta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "water",
-      "Form": "vettä",
-      "Segments": ["vet", "tä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_perhetta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "family",
-      "Form": "perhettä",
-      "Segments": ["perhe", "ttä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_autossa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "autossa",
-      "Segments": ["auto", "ssa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_autosta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "autosta",
-      "Segments": ["auto", "sta"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ela",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_autoon",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "autoon",
-      "Segments": ["auto", "on"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_maahan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "country",
-      "Form": "maahan",
-      "Segments": ["maa", "han"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_porvooseen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "porvoo",
-      "Form": "Porvooseen",
-      "Segments": ["Porvoo", "seen"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_poydalla",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "table",
-      "Form": "pöydällä",
-      "Segments": ["pöydä", "llä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ade",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_poydalta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "table",
-      "Form": "pöydältä",
-      "Segments": ["pöydä", "ltä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "abl",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_poydalle",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "table",
-      "Form": "pöydälle",
-      "Segments": ["pöydä", "lle"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "all",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_opettajana",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "teacher",
-      "Form": "opettajana",
-      "Segments": ["opettaja", "na"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ess",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_opettajaksi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "teacher",
-      "Form": "opettajaksi",
-      "Segments": ["opettaja", "ksi"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "transl",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_vaimoineni",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "wife",
-      "Form": "vaimoineni",
-      "Segments": ["vaimo", "ine", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "com",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_passitta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "passport",
-      "Form": "passitta",
-      "Segments": ["passi", "tta"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "abess",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_jalan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "foot",
-      "Form": "jalan",
-      "Segments": ["jala", "n"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "inst",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kirjani",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "book",
-      "Form": "kirjani",
-      "Segments": ["kirja", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kirjasi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "book",
-      "Form": "kirjasi",
-      "Segments": ["kirja", "si"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "2sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kirjansa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "book",
-      "Form": "kirjansa",
-      "Segments": ["kirja", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pullo",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullo",
-      "Segments": ["pullo"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pullossa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullossa",
-      "Segments": ["pullo", "ssa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pulloni",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pulloni",
-      "Segments": ["pullo", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pullostani",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullostani",
-      "Segments": ["pullo", "sta", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ela",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_hyllyssa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllyssä",
-      "Segments": ["hylly", "ssä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_hyllylla",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllyllä",
-      "Segments": ["hylly", "llä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ade",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_hyllysi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllysi",
-      "Segments": ["hylly", "si"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "2sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_hyllyllesi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllyllesi",
-      "Segments": ["hylly", "lle", "si"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "all",
-      "Possessor": "2sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_taloon",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloon",
-      "Segments": ["talo", "on"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_hyllynsa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllynsä",
-      "Segments": ["hylly", "nsä"],
-      "Comment": "Also 'their shelf'.",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kadessani",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "hand",
-      "Form": "kädessäni",
-      "Segments": ["käde", "ssä", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kateen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "hand",
-      "Form": "käteen",
-      "Segments": ["käte", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kateesi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "hand",
-      "Form": "käteesi",
-      "Segments": ["käte", "e", "si"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ill",
-      "Possessor": "2sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_katta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "hand",
-      "Form": "kättä",
-      "Segments": ["kät", "tä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_sanoa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "say",
-      "Form": "sanoa",
-      "Segments": ["sano", "a"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_syoda",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "eat",
-      "Form": "syödä",
-      "Segments": ["syö", "dä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_juosta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "run",
-      "Form": "juosta",
-      "Segments": ["juos", "ta"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_juostaksemme",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "run",
-      "Form": "juostaksemme",
-      "Segments": ["juos", "ta", "kse", "mme"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "transl",
-      "Possessor": "1pl",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_sanoessani",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "say",
-      "Form": "sanoessani",
-      "Segments": ["sano", "e", "ssa", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "ine",
-      "Possessor": "1sg",
-      "Infinitive": "e",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_syodessamme",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "eat",
-      "Form": "syödessämme",
-      "Segments": ["syö", "de", "ssä", "mme"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "ine",
-      "Possessor": "1pl",
-      "Infinitive": "e",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_juosten",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "run",
-      "Form": "juosten",
-      "Segments": ["juos", "te", "n"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "inst",
-      "Possessor": "",
-      "Infinitive": "e",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_syomalla",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "eat",
-      "Form": "syömällä",
-      "Segments": ["syö", "mä", "llä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "ade",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_sanomatta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "say",
-      "Form": "sanomatta",
-      "Segments": ["sano", "ma", "tta"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "abess",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_sanomaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "say",
-      "Form": "sanomaan",
-      "Segments": ["sano", "ma", "an"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_puhuaksesi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "speak",
-      "Form": "puhuaksesi",
-      "Segments": ["puhu", "a", "kse", "si"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "transl",
-      "Possessor": "2sg",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_puhumalla",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "speak",
-      "Form": "puhumalla",
-      "Segments": ["puhu", "ma", "lla"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.3]"],
-      "Case": "ade",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_autollani",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "autollani",
-      "Segments": ["auto", "lla", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ade",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_autostasi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "autostasi",
-      "Segments": ["auto", "sta", "si"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ela",
-      "Possessor": "2sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_autooni",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "autooni",
-      "Segments": ["auto", "o", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ill",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_laukkuni",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bag",
-      "Form": "laukkuni",
-      "Segments": ["laukku", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_laukkusi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bag",
-      "Form": "laukkusi",
-      "Segments": ["laukku", "si"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "2sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_laukkunsa_3sg",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bag",
-      "Form": "laukkunsa",
-      "Segments": ["laukku", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_laukkumme",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bag",
-      "Form": "laukkumme",
-      "Segments": ["laukku", "mme"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "1pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_laukkunne",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bag",
-      "Form": "laukkunne",
-      "Segments": ["laukku", "nne"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "2pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_laukkunsa_3pl",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bag",
-      "Form": "laukkunsa",
-      "Segments": ["laukku", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "3pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_taloaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloaan",
-      "Segments": ["talo", "a", "an"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_vieraanaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "guest",
-      "Form": "vieraanaan",
-      "Segments": ["vieraa", "na", "an"],
-      "Comment": "'as their guest'",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ess",
-      "Possessor": "3pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_saadakseen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "get",
-      "Form": "saadakseen",
-      "Segments": ["saa", "da", "kse", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "transl",
-      "Possessor": "3sg",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_talossaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "talossaan",
-      "Segments": ["talo", "ssa", "an"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ine",
-      "Possessor": "3pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_autollaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "autollaan",
-      "Segments": ["auto", "lla", "an"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ade",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_isalleen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "father",
-      "Form": "isälleen",
-      "Segments": ["isä", "lle", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "all",
-      "Possessor": "3pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_aidiltaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "mother",
-      "Form": "äidiltään",
-      "Segments": ["äidi", "ltä", "än"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "abl",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_aitiaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "mother",
-      "Form": "äitiään",
-      "Segments": ["äiti", "ä", "än"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_talonsa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloonsa",
-      "Segments": ["talo", "o", "nsa"],
-      "Comment": "'into their house'",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ill",
-      "Possessor": "3pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_autonsa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "car",
-      "Form": "autonsa",
-      "Segments": ["auto", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_isaansa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "father",
-      "Form": "isäänsä",
-      "Segments": ["isä", "ä", "nsä"],
-      "Comment": "Also the partitive singular.",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ill",
-      "Possessor": "3pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_aitinsa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "mother",
-      "Form": "äitinsä",
-      "Segments": ["äiti", "nsä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_sanoakseni",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "say",
-      "Form": "sanoakseni",
-      "Segments": ["sano", "a", "kse", "ni"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.2.2]"],
-      "Case": "transl",
-      "Possessor": "1sg",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_elaaksemme",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "live",
-      "Form": "elääksemme",
-      "Segments": ["elä", "ä", "kse", "mme"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.2.2]"],
-      "Case": "transl",
-      "Possessor": "1pl",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_tavataksesi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "meet",
-      "Form": "tavataksesi",
-      "Segments": ["tavat", "a", "kse", "si"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.2.2]"],
-      "Case": "transl",
-      "Possessor": "2sg",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_juodakseen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "drink",
-      "Form": "juodakseen",
-      "Segments": ["juo", "da", "kse", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.2.2]"],
-      "Case": "transl",
-      "Possessor": "3sg",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_ollaksenne",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "be",
-      "Form": "ollaksenne",
-      "Segments": ["ol", "la", "kse", "nne"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.2.2]"],
-      "Case": "transl",
-      "Possessor": "2pl",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_lepaamassa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "rest",
-      "Form": "lepäämässä",
-      "Segments": ["lepää", "mä", "ssä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_lepaamaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "rest",
-      "Form": "lepäämään",
-      "Segments": ["lepää", "mä", "än"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_vetamalla",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "pull",
-      "Form": "vetämällä",
-      "Segments": ["vetä", "mä", "llä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "ade",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_mainitsematta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "mention",
-      "Form": "mainitsematta",
-      "Segments": ["mainitse", "ma", "tta"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "abess",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_tekemasta",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "do",
-      "Form": "tekemästä",
-      "Segments": ["teke", "mä", "stä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "ela",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_tuleman",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "come",
-      "Form": "tuleman",
-      "Segments": ["tule", "ma", "n"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "inst",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pullot",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullot",
-      "Segments": ["pullo", "t"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "t",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pullokin",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullokin",
-      "Segments": ["pullo", "kin"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "kin"
-    },
-    {
-      "ID": "karlsson2017_pulloista",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pulloista",
-      "Segments": ["pullo", "i", "sta"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ela",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pullossahan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullossahan",
-      "Segments": ["pullo", "ssa", "han"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "hAn"
-    },
-    {
-      "ID": "karlsson2017_pullotkin",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullotkin",
-      "Segments": ["pullo", "t", "kin"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "t",
-      "Clitic": "kin"
-    },
-    {
-      "ID": "karlsson2017_pullossasiko",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullossasiko",
-      "Segments": ["pullo", "ssa", "si", "ko"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "2sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "kO"
-    },
-    {
-      "ID": "karlsson2017_pulloissamme",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pulloissamme",
-      "Segments": ["pullo", "i", "ssa", "mme"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "1pl",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pulloistakaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pulloistakaan",
-      "Segments": ["pullo", "i", "sta", "kaan"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ela",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": "kAAn"
-    },
-    {
-      "ID": "karlsson2017_pulloissannekin",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pulloissannekin",
-      "Segments": ["pullo", "i", "ssa", "nne", "kin"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "2pl",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": "kin"
-    },
-    {
-      "ID": "karlsson2017_hyllyltako",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllyltäkö",
-      "Segments": ["hylly", "ltä", "kö"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "abl",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "kO"
-    },
-    {
-      "ID": "karlsson2017_hyllytko",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllytkö",
-      "Segments": ["hylly", "t", "kö"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "t",
-      "Clitic": "kO"
-    },
-    {
-      "ID": "karlsson2017_hyllynhan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllynhän",
-      "Segments": ["hylly", "n", "hän"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "hAn"
-    },
-    {
-      "ID": "karlsson2017_talonsako",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "talonsako",
-      "Segments": ["talo", "nsa", "ko"],
-      "Comment": "Also 'their house?'.",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "kO"
-    },
-    {
-      "ID": "karlsson2017_hyllyillamme",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllyillämme",
-      "Segments": ["hylly", "i", "llä", "mme"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ade",
-      "Possessor": "1pl",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kasi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "hand",
-      "Form": "käsi",
-      "Segments": ["käsi"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kadet",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "hand",
-      "Form": "kädet",
-      "Segments": ["käde", "t"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "nom",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "t",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kasissammehan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "hand",
-      "Form": "käsissämmehän",
-      "Segments": ["käs", "i", "ssä", "mme", "hän"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§3.1]"],
-      "Case": "ine",
-      "Possessor": "1pl",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": "hAn"
-    },
-    {
-      "ID": "karlsson2017_lepaamaanko",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "rest",
-      "Form": "lepäämäänkö",
-      "Segments": ["lepää", "mä", "än", "kö"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": "kO"
-    },
-    {
-      "ID": "karlsson2017_vetamallakin",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "pull",
-      "Form": "vetämälläkin",
-      "Segments": ["vetä", "mä", "llä", "kin"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "ade",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": "kin"
-    },
-    {
-      "ID": "karlsson2017_mainitsemattakaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "mention",
-      "Form": "mainitsemattakaan",
-      "Segments": ["mainitse", "ma", "tta", "kaan"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§22.4.1]"],
-      "Case": "abess",
-      "Possessor": "",
-      "Infinitive": "ma",
-      "Number": "",
-      "Clitic": "kAAn"
-    },
-    {
-      "ID": "karlsson2017_oppiakseenhan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "learn",
-      "Form": "oppiakseenhan",
-      "Segments": ["oppi", "a", "kse", "en", "han"],
-      "Comment": "Also 'in order for them to learn'.",
-      "Source": ["karlsson-2017[§22.2.2]"],
-      "Case": "transl",
-      "Possessor": "3sg",
-      "Infinitive": "a",
-      "Number": "",
-      "Clitic": "hAn"
-    },
-    {
-      "ID": "karlsson2017_maatamme",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "country",
-      "Form": "maatamme",
-      "Segments": ["maa", "ta", "mme"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "1pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_poikannekin",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "son",
-      "Form": "poikannekin",
-      "Segments": ["poika", "nne", "kin"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "2pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "kin"
-    },
-    {
-      "ID": "karlsson2017_aidiltanihan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "mother",
-      "Form": "äidiltänihän",
-      "Segments": ["äidi", "ltä", "ni", "hän"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "abl",
-      "Possessor": "1sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "hAn"
-    },
-    {
-      "ID": "karlsson2017_isallesiko",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "father",
-      "Form": "isällesikö",
-      "Segments": ["isä", "lle", "si", "kö"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "all",
-      "Possessor": "2sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": "kO"
-    },
-    {
-      "ID": "karlsson2017_maahamme",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "country",
-      "Form": "maahamme",
-      "Segments": ["maa", "ha", "mme"],
-      "Comment": "The source glosses the form 'into her/his/their country'.",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ill",
-      "Possessor": "1pl",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_perhettaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "family",
-      "Form": "perhettään",
-      "Segments": ["perhe", "ttä", "än"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_talojaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "talojaan",
-      "Segments": ["talo", "j", "a", "an"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_renkaitaan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "ring",
-      "Form": "renkaitaan",
-      "Segments": ["renka", "i", "ta", "an"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_paataan",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "head",
-      "Form": "päätään",
-      "Segments": ["pää", "tä", "än"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_taloansa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloansa",
-      "Segments": ["talo", "a", "nsa"],
-      "Comment": "The archaic alternative to talo-a-an.",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kalansa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "fish",
-      "Form": "kalansa",
-      "Segments": ["kala", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "nom",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kalaansa_ill",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "fish",
-      "Form": "kalaansa",
-      "Segments": ["kala", "a", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ill",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kalaansa_part",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "fish",
-      "Form": "kalaansa",
-      "Segments": ["kala", "a", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "part",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kaloihinsa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "fish",
-      "Form": "kaloihinsa",
-      "Segments": ["kalo", "i", "hi", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "ill",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_taloissa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloissa",
-      "Segments": ["talo", "i", "ssa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_taloihin",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloihin",
-      "Segments": ["talo", "i", "hin"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "ill",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_taloina",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloina",
-      "Segments": ["talo", "i", "na"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "ess",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_taloille",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloille",
-      "Segments": ["talo", "i", "lle"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "all",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_taloiksi",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "taloiksi",
-      "Segments": ["talo", "i", "ksi"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "transl",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_hyllyja",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllyjä",
-      "Segments": ["hylly", "j", "ä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_hyllyjen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "shelf",
-      "Form": "hyllyjen",
-      "Segments": ["hylly", "j", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pulloja",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pulloja",
-      "Segments": ["pullo", "j", "a"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pullojen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pullojen",
-      "Segments": ["pullo", "j", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_tyttoja",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "girl",
-      "Form": "tyttöjä",
-      "Segments": ["tyttö", "j", "ä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_tyttojen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "girl",
-      "Form": "tyttöjen",
-      "Segments": ["tyttö", "j", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_pulloissa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "bottle",
-      "Form": "pulloissa",
-      "Segments": ["pullo", "i", "ssa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_maissa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "country",
-      "Form": "maissa",
-      "Segments": ["ma", "i", "ssa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_risteissa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "cross",
-      "Form": "risteissä",
-      "Segments": ["riste", "i", "ssä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kivissa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "stone",
-      "Form": "kivissä",
-      "Segments": ["kiv", "i", "ssä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§5.4]"],
-      "Case": "ine",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_lapsia",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "child",
-      "Form": "lapsia",
-      "Segments": ["laps", "i", "a"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§8.4]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_talojen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "house",
-      "Form": "talojen",
-      "Segments": ["talo", "j", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_poikia",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "boy",
-      "Form": "poikia",
-      "Segments": ["poik", "i", "a"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_poikien",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "boy",
-      "Form": "poikien",
-      "Segments": ["poik", "i", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kirjoja",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "book",
-      "Form": "kirjoja",
-      "Segments": ["kirjo", "j", "a"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kirjojen",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "book",
-      "Form": "kirjojen",
-      "Segments": ["kirjo", "j", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_paivia",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "day",
-      "Form": "päiviä",
-      "Segments": ["päiv", "i", "ä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_paivien",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "day",
-      "Form": "päivien",
-      "Segments": ["päiv", "i", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kasien",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "hand",
-      "Form": "käsien",
-      "Segments": ["käs", "i", "en"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_maita",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "country",
-      "Form": "maita",
-      "Segments": ["ma", "i", "ta"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_maiden",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "country",
-      "Form": "maiden",
-      "Segments": ["ma", "i", "den"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_maitten",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "country",
-      "Form": "maitten",
-      "Segments": ["ma", "i", "tten"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_teita",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "road",
-      "Form": "teitä",
-      "Segments": ["te", "i", "tä"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "part",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_teiden",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "road",
-      "Form": "teiden",
-      "Segments": ["te", "i", "den"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_esteitten",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "obstacle",
-      "Form": "esteitten",
-      "Segments": ["este", "i", "tten"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_valtioiden",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "state",
-      "Form": "valtioiden",
-      "Segments": ["valtio", "i", "den"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§13.1.2]"],
-      "Case": "gen",
-      "Possessor": "",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
-    },
-    {
-      "ID": "karlsson2017_kalojensa",
-      "Language_ID": "finn1318",
-      "Parameter_ID": "fish",
-      "Form": "kalojensa",
-      "Segments": ["kalo", "je", "nsa"],
-      "Comment": "",
-      "Source": ["karlsson-2017[§14.1]"],
-      "Case": "gen",
-      "Possessor": "3sg",
-      "Infinitive": "",
-      "Number": "i",
-      "Clitic": ""
+  "Types": {
+    "Possessor": [
+      {"Value": "1sg", "Lean": "sg1", "Description": "the possessive suffix of the 1st person singular"},
+      {"Value": "2sg", "Lean": "sg2", "Description": "the possessive suffix of the 2nd person singular"},
+      {"Value": "3sg", "Lean": "sg3", "Description": "the possessive suffix of the 3rd person singular"},
+      {"Value": "1pl", "Lean": "pl1", "Description": "the possessive suffix of the 1st person plural"},
+      {"Value": "2pl", "Lean": "pl2", "Description": "the possessive suffix of the 2nd person plural"},
+      {"Value": "3pl", "Lean": "pl3", "Description": "the possessive suffix of the 3rd person plural"}
+    ],
+    "Infinitive": [
+      {"Value": "a", "Lean": "a", "Description": "the first infinitive, in -A"},
+      {"Value": "e", "Lean": "e", "Description": "the second infinitive, in -e"},
+      {"Value": "ma", "Lean": "ma", "Description": "the third infinitive, in -mA"}
+    ],
+    "Clitic": [
+      {"Value": "kO", "Lean": "kO", "Description": "the interrogative clitic"},
+      {"Value": "kin", "Lean": "kin", "Description": "the additive clitic"},
+      {"Value": "hAn", "Lean": "hAn", "Description": "the clitic of familiarity"},
+      {"Value": "kAAn", "Lean": "kAAn", "Description": "the negative-polarity clitic"}
+    ]
+  },
+  "CellTable": [
+    {
+      "ID": "nom",
+      "Name": "nom",
+      "Features": "Case=Nom"
+    },
+    {
+      "ID": "gen",
+      "Name": "gen",
+      "Features": "Case=Gen"
+    },
+    {
+      "ID": "acc",
+      "Name": "acc",
+      "Features": "Case=Acc"
+    },
+    {
+      "ID": "part",
+      "Name": "part",
+      "Features": "Case=Par"
+    },
+    {
+      "ID": "ine",
+      "Name": "ine",
+      "Features": "Case=Ine"
+    },
+    {
+      "ID": "ela",
+      "Name": "ela",
+      "Features": "Case=Ela"
+    },
+    {
+      "ID": "ill",
+      "Name": "ill",
+      "Features": "Case=Ill"
+    },
+    {
+      "ID": "ade",
+      "Name": "ade",
+      "Features": "Case=Ade"
+    },
+    {
+      "ID": "abl",
+      "Name": "abl",
+      "Features": "Case=Abl"
+    },
+    {
+      "ID": "allat",
+      "Name": "all",
+      "Features": "Case=All"
+    },
+    {
+      "ID": "ess",
+      "Name": "ess",
+      "Features": "Case=Ess"
+    },
+    {
+      "ID": "transl",
+      "Name": "transl",
+      "Features": "Case=Tra"
+    },
+    {
+      "ID": "com_px1sg",
+      "Name": "com 1sg possessor",
+      "Features": "Case=Com|Possessor=1sg"
+    },
+    {
+      "ID": "abess",
+      "Name": "abess",
+      "Features": "Case=Abe"
+    },
+    {
+      "ID": "inst",
+      "Name": "inst",
+      "Features": "Case=Ins"
+    },
+    {
+      "ID": "nom_px1sg",
+      "Name": "nom 1sg possessor",
+      "Features": "Case=Nom|Possessor=1sg"
+    },
+    {
+      "ID": "nom_px2sg",
+      "Name": "nom 2sg possessor",
+      "Features": "Case=Nom|Possessor=2sg"
+    },
+    {
+      "ID": "nom_px3sg",
+      "Name": "nom 3sg possessor",
+      "Features": "Case=Nom|Possessor=3sg"
+    },
+    {
+      "ID": "ela_px1sg",
+      "Name": "ela 1sg possessor",
+      "Features": "Case=Ela|Possessor=1sg"
+    },
+    {
+      "ID": "allat_px2sg",
+      "Name": "all 2sg possessor",
+      "Features": "Case=All|Possessor=2sg"
+    },
+    {
+      "ID": "ine_px1sg",
+      "Name": "ine 1sg possessor",
+      "Features": "Case=Ine|Possessor=1sg"
+    },
+    {
+      "ID": "ill_px2sg",
+      "Name": "ill 2sg possessor",
+      "Features": "Case=Ill|Possessor=2sg"
+    },
+    {
+      "ID": "nom_infa",
+      "Name": "nom a-infinitive",
+      "Features": "Case=Nom|VerbForm=Inf|Infinitive=a"
+    },
+    {
+      "ID": "transl_infa_px1pl",
+      "Name": "transl a-infinitive 1pl possessor",
+      "Features": "Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=1pl"
+    },
+    {
+      "ID": "ine_infe_px1sg",
+      "Name": "ine e-infinitive 1sg possessor",
+      "Features": "Case=Ine|VerbForm=Inf|Infinitive=e|Possessor=1sg"
+    },
+    {
+      "ID": "ine_infe_px1pl",
+      "Name": "ine e-infinitive 1pl possessor",
+      "Features": "Case=Ine|VerbForm=Inf|Infinitive=e|Possessor=1pl"
+    },
+    {
+      "ID": "inst_infe",
+      "Name": "inst e-infinitive",
+      "Features": "Case=Ins|VerbForm=Inf|Infinitive=e"
+    },
+    {
+      "ID": "ade_infma",
+      "Name": "ade ma-infinitive",
+      "Features": "Case=Ade|VerbForm=Inf|Infinitive=ma"
+    },
+    {
+      "ID": "abess_infma",
+      "Name": "abess ma-infinitive",
+      "Features": "Case=Abe|VerbForm=Inf|Infinitive=ma"
+    },
+    {
+      "ID": "ill_infma",
+      "Name": "ill ma-infinitive",
+      "Features": "Case=Ill|VerbForm=Inf|Infinitive=ma"
+    },
+    {
+      "ID": "transl_infa_px2sg",
+      "Name": "transl a-infinitive 2sg possessor",
+      "Features": "Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=2sg"
+    },
+    {
+      "ID": "ade_px1sg",
+      "Name": "ade 1sg possessor",
+      "Features": "Case=Ade|Possessor=1sg"
+    },
+    {
+      "ID": "ela_px2sg",
+      "Name": "ela 2sg possessor",
+      "Features": "Case=Ela|Possessor=2sg"
+    },
+    {
+      "ID": "ill_px1sg",
+      "Name": "ill 1sg possessor",
+      "Features": "Case=Ill|Possessor=1sg"
+    },
+    {
+      "ID": "nom_px1pl",
+      "Name": "nom 1pl possessor",
+      "Features": "Case=Nom|Possessor=1pl"
+    },
+    {
+      "ID": "nom_px2pl",
+      "Name": "nom 2pl possessor",
+      "Features": "Case=Nom|Possessor=2pl"
+    },
+    {
+      "ID": "nom_px3pl",
+      "Name": "nom 3pl possessor",
+      "Features": "Case=Nom|Possessor=3pl"
+    },
+    {
+      "ID": "part_px3sg",
+      "Name": "part 3sg possessor",
+      "Features": "Case=Par|Possessor=3sg"
+    },
+    {
+      "ID": "ess_px3pl",
+      "Name": "ess 3pl possessor",
+      "Features": "Case=Ess|Possessor=3pl"
+    },
+    {
+      "ID": "transl_infa_px3sg",
+      "Name": "transl a-infinitive 3sg possessor",
+      "Features": "Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=3sg"
+    },
+    {
+      "ID": "ine_px3pl",
+      "Name": "ine 3pl possessor",
+      "Features": "Case=Ine|Possessor=3pl"
+    },
+    {
+      "ID": "ade_px3sg",
+      "Name": "ade 3sg possessor",
+      "Features": "Case=Ade|Possessor=3sg"
+    },
+    {
+      "ID": "allat_px3pl",
+      "Name": "all 3pl possessor",
+      "Features": "Case=All|Possessor=3pl"
+    },
+    {
+      "ID": "abl_px3sg",
+      "Name": "abl 3sg possessor",
+      "Features": "Case=Abl|Possessor=3sg"
+    },
+    {
+      "ID": "ill_px3pl",
+      "Name": "ill 3pl possessor",
+      "Features": "Case=Ill|Possessor=3pl"
+    },
+    {
+      "ID": "transl_infa_px1sg",
+      "Name": "transl a-infinitive 1sg possessor",
+      "Features": "Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=1sg"
+    },
+    {
+      "ID": "transl_infa_px2pl",
+      "Name": "transl a-infinitive 2pl possessor",
+      "Features": "Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=2pl"
+    },
+    {
+      "ID": "ine_infma",
+      "Name": "ine ma-infinitive",
+      "Features": "Case=Ine|VerbForm=Inf|Infinitive=ma"
+    },
+    {
+      "ID": "ela_infma",
+      "Name": "ela ma-infinitive",
+      "Features": "Case=Ela|VerbForm=Inf|Infinitive=ma"
+    },
+    {
+      "ID": "inst_infma",
+      "Name": "inst ma-infinitive",
+      "Features": "Case=Ins|VerbForm=Inf|Infinitive=ma"
+    },
+    {
+      "ID": "nom_pl",
+      "Name": "nom plural",
+      "Features": "Case=Nom|Number=Plur"
+    },
+    {
+      "ID": "nom_kin",
+      "Name": "nom -kin",
+      "Features": "Case=Nom|Clitic=kin"
+    },
+    {
+      "ID": "ela_pl",
+      "Name": "ela plural",
+      "Features": "Case=Ela|Number=Plur"
+    },
+    {
+      "ID": "ine_han",
+      "Name": "ine -hAn",
+      "Features": "Case=Ine|Clitic=hAn"
+    },
+    {
+      "ID": "nom_pl_kin",
+      "Name": "nom plural -kin",
+      "Features": "Case=Nom|Number=Plur|Clitic=kin"
+    },
+    {
+      "ID": "ine_px2sg_ko",
+      "Name": "ine 2sg possessor -kO",
+      "Features": "Case=Ine|Possessor=2sg|Clitic=kO"
+    },
+    {
+      "ID": "ine_pl_px1pl",
+      "Name": "ine plural 1pl possessor",
+      "Features": "Case=Ine|Number=Plur|Possessor=1pl"
+    },
+    {
+      "ID": "ela_pl_kaan",
+      "Name": "ela plural -kAAn",
+      "Features": "Case=Ela|Number=Plur|Clitic=kAAn"
+    },
+    {
+      "ID": "ine_pl_px2pl_kin",
+      "Name": "ine plural 2pl possessor -kin",
+      "Features": "Case=Ine|Number=Plur|Possessor=2pl|Clitic=kin"
+    },
+    {
+      "ID": "abl_ko",
+      "Name": "abl -kO",
+      "Features": "Case=Abl|Clitic=kO"
+    },
+    {
+      "ID": "nom_pl_ko",
+      "Name": "nom plural -kO",
+      "Features": "Case=Nom|Number=Plur|Clitic=kO"
+    },
+    {
+      "ID": "gen_han",
+      "Name": "gen -hAn",
+      "Features": "Case=Gen|Clitic=hAn"
+    },
+    {
+      "ID": "nom_px3sg_ko",
+      "Name": "nom 3sg possessor -kO",
+      "Features": "Case=Nom|Possessor=3sg|Clitic=kO"
+    },
+    {
+      "ID": "ade_pl_px1pl",
+      "Name": "ade plural 1pl possessor",
+      "Features": "Case=Ade|Number=Plur|Possessor=1pl"
+    },
+    {
+      "ID": "ine_pl_px1pl_han",
+      "Name": "ine plural 1pl possessor -hAn",
+      "Features": "Case=Ine|Number=Plur|Possessor=1pl|Clitic=hAn"
+    },
+    {
+      "ID": "ill_infma_ko",
+      "Name": "ill ma-infinitive -kO",
+      "Features": "Case=Ill|VerbForm=Inf|Infinitive=ma|Clitic=kO"
+    },
+    {
+      "ID": "ade_infma_kin",
+      "Name": "ade ma-infinitive -kin",
+      "Features": "Case=Ade|VerbForm=Inf|Infinitive=ma|Clitic=kin"
+    },
+    {
+      "ID": "abess_infma_kaan",
+      "Name": "abess ma-infinitive -kAAn",
+      "Features": "Case=Abe|VerbForm=Inf|Infinitive=ma|Clitic=kAAn"
+    },
+    {
+      "ID": "transl_infa_px3sg_han",
+      "Name": "transl a-infinitive 3sg possessor -hAn",
+      "Features": "Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=3sg|Clitic=hAn"
+    },
+    {
+      "ID": "part_px1pl",
+      "Name": "part 1pl possessor",
+      "Features": "Case=Par|Possessor=1pl"
+    },
+    {
+      "ID": "nom_px2pl_kin",
+      "Name": "nom 2pl possessor -kin",
+      "Features": "Case=Nom|Possessor=2pl|Clitic=kin"
+    },
+    {
+      "ID": "abl_px1sg_han",
+      "Name": "abl 1sg possessor -hAn",
+      "Features": "Case=Abl|Possessor=1sg|Clitic=hAn"
+    },
+    {
+      "ID": "allat_px2sg_ko",
+      "Name": "all 2sg possessor -kO",
+      "Features": "Case=All|Possessor=2sg|Clitic=kO"
+    },
+    {
+      "ID": "ill_px1pl",
+      "Name": "ill 1pl possessor",
+      "Features": "Case=Ill|Possessor=1pl"
+    },
+    {
+      "ID": "part_pl_px3sg",
+      "Name": "part plural 3sg possessor",
+      "Features": "Case=Par|Number=Plur|Possessor=3sg"
+    },
+    {
+      "ID": "ill_px3sg",
+      "Name": "ill 3sg possessor",
+      "Features": "Case=Ill|Possessor=3sg"
+    },
+    {
+      "ID": "ill_pl_px3sg",
+      "Name": "ill plural 3sg possessor",
+      "Features": "Case=Ill|Number=Plur|Possessor=3sg"
+    },
+    {
+      "ID": "ine_pl",
+      "Name": "ine plural",
+      "Features": "Case=Ine|Number=Plur"
+    },
+    {
+      "ID": "ill_pl",
+      "Name": "ill plural",
+      "Features": "Case=Ill|Number=Plur"
+    },
+    {
+      "ID": "ess_pl",
+      "Name": "ess plural",
+      "Features": "Case=Ess|Number=Plur"
+    },
+    {
+      "ID": "allat_pl",
+      "Name": "all plural",
+      "Features": "Case=All|Number=Plur"
+    },
+    {
+      "ID": "transl_pl",
+      "Name": "transl plural",
+      "Features": "Case=Tra|Number=Plur"
+    },
+    {
+      "ID": "part_pl",
+      "Name": "part plural",
+      "Features": "Case=Par|Number=Plur"
+    },
+    {
+      "ID": "gen_pl",
+      "Name": "gen plural",
+      "Features": "Case=Gen|Number=Plur"
+    },
+    {
+      "ID": "gen_pl_px3sg",
+      "Name": "gen plural 3sg possessor",
+      "Features": "Case=Gen|Number=Plur|Possessor=3sg"
     }
   ],
   "ParameterTable": [
@@ -2304,6 +692,1440 @@
       "ID": "state",
       "Name": "state",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "car",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "car"
+    },
+    {
+      "ID": "him_her",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "him_her"
+    },
+    {
+      "ID": "milk",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "milk"
+    },
+    {
+      "ID": "water",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "water"
+    },
+    {
+      "ID": "family",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "family"
+    },
+    {
+      "ID": "country",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "country"
+    },
+    {
+      "ID": "porvoo",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "porvoo"
+    },
+    {
+      "ID": "table",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "table"
+    },
+    {
+      "ID": "teacher",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "teacher"
+    },
+    {
+      "ID": "wife",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "wife"
+    },
+    {
+      "ID": "passport",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "passport"
+    },
+    {
+      "ID": "foot",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "foot"
+    },
+    {
+      "ID": "book",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "book"
+    },
+    {
+      "ID": "bottle",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "bottle"
+    },
+    {
+      "ID": "shelf",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "shelf"
+    },
+    {
+      "ID": "house",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "house"
+    },
+    {
+      "ID": "hand",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "hand"
+    },
+    {
+      "ID": "say",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "say"
+    },
+    {
+      "ID": "eat",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "eat"
+    },
+    {
+      "ID": "run",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "run"
+    },
+    {
+      "ID": "speak",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "speak"
+    },
+    {
+      "ID": "bag",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "bag"
+    },
+    {
+      "ID": "guest",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "guest"
+    },
+    {
+      "ID": "get",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "get"
+    },
+    {
+      "ID": "father",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "father"
+    },
+    {
+      "ID": "mother",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "mother"
+    },
+    {
+      "ID": "live",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "live"
+    },
+    {
+      "ID": "meet",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "meet"
+    },
+    {
+      "ID": "drink",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "drink"
+    },
+    {
+      "ID": "be",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "be"
+    },
+    {
+      "ID": "rest",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "rest"
+    },
+    {
+      "ID": "pull",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "pull"
+    },
+    {
+      "ID": "mention",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "mention"
+    },
+    {
+      "ID": "do",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "do"
+    },
+    {
+      "ID": "come",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "come"
+    },
+    {
+      "ID": "learn",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "learn"
+    },
+    {
+      "ID": "son",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "son"
+    },
+    {
+      "ID": "ring",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "ring"
+    },
+    {
+      "ID": "head",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "head"
+    },
+    {
+      "ID": "fish",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "fish"
+    },
+    {
+      "ID": "girl",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "girl"
+    },
+    {
+      "ID": "cross",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "cross"
+    },
+    {
+      "ID": "stone",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "stone"
+    },
+    {
+      "ID": "child",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "child"
+    },
+    {
+      "ID": "boy",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "boy"
+    },
+    {
+      "ID": "day",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "day"
+    },
+    {
+      "ID": "road",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "road"
+    },
+    {
+      "ID": "obstacle",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "obstacle"
+    },
+    {
+      "ID": "state",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "state"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "karlsson2017_auto",
+      "Lexeme_ID": "car",
+      "Cell": "nom",
+      "Form": "auto",
+      "Segments": ["auto"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_auton",
+      "Lexeme_ID": "car",
+      "Cell": "gen",
+      "Form": "auton",
+      "Segments": ["auto", "n"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hanet",
+      "Lexeme_ID": "him_her",
+      "Cell": "acc",
+      "Form": "hänet",
+      "Segments": ["häne", "t"],
+      "Comment": "The accusative ending is confined to the personal pronouns.",
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_maitoa",
+      "Lexeme_ID": "milk",
+      "Cell": "part",
+      "Form": "maitoa",
+      "Segments": ["maito", "a"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_vetta",
+      "Lexeme_ID": "water",
+      "Cell": "part",
+      "Form": "vettä",
+      "Segments": ["vet", "tä"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_perhetta",
+      "Lexeme_ID": "family",
+      "Cell": "part",
+      "Form": "perhettä",
+      "Segments": ["perhe", "ttä"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_autossa",
+      "Lexeme_ID": "car",
+      "Cell": "ine",
+      "Form": "autossa",
+      "Segments": ["auto", "ssa"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_autosta",
+      "Lexeme_ID": "car",
+      "Cell": "ela",
+      "Form": "autosta",
+      "Segments": ["auto", "sta"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_autoon",
+      "Lexeme_ID": "car",
+      "Cell": "ill",
+      "Form": "autoon",
+      "Segments": ["auto", "on"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_maahan",
+      "Lexeme_ID": "country",
+      "Cell": "ill",
+      "Form": "maahan",
+      "Segments": ["maa", "han"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_porvooseen",
+      "Lexeme_ID": "porvoo",
+      "Cell": "ill",
+      "Form": "Porvooseen",
+      "Segments": ["Porvoo", "seen"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_poydalla",
+      "Lexeme_ID": "table",
+      "Cell": "ade",
+      "Form": "pöydällä",
+      "Segments": ["pöydä", "llä"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_poydalta",
+      "Lexeme_ID": "table",
+      "Cell": "abl",
+      "Form": "pöydältä",
+      "Segments": ["pöydä", "ltä"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_poydalle",
+      "Lexeme_ID": "table",
+      "Cell": "allat",
+      "Form": "pöydälle",
+      "Segments": ["pöydä", "lle"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_opettajana",
+      "Lexeme_ID": "teacher",
+      "Cell": "ess",
+      "Form": "opettajana",
+      "Segments": ["opettaja", "na"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_opettajaksi",
+      "Lexeme_ID": "teacher",
+      "Cell": "transl",
+      "Form": "opettajaksi",
+      "Segments": ["opettaja", "ksi"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_vaimoineni",
+      "Lexeme_ID": "wife",
+      "Cell": "com_px1sg",
+      "Form": "vaimoineni",
+      "Segments": ["vaimo", "ine", "ni"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_passitta",
+      "Lexeme_ID": "passport",
+      "Cell": "abess",
+      "Form": "passitta",
+      "Segments": ["passi", "tta"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_jalan",
+      "Lexeme_ID": "foot",
+      "Cell": "inst",
+      "Form": "jalan",
+      "Segments": ["jala", "n"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kirjani",
+      "Lexeme_ID": "book",
+      "Cell": "nom_px1sg",
+      "Form": "kirjani",
+      "Segments": ["kirja", "ni"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kirjasi",
+      "Lexeme_ID": "book",
+      "Cell": "nom_px2sg",
+      "Form": "kirjasi",
+      "Segments": ["kirja", "si"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kirjansa",
+      "Lexeme_ID": "book",
+      "Cell": "nom_px3sg",
+      "Form": "kirjansa",
+      "Segments": ["kirja", "nsa"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pullo",
+      "Lexeme_ID": "bottle",
+      "Cell": "nom",
+      "Form": "pullo",
+      "Segments": ["pullo"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pullossa",
+      "Lexeme_ID": "bottle",
+      "Cell": "ine",
+      "Form": "pullossa",
+      "Segments": ["pullo", "ssa"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pulloni",
+      "Lexeme_ID": "bottle",
+      "Cell": "nom_px1sg",
+      "Form": "pulloni",
+      "Segments": ["pullo", "ni"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pullostani",
+      "Lexeme_ID": "bottle",
+      "Cell": "ela_px1sg",
+      "Form": "pullostani",
+      "Segments": ["pullo", "sta", "ni"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllyssa",
+      "Lexeme_ID": "shelf",
+      "Cell": "ine",
+      "Form": "hyllyssä",
+      "Segments": ["hylly", "ssä"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllylla",
+      "Lexeme_ID": "shelf",
+      "Cell": "ade",
+      "Form": "hyllyllä",
+      "Segments": ["hylly", "llä"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllysi",
+      "Lexeme_ID": "shelf",
+      "Cell": "nom_px2sg",
+      "Form": "hyllysi",
+      "Segments": ["hylly", "si"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllyllesi",
+      "Lexeme_ID": "shelf",
+      "Cell": "allat_px2sg",
+      "Form": "hyllyllesi",
+      "Segments": ["hylly", "lle", "si"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_taloon",
+      "Lexeme_ID": "house",
+      "Cell": "ill",
+      "Form": "taloon",
+      "Segments": ["talo", "on"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllynsa",
+      "Lexeme_ID": "shelf",
+      "Cell": "nom_px3sg",
+      "Form": "hyllynsä",
+      "Segments": ["hylly", "nsä"],
+      "Comment": "Also 'their shelf'.",
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kadessani",
+      "Lexeme_ID": "hand",
+      "Cell": "ine_px1sg",
+      "Form": "kädessäni",
+      "Segments": ["käde", "ssä", "ni"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kateen",
+      "Lexeme_ID": "hand",
+      "Cell": "ill",
+      "Form": "käteen",
+      "Segments": ["käte", "en"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kateesi",
+      "Lexeme_ID": "hand",
+      "Cell": "ill_px2sg",
+      "Form": "käteesi",
+      "Segments": ["käte", "e", "si"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_katta",
+      "Lexeme_ID": "hand",
+      "Cell": "part",
+      "Form": "kättä",
+      "Segments": ["kät", "tä"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_sanoa",
+      "Lexeme_ID": "say",
+      "Cell": "nom_infa",
+      "Form": "sanoa",
+      "Segments": ["sano", "a"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_syoda",
+      "Lexeme_ID": "eat",
+      "Cell": "nom_infa",
+      "Form": "syödä",
+      "Segments": ["syö", "dä"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_juosta",
+      "Lexeme_ID": "run",
+      "Cell": "nom_infa",
+      "Form": "juosta",
+      "Segments": ["juos", "ta"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_juostaksemme",
+      "Lexeme_ID": "run",
+      "Cell": "transl_infa_px1pl",
+      "Form": "juostaksemme",
+      "Segments": ["juos", "ta", "kse", "mme"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_sanoessani",
+      "Lexeme_ID": "say",
+      "Cell": "ine_infe_px1sg",
+      "Form": "sanoessani",
+      "Segments": ["sano", "e", "ssa", "ni"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_syodessamme",
+      "Lexeme_ID": "eat",
+      "Cell": "ine_infe_px1pl",
+      "Form": "syödessämme",
+      "Segments": ["syö", "de", "ssä", "mme"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_juosten",
+      "Lexeme_ID": "run",
+      "Cell": "inst_infe",
+      "Form": "juosten",
+      "Segments": ["juos", "te", "n"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_syomalla",
+      "Lexeme_ID": "eat",
+      "Cell": "ade_infma",
+      "Form": "syömällä",
+      "Segments": ["syö", "mä", "llä"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_sanomatta",
+      "Lexeme_ID": "say",
+      "Cell": "abess_infma",
+      "Form": "sanomatta",
+      "Segments": ["sano", "ma", "tta"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_sanomaan",
+      "Lexeme_ID": "say",
+      "Cell": "ill_infma",
+      "Form": "sanomaan",
+      "Segments": ["sano", "ma", "an"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_puhuaksesi",
+      "Lexeme_ID": "speak",
+      "Cell": "transl_infa_px2sg",
+      "Form": "puhuaksesi",
+      "Segments": ["puhu", "a", "kse", "si"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_puhumalla",
+      "Lexeme_ID": "speak",
+      "Cell": "ade_infma",
+      "Form": "puhumalla",
+      "Segments": ["puhu", "ma", "lla"],
+      "Source": ["karlsson-2017[§3.3]"]
+    },
+    {
+      "ID": "karlsson2017_autollani",
+      "Lexeme_ID": "car",
+      "Cell": "ade_px1sg",
+      "Form": "autollani",
+      "Segments": ["auto", "lla", "ni"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_autostasi",
+      "Lexeme_ID": "car",
+      "Cell": "ela_px2sg",
+      "Form": "autostasi",
+      "Segments": ["auto", "sta", "si"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_autooni",
+      "Lexeme_ID": "car",
+      "Cell": "ill_px1sg",
+      "Form": "autooni",
+      "Segments": ["auto", "o", "ni"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_laukkuni",
+      "Lexeme_ID": "bag",
+      "Cell": "nom_px1sg",
+      "Form": "laukkuni",
+      "Segments": ["laukku", "ni"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_laukkusi",
+      "Lexeme_ID": "bag",
+      "Cell": "nom_px2sg",
+      "Form": "laukkusi",
+      "Segments": ["laukku", "si"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_laukkunsa_3sg",
+      "Lexeme_ID": "bag",
+      "Cell": "nom_px3sg",
+      "Form": "laukkunsa",
+      "Segments": ["laukku", "nsa"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_laukkumme",
+      "Lexeme_ID": "bag",
+      "Cell": "nom_px1pl",
+      "Form": "laukkumme",
+      "Segments": ["laukku", "mme"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_laukkunne",
+      "Lexeme_ID": "bag",
+      "Cell": "nom_px2pl",
+      "Form": "laukkunne",
+      "Segments": ["laukku", "nne"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_laukkunsa_3pl",
+      "Lexeme_ID": "bag",
+      "Cell": "nom_px3pl",
+      "Form": "laukkunsa",
+      "Segments": ["laukku", "nsa"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_taloaan",
+      "Lexeme_ID": "house",
+      "Cell": "part_px3sg",
+      "Form": "taloaan",
+      "Segments": ["talo", "a", "an"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_vieraanaan",
+      "Lexeme_ID": "guest",
+      "Cell": "ess_px3pl",
+      "Form": "vieraanaan",
+      "Segments": ["vieraa", "na", "an"],
+      "Comment": "'as their guest'",
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_saadakseen",
+      "Lexeme_ID": "get",
+      "Cell": "transl_infa_px3sg",
+      "Form": "saadakseen",
+      "Segments": ["saa", "da", "kse", "en"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_talossaan",
+      "Lexeme_ID": "house",
+      "Cell": "ine_px3pl",
+      "Form": "talossaan",
+      "Segments": ["talo", "ssa", "an"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_autollaan",
+      "Lexeme_ID": "car",
+      "Cell": "ade_px3sg",
+      "Form": "autollaan",
+      "Segments": ["auto", "lla", "an"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_isalleen",
+      "Lexeme_ID": "father",
+      "Cell": "allat_px3pl",
+      "Form": "isälleen",
+      "Segments": ["isä", "lle", "en"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_aidiltaan",
+      "Lexeme_ID": "mother",
+      "Cell": "abl_px3sg",
+      "Form": "äidiltään",
+      "Segments": ["äidi", "ltä", "än"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_aitiaan",
+      "Lexeme_ID": "mother",
+      "Cell": "part_px3sg",
+      "Form": "äitiään",
+      "Segments": ["äiti", "ä", "än"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_talonsa",
+      "Lexeme_ID": "house",
+      "Cell": "ill_px3pl",
+      "Form": "taloonsa",
+      "Segments": ["talo", "o", "nsa"],
+      "Comment": "'into their house'",
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_autonsa",
+      "Lexeme_ID": "car",
+      "Cell": "nom_px3sg",
+      "Form": "autonsa",
+      "Segments": ["auto", "nsa"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_isaansa",
+      "Lexeme_ID": "father",
+      "Cell": "ill_px3pl",
+      "Form": "isäänsä",
+      "Segments": ["isä", "ä", "nsä"],
+      "Comment": "Also the partitive singular.",
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_aitinsa",
+      "Lexeme_ID": "mother",
+      "Cell": "nom_px3sg",
+      "Form": "äitinsä",
+      "Segments": ["äiti", "nsä"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_sanoakseni",
+      "Lexeme_ID": "say",
+      "Cell": "transl_infa_px1sg",
+      "Form": "sanoakseni",
+      "Segments": ["sano", "a", "kse", "ni"],
+      "Source": ["karlsson-2017[§22.2.2]"]
+    },
+    {
+      "ID": "karlsson2017_elaaksemme",
+      "Lexeme_ID": "live",
+      "Cell": "transl_infa_px1pl",
+      "Form": "elääksemme",
+      "Segments": ["elä", "ä", "kse", "mme"],
+      "Source": ["karlsson-2017[§22.2.2]"]
+    },
+    {
+      "ID": "karlsson2017_tavataksesi",
+      "Lexeme_ID": "meet",
+      "Cell": "transl_infa_px2sg",
+      "Form": "tavataksesi",
+      "Segments": ["tavat", "a", "kse", "si"],
+      "Source": ["karlsson-2017[§22.2.2]"]
+    },
+    {
+      "ID": "karlsson2017_juodakseen",
+      "Lexeme_ID": "drink",
+      "Cell": "transl_infa_px3sg",
+      "Form": "juodakseen",
+      "Segments": ["juo", "da", "kse", "en"],
+      "Source": ["karlsson-2017[§22.2.2]"]
+    },
+    {
+      "ID": "karlsson2017_ollaksenne",
+      "Lexeme_ID": "be",
+      "Cell": "transl_infa_px2pl",
+      "Form": "ollaksenne",
+      "Segments": ["ol", "la", "kse", "nne"],
+      "Source": ["karlsson-2017[§22.2.2]"]
+    },
+    {
+      "ID": "karlsson2017_lepaamassa",
+      "Lexeme_ID": "rest",
+      "Cell": "ine_infma",
+      "Form": "lepäämässä",
+      "Segments": ["lepää", "mä", "ssä"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_lepaamaan",
+      "Lexeme_ID": "rest",
+      "Cell": "ill_infma",
+      "Form": "lepäämään",
+      "Segments": ["lepää", "mä", "än"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_vetamalla",
+      "Lexeme_ID": "pull",
+      "Cell": "ade_infma",
+      "Form": "vetämällä",
+      "Segments": ["vetä", "mä", "llä"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_mainitsematta",
+      "Lexeme_ID": "mention",
+      "Cell": "abess_infma",
+      "Form": "mainitsematta",
+      "Segments": ["mainitse", "ma", "tta"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_tekemasta",
+      "Lexeme_ID": "do",
+      "Cell": "ela_infma",
+      "Form": "tekemästä",
+      "Segments": ["teke", "mä", "stä"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_tuleman",
+      "Lexeme_ID": "come",
+      "Cell": "inst_infma",
+      "Form": "tuleman",
+      "Segments": ["tule", "ma", "n"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_pullot",
+      "Lexeme_ID": "bottle",
+      "Cell": "nom_pl",
+      "Form": "pullot",
+      "Segments": ["pullo", "t"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pullokin",
+      "Lexeme_ID": "bottle",
+      "Cell": "nom_kin",
+      "Form": "pullokin",
+      "Segments": ["pullo", "kin"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pulloista",
+      "Lexeme_ID": "bottle",
+      "Cell": "ela_pl",
+      "Form": "pulloista",
+      "Segments": ["pullo", "i", "sta"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pullossahan",
+      "Lexeme_ID": "bottle",
+      "Cell": "ine_han",
+      "Form": "pullossahan",
+      "Segments": ["pullo", "ssa", "han"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pullotkin",
+      "Lexeme_ID": "bottle",
+      "Cell": "nom_pl_kin",
+      "Form": "pullotkin",
+      "Segments": ["pullo", "t", "kin"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pullossasiko",
+      "Lexeme_ID": "bottle",
+      "Cell": "ine_px2sg_ko",
+      "Form": "pullossasiko",
+      "Segments": ["pullo", "ssa", "si", "ko"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pulloissamme",
+      "Lexeme_ID": "bottle",
+      "Cell": "ine_pl_px1pl",
+      "Form": "pulloissamme",
+      "Segments": ["pullo", "i", "ssa", "mme"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pulloistakaan",
+      "Lexeme_ID": "bottle",
+      "Cell": "ela_pl_kaan",
+      "Form": "pulloistakaan",
+      "Segments": ["pullo", "i", "sta", "kaan"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_pulloissannekin",
+      "Lexeme_ID": "bottle",
+      "Cell": "ine_pl_px2pl_kin",
+      "Form": "pulloissannekin",
+      "Segments": ["pullo", "i", "ssa", "nne", "kin"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllyltako",
+      "Lexeme_ID": "shelf",
+      "Cell": "abl_ko",
+      "Form": "hyllyltäkö",
+      "Segments": ["hylly", "ltä", "kö"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllytko",
+      "Lexeme_ID": "shelf",
+      "Cell": "nom_pl_ko",
+      "Form": "hyllytkö",
+      "Segments": ["hylly", "t", "kö"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllynhan",
+      "Lexeme_ID": "shelf",
+      "Cell": "gen_han",
+      "Form": "hyllynhän",
+      "Segments": ["hylly", "n", "hän"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_talonsako",
+      "Lexeme_ID": "house",
+      "Cell": "nom_px3sg_ko",
+      "Form": "talonsako",
+      "Segments": ["talo", "nsa", "ko"],
+      "Comment": "Also 'their house?'.",
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_hyllyillamme",
+      "Lexeme_ID": "shelf",
+      "Cell": "ade_pl_px1pl",
+      "Form": "hyllyillämme",
+      "Segments": ["hylly", "i", "llä", "mme"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kasi",
+      "Lexeme_ID": "hand",
+      "Cell": "nom",
+      "Form": "käsi",
+      "Segments": ["käsi"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kadet",
+      "Lexeme_ID": "hand",
+      "Cell": "nom_pl",
+      "Form": "kädet",
+      "Segments": ["käde", "t"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kasissammehan",
+      "Lexeme_ID": "hand",
+      "Cell": "ine_pl_px1pl_han",
+      "Form": "käsissämmehän",
+      "Segments": ["käs", "i", "ssä", "mme", "hän"],
+      "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_lepaamaanko",
+      "Lexeme_ID": "rest",
+      "Cell": "ill_infma_ko",
+      "Form": "lepäämäänkö",
+      "Segments": ["lepää", "mä", "än", "kö"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_vetamallakin",
+      "Lexeme_ID": "pull",
+      "Cell": "ade_infma_kin",
+      "Form": "vetämälläkin",
+      "Segments": ["vetä", "mä", "llä", "kin"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_mainitsemattakaan",
+      "Lexeme_ID": "mention",
+      "Cell": "abess_infma_kaan",
+      "Form": "mainitsemattakaan",
+      "Segments": ["mainitse", "ma", "tta", "kaan"],
+      "Source": ["karlsson-2017[§22.4.1]"]
+    },
+    {
+      "ID": "karlsson2017_oppiakseenhan",
+      "Lexeme_ID": "learn",
+      "Cell": "transl_infa_px3sg_han",
+      "Form": "oppiakseenhan",
+      "Segments": ["oppi", "a", "kse", "en", "han"],
+      "Comment": "Also 'in order for them to learn'.",
+      "Source": ["karlsson-2017[§22.2.2]"]
+    },
+    {
+      "ID": "karlsson2017_maatamme",
+      "Lexeme_ID": "country",
+      "Cell": "part_px1pl",
+      "Form": "maatamme",
+      "Segments": ["maa", "ta", "mme"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_poikannekin",
+      "Lexeme_ID": "son",
+      "Cell": "nom_px2pl_kin",
+      "Form": "poikannekin",
+      "Segments": ["poika", "nne", "kin"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_aidiltanihan",
+      "Lexeme_ID": "mother",
+      "Cell": "abl_px1sg_han",
+      "Form": "äidiltänihän",
+      "Segments": ["äidi", "ltä", "ni", "hän"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_isallesiko",
+      "Lexeme_ID": "father",
+      "Cell": "allat_px2sg_ko",
+      "Form": "isällesikö",
+      "Segments": ["isä", "lle", "si", "kö"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_maahamme",
+      "Lexeme_ID": "country",
+      "Cell": "ill_px1pl",
+      "Form": "maahamme",
+      "Segments": ["maa", "ha", "mme"],
+      "Comment": "The source glosses the form 'into her/his/their country'.",
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_perhettaan",
+      "Lexeme_ID": "family",
+      "Cell": "part_px3sg",
+      "Form": "perhettään",
+      "Segments": ["perhe", "ttä", "än"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_talojaan",
+      "Lexeme_ID": "house",
+      "Cell": "part_pl_px3sg",
+      "Form": "talojaan",
+      "Segments": ["talo", "j", "a", "an"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_renkaitaan",
+      "Lexeme_ID": "ring",
+      "Cell": "part_pl_px3sg",
+      "Form": "renkaitaan",
+      "Segments": ["renka", "i", "ta", "an"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_paataan",
+      "Lexeme_ID": "head",
+      "Cell": "part_px3sg",
+      "Form": "päätään",
+      "Segments": ["pää", "tä", "än"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_taloansa",
+      "Lexeme_ID": "house",
+      "Cell": "part_px3sg",
+      "Form": "taloansa",
+      "Segments": ["talo", "a", "nsa"],
+      "Comment": "The archaic alternative to talo-a-an.",
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_kalansa",
+      "Lexeme_ID": "fish",
+      "Cell": "nom_px3sg",
+      "Form": "kalansa",
+      "Segments": ["kala", "nsa"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_kalaansa_ill",
+      "Lexeme_ID": "fish",
+      "Cell": "ill_px3sg",
+      "Form": "kalaansa",
+      "Segments": ["kala", "a", "nsa"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_kalaansa_part",
+      "Lexeme_ID": "fish",
+      "Cell": "part_px3sg",
+      "Form": "kalaansa",
+      "Segments": ["kala", "a", "nsa"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_kaloihinsa",
+      "Lexeme_ID": "fish",
+      "Cell": "ill_pl_px3sg",
+      "Form": "kaloihinsa",
+      "Segments": ["kalo", "i", "hi", "nsa"],
+      "Source": ["karlsson-2017[§14.1]"]
+    },
+    {
+      "ID": "karlsson2017_taloissa",
+      "Lexeme_ID": "house",
+      "Cell": "ine_pl",
+      "Form": "taloissa",
+      "Segments": ["talo", "i", "ssa"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_taloihin",
+      "Lexeme_ID": "house",
+      "Cell": "ill_pl",
+      "Form": "taloihin",
+      "Segments": ["talo", "i", "hin"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_taloina",
+      "Lexeme_ID": "house",
+      "Cell": "ess_pl",
+      "Form": "taloina",
+      "Segments": ["talo", "i", "na"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_taloille",
+      "Lexeme_ID": "house",
+      "Cell": "allat_pl",
+      "Form": "taloille",
+      "Segments": ["talo", "i", "lle"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_taloiksi",
+      "Lexeme_ID": "house",
+      "Cell": "transl_pl",
+      "Form": "taloiksi",
+      "Segments": ["talo", "i", "ksi"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_hyllyja",
+      "Lexeme_ID": "shelf",
+      "Cell": "part_pl",
+      "Form": "hyllyjä",
+      "Segments": ["hylly", "j", "ä"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_hyllyjen",
+      "Lexeme_ID": "shelf",
+      "Cell": "gen_pl",
+      "Form": "hyllyjen",
+      "Segments": ["hylly", "j", "en"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_pulloja",
+      "Lexeme_ID": "bottle",
+      "Cell": "part_pl",
+      "Form": "pulloja",
+      "Segments": ["pullo", "j", "a"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_pullojen",
+      "Lexeme_ID": "bottle",
+      "Cell": "gen_pl",
+      "Form": "pullojen",
+      "Segments": ["pullo", "j", "en"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_tyttoja",
+      "Lexeme_ID": "girl",
+      "Cell": "part_pl",
+      "Form": "tyttöjä",
+      "Segments": ["tyttö", "j", "ä"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_tyttojen",
+      "Lexeme_ID": "girl",
+      "Cell": "gen_pl",
+      "Form": "tyttöjen",
+      "Segments": ["tyttö", "j", "en"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_pulloissa",
+      "Lexeme_ID": "bottle",
+      "Cell": "ine_pl",
+      "Form": "pulloissa",
+      "Segments": ["pullo", "i", "ssa"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_maissa",
+      "Lexeme_ID": "country",
+      "Cell": "ine_pl",
+      "Form": "maissa",
+      "Segments": ["ma", "i", "ssa"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_risteissa",
+      "Lexeme_ID": "cross",
+      "Cell": "ine_pl",
+      "Form": "risteissä",
+      "Segments": ["riste", "i", "ssä"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_kivissa",
+      "Lexeme_ID": "stone",
+      "Cell": "ine_pl",
+      "Form": "kivissä",
+      "Segments": ["kiv", "i", "ssä"],
+      "Source": ["karlsson-2017[§5.4]"]
+    },
+    {
+      "ID": "karlsson2017_lapsia",
+      "Lexeme_ID": "child",
+      "Cell": "part_pl",
+      "Form": "lapsia",
+      "Segments": ["laps", "i", "a"],
+      "Source": ["karlsson-2017[§8.4]"]
+    },
+    {
+      "ID": "karlsson2017_talojen",
+      "Lexeme_ID": "house",
+      "Cell": "gen_pl",
+      "Form": "talojen",
+      "Segments": ["talo", "j", "en"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_poikia",
+      "Lexeme_ID": "boy",
+      "Cell": "part_pl",
+      "Form": "poikia",
+      "Segments": ["poik", "i", "a"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_poikien",
+      "Lexeme_ID": "boy",
+      "Cell": "gen_pl",
+      "Form": "poikien",
+      "Segments": ["poik", "i", "en"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_kirjoja",
+      "Lexeme_ID": "book",
+      "Cell": "part_pl",
+      "Form": "kirjoja",
+      "Segments": ["kirjo", "j", "a"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_kirjojen",
+      "Lexeme_ID": "book",
+      "Cell": "gen_pl",
+      "Form": "kirjojen",
+      "Segments": ["kirjo", "j", "en"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_paivia",
+      "Lexeme_ID": "day",
+      "Cell": "part_pl",
+      "Form": "päiviä",
+      "Segments": ["päiv", "i", "ä"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_paivien",
+      "Lexeme_ID": "day",
+      "Cell": "gen_pl",
+      "Form": "päivien",
+      "Segments": ["päiv", "i", "en"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_kasien",
+      "Lexeme_ID": "hand",
+      "Cell": "gen_pl",
+      "Form": "käsien",
+      "Segments": ["käs", "i", "en"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_maita",
+      "Lexeme_ID": "country",
+      "Cell": "part_pl",
+      "Form": "maita",
+      "Segments": ["ma", "i", "ta"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_maiden",
+      "Lexeme_ID": "country",
+      "Cell": "gen_pl",
+      "Form": "maiden",
+      "Segments": ["ma", "i", "den"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_maitten",
+      "Lexeme_ID": "country",
+      "Cell": "gen_pl",
+      "Form": "maitten",
+      "Segments": ["ma", "i", "tten"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_teita",
+      "Lexeme_ID": "road",
+      "Cell": "part_pl",
+      "Form": "teitä",
+      "Segments": ["te", "i", "tä"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_teiden",
+      "Lexeme_ID": "road",
+      "Cell": "gen_pl",
+      "Form": "teiden",
+      "Segments": ["te", "i", "den"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_esteitten",
+      "Lexeme_ID": "obstacle",
+      "Cell": "gen_pl",
+      "Form": "esteitten",
+      "Segments": ["este", "i", "tten"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_valtioiden",
+      "Lexeme_ID": "state",
+      "Cell": "gen_pl",
+      "Form": "valtioiden",
+      "Segments": ["valtio", "i", "den"],
+      "Source": ["karlsson-2017[§13.1.2]"]
+    },
+    {
+      "ID": "karlsson2017_kalojensa",
+      "Lexeme_ID": "fish",
+      "Cell": "gen_pl_px3sg",
+      "Form": "kalojensa",
+      "Segments": ["kalo", "je", "nsa"],
+      "Source": ["karlsson-2017[§14.1]"]
     }
   ]
 }

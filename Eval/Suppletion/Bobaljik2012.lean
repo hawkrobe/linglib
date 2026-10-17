@@ -8,7 +8,7 @@ public import Studies.Bobaljik2012
 # Scoring theories of root suppletion on Bobaljik (2012)
 
 The data are the cognate triples of Bobaljik's Tables 4.1 and 4.2, read from
-`Data/Paradigms/Bobaljik2012`: for each, a source's judgment of which of a word's positive,
+`Data/Forms/Bobaljik2012`: for each, a source's judgment of which of a word's positive,
 comparative and superlative share a root, and the root pattern over the grades that the judgment
 gives (`Bobaljik2012.rootPattern`). A triple is observed unless a source rejects one of its forms
 in its cell (`Contested`), as the 2009 questionnaire rejects Zajkov's Karelian *äij-in*.
@@ -55,21 +55,17 @@ the theory without containment predicts nothing (`verdict_patterns`).
 namespace Eval.Suppletion.Bobaljik2012
 
 open Morphology Morphology.Exponence Morphology.Containment
-open Data.Paradigms (RootClasses)
+open Data.Forms (RootClasses)
 open _root_.Bobaljik2012 (rootPattern positiveEmbedding)
-open _root_.Bobaljik2012.Paradigms
+open _root_.Bobaljik2012.Forms
 
 /-! ### The data -/
 
-/-- The forms some source rejects in their cells. -/
-def rejected : List Data.Paradigms.Form :=
-  forms.filter (·.judgment = .ungrammatical)
-
 /-- A triple is contested when a source rejects one of its forms in its cell. -/
-def Contested (r : RootClasses) : Prop :=
-  ∃ g ∈ rejected, ∃ f ∈ r.forms, g.cell = f.cell ∧ g.form = f.form ∧ g.lexeme.id = r.lexeme.id
+def Contested (r : RootClasses Cell) : Prop :=
+  ∃ g ∈ marked, ∃ f ∈ r.forms, g.cell = f.cell ∧ g.form = f.form ∧ g.lexeme.id = r.lexeme.id
 
-instance : DecidablePred Contested := fun _ ↦ inferInstanceAs (Decidable (∃ g ∈ rejected, _))
+instance : DecidablePred Contested := fun _ ↦ inferInstanceAs (Decidable (∃ g ∈ marked, _))
 
 /-! ### The theories -/
 
@@ -115,13 +111,13 @@ instance (T : Theory) (e : Fin 3 → Fin 3) (p : Paradigm 3 ℕ) : Decidable (T.
 
 /-- How a theory parses a triple, from the root pattern every theory shares, into the grade
 whose structure the root's word realizes in each cell. -/
-abbrev TripleParser := Parser RootClasses (Paradigm 3 ℕ) (Fin 3 → Fin 3)
+abbrev TripleParser := Parser (RootClasses Cell) (Paradigm 3 ℕ) (Fin 3 → Fin 3)
 
 /-- Every triple read as synthetic. -/
 def naive : TripleParser := .ofRule fun _ ↦ some id
 
-/-- Bobaljik's parse: synthetic, but for the Bulgarian and the Armenian 'many', whose
-superlatives embed the positive (pp. 127-129). -/
+/-- Bobaljik's parse reads every triple as synthetic, except the Bulgarian and the Armenian
+'many', whose superlatives embed the positive (pp. 127-129). -/
 def bobaljik : TripleParser :=
   ⟨fun _ ↦ some id, List.toFinmap
     [⟨bul_many.roots, positiveEmbedding⟩, ⟨hye_many.roots, positiveEmbedding⟩]⟩
@@ -134,7 +130,7 @@ theorem card_stipulations_bobaljik : bobaljik.stipulations.card = 2 := by
 /-! ### Triple by triple -/
 
 /-- Each triple scored by whether a theory, under its parse, fits it. -/
-def triples : Experiment (Theory × TripleParser) RootClasses Bool where
+def triples : Experiment (Theory × TripleParser) (RootClasses Cell) Bool where
   observed r := if Contested r then none else some true
   predicted Tπ r := (Tπ.2.parse rootPattern r).map fun e ↦ decide (Tπ.1.Fits e (rootPattern r))
 
@@ -152,7 +148,7 @@ theorem wrong_naive_grounded :
   decide +kernel
 
 /-- Bobaljik's parse agrees with the naive one off its stipulations. -/
-theorem verdict_bobaljik_of_notMem {T : Theory} {r : RootClasses}
+theorem verdict_bobaljik_of_notMem {T : Theory} {r : RootClasses Cell}
     (hr : r ∉ bobaljik.stipulations) :
     triples.verdict (T, bobaljik) r = triples.verdict (T, naive) r := by
   simp only [Experiment.verdict, triples, Parser.parse_of_notMem bobaljik rootPattern hr, naive,
@@ -173,7 +169,7 @@ theorem contested_ids : (rootClasses.filter Contested).map (·.id) = [krl_many.r
 /-- Under a parse whose rule covers every triple, a theory is silent exactly on the contested
 triples. -/
 theorem verdict_eq_silent_iff {T : Theory} {π : TripleParser} (hπ : ∀ p, π.rule p = some id)
-    (r : RootClasses) : triples.verdict (T, π) r = .silent ↔ Contested r := by
+    (r : RootClasses Cell) : triples.verdict (T, π) r = .silent ↔ Contested r := by
   obtain ⟨e, he⟩ : ∃ e, π.parse rootPattern r = some e := by
     cases h : π.table.lookup r <;> simp [Parser.parse, h, hπ]
   by_cases hc : Contested r
@@ -190,7 +186,7 @@ theorem free_fits_id (p : Paradigm 3 ℕ) : Theory.free.Fits id p := by
     simp_all [Paradigm.aaa, Paradigm.abb, Paradigm.abc, Paradigm.aba, Paradigm.aab]
 
 /-- Read as synthetic, the theory without containment is never wrong. -/
-theorem verdict_free_naive_ne_wrong (r : RootClasses) :
+theorem verdict_free_naive_ne_wrong (r : RootClasses Cell) :
     triples.verdict (.free, naive) r ≠ .wrong := by
   simp only [Experiment.verdict, triples, naive, Parser.parse_ofRule, Option.map_some,
     free_fits_id, decide_true]

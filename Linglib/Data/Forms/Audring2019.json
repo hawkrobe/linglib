@@ -1,69 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "audring2019_boyish",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "like_a_boy",
-      "Form": "boyish",
-      "Segments": ["boy", "ish"],
-      "Comment": "the [N -ish]A family (8)",
-      "Source": ["audring-2019[(8)]"]
-    },
-    {
-      "ID": "audring2019_foolish",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "like_a_fool",
-      "Form": "foolish",
-      "Segments": ["fool", "ish"],
-      "Comment": "the [N -ish]A family (8)",
-      "Source": ["audring-2019[(8)]"]
-    },
-    {
-      "ID": "audring2019_childish",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "like_a_child",
-      "Form": "childish",
-      "Segments": ["child", "ish"],
-      "Comment": "the [N -ish]A family (8)",
-      "Source": ["audring-2019[(8)]"]
-    },
-    {
-      "ID": "audring2019_trumpish",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "like_trump",
-      "Form": "Trumpish",
-      "Segments": ["Trump", "ish"],
-      "Comment": "novel formation showing the base variable is open",
-      "Source": ["audring-2019[4.1]"]
-    },
-    {
-      "ID": "audring2019_careful",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "careful",
-      "Form": "careful",
-      "Segments": ["care", "ful"],
-      "Comment": "the [N -ful]A schema of the second-order schema (14)",
-      "Source": ["audring-2019[5]"]
-    },
-    {
-      "ID": "audring2019_careless",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "careless",
-      "Form": "careless",
-      "Segments": ["care", "less"],
-      "Comment": "the [N -less]A schema of the second-order schema (14)",
-      "Source": ["audring-2019[5]"]
-    },
-    {
-      "ID": "audring2019_clueless",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "clueless",
-      "Form": "clueless",
-      "Segments": ["clue", "less"],
-      "Comment": "an [N -less]A word with no [N -ful]A sister",
-      "Source": ["audring-2019[4.2.2]"]
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "like_a_boy",
@@ -99,6 +34,101 @@
       "ID": "clueless",
       "Name": "clueless",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "like_a_boy",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_boy"
+    },
+    {
+      "ID": "like_a_fool",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_fool"
+    },
+    {
+      "ID": "like_a_child",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_child"
+    },
+    {
+      "ID": "like_trump",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_trump"
+    },
+    {
+      "ID": "careful",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "careful"
+    },
+    {
+      "ID": "careless",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "careless"
+    },
+    {
+      "ID": "clueless",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "clueless"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "audring2019_boyish",
+      "Lexeme_ID": "like_a_boy",
+      "Form": "boyish",
+      "Segments": ["boy", "ish"],
+      "Comment": "the [N -ish]A family (8)",
+      "Source": ["audring-2019[(8)]"]
+    },
+    {
+      "ID": "audring2019_foolish",
+      "Lexeme_ID": "like_a_fool",
+      "Form": "foolish",
+      "Segments": ["fool", "ish"],
+      "Comment": "the [N -ish]A family (8)",
+      "Source": ["audring-2019[(8)]"]
+    },
+    {
+      "ID": "audring2019_childish",
+      "Lexeme_ID": "like_a_child",
+      "Form": "childish",
+      "Segments": ["child", "ish"],
+      "Comment": "the [N -ish]A family (8)",
+      "Source": ["audring-2019[(8)]"]
+    },
+    {
+      "ID": "audring2019_trumpish",
+      "Lexeme_ID": "like_trump",
+      "Form": "Trumpish",
+      "Segments": ["Trump", "ish"],
+      "Comment": "novel formation showing the base variable is open",
+      "Source": ["audring-2019[4.1]"]
+    },
+    {
+      "ID": "audring2019_careful",
+      "Lexeme_ID": "careful",
+      "Form": "careful",
+      "Segments": ["care", "ful"],
+      "Comment": "the [N -ful]A schema of the second-order schema (14)",
+      "Source": ["audring-2019[5]"]
+    },
+    {
+      "ID": "audring2019_careless",
+      "Lexeme_ID": "careless",
+      "Form": "careless",
+      "Segments": ["care", "less"],
+      "Comment": "the [N -less]A schema of the second-order schema (14)",
+      "Source": ["audring-2019[5]"]
+    },
+    {
+      "ID": "audring2019_clueless",
+      "Lexeme_ID": "clueless",
+      "Form": "clueless",
+      "Segments": ["clue", "less"],
+      "Comment": "an [N -less]A word with no [N -ful]A sister",
+      "Source": ["audring-2019[4.2.2]"]
     }
   ],
   "FormRelationTable": [

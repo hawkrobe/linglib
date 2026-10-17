@@ -11,8 +11,6 @@ public import Linglib.Phonology.OptimalityTheory.Tableau
 
 This file formalizes Stojković's account of the Slavic verbalizer, the suffix of verbs derived
 from nouns and adjectives. The suffix is [u] before the theme /-je-/ and a vowel followed by
-
-@[expose] public section
 [v] before the theme /-a-/, where the languages fall into three groups: [ov] throughout, [ov]
 alternating with [ev] after a palatal, and [uv] throughout.
 
@@ -56,6 +54,8 @@ support and which changes no outcome.
 * [stojkovic-2026]
 * [mccarthy-prince-1995]
 -/
+
+@[expose] public section
 
 namespace Stojkovic2026
 
@@ -266,43 +266,44 @@ def letter? (s : Segment) : Option Char :=
 def spelling (k : Candidate) : String :=
   String.ofList (((output c k).drop 1).dropLast.filterMap letter?)
 
-/-- `context? f` is the context of the verbalizer in the form `f`. The root is plain or palatal
-by the table the form comes from, and the theme is the morph after the verbalizer. -/
-def context? (f : Form) : Option Context := do
-  let s ← match f.column? "Root" with
-    | some "plain" => some StemFinal.plain
-    | some "palatal" => some .palatal
-    | _ => none
-  let t ← match (← f.segments[2]?).toList.head? with
+/-- `context? a` is the context of the verbalizer in the form `a` analyses. The root is plain or
+palatal by the table the form comes from, and the theme is the morph after the verbalizer. -/
+def context? (a : Forms.Analysis) : Option Context := do
+  let t ← match (← a.form.morphs[2]?).toList.head? with
     | some 'a' => some Theme.a
     | some 'j' => some .je
     | _ => none
-  pure ⟨s, t⟩
+  match a.root with
+  | .plain => pure ⟨.plain, t⟩
+  | .palatal => pure ⟨.palatal, t⟩
 
 /-- The verbalizer a form is written with. Belarusian writes the reduced vowel of [ov] as
 *a*, and the paper takes it to be /o/. -/
-def verbalizer? (f : Form) : Option String :=
-  f.segments[1]?.map fun s ↦ if f.column? "Variety" = some "Belarusian" ∧ s = "av" then "ov" else s
+def verbalizer? (f : Form Forms.Cell) : Option String :=
+  f.morphs[1]?.map fun s ↦ if f.lexeme.variety = "Belarusian" ∧ s = "av" then "ov" else s
 
 /-- A group generates a form when the form is written with the group's verbalizer for its
 context. -/
-def Generates (g : Group) (f : Form) : Prop :=
-  ∃ c ∈ context? f, verbalizer? f = some (spelling c (g.form c))
+def Generates (g : Group) (a : Forms.Analysis) : Prop :=
+  ∃ c ∈ context? a, verbalizer? a.form = some (spelling c (g.form c))
 
-instance (g : Group) (f : Form) : Decidable (Generates g f) :=
-  inferInstanceAs (Decidable (∃ c ∈ context? f, _))
+instance (g : Group) (a : Forms.Analysis) : Decidable (Generates g a) :=
+  inferInstanceAs (Decidable (∃ c ∈ context? a, _))
 
 /-- The varieties of the two tables. -/
-def varieties : List String := (Forms.all.filterMap (·.column? "Variety")).dedup
+def varieties : List String := (Forms.lexemes.map (·.variety)).dedup
+
+/-- The analysed forms of a variety. -/
+def formsOf (variety : String) : List Forms.Analysis :=
+  Forms.analyses.filter (·.form.lexeme.variety = variety)
 
 /-- For every variety exactly one group generates all of its forms, the infinitive-stem forms
 after a plain and after a palatal root and the present forms alike. The Bulgarian and
 Macedonian present in [uv] needs no separate statement, since its theme is /-a-/. -/
 theorem existsUnique_generates :
     ∀ variety ∈ varieties, ∃ g : Group,
-      (∀ f ∈ Forms.all, f.column? "Variety" = some variety → Generates g f) ∧
-      ∀ g' : Group, (∀ f ∈ Forms.all, f.column? "Variety" = some variety → Generates g' f) →
-        g' = g := by
+      (∀ a ∈ formsOf variety, Generates g a) ∧
+      ∀ g' : Group, (∀ a ∈ formsOf variety, Generates g' a) → g' = g := by
   decide +kernel
 
 end Stojkovic2026

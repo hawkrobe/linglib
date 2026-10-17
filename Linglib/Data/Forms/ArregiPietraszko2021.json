@@ -1,74 +1,10 @@
 {
-  "FormTable": [
-    {
-      "ID": "arregipietraszko2021_19_cl1",
-      "Language_ID": "nort2795",
-      "Parameter_ID": "rel_cl1",
-      "Form": "o",
-      "Segments": ["o"],
-      "Comment": "",
-      "Source": ["arregi-pietraszko-2021[(19)]"],
-      "Lnk": "a",
-      "D": "u",
-      "T": "u"
-    },
-    {
-      "ID": "arregipietraszko2021_19_cl9",
-      "Language_ID": "nort2795",
-      "Parameter_ID": "rel_cl9",
-      "Form": "e",
-      "Segments": ["e"],
-      "Comment": "",
-      "Source": ["arregi-pietraszko-2021[(19)]"],
-      "Lnk": "a",
-      "D": "i",
-      "T": "i"
-    },
-    {
-      "ID": "arregipietraszko2021_19_cl7",
-      "Language_ID": "nort2795",
-      "Parameter_ID": "rel_cl7",
-      "Form": "esi",
-      "Segments": ["e", "s", "i"],
-      "Comment": "",
-      "Source": ["arregi-pietraszko-2021[(19)]"],
-      "Lnk": "a",
-      "D": "i",
-      "T": "si"
-    },
-    {
-      "ID": "arregipietraszko2021_19_cl11",
-      "Language_ID": "nort2795",
-      "Parameter_ID": "rel_cl11",
-      "Form": "olu",
-      "Segments": ["o", "l", "u"],
-      "Comment": "",
-      "Source": ["arregi-pietraszko-2021[(19)]"],
-      "Lnk": "a",
-      "D": "u",
-      "T": "lu"
-    },
-    {
-      "ID": "arregipietraszko2021_doesnt",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "do_3sg_neg",
-      "Form": "doesn't",
-      "Segments": ["doe", "s", "n't"],
-      "Comment": "The paper stars the order do(e)-n't-s, with contracted negation inside the inflection.",
-      "Source": ["arregi-pietraszko-2021[p. 264]"],
-      "Verb": "dummy"
-    },
-    {
-      "ID": "arregipietraszko2021_hadnt",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "have_pst_neg",
-      "Form": "hadn't",
-      "Segments": ["ha", "d", "n't"],
-      "Comment": "The paper stars the order ha(ve)-n't-ed, with contracted negation inside the inflection.",
-      "Source": ["arregi-pietraszko-2021[p. 264]"],
-      "Verb": "auxiliary"
-    }
-  ],
+  "Types": {
+    "Verb": [
+      {"Value": "dummy", "Lean": "dummy", "Description": "dummy do"},
+      {"Value": "auxiliary", "Lean": "auxiliary", "Description": "an auxiliary"}
+    ]
+  },
   "ParameterTable": [
     {
       "ID": "rel_cl1",
@@ -99,6 +35,140 @@
       "ID": "have_pst_neg",
       "Name": "have.PST-NEG",
       "Description": "past of the auxiliary have with contracted negation"
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "rel_cl1",
+      "Language_ID": "nort2795",
+      "Parameter_ID": "rel_cl1"
+    },
+    {
+      "ID": "rel_cl9",
+      "Language_ID": "nort2795",
+      "Parameter_ID": "rel_cl9"
+    },
+    {
+      "ID": "rel_cl7",
+      "Language_ID": "nort2795",
+      "Parameter_ID": "rel_cl7"
+    },
+    {
+      "ID": "rel_cl11",
+      "Language_ID": "nort2795",
+      "Parameter_ID": "rel_cl11"
+    },
+    {
+      "ID": "do_3sg_neg",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "do_3sg_neg"
+    },
+    {
+      "ID": "have_pst_neg",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "have_pst_neg"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "arregipietraszko2021_19_cl1",
+      "Lexeme_ID": "rel_cl1",
+      "Form": "o",
+      "Segments": ["o"],
+      "Source": ["arregi-pietraszko-2021[(19)]"]
+    },
+    {
+      "ID": "arregipietraszko2021_19_cl9",
+      "Lexeme_ID": "rel_cl9",
+      "Form": "e",
+      "Segments": ["e"],
+      "Source": ["arregi-pietraszko-2021[(19)]"]
+    },
+    {
+      "ID": "arregipietraszko2021_19_cl7",
+      "Lexeme_ID": "rel_cl7",
+      "Form": "esi",
+      "Segments": ["e", "s", "i"],
+      "Source": ["arregi-pietraszko-2021[(19)]"]
+    },
+    {
+      "ID": "arregipietraszko2021_19_cl11",
+      "Lexeme_ID": "rel_cl11",
+      "Form": "olu",
+      "Segments": ["o", "l", "u"],
+      "Source": ["arregi-pietraszko-2021[(19)]"]
+    },
+    {
+      "ID": "arregipietraszko2021_doesnt",
+      "Lexeme_ID": "do_3sg_neg",
+      "Form": "doesn't",
+      "Segments": ["doe", "s", "n't"],
+      "Comment": "The paper stars the order do(e)-n't-s, with contracted negation inside the inflection.",
+      "Source": ["arregi-pietraszko-2021[p. 264]"]
+    },
+    {
+      "ID": "arregipietraszko2021_hadnt",
+      "Lexeme_ID": "have_pst_neg",
+      "Form": "hadn't",
+      "Segments": ["ha", "d", "n't"],
+      "Comment": "The paper stars the order ha(ve)-n't-ed, with contracted negation inside the inflection.",
+      "Source": ["arregi-pietraszko-2021[p. 264]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Lnk",
+      "Lean": "lnk",
+      "Type": "String"
+    },
+    {
+      "Name": "D",
+      "Lean": "d",
+      "Type": "String"
+    },
+    {
+      "Name": "T",
+      "Lean": "t",
+      "Type": "String"
+    },
+    {
+      "Name": "Verb",
+      "Lean": "verb",
+      "Type": "Verb"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "arregipietraszko2021_19_cl1",
+      "Lnk": "a",
+      "D": "u",
+      "T": "u"
+    },
+    {
+      "Form_ID": "arregipietraszko2021_19_cl9",
+      "Lnk": "a",
+      "D": "i",
+      "T": "i"
+    },
+    {
+      "Form_ID": "arregipietraszko2021_19_cl7",
+      "Lnk": "a",
+      "D": "i",
+      "T": "si"
+    },
+    {
+      "Form_ID": "arregipietraszko2021_19_cl11",
+      "Lnk": "a",
+      "D": "u",
+      "T": "lu"
+    },
+    {
+      "Form_ID": "arregipietraszko2021_doesnt",
+      "Verb": "dummy"
+    },
+    {
+      "Form_ID": "arregipietraszko2021_hadnt",
+      "Verb": "auxiliary"
     }
   ]
 }

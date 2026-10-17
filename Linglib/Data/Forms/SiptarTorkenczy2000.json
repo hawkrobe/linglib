@@ -1,540 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "siptartorkenczy2000_haz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "house",
-      "Form": "ház",
-      "Segments": ["h", "á", "z"],
-      "Comment": "stem of Table 11 class IA-b",
-      "Source": ["siptar-torkenczy-2000[(13)]"],
-      "Class": "IA-b"
-    },
-    {
-      "ID": "siptartorkenczy2000_hazunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "house_1pl",
-      "Form": "házunk",
-      "Segments": ["h", "á", "z", "u", "n", "k"],
-      "Comment": "1pl of ház",
-      "Source": ["siptar-torkenczy-2000[(13a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_haztol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "house_abl",
-      "Form": "háztól",
-      "Segments": ["h", "á", "z", "t", "ó", "l"],
-      "Comment": "ablative of ház",
-      "Source": ["siptar-torkenczy-2000[(13b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_haznak",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "house_dat",
-      "Form": "háznak",
-      "Segments": ["h", "á", "z", "n", "a", "k"],
-      "Comment": "dative of ház",
-      "Source": ["siptar-torkenczy-2000[(13c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_hazhoz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "house_all",
-      "Form": "házhoz",
-      "Segments": ["h", "á", "z", "h", "o", "z"],
-      "Comment": "allative of ház",
-      "Source": ["siptar-torkenczy-2000[(13d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_tuz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "fire",
-      "Form": "tűz",
-      "Segments": ["t", "ű", "z"],
-      "Comment": "stem of Table 11 class IA-f",
-      "Source": ["siptar-torkenczy-2000[(14)]"],
-      "Class": "IA-f"
-    },
-    {
-      "ID": "siptartorkenczy2000_tuzunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "fire_1pl",
-      "Form": "tüzünk",
-      "Segments": ["t", "ü", "z", "ü", "n", "k"],
-      "Comment": "1pl of tűz",
-      "Source": ["siptar-torkenczy-2000[(14a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_tuztol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "fire_abl",
-      "Form": "tűztől",
-      "Segments": ["t", "ű", "z", "t", "ő", "l"],
-      "Comment": "ablative of tűz",
-      "Source": ["siptar-torkenczy-2000[(14b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_tuznek",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "fire_dat",
-      "Form": "tűznek",
-      "Segments": ["t", "ű", "z", "n", "e", "k"],
-      "Comment": "dative of tűz",
-      "Source": ["siptar-torkenczy-2000[(14c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_tuzhoz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "fire_all",
-      "Form": "tűzhöz",
-      "Segments": ["t", "ű", "z", "h", "ö", "z"],
-      "Comment": "allative of tűz",
-      "Source": ["siptar-torkenczy-2000[(14d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_viz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "water",
-      "Form": "víz",
-      "Segments": ["v", "í", "z"],
-      "Comment": "stem of Table 11 class IIA-f",
-      "Source": ["siptar-torkenczy-2000[(15)]"],
-      "Class": "IIA-f"
-    },
-    {
-      "ID": "siptartorkenczy2000_vizunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "water_1pl",
-      "Form": "vizünk",
-      "Segments": ["v", "i", "z", "ü", "n", "k"],
-      "Comment": "1pl of víz",
-      "Source": ["siptar-torkenczy-2000[(15a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_viztol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "water_abl",
-      "Form": "víztől",
-      "Segments": ["v", "í", "z", "t", "ő", "l"],
-      "Comment": "ablative of víz",
-      "Source": ["siptar-torkenczy-2000[(15b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_viznek",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "water_dat",
-      "Form": "víznek",
-      "Segments": ["v", "í", "z", "n", "e", "k"],
-      "Comment": "dative of víz",
-      "Source": ["siptar-torkenczy-2000[(15c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_vizhez",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "water_all",
-      "Form": "vízhez",
-      "Segments": ["v", "í", "z", "h", "e", "z"],
-      "Comment": "allative of víz",
-      "Source": ["siptar-torkenczy-2000[(15d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_piros",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "red",
-      "Form": "piros",
-      "Segments": ["p", "i", "r", "o", "s"],
-      "Comment": "stem of Table 11 class IA-b",
-      "Source": ["siptar-torkenczy-2000[(16)]"],
-      "Class": "IA-b"
-    },
-    {
-      "ID": "siptartorkenczy2000_pirosunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "red_1pl",
-      "Form": "pirosunk",
-      "Segments": ["p", "i", "r", "o", "s", "u", "n", "k"],
-      "Comment": "1pl of piros",
-      "Source": ["siptar-torkenczy-2000[(16a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_pirostol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "red_abl",
-      "Form": "pirostól",
-      "Segments": ["p", "i", "r", "o", "s", "t", "ó", "l"],
-      "Comment": "ablative of piros",
-      "Source": ["siptar-torkenczy-2000[(16b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_pirosnak",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "red_dat",
-      "Form": "pirosnak",
-      "Segments": ["p", "i", "r", "o", "s", "n", "a", "k"],
-      "Comment": "dative of piros",
-      "Source": ["siptar-torkenczy-2000[(16c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_piroshoz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "red_all",
-      "Form": "piroshoz",
-      "Segments": ["p", "i", "r", "o", "s", "h", "o", "z"],
-      "Comment": "allative of piros",
-      "Source": ["siptar-torkenczy-2000[(16d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_nuansz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "nuance",
-      "Form": "nüansz",
-      "Segments": ["n", "ü", "a", "n", "sz"],
-      "Comment": "stem of Table 11 class IB-b",
-      "Source": ["siptar-torkenczy-2000[(17)]"],
-      "Class": "IB-b"
-    },
-    {
-      "ID": "siptartorkenczy2000_nuanszunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "nuance_1pl",
-      "Form": "nüanszunk",
-      "Segments": ["n", "ü", "a", "n", "sz", "u", "n", "k"],
-      "Comment": "1pl of nüansz",
-      "Source": ["siptar-torkenczy-2000[(17a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_nuansztol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "nuance_abl",
-      "Form": "nüansztól",
-      "Segments": ["n", "ü", "a", "n", "sz", "t", "ó", "l"],
-      "Comment": "ablative of nüansz",
-      "Source": ["siptar-torkenczy-2000[(17b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_nuansznak",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "nuance_dat",
-      "Form": "nüansznak",
-      "Segments": ["n", "ü", "a", "n", "sz", "n", "a", "k"],
-      "Comment": "dative of nüansz",
-      "Source": ["siptar-torkenczy-2000[(17c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_nuanszhoz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "nuance_all",
-      "Form": "nüanszhoz",
-      "Segments": ["n", "ü", "a", "n", "sz", "h", "o", "z"],
-      "Comment": "allative of nüansz",
-      "Source": ["siptar-torkenczy-2000[(17d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_oreg",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "old",
-      "Form": "öreg",
-      "Segments": ["ö", "r", "e", "g"],
-      "Comment": "stem of Table 11 class IIB-f",
-      "Source": ["siptar-torkenczy-2000[(18)]"],
-      "Class": "IIB-f"
-    },
-    {
-      "ID": "siptartorkenczy2000_oregunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "old_1pl",
-      "Form": "öregünk",
-      "Segments": ["ö", "r", "e", "g", "ü", "n", "k"],
-      "Comment": "1pl of öreg",
-      "Source": ["siptar-torkenczy-2000[(18a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_oregtol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "old_abl",
-      "Form": "öregtől",
-      "Segments": ["ö", "r", "e", "g", "t", "ő", "l"],
-      "Comment": "ablative of öreg",
-      "Source": ["siptar-torkenczy-2000[(18b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_oregnek",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "old_dat",
-      "Form": "öregnek",
-      "Segments": ["ö", "r", "e", "g", "n", "e", "k"],
-      "Comment": "dative of öreg",
-      "Source": ["siptar-torkenczy-2000[(18c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_oreghez",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "old_all",
-      "Form": "öreghez",
-      "Segments": ["ö", "r", "e", "g", "h", "e", "z"],
-      "Comment": "allative of öreg",
-      "Source": ["siptar-torkenczy-2000[(18d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_szemolcs",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "wart",
-      "Form": "szemölcs",
-      "Segments": ["sz", "e", "m", "ö", "l", "cs"],
-      "Comment": "stem of Table 11 class IA-f",
-      "Source": ["siptar-torkenczy-2000[(19)]"],
-      "Class": "IA-f"
-    },
-    {
-      "ID": "siptartorkenczy2000_szemolcsunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "wart_1pl",
-      "Form": "szemölcsünk",
-      "Segments": ["sz", "e", "m", "ö", "l", "cs", "ü", "n", "k"],
-      "Comment": "1pl of szemölcs",
-      "Source": ["siptar-torkenczy-2000[(19a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_szemolcstol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "wart_abl",
-      "Form": "szemölcstől",
-      "Segments": ["sz", "e", "m", "ö", "l", "cs", "t", "ő", "l"],
-      "Comment": "ablative of szemölcs",
-      "Source": ["siptar-torkenczy-2000[(19b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_szemolcsnek",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "wart_dat",
-      "Form": "szemölcsnek",
-      "Segments": ["sz", "e", "m", "ö", "l", "cs", "n", "e", "k"],
-      "Comment": "dative of szemölcs",
-      "Source": ["siptar-torkenczy-2000[(19c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_szemolcshoz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "wart_all",
-      "Form": "szemölcshöz",
-      "Segments": ["sz", "e", "m", "ö", "l", "cs", "h", "ö", "z"],
-      "Comment": "allative of szemölcs",
-      "Source": ["siptar-torkenczy-2000[(19d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_sofor",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "driver",
-      "Form": "sofőr",
-      "Segments": ["s", "o", "f", "ő", "r"],
-      "Comment": "stem of Table 11 class IB-f",
-      "Source": ["siptar-torkenczy-2000[(20)]"],
-      "Class": "IB-f"
-    },
-    {
-      "ID": "siptartorkenczy2000_soforunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "driver_1pl",
-      "Form": "sofőrünk",
-      "Segments": ["s", "o", "f", "ő", "r", "ü", "n", "k"],
-      "Comment": "1pl of sofőr",
-      "Source": ["siptar-torkenczy-2000[(20a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_sofortol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "driver_abl",
-      "Form": "sofőrtől",
-      "Segments": ["s", "o", "f", "ő", "r", "t", "ő", "l"],
-      "Comment": "ablative of sofőr",
-      "Source": ["siptar-torkenczy-2000[(20b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_sofornek",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "driver_dat",
-      "Form": "sofőrnek",
-      "Segments": ["s", "o", "f", "ő", "r", "n", "e", "k"],
-      "Comment": "dative of sofőr",
-      "Source": ["siptar-torkenczy-2000[(20c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_soforhoz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "driver_all",
-      "Form": "sofőrhöz",
-      "Segments": ["s", "o", "f", "ő", "r", "h", "ö", "z"],
-      "Comment": "allative of sofőr",
-      "Source": ["siptar-torkenczy-2000[(20d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_papir",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "paper",
-      "Form": "papír",
-      "Segments": ["p", "a", "p", "í", "r"],
-      "Comment": "stem of Table 11 class IIB-b",
-      "Source": ["siptar-torkenczy-2000[(21)]"],
-      "Class": "IIB-b"
-    },
-    {
-      "ID": "siptartorkenczy2000_papirunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "paper_1pl",
-      "Form": "papírunk",
-      "Segments": ["p", "a", "p", "í", "r", "u", "n", "k"],
-      "Comment": "1pl of papír",
-      "Source": ["siptar-torkenczy-2000[(21a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_papirtol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "paper_abl",
-      "Form": "papírtól",
-      "Segments": ["p", "a", "p", "í", "r", "t", "ó", "l"],
-      "Comment": "ablative of papír",
-      "Source": ["siptar-torkenczy-2000[(21b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_papirnak",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "paper_dat",
-      "Form": "papírnak",
-      "Segments": ["p", "a", "p", "í", "r", "n", "a", "k"],
-      "Comment": "dative of papír",
-      "Source": ["siptar-torkenczy-2000[(21c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_papirhoz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "paper_all",
-      "Form": "papírhoz",
-      "Segments": ["p", "a", "p", "í", "r", "h", "o", "z"],
-      "Comment": "allative of papír",
-      "Source": ["siptar-torkenczy-2000[(21d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_hid",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "bridge",
-      "Form": "híd",
-      "Segments": ["h", "í", "d"],
-      "Comment": "stem of Table 11 class IIA-b",
-      "Source": ["siptar-torkenczy-2000[(22)]"],
-      "Class": "IIA-b"
-    },
-    {
-      "ID": "siptartorkenczy2000_hidunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "bridge_1pl",
-      "Form": "hidunk",
-      "Segments": ["h", "i", "d", "u", "n", "k"],
-      "Comment": "1pl of híd",
-      "Source": ["siptar-torkenczy-2000[(22a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_hidtol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "bridge_abl",
-      "Form": "hídtól",
-      "Segments": ["h", "í", "d", "t", "ó", "l"],
-      "Comment": "ablative of híd",
-      "Source": ["siptar-torkenczy-2000[(22b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_hidnak",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "bridge_dat",
-      "Form": "hídnak",
-      "Segments": ["h", "í", "d", "n", "a", "k"],
-      "Comment": "dative of híd",
-      "Source": ["siptar-torkenczy-2000[(22c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_hidhoz",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "bridge_all",
-      "Form": "hídhoz",
-      "Segments": ["h", "í", "d", "h", "o", "z"],
-      "Comment": "allative of híd",
-      "Source": ["siptar-torkenczy-2000[(22d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_kodex",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "codex",
-      "Form": "kódex",
-      "Segments": ["k", "ó", "d", "e", "x"],
-      "Comment": "stem of Table 11 class IB-f",
-      "Source": ["siptar-torkenczy-2000[(23)]"],
-      "Class": "IB-f"
-    },
-    {
-      "ID": "siptartorkenczy2000_kodexunk",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "codex_1pl",
-      "Form": "kódexünk",
-      "Segments": ["k", "ó", "d", "e", "x", "ü", "n", "k"],
-      "Comment": "1pl of kódex",
-      "Source": ["siptar-torkenczy-2000[(23a)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_kodextol",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "codex_abl",
-      "Form": "kódextől",
-      "Segments": ["k", "ó", "d", "e", "x", "t", "ő", "l"],
-      "Comment": "ablative of kódex",
-      "Source": ["siptar-torkenczy-2000[(23b)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_kodexnek",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "codex_dat",
-      "Form": "kódexnek",
-      "Segments": ["k", "ó", "d", "e", "x", "n", "e", "k"],
-      "Comment": "dative of kódex",
-      "Source": ["siptar-torkenczy-2000[(23c)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_kodexhez",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "codex_all",
-      "Form": "kódexhez",
-      "Segments": ["k", "ó", "d", "e", "x", "h", "e", "z"],
-      "Comment": "allative of kódex",
-      "Source": ["siptar-torkenczy-2000[(23d)]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_dzsungel",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "jungle",
-      "Form": "dzsungel",
-      "Segments": ["dzs", "u", "n", "g", "e", "l"],
-      "Comment": "stem of Table 11 class IIB-b/IB-f",
-      "Source": ["siptar-torkenczy-2000[section 3.2.3.1]"],
-      "Class": "IIB-b/IB-f"
-    },
-    {
-      "ID": "siptartorkenczy2000_dzsungelban",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "jungle_iness",
-      "Form": "dzsungelban",
-      "Segments": ["dzs", "u", "n", "g", "e", "l", "b", "a", "n"],
-      "Comment": "inessive of dzsungel, vacillating",
-      "Source": ["siptar-torkenczy-2000[section 3.2.3.1]"]
-    },
-    {
-      "ID": "siptartorkenczy2000_dzsungelben",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "jungle_iness",
-      "Form": "dzsungelben",
-      "Segments": ["dzs", "u", "n", "g", "e", "l", "b", "e", "n"],
-      "Comment": "inessive of dzsungel, vacillating",
-      "Source": ["siptar-torkenczy-2000[section 3.2.3.1]"]
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "house",
@@ -820,6 +284,759 @@
       "ID": "jungle_iness",
       "Name": "jungle (iness)",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "house",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "house"
+    },
+    {
+      "ID": "house_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "house_1pl"
+    },
+    {
+      "ID": "house_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "house_abl"
+    },
+    {
+      "ID": "house_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "house_dat"
+    },
+    {
+      "ID": "house_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "house_all"
+    },
+    {
+      "ID": "fire",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "fire"
+    },
+    {
+      "ID": "fire_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "fire_1pl"
+    },
+    {
+      "ID": "fire_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "fire_abl"
+    },
+    {
+      "ID": "fire_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "fire_dat"
+    },
+    {
+      "ID": "fire_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "fire_all"
+    },
+    {
+      "ID": "water",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "water"
+    },
+    {
+      "ID": "water_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "water_1pl"
+    },
+    {
+      "ID": "water_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "water_abl"
+    },
+    {
+      "ID": "water_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "water_dat"
+    },
+    {
+      "ID": "water_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "water_all"
+    },
+    {
+      "ID": "red",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "red"
+    },
+    {
+      "ID": "red_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "red_1pl"
+    },
+    {
+      "ID": "red_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "red_abl"
+    },
+    {
+      "ID": "red_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "red_dat"
+    },
+    {
+      "ID": "red_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "red_all"
+    },
+    {
+      "ID": "nuance",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "nuance"
+    },
+    {
+      "ID": "nuance_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "nuance_1pl"
+    },
+    {
+      "ID": "nuance_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "nuance_abl"
+    },
+    {
+      "ID": "nuance_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "nuance_dat"
+    },
+    {
+      "ID": "nuance_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "nuance_all"
+    },
+    {
+      "ID": "old",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "old"
+    },
+    {
+      "ID": "old_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "old_1pl"
+    },
+    {
+      "ID": "old_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "old_abl"
+    },
+    {
+      "ID": "old_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "old_dat"
+    },
+    {
+      "ID": "old_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "old_all"
+    },
+    {
+      "ID": "wart",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "wart"
+    },
+    {
+      "ID": "wart_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "wart_1pl"
+    },
+    {
+      "ID": "wart_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "wart_abl"
+    },
+    {
+      "ID": "wart_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "wart_dat"
+    },
+    {
+      "ID": "wart_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "wart_all"
+    },
+    {
+      "ID": "driver",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "driver"
+    },
+    {
+      "ID": "driver_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "driver_1pl"
+    },
+    {
+      "ID": "driver_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "driver_abl"
+    },
+    {
+      "ID": "driver_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "driver_dat"
+    },
+    {
+      "ID": "driver_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "driver_all"
+    },
+    {
+      "ID": "paper",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "paper"
+    },
+    {
+      "ID": "paper_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "paper_1pl"
+    },
+    {
+      "ID": "paper_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "paper_abl"
+    },
+    {
+      "ID": "paper_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "paper_dat"
+    },
+    {
+      "ID": "paper_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "paper_all"
+    },
+    {
+      "ID": "bridge",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "bridge"
+    },
+    {
+      "ID": "bridge_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "bridge_1pl"
+    },
+    {
+      "ID": "bridge_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "bridge_abl"
+    },
+    {
+      "ID": "bridge_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "bridge_dat"
+    },
+    {
+      "ID": "bridge_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "bridge_all"
+    },
+    {
+      "ID": "codex",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "codex"
+    },
+    {
+      "ID": "codex_1pl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "codex_1pl"
+    },
+    {
+      "ID": "codex_abl",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "codex_abl"
+    },
+    {
+      "ID": "codex_dat",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "codex_dat"
+    },
+    {
+      "ID": "codex_all",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "codex_all"
+    },
+    {
+      "ID": "jungle",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "jungle"
+    },
+    {
+      "ID": "jungle_iness",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "jungle_iness"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "siptartorkenczy2000_haz",
+      "Lexeme_ID": "house",
+      "Form": "ház",
+      "Segments": ["h", "á", "z"],
+      "Comment": "stem of Table 11 class IA-b",
+      "Source": ["siptar-torkenczy-2000[(13)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_hazunk",
+      "Lexeme_ID": "house_1pl",
+      "Form": "házunk",
+      "Segments": ["h", "á", "z", "u", "n", "k"],
+      "Comment": "1pl of ház",
+      "Source": ["siptar-torkenczy-2000[(13a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_haztol",
+      "Lexeme_ID": "house_abl",
+      "Form": "háztól",
+      "Segments": ["h", "á", "z", "t", "ó", "l"],
+      "Comment": "ablative of ház",
+      "Source": ["siptar-torkenczy-2000[(13b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_haznak",
+      "Lexeme_ID": "house_dat",
+      "Form": "háznak",
+      "Segments": ["h", "á", "z", "n", "a", "k"],
+      "Comment": "dative of ház",
+      "Source": ["siptar-torkenczy-2000[(13c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_hazhoz",
+      "Lexeme_ID": "house_all",
+      "Form": "házhoz",
+      "Segments": ["h", "á", "z", "h", "o", "z"],
+      "Comment": "allative of ház",
+      "Source": ["siptar-torkenczy-2000[(13d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_tuz",
+      "Lexeme_ID": "fire",
+      "Form": "tűz",
+      "Segments": ["t", "ű", "z"],
+      "Comment": "stem of Table 11 class IA-f",
+      "Source": ["siptar-torkenczy-2000[(14)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_tuzunk",
+      "Lexeme_ID": "fire_1pl",
+      "Form": "tüzünk",
+      "Segments": ["t", "ü", "z", "ü", "n", "k"],
+      "Comment": "1pl of tűz",
+      "Source": ["siptar-torkenczy-2000[(14a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_tuztol",
+      "Lexeme_ID": "fire_abl",
+      "Form": "tűztől",
+      "Segments": ["t", "ű", "z", "t", "ő", "l"],
+      "Comment": "ablative of tűz",
+      "Source": ["siptar-torkenczy-2000[(14b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_tuznek",
+      "Lexeme_ID": "fire_dat",
+      "Form": "tűznek",
+      "Segments": ["t", "ű", "z", "n", "e", "k"],
+      "Comment": "dative of tűz",
+      "Source": ["siptar-torkenczy-2000[(14c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_tuzhoz",
+      "Lexeme_ID": "fire_all",
+      "Form": "tűzhöz",
+      "Segments": ["t", "ű", "z", "h", "ö", "z"],
+      "Comment": "allative of tűz",
+      "Source": ["siptar-torkenczy-2000[(14d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_viz",
+      "Lexeme_ID": "water",
+      "Form": "víz",
+      "Segments": ["v", "í", "z"],
+      "Comment": "stem of Table 11 class IIA-f",
+      "Source": ["siptar-torkenczy-2000[(15)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_vizunk",
+      "Lexeme_ID": "water_1pl",
+      "Form": "vizünk",
+      "Segments": ["v", "i", "z", "ü", "n", "k"],
+      "Comment": "1pl of víz",
+      "Source": ["siptar-torkenczy-2000[(15a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_viztol",
+      "Lexeme_ID": "water_abl",
+      "Form": "víztől",
+      "Segments": ["v", "í", "z", "t", "ő", "l"],
+      "Comment": "ablative of víz",
+      "Source": ["siptar-torkenczy-2000[(15b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_viznek",
+      "Lexeme_ID": "water_dat",
+      "Form": "víznek",
+      "Segments": ["v", "í", "z", "n", "e", "k"],
+      "Comment": "dative of víz",
+      "Source": ["siptar-torkenczy-2000[(15c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_vizhez",
+      "Lexeme_ID": "water_all",
+      "Form": "vízhez",
+      "Segments": ["v", "í", "z", "h", "e", "z"],
+      "Comment": "allative of víz",
+      "Source": ["siptar-torkenczy-2000[(15d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_piros",
+      "Lexeme_ID": "red",
+      "Form": "piros",
+      "Segments": ["p", "i", "r", "o", "s"],
+      "Comment": "stem of Table 11 class IA-b",
+      "Source": ["siptar-torkenczy-2000[(16)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_pirosunk",
+      "Lexeme_ID": "red_1pl",
+      "Form": "pirosunk",
+      "Segments": ["p", "i", "r", "o", "s", "u", "n", "k"],
+      "Comment": "1pl of piros",
+      "Source": ["siptar-torkenczy-2000[(16a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_pirostol",
+      "Lexeme_ID": "red_abl",
+      "Form": "pirostól",
+      "Segments": ["p", "i", "r", "o", "s", "t", "ó", "l"],
+      "Comment": "ablative of piros",
+      "Source": ["siptar-torkenczy-2000[(16b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_pirosnak",
+      "Lexeme_ID": "red_dat",
+      "Form": "pirosnak",
+      "Segments": ["p", "i", "r", "o", "s", "n", "a", "k"],
+      "Comment": "dative of piros",
+      "Source": ["siptar-torkenczy-2000[(16c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_piroshoz",
+      "Lexeme_ID": "red_all",
+      "Form": "piroshoz",
+      "Segments": ["p", "i", "r", "o", "s", "h", "o", "z"],
+      "Comment": "allative of piros",
+      "Source": ["siptar-torkenczy-2000[(16d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_nuansz",
+      "Lexeme_ID": "nuance",
+      "Form": "nüansz",
+      "Segments": ["n", "ü", "a", "n", "sz"],
+      "Comment": "stem of Table 11 class IB-b",
+      "Source": ["siptar-torkenczy-2000[(17)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_nuanszunk",
+      "Lexeme_ID": "nuance_1pl",
+      "Form": "nüanszunk",
+      "Segments": ["n", "ü", "a", "n", "sz", "u", "n", "k"],
+      "Comment": "1pl of nüansz",
+      "Source": ["siptar-torkenczy-2000[(17a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_nuansztol",
+      "Lexeme_ID": "nuance_abl",
+      "Form": "nüansztól",
+      "Segments": ["n", "ü", "a", "n", "sz", "t", "ó", "l"],
+      "Comment": "ablative of nüansz",
+      "Source": ["siptar-torkenczy-2000[(17b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_nuansznak",
+      "Lexeme_ID": "nuance_dat",
+      "Form": "nüansznak",
+      "Segments": ["n", "ü", "a", "n", "sz", "n", "a", "k"],
+      "Comment": "dative of nüansz",
+      "Source": ["siptar-torkenczy-2000[(17c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_nuanszhoz",
+      "Lexeme_ID": "nuance_all",
+      "Form": "nüanszhoz",
+      "Segments": ["n", "ü", "a", "n", "sz", "h", "o", "z"],
+      "Comment": "allative of nüansz",
+      "Source": ["siptar-torkenczy-2000[(17d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_oreg",
+      "Lexeme_ID": "old",
+      "Form": "öreg",
+      "Segments": ["ö", "r", "e", "g"],
+      "Comment": "stem of Table 11 class IIB-f",
+      "Source": ["siptar-torkenczy-2000[(18)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_oregunk",
+      "Lexeme_ID": "old_1pl",
+      "Form": "öregünk",
+      "Segments": ["ö", "r", "e", "g", "ü", "n", "k"],
+      "Comment": "1pl of öreg",
+      "Source": ["siptar-torkenczy-2000[(18a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_oregtol",
+      "Lexeme_ID": "old_abl",
+      "Form": "öregtől",
+      "Segments": ["ö", "r", "e", "g", "t", "ő", "l"],
+      "Comment": "ablative of öreg",
+      "Source": ["siptar-torkenczy-2000[(18b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_oregnek",
+      "Lexeme_ID": "old_dat",
+      "Form": "öregnek",
+      "Segments": ["ö", "r", "e", "g", "n", "e", "k"],
+      "Comment": "dative of öreg",
+      "Source": ["siptar-torkenczy-2000[(18c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_oreghez",
+      "Lexeme_ID": "old_all",
+      "Form": "öreghez",
+      "Segments": ["ö", "r", "e", "g", "h", "e", "z"],
+      "Comment": "allative of öreg",
+      "Source": ["siptar-torkenczy-2000[(18d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_szemolcs",
+      "Lexeme_ID": "wart",
+      "Form": "szemölcs",
+      "Segments": ["sz", "e", "m", "ö", "l", "cs"],
+      "Comment": "stem of Table 11 class IA-f",
+      "Source": ["siptar-torkenczy-2000[(19)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_szemolcsunk",
+      "Lexeme_ID": "wart_1pl",
+      "Form": "szemölcsünk",
+      "Segments": ["sz", "e", "m", "ö", "l", "cs", "ü", "n", "k"],
+      "Comment": "1pl of szemölcs",
+      "Source": ["siptar-torkenczy-2000[(19a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_szemolcstol",
+      "Lexeme_ID": "wart_abl",
+      "Form": "szemölcstől",
+      "Segments": ["sz", "e", "m", "ö", "l", "cs", "t", "ő", "l"],
+      "Comment": "ablative of szemölcs",
+      "Source": ["siptar-torkenczy-2000[(19b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_szemolcsnek",
+      "Lexeme_ID": "wart_dat",
+      "Form": "szemölcsnek",
+      "Segments": ["sz", "e", "m", "ö", "l", "cs", "n", "e", "k"],
+      "Comment": "dative of szemölcs",
+      "Source": ["siptar-torkenczy-2000[(19c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_szemolcshoz",
+      "Lexeme_ID": "wart_all",
+      "Form": "szemölcshöz",
+      "Segments": ["sz", "e", "m", "ö", "l", "cs", "h", "ö", "z"],
+      "Comment": "allative of szemölcs",
+      "Source": ["siptar-torkenczy-2000[(19d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_sofor",
+      "Lexeme_ID": "driver",
+      "Form": "sofőr",
+      "Segments": ["s", "o", "f", "ő", "r"],
+      "Comment": "stem of Table 11 class IB-f",
+      "Source": ["siptar-torkenczy-2000[(20)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_soforunk",
+      "Lexeme_ID": "driver_1pl",
+      "Form": "sofőrünk",
+      "Segments": ["s", "o", "f", "ő", "r", "ü", "n", "k"],
+      "Comment": "1pl of sofőr",
+      "Source": ["siptar-torkenczy-2000[(20a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_sofortol",
+      "Lexeme_ID": "driver_abl",
+      "Form": "sofőrtől",
+      "Segments": ["s", "o", "f", "ő", "r", "t", "ő", "l"],
+      "Comment": "ablative of sofőr",
+      "Source": ["siptar-torkenczy-2000[(20b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_sofornek",
+      "Lexeme_ID": "driver_dat",
+      "Form": "sofőrnek",
+      "Segments": ["s", "o", "f", "ő", "r", "n", "e", "k"],
+      "Comment": "dative of sofőr",
+      "Source": ["siptar-torkenczy-2000[(20c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_soforhoz",
+      "Lexeme_ID": "driver_all",
+      "Form": "sofőrhöz",
+      "Segments": ["s", "o", "f", "ő", "r", "h", "ö", "z"],
+      "Comment": "allative of sofőr",
+      "Source": ["siptar-torkenczy-2000[(20d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_papir",
+      "Lexeme_ID": "paper",
+      "Form": "papír",
+      "Segments": ["p", "a", "p", "í", "r"],
+      "Comment": "stem of Table 11 class IIB-b",
+      "Source": ["siptar-torkenczy-2000[(21)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_papirunk",
+      "Lexeme_ID": "paper_1pl",
+      "Form": "papírunk",
+      "Segments": ["p", "a", "p", "í", "r", "u", "n", "k"],
+      "Comment": "1pl of papír",
+      "Source": ["siptar-torkenczy-2000[(21a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_papirtol",
+      "Lexeme_ID": "paper_abl",
+      "Form": "papírtól",
+      "Segments": ["p", "a", "p", "í", "r", "t", "ó", "l"],
+      "Comment": "ablative of papír",
+      "Source": ["siptar-torkenczy-2000[(21b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_papirnak",
+      "Lexeme_ID": "paper_dat",
+      "Form": "papírnak",
+      "Segments": ["p", "a", "p", "í", "r", "n", "a", "k"],
+      "Comment": "dative of papír",
+      "Source": ["siptar-torkenczy-2000[(21c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_papirhoz",
+      "Lexeme_ID": "paper_all",
+      "Form": "papírhoz",
+      "Segments": ["p", "a", "p", "í", "r", "h", "o", "z"],
+      "Comment": "allative of papír",
+      "Source": ["siptar-torkenczy-2000[(21d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_hid",
+      "Lexeme_ID": "bridge",
+      "Form": "híd",
+      "Segments": ["h", "í", "d"],
+      "Comment": "stem of Table 11 class IIA-b",
+      "Source": ["siptar-torkenczy-2000[(22)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_hidunk",
+      "Lexeme_ID": "bridge_1pl",
+      "Form": "hidunk",
+      "Segments": ["h", "i", "d", "u", "n", "k"],
+      "Comment": "1pl of híd",
+      "Source": ["siptar-torkenczy-2000[(22a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_hidtol",
+      "Lexeme_ID": "bridge_abl",
+      "Form": "hídtól",
+      "Segments": ["h", "í", "d", "t", "ó", "l"],
+      "Comment": "ablative of híd",
+      "Source": ["siptar-torkenczy-2000[(22b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_hidnak",
+      "Lexeme_ID": "bridge_dat",
+      "Form": "hídnak",
+      "Segments": ["h", "í", "d", "n", "a", "k"],
+      "Comment": "dative of híd",
+      "Source": ["siptar-torkenczy-2000[(22c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_hidhoz",
+      "Lexeme_ID": "bridge_all",
+      "Form": "hídhoz",
+      "Segments": ["h", "í", "d", "h", "o", "z"],
+      "Comment": "allative of híd",
+      "Source": ["siptar-torkenczy-2000[(22d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_kodex",
+      "Lexeme_ID": "codex",
+      "Form": "kódex",
+      "Segments": ["k", "ó", "d", "e", "x"],
+      "Comment": "stem of Table 11 class IB-f",
+      "Source": ["siptar-torkenczy-2000[(23)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_kodexunk",
+      "Lexeme_ID": "codex_1pl",
+      "Form": "kódexünk",
+      "Segments": ["k", "ó", "d", "e", "x", "ü", "n", "k"],
+      "Comment": "1pl of kódex",
+      "Source": ["siptar-torkenczy-2000[(23a)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_kodextol",
+      "Lexeme_ID": "codex_abl",
+      "Form": "kódextől",
+      "Segments": ["k", "ó", "d", "e", "x", "t", "ő", "l"],
+      "Comment": "ablative of kódex",
+      "Source": ["siptar-torkenczy-2000[(23b)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_kodexnek",
+      "Lexeme_ID": "codex_dat",
+      "Form": "kódexnek",
+      "Segments": ["k", "ó", "d", "e", "x", "n", "e", "k"],
+      "Comment": "dative of kódex",
+      "Source": ["siptar-torkenczy-2000[(23c)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_kodexhez",
+      "Lexeme_ID": "codex_all",
+      "Form": "kódexhez",
+      "Segments": ["k", "ó", "d", "e", "x", "h", "e", "z"],
+      "Comment": "allative of kódex",
+      "Source": ["siptar-torkenczy-2000[(23d)]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_dzsungel",
+      "Lexeme_ID": "jungle",
+      "Form": "dzsungel",
+      "Segments": ["dzs", "u", "n", "g", "e", "l"],
+      "Comment": "stem of Table 11 class IIB-b/IB-f",
+      "Source": ["siptar-torkenczy-2000[section 3.2.3.1]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_dzsungelban",
+      "Lexeme_ID": "jungle_iness",
+      "Form": "dzsungelban",
+      "Segments": ["dzs", "u", "n", "g", "e", "l", "b", "a", "n"],
+      "Comment": "inessive of dzsungel, vacillating",
+      "Source": ["siptar-torkenczy-2000[section 3.2.3.1]"]
+    },
+    {
+      "ID": "siptartorkenczy2000_dzsungelben",
+      "Lexeme_ID": "jungle_iness",
+      "Form": "dzsungelben",
+      "Segments": ["dzs", "u", "n", "g", "e", "l", "b", "e", "n"],
+      "Comment": "inessive of dzsungel, vacillating",
+      "Source": ["siptar-torkenczy-2000[section 3.2.3.1]"]
     }
   ],
   "FormRelationTable": [
@@ -1144,6 +1361,63 @@
       "Target_ID": "siptartorkenczy2000_dzsungelben",
       "Relation": "inessive",
       "Source": ["siptar-torkenczy-2000[section 3.2.3.1]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Class",
+      "Lean": "stemClass",
+      "Type": "String"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "siptartorkenczy2000_haz",
+      "Class": "IA-b"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_tuz",
+      "Class": "IA-f"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_viz",
+      "Class": "IIA-f"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_piros",
+      "Class": "IA-b"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_nuansz",
+      "Class": "IB-b"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_oreg",
+      "Class": "IIB-f"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_szemolcs",
+      "Class": "IA-f"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_sofor",
+      "Class": "IB-f"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_papir",
+      "Class": "IIB-b"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_hid",
+      "Class": "IIA-b"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_kodex",
+      "Class": "IB-f"
+    },
+    {
+      "Form_ID": "siptartorkenczy2000_dzsungel",
+      "Class": "IIB-b/IB-f"
     }
   ]
 }

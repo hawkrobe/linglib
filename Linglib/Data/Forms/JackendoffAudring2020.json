@@ -1,222 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "jackendoffaudring2020_sing",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "sing",
-      "Form": "sing",
-      "Segments": ["s", "ɪ", "ŋ"],
-      "Comment": "stem; onset, nucleus, coda",
-      "Source": ["jackendoff-audring-2020[(24)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_sang",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "sing_past",
-      "Form": "sang",
-      "Segments": ["s", "æ", "ŋ"],
-      "Comment": "past tense; onset, nucleus, coda",
-      "Source": ["jackendoff-audring-2020[(24)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_string",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "string",
-      "Form": "string",
-      "Segments": ["str", "ɪ", "ŋ"],
-      "Comment": "stem; the onset cluster is one segment",
-      "Source": ["jackendoff-audring-2020[(26)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_strung",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "string_past",
-      "Form": "strung",
-      "Segments": ["str", "ʌ", "ŋ"],
-      "Comment": "past tense",
-      "Source": ["jackendoff-audring-2020[(26)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_sprech",
-      "Language_ID": "stan1295",
-      "Parameter_ID": "speak_stem",
-      "Form": "sprech-",
-      "Segments": ["ʃpr", "ɛ", "x"],
-      "Comment": "default stem of sprechen",
-      "Source": ["jackendoff-audring-2020[(43)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_sprich",
-      "Language_ID": "stan1295",
-      "Parameter_ID": "speak_stem_present_2_3_sg",
-      "Form": "sprich-",
-      "Segments": ["ʃpr", "ɪ", "x"],
-      "Comment": "special stem of the present 2nd and 3rd singular",
-      "Source": ["jackendoff-audring-2020[(43)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_piggish",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "like_a_pig",
-      "Form": "piggish",
-      "Segments": ["pig", "ish"],
-      "Comment": "the -ish sisters of Section 7.8.1",
-      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_childish",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "like_a_child",
-      "Form": "childish",
-      "Segments": ["child", "ish"],
-      "Comment": "the -ish sisters of Section 7.8.1",
-      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_sluggish",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "like_a_slug",
-      "Form": "sluggish",
-      "Segments": ["slug", "ish"],
-      "Comment": "the -ish sisters of Section 7.8.1",
-      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_foolish",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "like_a_fool",
-      "Form": "foolish",
-      "Segments": ["fool", "ish"],
-      "Comment": "the newly encountered sister of Section 7.8.1",
-      "Source": ["jackendoff-audring-2020[7.8.1]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_arrowheadLake",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Arrowhead Lake",
-      "Segments": ["Arrowhead", "Lake"],
-      "Comment": "(17a): name then feature",
-      "Source": ["jackendoff-audring-2020[(17a)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_loonMountain",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Loon Mountain",
-      "Segments": ["Loon", "Mountain"],
-      "Comment": "(17a): name then feature",
-      "Source": ["jackendoff-audring-2020[(17a)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_wissahickonCreek",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Wissahickon Creek",
-      "Segments": ["Wissahickon", "Creek"],
-      "Comment": "(17a): name then feature",
-      "Source": ["jackendoff-audring-2020[(17a)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_laurelHill",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Laurel Hill",
-      "Segments": ["Laurel", "Hill"],
-      "Comment": "(17a): name then feature",
-      "Source": ["jackendoff-audring-2020[(17a)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_sugarIsland",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Sugar Island",
-      "Segments": ["Sugar", "Island"],
-      "Comment": "(17a): name then feature",
-      "Source": ["jackendoff-audring-2020[(17a)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_mountEverest",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Mount Everest",
-      "Segments": ["Mount", "Everest"],
-      "Comment": "(17b): feature then name",
-      "Source": ["jackendoff-audring-2020[(17b)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_lakeMichigan",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Lake Michigan",
-      "Segments": ["Lake", "Michigan"],
-      "Comment": "(17b): feature then name",
-      "Source": ["jackendoff-audring-2020[(17b)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_capeCod",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Cape Cod",
-      "Segments": ["Cape", "Cod"],
-      "Comment": "(17b): feature then name",
-      "Source": ["jackendoff-audring-2020[(17b)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_bayOfFundy",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "the Bay of Fundy",
-      "Segments": ["the", "Bay", "of", "Fundy"],
-      "Comment": "(17d): the feature of name",
-      "Source": ["jackendoff-audring-2020[(17d)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_gulfOfStLawrence",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "the Gulf of St. Lawrence",
-      "Segments": ["the", "Gulf", "of", "St. Lawrence"],
-      "Comment": "(17d)",
-      "Source": ["jackendoff-audring-2020[(17d)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_capeOfGoodHope",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "the Cape of Good Hope",
-      "Segments": ["the", "Cape", "of", "Good Hope"],
-      "Comment": "(17d)",
-      "Source": ["jackendoff-audring-2020[(17d)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_isleOfWight",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "the Isle of Wight",
-      "Segments": ["the", "Isle", "of", "Wight"],
-      "Comment": "(17d)",
-      "Source": ["jackendoff-audring-2020[(17d)]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_morrisMountain",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Morris Mountain",
-      "Segments": ["Morris", "Mountain"],
-      "Comment": "a coinage the pattern (17a) licenses",
-      "Source": ["jackendoff-audring-2020[2.7]"]
-    },
-    {
-      "ID": "jackendoffaudring2020_mountMorris",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "toponym",
-      "Form": "Mount Morris",
-      "Segments": ["Mount", "Morris"],
-      "Comment": "a coinage the pattern (17b) licenses",
-      "Source": ["jackendoff-audring-2020[2.7]"]
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "sing",
@@ -272,6 +54,257 @@
       "ID": "toponym",
       "Name": "name of a geographical feature",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "sing",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "sing"
+    },
+    {
+      "ID": "sing_past",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "sing_past"
+    },
+    {
+      "ID": "string",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "string"
+    },
+    {
+      "ID": "string_past",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "string_past"
+    },
+    {
+      "ID": "speak_stem",
+      "Language_ID": "stan1295",
+      "Parameter_ID": "speak_stem"
+    },
+    {
+      "ID": "speak_stem_present_2_3_sg",
+      "Language_ID": "stan1295",
+      "Parameter_ID": "speak_stem_present_2_3_sg"
+    },
+    {
+      "ID": "like_a_pig",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_pig"
+    },
+    {
+      "ID": "like_a_child",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_child"
+    },
+    {
+      "ID": "like_a_slug",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_slug"
+    },
+    {
+      "ID": "like_a_fool",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "like_a_fool"
+    },
+    {
+      "ID": "toponym",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "toponym"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "jackendoffaudring2020_sing",
+      "Lexeme_ID": "sing",
+      "Form": "sing",
+      "Segments": ["s", "ɪ", "ŋ"],
+      "Comment": "stem; onset, nucleus, coda",
+      "Source": ["jackendoff-audring-2020[(24)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sang",
+      "Lexeme_ID": "sing_past",
+      "Form": "sang",
+      "Segments": ["s", "æ", "ŋ"],
+      "Comment": "past tense; onset, nucleus, coda",
+      "Source": ["jackendoff-audring-2020[(24)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_string",
+      "Lexeme_ID": "string",
+      "Form": "string",
+      "Segments": ["str", "ɪ", "ŋ"],
+      "Comment": "stem; the onset cluster is one segment",
+      "Source": ["jackendoff-audring-2020[(26)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_strung",
+      "Lexeme_ID": "string_past",
+      "Form": "strung",
+      "Segments": ["str", "ʌ", "ŋ"],
+      "Comment": "past tense",
+      "Source": ["jackendoff-audring-2020[(26)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sprech",
+      "Lexeme_ID": "speak_stem",
+      "Form": "sprech-",
+      "Segments": ["ʃpr", "ɛ", "x"],
+      "Comment": "default stem of sprechen",
+      "Source": ["jackendoff-audring-2020[(43)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sprich",
+      "Lexeme_ID": "speak_stem_present_2_3_sg",
+      "Form": "sprich-",
+      "Segments": ["ʃpr", "ɪ", "x"],
+      "Comment": "special stem of the present 2nd and 3rd singular",
+      "Source": ["jackendoff-audring-2020[(43)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_piggish",
+      "Lexeme_ID": "like_a_pig",
+      "Form": "piggish",
+      "Segments": ["pig", "ish"],
+      "Comment": "the -ish sisters of Section 7.8.1",
+      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_childish",
+      "Lexeme_ID": "like_a_child",
+      "Form": "childish",
+      "Segments": ["child", "ish"],
+      "Comment": "the -ish sisters of Section 7.8.1",
+      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sluggish",
+      "Lexeme_ID": "like_a_slug",
+      "Form": "sluggish",
+      "Segments": ["slug", "ish"],
+      "Comment": "the -ish sisters of Section 7.8.1",
+      "Source": ["jackendoff-audring-2020[7.8.1 (5)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_foolish",
+      "Lexeme_ID": "like_a_fool",
+      "Form": "foolish",
+      "Segments": ["fool", "ish"],
+      "Comment": "the newly encountered sister of Section 7.8.1",
+      "Source": ["jackendoff-audring-2020[7.8.1]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_arrowheadLake",
+      "Lexeme_ID": "toponym",
+      "Form": "Arrowhead Lake",
+      "Segments": ["Arrowhead", "Lake"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_loonMountain",
+      "Lexeme_ID": "toponym",
+      "Form": "Loon Mountain",
+      "Segments": ["Loon", "Mountain"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_wissahickonCreek",
+      "Lexeme_ID": "toponym",
+      "Form": "Wissahickon Creek",
+      "Segments": ["Wissahickon", "Creek"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_laurelHill",
+      "Lexeme_ID": "toponym",
+      "Form": "Laurel Hill",
+      "Segments": ["Laurel", "Hill"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_sugarIsland",
+      "Lexeme_ID": "toponym",
+      "Form": "Sugar Island",
+      "Segments": ["Sugar", "Island"],
+      "Comment": "(17a): name then feature",
+      "Source": ["jackendoff-audring-2020[(17a)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_mountEverest",
+      "Lexeme_ID": "toponym",
+      "Form": "Mount Everest",
+      "Segments": ["Mount", "Everest"],
+      "Comment": "(17b): feature then name",
+      "Source": ["jackendoff-audring-2020[(17b)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_lakeMichigan",
+      "Lexeme_ID": "toponym",
+      "Form": "Lake Michigan",
+      "Segments": ["Lake", "Michigan"],
+      "Comment": "(17b): feature then name",
+      "Source": ["jackendoff-audring-2020[(17b)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_capeCod",
+      "Lexeme_ID": "toponym",
+      "Form": "Cape Cod",
+      "Segments": ["Cape", "Cod"],
+      "Comment": "(17b): feature then name",
+      "Source": ["jackendoff-audring-2020[(17b)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_bayOfFundy",
+      "Lexeme_ID": "toponym",
+      "Form": "the Bay of Fundy",
+      "Segments": ["the", "Bay", "of", "Fundy"],
+      "Comment": "(17d): the feature of name",
+      "Source": ["jackendoff-audring-2020[(17d)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_gulfOfStLawrence",
+      "Lexeme_ID": "toponym",
+      "Form": "the Gulf of St. Lawrence",
+      "Segments": ["the", "Gulf", "of", "St. Lawrence"],
+      "Comment": "(17d)",
+      "Source": ["jackendoff-audring-2020[(17d)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_capeOfGoodHope",
+      "Lexeme_ID": "toponym",
+      "Form": "the Cape of Good Hope",
+      "Segments": ["the", "Cape", "of", "Good Hope"],
+      "Comment": "(17d)",
+      "Source": ["jackendoff-audring-2020[(17d)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_isleOfWight",
+      "Lexeme_ID": "toponym",
+      "Form": "the Isle of Wight",
+      "Segments": ["the", "Isle", "of", "Wight"],
+      "Comment": "(17d)",
+      "Source": ["jackendoff-audring-2020[(17d)]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_morrisMountain",
+      "Lexeme_ID": "toponym",
+      "Form": "Morris Mountain",
+      "Segments": ["Morris", "Mountain"],
+      "Comment": "a coinage the pattern (17a) licenses",
+      "Source": ["jackendoff-audring-2020[2.7]"]
+    },
+    {
+      "ID": "jackendoffaudring2020_mountMorris",
+      "Lexeme_ID": "toponym",
+      "Form": "Mount Morris",
+      "Segments": ["Mount", "Morris"],
+      "Comment": "a coinage the pattern (17b) licenses",
+      "Source": ["jackendoff-audring-2020[2.7]"]
     }
   ],
   "FormRelationTable": [

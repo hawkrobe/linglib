@@ -1,46 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "heinzlai2013_ipin",
-      "Language_ID": "nucl1301",
-      "Parameter_ID": "rope_gen",
-      "Form": "ipin",
-      "Segments": ["i", "p", "i", "n"],
-      "Comment": "Table 1 cites Nevins (2010: 32).",
-      "Source": ["heinz-lai-2013[Table 1a]", "heinz-lai-2013[Table 2a]"],
-      "Underlying": "/ip-un/"
-    },
-    {
-      "ID": "heinzlai2013_elin",
-      "Language_ID": "nucl1301",
-      "Parameter_ID": "hand_gen",
-      "Form": "elin",
-      "Segments": ["e", "l", "i", "n"],
-      "Comment": "Table 1 prints the gloss as 'and'. Table 1 cites Nevins (2010: 32).",
-      "Source": ["heinz-lai-2013[Table 1b]", "heinz-lai-2013[Table 2a]"],
-      "Underlying": "/el-un/"
-    },
-    {
-      "ID": "heinzlai2013_sonun",
-      "Language_ID": "nucl1301",
-      "Parameter_ID": "end_gen",
-      "Form": "sonun",
-      "Segments": ["s", "o", "n", "u", "n"],
-      "Comment": "Table 1 cites Nevins (2010: 32).",
-      "Source": ["heinz-lai-2013[Table 1c]", "heinz-lai-2013[Table 2a]"],
-      "Underlying": "/son-un/"
-    },
-    {
-      "ID": "heinzlai2013_pulun",
-      "Language_ID": "nucl1301",
-      "Parameter_ID": "stamp_gen",
-      "Form": "pulun",
-      "Segments": ["p", "u", "l", "u", "n"],
-      "Comment": "Table 1 cites Nevins (2010: 32).",
-      "Source": ["heinz-lai-2013[Table 1d]", "heinz-lai-2013[Table 2a]"],
-      "Underlying": "/pul-un/"
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "rope_gen",
@@ -61,6 +19,87 @@
       "ID": "stamp_gen",
       "Name": "stamp-GEN",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "rope_gen",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "rope_gen"
+    },
+    {
+      "ID": "hand_gen",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "hand_gen"
+    },
+    {
+      "ID": "end_gen",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "end_gen"
+    },
+    {
+      "ID": "stamp_gen",
+      "Language_ID": "nucl1301",
+      "Parameter_ID": "stamp_gen"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "heinzlai2013_ipin",
+      "Lexeme_ID": "rope_gen",
+      "Form": "ipin",
+      "Segments": ["i", "p", "i", "n"],
+      "Comment": "Table 1 cites Nevins (2010: 32).",
+      "Source": ["heinz-lai-2013[Table 1a]", "heinz-lai-2013[Table 2a]"]
+    },
+    {
+      "ID": "heinzlai2013_elin",
+      "Lexeme_ID": "hand_gen",
+      "Form": "elin",
+      "Segments": ["e", "l", "i", "n"],
+      "Comment": "Table 1 prints the gloss as 'and'. Table 1 cites Nevins (2010: 32).",
+      "Source": ["heinz-lai-2013[Table 1b]", "heinz-lai-2013[Table 2a]"]
+    },
+    {
+      "ID": "heinzlai2013_sonun",
+      "Lexeme_ID": "end_gen",
+      "Form": "sonun",
+      "Segments": ["s", "o", "n", "u", "n"],
+      "Comment": "Table 1 cites Nevins (2010: 32).",
+      "Source": ["heinz-lai-2013[Table 1c]", "heinz-lai-2013[Table 2a]"]
+    },
+    {
+      "ID": "heinzlai2013_pulun",
+      "Lexeme_ID": "stamp_gen",
+      "Form": "pulun",
+      "Segments": ["p", "u", "l", "u", "n"],
+      "Comment": "Table 1 cites Nevins (2010: 32).",
+      "Source": ["heinz-lai-2013[Table 1d]", "heinz-lai-2013[Table 2a]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Underlying",
+      "Lean": "underlying",
+      "Type": "String"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "heinzlai2013_ipin",
+      "Underlying": "/ip-un/"
+    },
+    {
+      "Form_ID": "heinzlai2013_elin",
+      "Underlying": "/el-un/"
+    },
+    {
+      "Form_ID": "heinzlai2013_sonun",
+      "Underlying": "/son-un/"
+    },
+    {
+      "Form_ID": "heinzlai2013_pulun",
+      "Underlying": "/pul-un/"
     }
   ]
 }

@@ -1,564 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "lucy1994_AFCT",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "AFCT",
-      "Form": "=t",
-      "Segments": ["=t"],
-      "Comment": "the affective suffix, transitivising an agent-salient root",
-      "Source": ["lucy-1994[(1a)]"]
-    },
-    {
-      "ID": "lucy1994_ROOT",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "ROOT",
-      "Form": "=∅",
-      "Segments": ["=∅"],
-      "Comment": "zero derivation: the root alone supports a transitive stem",
-      "Source": ["lucy-1994[(1b)]"]
-    },
-    {
-      "ID": "lucy1994_CAUS",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "CAUS",
-      "Form": "=s",
-      "Segments": ["=s"],
-      "Comment": "the causative suffix, transitivising a patient-salient root",
-      "Source": ["lucy-1994[(1c)]"]
-    },
-    {
-      "ID": "lucy1994_POS",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "POS",
-      "Form": "=lah",
-      "Segments": ["=lah"],
-      "Comment": "the positional derivation, =tal in the imperfective",
-      "Source": ["lucy-1994[(5)]"]
-    },
-    {
-      "ID": "lucy1994_siit",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "jump",
-      "Form": "síit'",
-      "Segments": ["síit'"],
-      "Comment": "",
-      "Source": ["lucy-1994[(1a)]"]
-    },
-    {
-      "ID": "lucy1994_siit_t",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "jump-over",
-      "Form": "síit'=t",
-      "Segments": ["síit'", "=t"],
-      "Comment": "",
-      "Source": ["lucy-1994[(1a)]"]
-    },
-    {
-      "ID": "lucy1994_tziib",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "write",
-      "Form": "¢'iib'",
-      "Segments": ["¢'iib'"],
-      "Comment": "",
-      "Source": ["lucy-1994[p. 629]"]
-    },
-    {
-      "ID": "lucy1994_miis",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "sweep",
-      "Form": "mìis",
-      "Segments": ["mìis"],
-      "Comment": "",
-      "Source": ["lucy-1994[p. 629]"]
-    },
-    {
-      "ID": "lucy1994_cheh",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "smile",
-      "Form": "čé'eh",
-      "Segments": ["čé'eh"],
-      "Comment": "",
-      "Source": ["lucy-1994[p. 629]"]
-    },
-    {
-      "ID": "lucy1994_paak",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "weed",
-      "Form": "páak",
-      "Segments": ["páak"],
-      "Comment": "",
-      "Source": ["lucy-1994[p. 629]"]
-    },
-    {
-      "ID": "lucy1994_kuc",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "carry",
-      "Form": "kuč",
-      "Segments": ["kuč"],
-      "Comment": "",
-      "Source": ["lucy-1994[(1b)]"]
-    },
-    {
-      "ID": "lucy1994_kuc_0",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "carry-tr",
-      "Form": "kuč=∅",
-      "Segments": ["kuč", "=∅"],
-      "Comment": "",
-      "Source": ["lucy-1994[(1b)]"]
-    },
-    {
-      "ID": "lucy1994_kos",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "cut",
-      "Form": "k'os",
-      "Segments": ["k'os"],
-      "Comment": "",
-      "Source": ["lucy-1994[p. 629]"]
-    },
-    {
-      "ID": "lucy1994_pis",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "measure",
-      "Form": "p'is",
-      "Segments": ["p'is"],
-      "Comment": "",
-      "Source": ["lucy-1994[p. 629]"]
-    },
-    {
-      "ID": "lucy1994_hats",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "whip",
-      "Form": "ha¢",
-      "Segments": ["ha¢"],
-      "Comment": "",
-      "Source": ["lucy-1994[p. 629]"]
-    },
-    {
-      "ID": "lucy1994_los",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "punch",
-      "Form": "loš",
-      "Segments": ["loš"],
-      "Comment": "",
-      "Source": ["lucy-1994[p. 629]"]
-    },
-    {
-      "ID": "lucy1994_ah",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "awaken",
-      "Form": "'ah",
-      "Segments": ["'ah"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_ah_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "wake-someone",
-      "Form": "'ah=s",
-      "Segments": ["'ah", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_wen",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "fall-asleep",
-      "Form": "wen",
-      "Segments": ["wen"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_wen_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "put-to-sleep",
-      "Form": "ween=s",
-      "Segments": ["ween", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_siih",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "be-born",
-      "Form": "siih",
-      "Segments": ["siih"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_siih_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "give-birth",
-      "Form": "siih=s",
-      "Segments": ["siih", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_kiim",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "die",
-      "Form": "kíim",
-      "Segments": ["kíim"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_kiim_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "kill",
-      "Form": "kíim=s",
-      "Segments": ["kíim", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_tuub",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "forget",
-      "Form": "tú'ub'",
-      "Segments": ["tú'ub'"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_tuub_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "distract",
-      "Form": "tú'ub'=s",
-      "Segments": ["tú'ub'", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_kaah",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "remember",
-      "Form": "k'a'ah",
-      "Segments": ["k'a'ah"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_kaah_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "remind",
-      "Form": "k'á'ah=s",
-      "Segments": ["k'á'ah", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_chuun",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "begin-activity",
-      "Form": "ču'un",
-      "Segments": ["ču'un"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_chuun_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "cause-to-begin",
-      "Form": "ču'un=s",
-      "Segments": ["ču'un", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_chen",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "stop",
-      "Form": "č'en",
-      "Segments": ["č'en"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_chen_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "cause-to-stop",
-      "Form": "č'en=s",
-      "Segments": ["č'en", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_hoop",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "begin",
-      "Form": "hó'op'",
-      "Segments": ["hó'op'"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_hoop_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "cause-to-start",
-      "Form": "hó'op'=s",
-      "Segments": ["hó'op'", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_haaw",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "cease",
-      "Form": "háaw",
-      "Segments": ["háaw"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_haaw_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "revoke",
-      "Form": "háaw=s",
-      "Segments": ["háaw", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_heel",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "rest",
-      "Form": "hé'el",
-      "Segments": ["hé'el"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_heel_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "rest-tr",
-      "Form": "hé'e(l)=s",
-      "Segments": ["hé'e(l)", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_paat",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "remain",
-      "Form": "p'át",
-      "Segments": ["p'át"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_paat_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "abandon",
-      "Form": "p'át=s",
-      "Segments": ["p'át", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(2)]"]
-    },
-    {
-      "ID": "lucy1994_maan",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "pass-by",
-      "Form": "máan",
-      "Segments": ["máan"],
-      "Comment": "marked # in (4): lacks the -Vl imperfective",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_maan_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "transport",
-      "Form": "maan=s",
-      "Segments": ["maan", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_peek",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "move",
-      "Form": "péek",
-      "Segments": ["péek"],
-      "Comment": "marked # in (4): lacks the -Vl imperfective",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_peek_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "cause-to-move",
-      "Form": "pek=s",
-      "Segments": ["pek", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_bin",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "go",
-      "Form": "b'in",
-      "Segments": ["b'in"],
-      "Comment": "marked # in (4): lacks the -Vl imperfective",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_bin_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "take",
-      "Form": "bi(n)=s",
-      "Segments": ["bi(n)", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_taal",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "come",
-      "Form": "tàal",
-      "Segments": ["tàal"],
-      "Comment": "marked # in (4): lacks the -Vl imperfective",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_taal_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "bring",
-      "Form": "taa(l)=s",
-      "Segments": ["taa(l)", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_uul",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "arrive-here",
-      "Form": "'ú'ul",
-      "Segments": ["'ú'ul"],
-      "Comment": "marked # in (4): lacks the -Vl imperfective",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_uul_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "bring-here",
-      "Form": "'u'uh=s",
-      "Segments": ["'u'uh", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_ok",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "enter",
-      "Form": "'ok",
-      "Segments": ["'ok"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_ok_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "move-in",
-      "Form": "'ook=s",
-      "Segments": ["'ook", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_luub",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "fall",
-      "Form": "lúub'",
-      "Segments": ["lúub'"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_luub_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "fell",
-      "Form": "luub'=s",
-      "Segments": ["luub'", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_liik",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "rise",
-      "Form": "líik'",
-      "Segments": ["líik'"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_liik_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "raise",
-      "Form": "lii(k)'=s",
-      "Segments": ["lii(k)'", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_naak",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "ascend",
-      "Form": "ná'ak",
-      "Segments": ["ná'ak"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_naak_s",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "raise-2",
-      "Form": "na'ak=s",
-      "Segments": ["na'ak", "=s"],
-      "Comment": "",
-      "Source": ["lucy-1994[(4)]"]
-    },
-    {
-      "ID": "lucy1994_cin",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "bend",
-      "Form": "čin",
-      "Segments": ["čin"],
-      "Comment": "",
-      "Source": ["lucy-1994[(5)]"]
-    },
-    {
-      "ID": "lucy1994_cin_0",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "bend-tr",
-      "Form": "čin=∅",
-      "Segments": ["čin", "=∅"],
-      "Comment": "",
-      "Source": ["lucy-1994[(6)]"]
-    },
-    {
-      "ID": "lucy1994_cin_lah",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "become-bent",
-      "Form": "čin=lah",
-      "Segments": ["čin", "=lah"],
-      "Comment": "=tal in the imperfective (5a)",
-      "Source": ["lucy-1994[(5c)]"]
-    },
-    {
-      "ID": "lucy1994_cil",
-      "Language_ID": "yuca1254",
-      "Parameter_ID": "lie-down",
-      "Form": "čil",
-      "Segments": ["čil"],
-      "Comment": "",
-      "Source": ["lucy-1994[(7)]"]
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "AFCT",
@@ -869,6 +309,764 @@
       "ID": "lie-down",
       "Name": "lie down, lying down",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "afct",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "AFCT"
+    },
+    {
+      "ID": "root",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "ROOT"
+    },
+    {
+      "ID": "caus",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "CAUS"
+    },
+    {
+      "ID": "pos",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "POS"
+    },
+    {
+      "ID": "jump",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "jump"
+    },
+    {
+      "ID": "jump_over",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "jump-over"
+    },
+    {
+      "ID": "write",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "write"
+    },
+    {
+      "ID": "sweep",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "sweep"
+    },
+    {
+      "ID": "smile",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "smile"
+    },
+    {
+      "ID": "weed",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "weed"
+    },
+    {
+      "ID": "carry",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "carry"
+    },
+    {
+      "ID": "carry_tr",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "carry-tr"
+    },
+    {
+      "ID": "cut",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cut"
+    },
+    {
+      "ID": "measure",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "measure"
+    },
+    {
+      "ID": "whip",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "whip"
+    },
+    {
+      "ID": "punch",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "punch"
+    },
+    {
+      "ID": "awaken",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "awaken"
+    },
+    {
+      "ID": "wake_someone",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "wake-someone"
+    },
+    {
+      "ID": "fall_asleep",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "fall-asleep"
+    },
+    {
+      "ID": "put_to_sleep",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "put-to-sleep"
+    },
+    {
+      "ID": "be_born",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "be-born"
+    },
+    {
+      "ID": "give_birth",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "give-birth"
+    },
+    {
+      "ID": "die",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "die"
+    },
+    {
+      "ID": "kill",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "kill"
+    },
+    {
+      "ID": "forget",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "forget"
+    },
+    {
+      "ID": "distract",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "distract"
+    },
+    {
+      "ID": "remember",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "remember"
+    },
+    {
+      "ID": "remind",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "remind"
+    },
+    {
+      "ID": "begin_activity",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "begin-activity"
+    },
+    {
+      "ID": "cause_to_begin",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cause-to-begin"
+    },
+    {
+      "ID": "stop",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "stop"
+    },
+    {
+      "ID": "cause_to_stop",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cause-to-stop"
+    },
+    {
+      "ID": "begin",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "begin"
+    },
+    {
+      "ID": "cause_to_start",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cause-to-start"
+    },
+    {
+      "ID": "cease",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cease"
+    },
+    {
+      "ID": "revoke",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "revoke"
+    },
+    {
+      "ID": "rest",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "rest"
+    },
+    {
+      "ID": "rest_tr",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "rest-tr"
+    },
+    {
+      "ID": "remain",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "remain"
+    },
+    {
+      "ID": "abandon",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "abandon"
+    },
+    {
+      "ID": "pass_by",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "pass-by"
+    },
+    {
+      "ID": "transport",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "transport"
+    },
+    {
+      "ID": "move",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "move"
+    },
+    {
+      "ID": "cause_to_move",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "cause-to-move"
+    },
+    {
+      "ID": "go",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "go"
+    },
+    {
+      "ID": "take",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "take"
+    },
+    {
+      "ID": "come",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "come"
+    },
+    {
+      "ID": "bring",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "bring"
+    },
+    {
+      "ID": "arrive_here",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "arrive-here"
+    },
+    {
+      "ID": "bring_here",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "bring-here"
+    },
+    {
+      "ID": "enter",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "enter"
+    },
+    {
+      "ID": "move_in",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "move-in"
+    },
+    {
+      "ID": "fall",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "fall"
+    },
+    {
+      "ID": "fell",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "fell"
+    },
+    {
+      "ID": "rise",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "rise"
+    },
+    {
+      "ID": "raise",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "raise"
+    },
+    {
+      "ID": "ascend",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "ascend"
+    },
+    {
+      "ID": "raise_2",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "raise-2"
+    },
+    {
+      "ID": "bend",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "bend"
+    },
+    {
+      "ID": "bend_tr",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "bend-tr"
+    },
+    {
+      "ID": "become_bent",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "become-bent"
+    },
+    {
+      "ID": "lie_down",
+      "Language_ID": "yuca1254",
+      "Parameter_ID": "lie-down"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "lucy1994_AFCT",
+      "Lexeme_ID": "afct",
+      "Form": "=t",
+      "Segments": ["=t"],
+      "Comment": "the affective suffix, transitivising an agent-salient root",
+      "Source": ["lucy-1994[(1a)]"]
+    },
+    {
+      "ID": "lucy1994_ROOT",
+      "Lexeme_ID": "root",
+      "Form": "=∅",
+      "Segments": ["=∅"],
+      "Comment": "zero derivation: the root alone supports a transitive stem",
+      "Source": ["lucy-1994[(1b)]"]
+    },
+    {
+      "ID": "lucy1994_CAUS",
+      "Lexeme_ID": "caus",
+      "Form": "=s",
+      "Segments": ["=s"],
+      "Comment": "the causative suffix, transitivising a patient-salient root",
+      "Source": ["lucy-1994[(1c)]"]
+    },
+    {
+      "ID": "lucy1994_POS",
+      "Lexeme_ID": "pos",
+      "Form": "=lah",
+      "Segments": ["=lah"],
+      "Comment": "the positional derivation, =tal in the imperfective",
+      "Source": ["lucy-1994[(5)]"]
+    },
+    {
+      "ID": "lucy1994_siit",
+      "Lexeme_ID": "jump",
+      "Form": "síit'",
+      "Segments": ["síit'"],
+      "Source": ["lucy-1994[(1a)]"]
+    },
+    {
+      "ID": "lucy1994_siit_t",
+      "Lexeme_ID": "jump_over",
+      "Form": "síit'=t",
+      "Segments": ["síit'", "=t"],
+      "Source": ["lucy-1994[(1a)]"]
+    },
+    {
+      "ID": "lucy1994_tziib",
+      "Lexeme_ID": "write",
+      "Form": "¢'iib'",
+      "Segments": ["¢'iib'"],
+      "Source": ["lucy-1994[p. 629]"]
+    },
+    {
+      "ID": "lucy1994_miis",
+      "Lexeme_ID": "sweep",
+      "Form": "mìis",
+      "Segments": ["mìis"],
+      "Source": ["lucy-1994[p. 629]"]
+    },
+    {
+      "ID": "lucy1994_cheh",
+      "Lexeme_ID": "smile",
+      "Form": "čé'eh",
+      "Segments": ["čé'eh"],
+      "Source": ["lucy-1994[p. 629]"]
+    },
+    {
+      "ID": "lucy1994_paak",
+      "Lexeme_ID": "weed",
+      "Form": "páak",
+      "Segments": ["páak"],
+      "Source": ["lucy-1994[p. 629]"]
+    },
+    {
+      "ID": "lucy1994_kuc",
+      "Lexeme_ID": "carry",
+      "Form": "kuč",
+      "Segments": ["kuč"],
+      "Source": ["lucy-1994[(1b)]"]
+    },
+    {
+      "ID": "lucy1994_kuc_0",
+      "Lexeme_ID": "carry_tr",
+      "Form": "kuč=∅",
+      "Segments": ["kuč", "=∅"],
+      "Source": ["lucy-1994[(1b)]"]
+    },
+    {
+      "ID": "lucy1994_kos",
+      "Lexeme_ID": "cut",
+      "Form": "k'os",
+      "Segments": ["k'os"],
+      "Source": ["lucy-1994[p. 629]"]
+    },
+    {
+      "ID": "lucy1994_pis",
+      "Lexeme_ID": "measure",
+      "Form": "p'is",
+      "Segments": ["p'is"],
+      "Source": ["lucy-1994[p. 629]"]
+    },
+    {
+      "ID": "lucy1994_hats",
+      "Lexeme_ID": "whip",
+      "Form": "ha¢",
+      "Segments": ["ha¢"],
+      "Source": ["lucy-1994[p. 629]"]
+    },
+    {
+      "ID": "lucy1994_los",
+      "Lexeme_ID": "punch",
+      "Form": "loš",
+      "Segments": ["loš"],
+      "Source": ["lucy-1994[p. 629]"]
+    },
+    {
+      "ID": "lucy1994_ah",
+      "Lexeme_ID": "awaken",
+      "Form": "'ah",
+      "Segments": ["'ah"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_ah_s",
+      "Lexeme_ID": "wake_someone",
+      "Form": "'ah=s",
+      "Segments": ["'ah", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_wen",
+      "Lexeme_ID": "fall_asleep",
+      "Form": "wen",
+      "Segments": ["wen"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_wen_s",
+      "Lexeme_ID": "put_to_sleep",
+      "Form": "ween=s",
+      "Segments": ["ween", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_siih",
+      "Lexeme_ID": "be_born",
+      "Form": "siih",
+      "Segments": ["siih"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_siih_s",
+      "Lexeme_ID": "give_birth",
+      "Form": "siih=s",
+      "Segments": ["siih", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_kiim",
+      "Lexeme_ID": "die",
+      "Form": "kíim",
+      "Segments": ["kíim"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_kiim_s",
+      "Lexeme_ID": "kill",
+      "Form": "kíim=s",
+      "Segments": ["kíim", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_tuub",
+      "Lexeme_ID": "forget",
+      "Form": "tú'ub'",
+      "Segments": ["tú'ub'"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_tuub_s",
+      "Lexeme_ID": "distract",
+      "Form": "tú'ub'=s",
+      "Segments": ["tú'ub'", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_kaah",
+      "Lexeme_ID": "remember",
+      "Form": "k'a'ah",
+      "Segments": ["k'a'ah"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_kaah_s",
+      "Lexeme_ID": "remind",
+      "Form": "k'á'ah=s",
+      "Segments": ["k'á'ah", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_chuun",
+      "Lexeme_ID": "begin_activity",
+      "Form": "ču'un",
+      "Segments": ["ču'un"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_chuun_s",
+      "Lexeme_ID": "cause_to_begin",
+      "Form": "ču'un=s",
+      "Segments": ["ču'un", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_chen",
+      "Lexeme_ID": "stop",
+      "Form": "č'en",
+      "Segments": ["č'en"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_chen_s",
+      "Lexeme_ID": "cause_to_stop",
+      "Form": "č'en=s",
+      "Segments": ["č'en", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_hoop",
+      "Lexeme_ID": "begin",
+      "Form": "hó'op'",
+      "Segments": ["hó'op'"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_hoop_s",
+      "Lexeme_ID": "cause_to_start",
+      "Form": "hó'op'=s",
+      "Segments": ["hó'op'", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_haaw",
+      "Lexeme_ID": "cease",
+      "Form": "háaw",
+      "Segments": ["háaw"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_haaw_s",
+      "Lexeme_ID": "revoke",
+      "Form": "háaw=s",
+      "Segments": ["háaw", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_heel",
+      "Lexeme_ID": "rest",
+      "Form": "hé'el",
+      "Segments": ["hé'el"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_heel_s",
+      "Lexeme_ID": "rest_tr",
+      "Form": "hé'e(l)=s",
+      "Segments": ["hé'e(l)", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_paat",
+      "Lexeme_ID": "remain",
+      "Form": "p'át",
+      "Segments": ["p'át"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_paat_s",
+      "Lexeme_ID": "abandon",
+      "Form": "p'át=s",
+      "Segments": ["p'át", "=s"],
+      "Source": ["lucy-1994[(2)]"]
+    },
+    {
+      "ID": "lucy1994_maan",
+      "Lexeme_ID": "pass_by",
+      "Form": "máan",
+      "Segments": ["máan"],
+      "Comment": "marked # in (4): lacks the -Vl imperfective",
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_maan_s",
+      "Lexeme_ID": "transport",
+      "Form": "maan=s",
+      "Segments": ["maan", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_peek",
+      "Lexeme_ID": "move",
+      "Form": "péek",
+      "Segments": ["péek"],
+      "Comment": "marked # in (4): lacks the -Vl imperfective",
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_peek_s",
+      "Lexeme_ID": "cause_to_move",
+      "Form": "pek=s",
+      "Segments": ["pek", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_bin",
+      "Lexeme_ID": "go",
+      "Form": "b'in",
+      "Segments": ["b'in"],
+      "Comment": "marked # in (4): lacks the -Vl imperfective",
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_bin_s",
+      "Lexeme_ID": "take",
+      "Form": "bi(n)=s",
+      "Segments": ["bi(n)", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_taal",
+      "Lexeme_ID": "come",
+      "Form": "tàal",
+      "Segments": ["tàal"],
+      "Comment": "marked # in (4): lacks the -Vl imperfective",
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_taal_s",
+      "Lexeme_ID": "bring",
+      "Form": "taa(l)=s",
+      "Segments": ["taa(l)", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_uul",
+      "Lexeme_ID": "arrive_here",
+      "Form": "'ú'ul",
+      "Segments": ["'ú'ul"],
+      "Comment": "marked # in (4): lacks the -Vl imperfective",
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_uul_s",
+      "Lexeme_ID": "bring_here",
+      "Form": "'u'uh=s",
+      "Segments": ["'u'uh", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_ok",
+      "Lexeme_ID": "enter",
+      "Form": "'ok",
+      "Segments": ["'ok"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_ok_s",
+      "Lexeme_ID": "move_in",
+      "Form": "'ook=s",
+      "Segments": ["'ook", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_luub",
+      "Lexeme_ID": "fall",
+      "Form": "lúub'",
+      "Segments": ["lúub'"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_luub_s",
+      "Lexeme_ID": "fell",
+      "Form": "luub'=s",
+      "Segments": ["luub'", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_liik",
+      "Lexeme_ID": "rise",
+      "Form": "líik'",
+      "Segments": ["líik'"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_liik_s",
+      "Lexeme_ID": "raise",
+      "Form": "lii(k)'=s",
+      "Segments": ["lii(k)'", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_naak",
+      "Lexeme_ID": "ascend",
+      "Form": "ná'ak",
+      "Segments": ["ná'ak"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_naak_s",
+      "Lexeme_ID": "raise_2",
+      "Form": "na'ak=s",
+      "Segments": ["na'ak", "=s"],
+      "Source": ["lucy-1994[(4)]"]
+    },
+    {
+      "ID": "lucy1994_cin",
+      "Lexeme_ID": "bend",
+      "Form": "čin",
+      "Segments": ["čin"],
+      "Source": ["lucy-1994[(5)]"]
+    },
+    {
+      "ID": "lucy1994_cin_0",
+      "Lexeme_ID": "bend_tr",
+      "Form": "čin=∅",
+      "Segments": ["čin", "=∅"],
+      "Source": ["lucy-1994[(6)]"]
+    },
+    {
+      "ID": "lucy1994_cin_lah",
+      "Lexeme_ID": "become_bent",
+      "Form": "čin=lah",
+      "Segments": ["čin", "=lah"],
+      "Comment": "=tal in the imperfective (5a)",
+      "Source": ["lucy-1994[(5c)]"]
+    },
+    {
+      "ID": "lucy1994_cil",
+      "Lexeme_ID": "lie_down",
+      "Form": "čil",
+      "Segments": ["čil"],
+      "Source": ["lucy-1994[(7)]"]
     }
   ],
   "FormRelationTable": [

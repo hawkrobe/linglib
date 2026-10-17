@@ -3,12 +3,11 @@ module
 public import Linglib.Data.Forms.Schema
 
 /-!
-# `Stojkovic2026` — CLDF form data
+# `Stojkovic2026`: word forms
 
-Auto-generated from `Linglib/Data/Forms/Stojkovic2026.json` by
-`scripts/gen_forms.py`. Do not edit by hand; edit the JSON and re-run the
-generator. Consumers import this module; declarations live in
-`namespace Stojkovic2026.Forms`.
+Auto-generated from `Linglib/Data/Forms/Stojkovic2026.json` by `scripts/gen_forms.py`. Do not edit
+by hand; edit the JSON and re-run the generator. Declarations live in `namespace
+Stojkovic2026.Forms`.
 -/
 
 @[expose] public section
@@ -17,844 +16,1322 @@ namespace Stojkovic2026.Forms
 
 open Data.Forms
 
-def belarusian_plain_lform : Form :=
+/-- The values of `Root` the source distinguishes. -/
+inductive Root where
+  /-- A plain root-final consonant, `plain` in the source. -/
+  | plain
+  /-- A palatal root-final consonant, `palatal` in the source. -/
+  | palatal
+  deriving DecidableEq, Repr
+
+/-- A cell of the source's tables, by its Universal Dependencies features. -/
+abbrev Cell := UD.MorphFeatures
+
+/-- The l-form.f.sg cell, `VerbForm=Part|Tense=Past|Gender=Fem|Number=Sing`. -/
+def l_form_f_sg : Cell :=
+  { verbForm := ↑UD.VerbForm.Part, tense := ↑UD.Tense.Past, gender := ↑UD.Gender.Fem,
+    number := ↑UD.Number.Sing }
+
+/-- The 2sg.prs cell, `Person=2|Number=Sing|Tense=Pres`. -/
+def prs_2sg : Cell :=
+  { person := ↑UD.Person.second, number := ↑UD.Number.Sing, tense := ↑UD.Tense.Pres }
+
+def Lexemes.abolish_belarusian : Lexeme :=
+  { id := "abolish_belarusian", languageId := "bela1254", variety := "Belarusian",
+    parameterId := "abolish" }
+
+def Lexemes.care_for_bos_cro_mon_ser : Lexeme :=
+  { id := "care_for_bos_cro_mon_ser", languageId := "sout1528", variety := "Bos/Cro/Mon/Ser",
+    parameterId := "care_for" }
+
+def Lexemes.kiss_bulgarian : Lexeme :=
+  { id := "kiss_bulgarian", languageId := "bulg1262", variety := "Bulgarian",
+    parameterId := "kiss" }
+
+def Lexemes.swear_at_god_bunyev_ac : Lexeme :=
+  { id := "swear_at_god_bunyev_ac", languageId := "sout1528", variety := "Bunyev(ac)",
+    parameterId := "swear_at_god" }
+
+def Lexemes.talk_carpathian_rusyn : Lexeme :=
+  { id := "talk_carpathian_rusyn", languageId := "rusy1239", variety := "Carpathian Rusyn",
+    parameterId := "talk" }
+
+def Lexemes.buy_czech : Lexeme :=
+  { id := "buy_czech", languageId := "czec1258", variety := "Czech", parameterId := "buy" }
+
+def Lexemes.get_engaged_kashubian : Lexeme :=
+  { id := "get_engaged_kashubian", languageId := "kash1274", variety := "Kashubian",
+    parameterId := "get_engaged" }
+
+def Lexemes.draw_lemko_rusyn : Lexeme :=
+  { id := "draw_lemko_rusyn", languageId := "rusy1239", variety := "Lemko Rusyn",
+    parameterId := "draw" }
+
+def Lexemes.paint_lower_sorbian : Lexeme :=
+  { id := "paint_lower_sorbian", languageId := "lowe1385", variety := "Lower Sorbian",
+    parameterId := "paint" }
+
+def Lexemes.believe_macedonian : Lexeme :=
+  { id := "believe_macedonian", languageId := "mace1250", variety := "Macedonian",
+    parameterId := "believe" }
+
+def Lexemes.serve_pannonian_rusyn : Lexeme :=
+  { id := "serve_pannonian_rusyn", languageId := "pann1240", variety := "Pannonian Rusyn",
+    parameterId := "serve" }
+
+def Lexemes.aim_podlachian : Lexeme :=
+  { id := "aim_podlachian", languageId := "east1426", variety := "Podlachian",
+    parameterId := "aim" }
+
+def Lexemes.work_polish : Lexeme :=
+  { id := "work_polish", languageId := "poli1260", variety := "Polish", parameterId := "work" }
+
+def Lexemes.complain_russian : Lexeme :=
+  { id := "complain_russian", languageId := "russ1263", variety := "Russian",
+    parameterId := "complain" }
+
+def Lexemes.darn_silesian : Lexeme :=
+  { id := "darn_silesian", languageId := "sile1253", variety := "Silesian", parameterId := "darn" }
+
+def Lexemes.battle_slovak : Lexeme :=
+  { id := "battle_slovak", languageId := "slov1269", variety := "Slovak", parameterId := "battle" }
+
+def Lexemes.travel_slovenian : Lexeme :=
+  { id := "travel_slovenian", languageId := "slov1268", variety := "Slovenian",
+    parameterId := "travel" }
+
+def Lexemes.squeeze_ukrainian : Lexeme :=
+  { id := "squeeze_ukrainian", languageId := "ukra1253", variety := "Ukrainian",
+    parameterId := "squeeze" }
+
+def Lexemes.buy_upper_sorbian : Lexeme :=
+  { id := "buy_upper_sorbian", languageId := "uppe1395", variety := "Upper Sorbian",
+    parameterId := "buy" }
+
+def Lexemes.battle_belarusian : Lexeme :=
+  { id := "battle_belarusian", languageId := "bela1254", variety := "Belarusian",
+    parameterId := "battle" }
+
+def Lexemes.prune_bunyev_ac : Lexeme :=
+  { id := "prune_bunyev_ac", languageId := "sout1528", variety := "Bunyev(ac)",
+    parameterId := "prune" }
+
+def Lexemes.whip_czech : Lexeme :=
+  { id := "whip_czech", languageId := "czec1258", variety := "Czech", parameterId := "whip" }
+
+def Lexemes.date_kashubian : Lexeme :=
+  { id := "date_kashubian", languageId := "kash1274", variety := "Kashubian",
+    parameterId := "date" }
+
+def Lexemes.wander_lower_sorbian : Lexeme :=
+  { id := "wander_lower_sorbian", languageId := "lowe1385", variety := "Lower Sorbian",
+    parameterId := "wander" }
+
+def Lexemes.reign_pannonian_rusyn : Lexeme :=
+  { id := "reign_pannonian_rusyn", languageId := "pann1240", variety := "Pannonian Rusyn",
+    parameterId := "reign" }
+
+def Lexemes.grub_podlachian : Lexeme :=
+  { id := "grub_podlachian", languageId := "east1426", variety := "Podlachian",
+    parameterId := "grub" }
+
+def Lexemes.accommodate_polish : Lexeme :=
+  { id := "accommodate_polish", languageId := "poli1260", variety := "Polish",
+    parameterId := "accommodate" }
+
+def Lexemes.whip_silesian : Lexeme :=
+  { id := "whip_silesian", languageId := "sile1253", variety := "Silesian", parameterId := "whip" }
+
+def Lexemes.translate_upper_sorbian : Lexeme :=
+  { id := "translate_upper_sorbian", languageId := "uppe1395", variety := "Upper Sorbian",
+    parameterId := "translate" }
+
+def Lexemes.be_teacher_bos_cro_mon_ser : Lexeme :=
+  { id := "be_teacher_bos_cro_mon_ser", languageId := "sout1528", variety := "Bos/Cro/Mon/Ser",
+    parameterId := "be_teacher" }
+
+def Lexemes.compare_carpathian_rusyn : Lexeme :=
+  { id := "compare_carpathian_rusyn", languageId := "rusy1239", variety := "Carpathian Rusyn",
+    parameterId := "compare" }
+
+def Lexemes.swindle_russian : Lexeme :=
+  { id := "swindle_russian", languageId := "russ1263", variety := "Russian",
+    parameterId := "swindle" }
+
+def Lexemes.rain_slovenian : Lexeme :=
+  { id := "rain_slovenian", languageId := "slov1268", variety := "Slovenian",
+    parameterId := "rain" }
+
+def Lexemes.jitter_bulgarian : Lexeme :=
+  { id := "jitter_bulgarian", languageId := "bulg1262", variety := "Bulgarian",
+    parameterId := "jitter" }
+
+def Lexemes.adore_lemko_rusyn : Lexeme :=
+  { id := "adore_lemko_rusyn", languageId := "rusy1239", variety := "Lemko Rusyn",
+    parameterId := "adore" }
+
+def Lexemes.spend_night_macedonian : Lexeme :=
+  { id := "spend_night_macedonian", languageId := "mace1250", variety := "Macedonian",
+    parameterId := "spend_night" }
+
+def Lexemes.be_late_ukrainian : Lexeme :=
+  { id := "be_late_ukrainian", languageId := "ukra1253", variety := "Ukrainian",
+    parameterId := "be_late" }
+
+def belarusian_plain_lform : Form Cell :=
   { id := "stojkovic2026_belarusian_plain_lform"
-    languageId := "bela1254"
-    parameterId := "abolish"
-    form := "kas-av-a-l-a"
-    segments := ["kas", "av", "a", "l", "a"]
+    lexeme := Lexemes.abolish_belarusian
+    cell := l_form_f_sg
+    form := "kasavala"
+    morphs := ["kas", "av", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Belarusian"), ("Root", "plain"), ("Cell", "l-form.f.sg"), ("Verbalizer", "orthographic")] }
+    ] }
 
-def belarusian_plain_prs : Form :=
+def belarusian_plain_prs : Form Cell :=
   { id := "stojkovic2026_belarusian_plain_prs"
-    languageId := "bela1254"
-    parameterId := "abolish"
-    form := "kas-u-je-ʃ"
-    segments := ["kas", "u", "je", "ʃ"]
+    lexeme := Lexemes.abolish_belarusian
+    cell := prs_2sg
+    form := "kasujeʃ"
+    morphs := ["kas", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Belarusian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def bos_cro_mon_ser_plain_lform : Form :=
+def bos_cro_mon_ser_plain_lform : Form Cell :=
   { id := "stojkovic2026_bos_cro_mon_ser_plain_lform"
-    languageId := "sout1528"
-    parameterId := "care_for"
-    form := "ɲeg-ov-a-l-a"
-    segments := ["ɲeg", "ov", "a", "l", "a"]
+    lexeme := Lexemes.care_for_bos_cro_mon_ser
+    cell := l_form_f_sg
+    form := "ɲegovala"
+    morphs := ["ɲeg", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Bos/Cro/Mon/Ser"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def bos_cro_mon_ser_plain_prs : Form :=
+def bos_cro_mon_ser_plain_prs : Form Cell :=
   { id := "stojkovic2026_bos_cro_mon_ser_plain_prs"
-    languageId := "sout1528"
-    parameterId := "care_for"
-    form := "ɲeg-u-je-ʃ"
-    segments := ["ɲeg", "u", "je", "ʃ"]
+    lexeme := Lexemes.care_for_bos_cro_mon_ser
+    cell := prs_2sg
+    form := "ɲegujeʃ"
+    morphs := ["ɲeg", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Bos/Cro/Mon/Ser"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def bulgarian_plain_lform : Form :=
+def bulgarian_plain_lform : Form Cell :=
   { id := "stojkovic2026_bulgarian_plain_lform"
-    languageId := "bulg1262"
-    parameterId := "kiss"
-    form := "tsel-uv-a-l-a"
-    segments := ["tsel", "uv", "a", "l", "a"]
+    lexeme := Lexemes.kiss_bulgarian
+    cell := l_form_f_sg
+    form := "tseluvala"
+    morphs := ["tsel", "uv", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Bulgarian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def bulgarian_plain_prs : Form :=
+def bulgarian_plain_prs : Form Cell :=
   { id := "stojkovic2026_bulgarian_plain_prs"
-    languageId := "bulg1262"
-    parameterId := "kiss"
-    form := "tsel-uv-a-ʃ"
-    segments := ["tsel", "uv", "a", "ʃ"]
+    lexeme := Lexemes.kiss_bulgarian
+    cell := prs_2sg
+    form := "tseluvaʃ"
+    morphs := ["tsel", "uv", "a", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Bulgarian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def bunyev_ac_plain_lform : Form :=
+def bunyev_ac_plain_lform : Form Cell :=
   { id := "stojkovic2026_bunyev_ac_plain_lform"
-    languageId := "sout1528"
-    parameterId := "swear_at_god"
-    form := "bog-ov-a-l-a"
-    segments := ["bog", "ov", "a", "l", "a"]
+    lexeme := Lexemes.swear_at_god_bunyev_ac
+    cell := l_form_f_sg
+    form := "bogovala"
+    morphs := ["bog", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Bunyev(ac)"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def bunyev_ac_plain_prs : Form :=
+def bunyev_ac_plain_prs : Form Cell :=
   { id := "stojkovic2026_bunyev_ac_plain_prs"
-    languageId := "sout1528"
-    parameterId := "swear_at_god"
-    form := "bog-u-je-ʃ"
-    segments := ["bog", "u", "je", "ʃ"]
+    lexeme := Lexemes.swear_at_god_bunyev_ac
+    cell := prs_2sg
+    form := "bogujeʃ"
+    morphs := ["bog", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Bunyev(ac)"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def carpathian_rusyn_plain_lform : Form :=
+def carpathian_rusyn_plain_lform : Form Cell :=
   { id := "stojkovic2026_carpathian_rusyn_plain_lform"
-    languageId := "rusy1239"
-    parameterId := "talk"
-    form := "bisid-ov-a-l-a"
-    segments := ["bisid", "ov", "a", "l", "a"]
+    lexeme := Lexemes.talk_carpathian_rusyn
+    cell := l_form_f_sg
+    form := "bisidovala"
+    morphs := ["bisid", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Carpathian Rusyn"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def carpathian_rusyn_plain_prs : Form :=
+def carpathian_rusyn_plain_prs : Form Cell :=
   { id := "stojkovic2026_carpathian_rusyn_plain_prs"
-    languageId := "rusy1239"
-    parameterId := "talk"
-    form := "bisid-u-je-ʃ"
-    segments := ["bisid", "u", "je", "ʃ"]
+    lexeme := Lexemes.talk_carpathian_rusyn
+    cell := prs_2sg
+    form := "bisidujeʃ"
+    morphs := ["bisid", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Carpathian Rusyn"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def czech_plain_lform : Form :=
+def czech_plain_lform : Form Cell :=
   { id := "stojkovic2026_czech_plain_lform"
-    languageId := "czec1258"
-    parameterId := "buy"
-    form := "kup-ov-a-l-a"
-    segments := ["kup", "ov", "a", "l", "a"]
+    lexeme := Lexemes.buy_czech
+    cell := l_form_f_sg
+    form := "kupovala"
+    morphs := ["kup", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Czech"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def czech_plain_prs : Form :=
+def czech_plain_prs : Form Cell :=
   { id := "stojkovic2026_czech_plain_prs"
-    languageId := "czec1258"
-    parameterId := "buy"
-    form := "kup-u-je-ʃ"
-    segments := ["kup", "u", "je", "ʃ"]
+    lexeme := Lexemes.buy_czech
+    cell := prs_2sg
+    form := "kupujeʃ"
+    morphs := ["kup", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Czech"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def kashubian_plain_lform : Form :=
+def kashubian_plain_lform : Form Cell :=
   { id := "stojkovic2026_kashubian_plain_lform"
-    languageId := "kash1274"
-    parameterId := "get_engaged"
-    form := "brutk-ov-a-w-a"
-    segments := ["brutk", "ov", "a", "w", "a"]
+    lexeme := Lexemes.get_engaged_kashubian
+    cell := l_form_f_sg
+    form := "brutkovawa"
+    morphs := ["brutk", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Kashubian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def kashubian_plain_prs : Form :=
+def kashubian_plain_prs : Form Cell :=
   { id := "stojkovic2026_kashubian_plain_prs"
-    languageId := "kash1274"
-    parameterId := "get_engaged"
-    form := "brutk-u-je-ʃ"
-    segments := ["brutk", "u", "je", "ʃ"]
+    lexeme := Lexemes.get_engaged_kashubian
+    cell := prs_2sg
+    form := "brutkujeʃ"
+    morphs := ["brutk", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Kashubian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def lemko_rusyn_plain_lform : Form :=
+def lemko_rusyn_plain_lform : Form Cell :=
   { id := "stojkovic2026_lemko_rusyn_plain_lform"
-    languageId := "rusy1239"
-    parameterId := "draw"
-    form := "rɨs-uv-a-l-a"
-    segments := ["rɨs", "uv", "a", "l", "a"]
+    lexeme := Lexemes.draw_lemko_rusyn
+    cell := l_form_f_sg
+    form := "rɨsuvala"
+    morphs := ["rɨs", "uv", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Lemko Rusyn"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def lemko_rusyn_plain_prs : Form :=
+def lemko_rusyn_plain_prs : Form Cell :=
   { id := "stojkovic2026_lemko_rusyn_plain_prs"
-    languageId := "rusy1239"
-    parameterId := "draw"
-    form := "rɨs-u-je-ʃ"
-    segments := ["rɨs", "u", "je", "ʃ"]
+    lexeme := Lexemes.draw_lemko_rusyn
+    cell := prs_2sg
+    form := "rɨsujeʃ"
+    morphs := ["rɨs", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Lemko Rusyn"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def lower_sorbian_plain_lform : Form :=
+def lower_sorbian_plain_lform : Form Cell :=
   { id := "stojkovic2026_lower_sorbian_plain_lform"
-    languageId := "lowe1385"
-    parameterId := "paint"
-    form := "mol-ov-a-w-a"
-    segments := ["mol", "ov", "a", "w", "a"]
+    lexeme := Lexemes.paint_lower_sorbian
+    cell := l_form_f_sg
+    form := "molovawa"
+    morphs := ["mol", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Lower Sorbian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def lower_sorbian_plain_prs : Form :=
+def lower_sorbian_plain_prs : Form Cell :=
   { id := "stojkovic2026_lower_sorbian_plain_prs"
-    languageId := "lowe1385"
-    parameterId := "paint"
-    form := "mol-u-je-ʃ"
-    segments := ["mol", "u", "je", "ʃ"]
+    lexeme := Lexemes.paint_lower_sorbian
+    cell := prs_2sg
+    form := "molujeʃ"
+    morphs := ["mol", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Lower Sorbian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def macedonian_plain_lform : Form :=
+def macedonian_plain_lform : Form Cell :=
   { id := "stojkovic2026_macedonian_plain_lform"
-    languageId := "mace1250"
-    parameterId := "believe"
-    form := "ver-uv-a-l-a"
-    segments := ["ver", "uv", "a", "l", "a"]
+    lexeme := Lexemes.believe_macedonian
+    cell := l_form_f_sg
+    form := "veruvala"
+    morphs := ["ver", "uv", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Macedonian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def macedonian_plain_prs : Form :=
+def macedonian_plain_prs : Form Cell :=
   { id := "stojkovic2026_macedonian_plain_prs"
-    languageId := "mace1250"
-    parameterId := "believe"
-    form := "ver-uv-a-ʃ"
-    segments := ["ver", "uv", "a", "ʃ"]
+    lexeme := Lexemes.believe_macedonian
+    cell := prs_2sg
+    form := "veruvaʃ"
+    morphs := ["ver", "uv", "a", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Macedonian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def pannonian_rusyn_plain_lform : Form :=
+def pannonian_rusyn_plain_lform : Form Cell :=
   { id := "stojkovic2026_pannonian_rusyn_plain_lform"
-    languageId := "pann1240"
-    parameterId := "serve"
-    form := "rab-ov-a-l-a"
-    segments := ["rab", "ov", "a", "l", "a"]
+    lexeme := Lexemes.serve_pannonian_rusyn
+    cell := l_form_f_sg
+    form := "rabovala"
+    morphs := ["rab", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Pannonian Rusyn"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def pannonian_rusyn_plain_prs : Form :=
+def pannonian_rusyn_plain_prs : Form Cell :=
   { id := "stojkovic2026_pannonian_rusyn_plain_prs"
-    languageId := "pann1240"
-    parameterId := "serve"
-    form := "rab-u-je-ʃ"
-    segments := ["rab", "u", "je", "ʃ"]
+    lexeme := Lexemes.serve_pannonian_rusyn
+    cell := prs_2sg
+    form := "rabujeʃ"
+    morphs := ["rab", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Pannonian Rusyn"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def podlachian_plain_lform : Form :=
+def podlachian_plain_lform : Form Cell :=
   { id := "stojkovic2026_podlachian_plain_lform"
-    languageId := "east1426"
-    parameterId := "aim"
-    form := "tsil-ov-a-w-a"
-    segments := ["tsil", "ov", "a", "w", "a"]
+    lexeme := Lexemes.aim_podlachian
+    cell := l_form_f_sg
+    form := "tsilovawa"
+    morphs := ["tsil", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Podlachian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def podlachian_plain_prs : Form :=
+def podlachian_plain_prs : Form Cell :=
   { id := "stojkovic2026_podlachian_plain_prs"
-    languageId := "east1426"
-    parameterId := "aim"
-    form := "tsil-u-je-ʃ"
-    segments := ["tsil", "u", "je", "ʃ"]
+    lexeme := Lexemes.aim_podlachian
+    cell := prs_2sg
+    form := "tsilujeʃ"
+    morphs := ["tsil", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Podlachian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def polish_plain_lform : Form :=
+def polish_plain_lform : Form Cell :=
   { id := "stojkovic2026_polish_plain_lform"
-    languageId := "poli1260"
-    parameterId := "work"
-    form := "prats-ov-a-w-a"
-    segments := ["prats", "ov", "a", "w", "a"]
+    lexeme := Lexemes.work_polish
+    cell := l_form_f_sg
+    form := "pratsovawa"
+    morphs := ["prats", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Polish"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def polish_plain_prs : Form :=
+def polish_plain_prs : Form Cell :=
   { id := "stojkovic2026_polish_plain_prs"
-    languageId := "poli1260"
-    parameterId := "work"
-    form := "prats-u-je-ʃ"
-    segments := ["prats", "u", "je", "ʃ"]
+    lexeme := Lexemes.work_polish
+    cell := prs_2sg
+    form := "pratsujeʃ"
+    morphs := ["prats", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Polish"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def russian_plain_lform : Form :=
+def russian_plain_lform : Form Cell :=
   { id := "stojkovic2026_russian_plain_lform"
-    languageId := "russ1263"
-    parameterId := "complain"
-    form := "ʒal-ov-a-l-a-sʲ"
-    segments := ["ʒal", "ov", "a", "l", "a", "sʲ"]
+    lexeme := Lexemes.complain_russian
+    cell := l_form_f_sg
+    form := "ʒalovalasʲ"
+    morphs := ["ʒal", "ov", "a", "l", "a", "sʲ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Russian"), ("Root", "plain"), ("Cell", "l-form.f.sg"), ("Verbalizer", "orthographic")] }
+    ] }
 
-def russian_plain_prs : Form :=
+def russian_plain_prs : Form Cell :=
   { id := "stojkovic2026_russian_plain_prs"
-    languageId := "russ1263"
-    parameterId := "complain"
-    form := "ʒal-u-je-ʃ-sʲ"
-    segments := ["ʒal", "u", "je", "ʃ", "sʲ"]
+    lexeme := Lexemes.complain_russian
+    cell := prs_2sg
+    form := "ʒalujeʃsʲ"
+    morphs := ["ʒal", "u", "je", "ʃ", "sʲ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Russian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def silesian_plain_lform : Form :=
+def silesian_plain_lform : Form Cell :=
   { id := "stojkovic2026_silesian_plain_lform"
-    languageId := "sile1253"
-    parameterId := "darn"
-    form := "ɕtop-ov-a-w-a"
-    segments := ["ɕtop", "ov", "a", "w", "a"]
+    lexeme := Lexemes.darn_silesian
+    cell := l_form_f_sg
+    form := "ɕtopovawa"
+    morphs := ["ɕtop", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Silesian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def silesian_plain_prs : Form :=
+def silesian_plain_prs : Form Cell :=
   { id := "stojkovic2026_silesian_plain_prs"
-    languageId := "sile1253"
-    parameterId := "darn"
-    form := "ɕtop-u-je-ʃ"
-    segments := ["ɕtop", "u", "je", "ʃ"]
+    lexeme := Lexemes.darn_silesian
+    cell := prs_2sg
+    form := "ɕtopujeʃ"
+    morphs := ["ɕtop", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Silesian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def slovak_plain_lform : Form :=
+def slovak_plain_lform : Form Cell :=
   { id := "stojkovic2026_slovak_plain_lform"
-    languageId := "slov1269"
-    parameterId := "battle"
-    form := "boj-ov-a-l-a"
-    segments := ["boj", "ov", "a", "l", "a"]
+    lexeme := Lexemes.battle_slovak
+    cell := l_form_f_sg
+    form := "bojovala"
+    morphs := ["boj", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Slovak"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def slovak_plain_prs : Form :=
+def slovak_plain_prs : Form Cell :=
   { id := "stojkovic2026_slovak_plain_prs"
-    languageId := "slov1269"
-    parameterId := "battle"
-    form := "boj-u-je-ʃ"
-    segments := ["boj", "u", "je", "ʃ"]
+    lexeme := Lexemes.battle_slovak
+    cell := prs_2sg
+    form := "bojujeʃ"
+    morphs := ["boj", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Slovak"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def slovenian_plain_lform : Form :=
+def slovenian_plain_lform : Form Cell :=
   { id := "stojkovic2026_slovenian_plain_lform"
-    languageId := "slov1268"
-    parameterId := "travel"
-    form := "pot-ov-a-l-a"
-    segments := ["pot", "ov", "a", "l", "a"]
+    lexeme := Lexemes.travel_slovenian
+    cell := l_form_f_sg
+    form := "potovala"
+    morphs := ["pot", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Slovenian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def slovenian_plain_prs : Form :=
+def slovenian_plain_prs : Form Cell :=
   { id := "stojkovic2026_slovenian_plain_prs"
-    languageId := "slov1268"
-    parameterId := "travel"
-    form := "pot-u-je-ʃ"
-    segments := ["pot", "u", "je", "ʃ"]
+    lexeme := Lexemes.travel_slovenian
+    cell := prs_2sg
+    form := "potujeʃ"
+    morphs := ["pot", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Slovenian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def ukrainian_plain_lform : Form :=
+def ukrainian_plain_lform : Form Cell :=
   { id := "stojkovic2026_ukrainian_plain_lform"
-    languageId := "ukra1253"
-    parameterId := "squeeze"
-    form := "stis-uv-a-l-a"
-    segments := ["stis", "uv", "a", "l", "a"]
+    lexeme := Lexemes.squeeze_ukrainian
+    cell := l_form_f_sg
+    form := "stisuvala"
+    morphs := ["stis", "uv", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Ukrainian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def ukrainian_plain_prs : Form :=
+def ukrainian_plain_prs : Form Cell :=
   { id := "stojkovic2026_ukrainian_plain_prs"
-    languageId := "ukra1253"
-    parameterId := "squeeze"
-    form := "stis-u-jeʃ"
-    segments := ["stis", "u", "jeʃ"]
+    lexeme := Lexemes.squeeze_ukrainian
+    cell := prs_2sg
+    form := "stisujeʃ"
+    morphs := ["stis", "u", "jeʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Ukrainian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def upper_sorbian_plain_lform : Form :=
+def upper_sorbian_plain_lform : Form Cell :=
   { id := "stojkovic2026_upper_sorbian_plain_lform"
-    languageId := "uppe1395"
-    parameterId := "buy"
-    form := "kup-ov-a-w-a"
-    segments := ["kup", "ov", "a", "w", "a"]
+    lexeme := Lexemes.buy_upper_sorbian
+    cell := l_form_f_sg
+    form := "kupovawa"
+    morphs := ["kup", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Upper Sorbian"), ("Root", "plain"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def upper_sorbian_plain_prs : Form :=
+def upper_sorbian_plain_prs : Form Cell :=
   { id := "stojkovic2026_upper_sorbian_plain_prs"
-    languageId := "uppe1395"
-    parameterId := "buy"
-    form := "kup-u-je-ʃ"
-    segments := ["kup", "u", "je", "ʃ"]
+    lexeme := Lexemes.buy_upper_sorbian
+    cell := prs_2sg
+    form := "kupujeʃ"
+    morphs := ["kup", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 1"⟩
-    ]
-    columns := [("Variety", "Upper Sorbian"), ("Root", "plain"), ("Cell", "2sg.prs")] }
+    ] }
 
-def belarusian_palatal_lform : Form :=
+def belarusian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_belarusian_palatal_lform"
-    languageId := "bela1254"
-    parameterId := "battle"
-    form := "vaj-av-a-l-a"
-    segments := ["vaj", "av", "a", "l", "a"]
+    lexeme := Lexemes.battle_belarusian
+    cell := l_form_f_sg
+    form := "vajavala"
+    morphs := ["vaj", "av", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Belarusian"), ("Root", "palatal"), ("Cell", "l-form.f.sg"), ("Verbalizer", "orthographic")] }
+    ] }
 
-def belarusian_palatal_prs : Form :=
+def belarusian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_belarusian_palatal_prs"
-    languageId := "bela1254"
-    parameterId := "battle"
-    form := "vaj-u-je-ʃ"
-    segments := ["vaj", "u", "je", "ʃ"]
+    lexeme := Lexemes.battle_belarusian
+    cell := prs_2sg
+    form := "vajujeʃ"
+    morphs := ["vaj", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Belarusian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def bunyev_ac_palatal_lform : Form :=
+def bunyev_ac_palatal_lform : Form Cell :=
   { id := "stojkovic2026_bunyev_ac_palatal_lform"
-    languageId := "sout1528"
-    parameterId := "prune"
-    form := "katʃ-ov-a-l-a"
-    segments := ["katʃ", "ov", "a", "l", "a"]
+    lexeme := Lexemes.prune_bunyev_ac
+    cell := l_form_f_sg
+    form := "katʃovala"
+    morphs := ["katʃ", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Bunyev(ac)"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def bunyev_ac_palatal_prs : Form :=
+def bunyev_ac_palatal_prs : Form Cell :=
   { id := "stojkovic2026_bunyev_ac_palatal_prs"
-    languageId := "sout1528"
-    parameterId := "prune"
-    form := "katʃ-u-je-ʃ"
-    segments := ["katʃ", "u", "je", "ʃ"]
+    lexeme := Lexemes.prune_bunyev_ac
+    cell := prs_2sg
+    form := "katʃujeʃ"
+    morphs := ["katʃ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Bunyev(ac)"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def czech_palatal_lform : Form :=
+def czech_palatal_lform : Form Cell :=
   { id := "stojkovic2026_czech_palatal_lform"
-    languageId := "czec1258"
-    parameterId := "whip"
-    form := "bitʃ-ov-a-l-a"
-    segments := ["bitʃ", "ov", "a", "l", "a"]
+    lexeme := Lexemes.whip_czech
+    cell := l_form_f_sg
+    form := "bitʃovala"
+    morphs := ["bitʃ", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Czech"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def czech_palatal_prs : Form :=
+def czech_palatal_prs : Form Cell :=
   { id := "stojkovic2026_czech_palatal_prs"
-    languageId := "czec1258"
-    parameterId := "whip"
-    form := "bitʃ-u-je-ʃ"
-    segments := ["bitʃ", "u", "je", "ʃ"]
+    lexeme := Lexemes.whip_czech
+    cell := prs_2sg
+    form := "bitʃujeʃ"
+    morphs := ["bitʃ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Czech"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def kashubian_palatal_lform : Form :=
+def kashubian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_kashubian_palatal_lform"
-    languageId := "kash1274"
-    parameterId := "date"
-    form := "vrəj-ov-a-w-a"
-    segments := ["vrəj", "ov", "a", "w", "a"]
+    lexeme := Lexemes.date_kashubian
+    cell := l_form_f_sg
+    form := "vrəjovawa"
+    morphs := ["vrəj", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Kashubian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def kashubian_palatal_prs : Form :=
+def kashubian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_kashubian_palatal_prs"
-    languageId := "kash1274"
-    parameterId := "date"
-    form := "vrəj-u-je-ʃ"
-    segments := ["vrəj", "u", "je", "ʃ"]
+    lexeme := Lexemes.date_kashubian
+    cell := prs_2sg
+    form := "vrəjujeʃ"
+    morphs := ["vrəj", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Kashubian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def lower_sorbian_palatal_lform : Form :=
+def lower_sorbian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_lower_sorbian_palatal_lform"
-    languageId := "lowe1385"
-    parameterId := "wander"
-    form := "puɕ-ov-a-w-a"
-    segments := ["puɕ", "ov", "a", "w", "a"]
+    lexeme := Lexemes.wander_lower_sorbian
+    cell := l_form_f_sg
+    form := "puɕovawa"
+    morphs := ["puɕ", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Lower Sorbian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def lower_sorbian_palatal_prs : Form :=
+def lower_sorbian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_lower_sorbian_palatal_prs"
-    languageId := "lowe1385"
-    parameterId := "wander"
-    form := "puɕ-u-je-ʃ"
-    segments := ["puɕ", "u", "je", "ʃ"]
+    lexeme := Lexemes.wander_lower_sorbian
+    cell := prs_2sg
+    form := "puɕujeʃ"
+    morphs := ["puɕ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Lower Sorbian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def pannonian_rusyn_palatal_lform : Form :=
+def pannonian_rusyn_palatal_lform : Form Cell :=
   { id := "stojkovic2026_pannonian_rusyn_palatal_lform"
-    languageId := "pann1240"
-    parameterId := "reign"
-    form := "kraʎ-ov-a-l-a"
-    segments := ["kraʎ", "ov", "a", "l", "a"]
+    lexeme := Lexemes.reign_pannonian_rusyn
+    cell := l_form_f_sg
+    form := "kraʎovala"
+    morphs := ["kraʎ", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Pannonian Rusyn"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def pannonian_rusyn_palatal_prs : Form :=
+def pannonian_rusyn_palatal_prs : Form Cell :=
   { id := "stojkovic2026_pannonian_rusyn_palatal_prs"
-    languageId := "pann1240"
-    parameterId := "reign"
-    form := "kraʎ-u-je-ʃ"
-    segments := ["kraʎ", "u", "je", "ʃ"]
+    lexeme := Lexemes.reign_pannonian_rusyn
+    cell := prs_2sg
+    form := "kraʎujeʃ"
+    morphs := ["kraʎ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Pannonian Rusyn"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def podlachian_palatal_lform : Form :=
+def podlachian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_podlachian_palatal_lform"
-    languageId := "east1426"
-    parameterId := "grub"
-    form := "kartʃ-ov-a-w-a"
-    segments := ["kartʃ", "ov", "a", "w", "a"]
+    lexeme := Lexemes.grub_podlachian
+    cell := l_form_f_sg
+    form := "kartʃovawa"
+    morphs := ["kartʃ", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Podlachian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def podlachian_palatal_prs : Form :=
+def podlachian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_podlachian_palatal_prs"
-    languageId := "east1426"
-    parameterId := "grub"
-    form := "kartʃ-u-je-ʃ"
-    segments := ["kartʃ", "u", "je", "ʃ"]
+    lexeme := Lexemes.grub_podlachian
+    cell := prs_2sg
+    form := "kartʃujeʃ"
+    morphs := ["kartʃ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Podlachian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def polish_palatal_lform : Form :=
+def polish_palatal_lform : Form Cell :=
   { id := "stojkovic2026_polish_palatal_lform"
-    languageId := "poli1260"
-    parameterId := "accommodate"
-    form := "hotel'-ov-a-w-a"
-    segments := ["hotel'", "ov", "a", "w", "a"]
+    lexeme := Lexemes.accommodate_polish
+    cell := l_form_f_sg
+    form := "hotel'ovawa"
+    morphs := ["hotel'", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Polish"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def polish_palatal_prs : Form :=
+def polish_palatal_prs : Form Cell :=
   { id := "stojkovic2026_polish_palatal_prs"
-    languageId := "poli1260"
-    parameterId := "accommodate"
-    form := "hotel'-u-je-ʃ"
-    segments := ["hotel'", "u", "je", "ʃ"]
+    lexeme := Lexemes.accommodate_polish
+    cell := prs_2sg
+    form := "hotel'ujeʃ"
+    morphs := ["hotel'", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Polish"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def slovak_palatal_lform : Form :=
+def slovak_palatal_lform : Form Cell :=
   { id := "stojkovic2026_slovak_palatal_lform"
-    languageId := "slov1269"
-    parameterId := "battle"
-    form := "boj-ov-a-l-a"
-    segments := ["boj", "ov", "a", "l", "a"]
+    lexeme := Lexemes.battle_slovak
+    cell := l_form_f_sg
+    form := "bojovala"
+    morphs := ["boj", "ov", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Slovak"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def slovak_palatal_prs : Form :=
+def slovak_palatal_prs : Form Cell :=
   { id := "stojkovic2026_slovak_palatal_prs"
-    languageId := "slov1269"
-    parameterId := "battle"
-    form := "boj-u-je-ʃ"
-    segments := ["boj", "u", "je", "ʃ"]
+    lexeme := Lexemes.battle_slovak
+    cell := prs_2sg
+    form := "bojujeʃ"
+    morphs := ["boj", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Slovak"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def silesian_palatal_lform : Form :=
+def silesian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_silesian_palatal_lform"
-    languageId := "sile1253"
-    parameterId := "whip"
-    form := "pajtɕ-ov-a-w-a"
-    segments := ["pajtɕ", "ov", "a", "w", "a"]
+    lexeme := Lexemes.whip_silesian
+    cell := l_form_f_sg
+    form := "pajtɕovawa"
+    morphs := ["pajtɕ", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Silesian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def silesian_palatal_prs : Form :=
+def silesian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_silesian_palatal_prs"
-    languageId := "sile1253"
-    parameterId := "whip"
-    form := "pajtɕ-u-je-ʃ"
-    segments := ["pajtɕ", "u", "je", "ʃ"]
+    lexeme := Lexemes.whip_silesian
+    cell := prs_2sg
+    form := "pajtɕujeʃ"
+    morphs := ["pajtɕ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Silesian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def upper_sorbian_palatal_lform : Form :=
+def upper_sorbian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_upper_sorbian_palatal_lform"
-    languageId := "uppe1395"
-    parameterId := "translate"
-    form := "preloʒ-ov-a-w-a"
-    segments := ["preloʒ", "ov", "a", "w", "a"]
+    lexeme := Lexemes.translate_upper_sorbian
+    cell := l_form_f_sg
+    form := "preloʒovawa"
+    morphs := ["preloʒ", "ov", "a", "w", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Upper Sorbian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def upper_sorbian_palatal_prs : Form :=
+def upper_sorbian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_upper_sorbian_palatal_prs"
-    languageId := "uppe1395"
-    parameterId := "translate"
-    form := "preloʒ-u-je-ʃ"
-    segments := ["preloʒ", "u", "je", "ʃ"]
+    lexeme := Lexemes.translate_upper_sorbian
+    cell := prs_2sg
+    form := "preloʒujeʃ"
+    morphs := ["preloʒ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Upper Sorbian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def bos_cro_mon_ser_palatal_lform : Form :=
+def bos_cro_mon_ser_palatal_lform : Form Cell :=
   { id := "stojkovic2026_bos_cro_mon_ser_palatal_lform"
-    languageId := "sout1528"
-    parameterId := "be_teacher"
-    form := "utʃiteʎ-ev-a-l-a"
-    segments := ["utʃiteʎ", "ev", "a", "l", "a"]
+    lexeme := Lexemes.be_teacher_bos_cro_mon_ser
+    cell := l_form_f_sg
+    form := "utʃiteʎevala"
+    morphs := ["utʃiteʎ", "ev", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Bos/Cro/Mon/Ser"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def bos_cro_mon_ser_palatal_prs : Form :=
+def bos_cro_mon_ser_palatal_prs : Form Cell :=
   { id := "stojkovic2026_bos_cro_mon_ser_palatal_prs"
-    languageId := "sout1528"
-    parameterId := "be_teacher"
-    form := "utʃiteʎ-u-je-ʃ"
-    segments := ["utʃiteʎ", "u", "je", "ʃ"]
+    lexeme := Lexemes.be_teacher_bos_cro_mon_ser
+    cell := prs_2sg
+    form := "utʃiteʎujeʃ"
+    morphs := ["utʃiteʎ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Bos/Cro/Mon/Ser"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def carpathian_rusyn_palatal_lform : Form :=
+def carpathian_rusyn_palatal_lform : Form Cell :=
   { id := "stojkovic2026_carpathian_rusyn_palatal_lform"
-    languageId := "rusy1239"
-    parameterId := "compare"
-    form := "stupɲ-ev-a-l-a"
-    segments := ["stupɲ", "ev", "a", "l", "a"]
+    lexeme := Lexemes.compare_carpathian_rusyn
+    cell := l_form_f_sg
+    form := "stupɲevala"
+    morphs := ["stupɲ", "ev", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Carpathian Rusyn"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def carpathian_rusyn_palatal_prs : Form :=
+def carpathian_rusyn_palatal_prs : Form Cell :=
   { id := "stojkovic2026_carpathian_rusyn_palatal_prs"
-    languageId := "rusy1239"
-    parameterId := "compare"
-    form := "stupɲ-u-je-ʃ"
-    segments := ["stupɲ", "u", "je", "ʃ"]
+    lexeme := Lexemes.compare_carpathian_rusyn
+    cell := prs_2sg
+    form := "stupɲujeʃ"
+    morphs := ["stupɲ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Carpathian Rusyn"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def russian_palatal_lform : Form :=
+def russian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_russian_palatal_lform"
-    languageId := "russ1263"
-    parameterId := "swindle"
-    form := "muxlʲ-ev-a-l-a"
-    segments := ["muxlʲ", "ev", "a", "l", "a"]
+    lexeme := Lexemes.swindle_russian
+    cell := l_form_f_sg
+    form := "muxlʲevala"
+    morphs := ["muxlʲ", "ev", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Russian"), ("Root", "palatal"), ("Cell", "l-form.f.sg"), ("Verbalizer", "orthographic")] }
+    ] }
 
-def russian_palatal_prs : Form :=
+def russian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_russian_palatal_prs"
-    languageId := "russ1263"
-    parameterId := "swindle"
-    form := "muxlʲ-u-je-ʃ"
-    segments := ["muxlʲ", "u", "je", "ʃ"]
+    lexeme := Lexemes.swindle_russian
+    cell := prs_2sg
+    form := "muxlʲujeʃ"
+    morphs := ["muxlʲ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Russian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def slovenian_palatal_lform : Form :=
+def slovenian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_slovenian_palatal_lform"
-    languageId := "slov1268"
-    parameterId := "rain"
-    form := "deʒ-ev-a-l-a"
-    segments := ["deʒ", "ev", "a", "l", "a"]
+    lexeme := Lexemes.rain_slovenian
+    cell := l_form_f_sg
+    form := "deʒevala"
+    morphs := ["deʒ", "ev", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Slovenian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def slovenian_palatal_prs : Form :=
+def slovenian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_slovenian_palatal_prs"
-    languageId := "slov1268"
-    parameterId := "rain"
-    form := "deʒ-u-je-ʃ"
-    segments := ["deʒ", "u", "je", "ʃ"]
+    lexeme := Lexemes.rain_slovenian
+    cell := prs_2sg
+    form := "deʒujeʃ"
+    morphs := ["deʒ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Slovenian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def bulgarian_palatal_lform : Form :=
+def bulgarian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_bulgarian_palatal_lform"
-    languageId := "bulg1262"
-    parameterId := "jitter"
-    form := "najeʒ-uv-a-l-a"
-    segments := ["najeʒ", "uv", "a", "l", "a"]
+    lexeme := Lexemes.jitter_bulgarian
+    cell := l_form_f_sg
+    form := "najeʒuvala"
+    morphs := ["najeʒ", "uv", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Bulgarian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def bulgarian_palatal_prs : Form :=
+def bulgarian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_bulgarian_palatal_prs"
-    languageId := "bulg1262"
-    parameterId := "jitter"
-    form := "najeʒ-uv-a-ʃ"
-    segments := ["najeʒ", "uv", "a", "ʃ"]
+    lexeme := Lexemes.jitter_bulgarian
+    cell := prs_2sg
+    form := "najeʒuvaʃ"
+    morphs := ["najeʒ", "uv", "a", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Bulgarian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def lemko_rusyn_palatal_lform : Form :=
+def lemko_rusyn_palatal_lform : Form Cell :=
   { id := "stojkovic2026_lemko_rusyn_palatal_lform"
-    languageId := "rusy1239"
-    parameterId := "adore"
-    form := "oboʒ-uv-a-l-a"
-    segments := ["oboʒ", "uv", "a", "l", "a"]
+    lexeme := Lexemes.adore_lemko_rusyn
+    cell := l_form_f_sg
+    form := "oboʒuvala"
+    morphs := ["oboʒ", "uv", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Lemko Rusyn"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def lemko_rusyn_palatal_prs : Form :=
+def lemko_rusyn_palatal_prs : Form Cell :=
   { id := "stojkovic2026_lemko_rusyn_palatal_prs"
-    languageId := "rusy1239"
-    parameterId := "adore"
-    form := "oboʒ-u-je-ʃ"
-    segments := ["oboʒ", "u", "je", "ʃ"]
+    lexeme := Lexemes.adore_lemko_rusyn
+    cell := prs_2sg
+    form := "oboʒujeʃ"
+    morphs := ["oboʒ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Lemko Rusyn"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def macedonian_palatal_lform : Form :=
+def macedonian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_macedonian_palatal_lform"
-    languageId := "mace1250"
-    parameterId := "spend_night"
-    form := "noc-uv-a-l-a"
-    segments := ["noc", "uv", "a", "l", "a"]
+    lexeme := Lexemes.spend_night_macedonian
+    cell := l_form_f_sg
+    form := "nocuvala"
+    morphs := ["noc", "uv", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Macedonian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def macedonian_palatal_prs : Form :=
+def macedonian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_macedonian_palatal_prs"
-    languageId := "mace1250"
-    parameterId := "spend_night"
-    form := "noc-uv-a-ʃ"
-    segments := ["noc", "uv", "a", "ʃ"]
+    lexeme := Lexemes.spend_night_macedonian
+    cell := prs_2sg
+    form := "nocuvaʃ"
+    morphs := ["noc", "uv", "a", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Macedonian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def ukrainian_palatal_lform : Form :=
+def ukrainian_palatal_lform : Form Cell :=
   { id := "stojkovic2026_ukrainian_palatal_lform"
-    languageId := "ukra1253"
-    parameterId := "be_late"
-    form := "zapizɲ-uv-a-l-a"
-    segments := ["zapizɲ", "uv", "a", "l", "a"]
+    lexeme := Lexemes.be_late_ukrainian
+    cell := l_form_f_sg
+    form := "zapizɲuvala"
+    morphs := ["zapizɲ", "uv", "a", "l", "a"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Ukrainian"), ("Root", "palatal"), ("Cell", "l-form.f.sg")] }
+    ] }
 
-def ukrainian_palatal_prs : Form :=
+def ukrainian_palatal_prs : Form Cell :=
   { id := "stojkovic2026_ukrainian_palatal_prs"
-    languageId := "ukra1253"
-    parameterId := "be_late"
-    form := "zapizɲ-u-je-ʃ"
-    segments := ["zapizɲ", "u", "je", "ʃ"]
+    lexeme := Lexemes.be_late_ukrainian
+    cell := prs_2sg
+    form := "zapizɲujeʃ"
+    morphs := ["zapizɲ", "u", "je", "ʃ"]
     source := [
       ⟨"stojkovic-2026", "Table 2"⟩
-    ]
-    columns := [("Variety", "Ukrainian"), ("Root", "palatal"), ("Cell", "2sg.prs")] }
+    ] }
 
-def all : List Form := [belarusian_plain_lform, belarusian_plain_prs, bos_cro_mon_ser_plain_lform, bos_cro_mon_ser_plain_prs, bulgarian_plain_lform, bulgarian_plain_prs, bunyev_ac_plain_lform, bunyev_ac_plain_prs, carpathian_rusyn_plain_lform, carpathian_rusyn_plain_prs, czech_plain_lform, czech_plain_prs, kashubian_plain_lform, kashubian_plain_prs, lemko_rusyn_plain_lform, lemko_rusyn_plain_prs, lower_sorbian_plain_lform, lower_sorbian_plain_prs, macedonian_plain_lform, macedonian_plain_prs, pannonian_rusyn_plain_lform, pannonian_rusyn_plain_prs, podlachian_plain_lform, podlachian_plain_prs, polish_plain_lform, polish_plain_prs, russian_plain_lform, russian_plain_prs, silesian_plain_lform, silesian_plain_prs, slovak_plain_lform, slovak_plain_prs, slovenian_plain_lform, slovenian_plain_prs, ukrainian_plain_lform, ukrainian_plain_prs, upper_sorbian_plain_lform, upper_sorbian_plain_prs, belarusian_palatal_lform, belarusian_palatal_prs, bunyev_ac_palatal_lform, bunyev_ac_palatal_prs, czech_palatal_lform, czech_palatal_prs, kashubian_palatal_lform, kashubian_palatal_prs, lower_sorbian_palatal_lform, lower_sorbian_palatal_prs, pannonian_rusyn_palatal_lform, pannonian_rusyn_palatal_prs, podlachian_palatal_lform, podlachian_palatal_prs, polish_palatal_lform, polish_palatal_prs, slovak_palatal_lform, slovak_palatal_prs, silesian_palatal_lform, silesian_palatal_prs, upper_sorbian_palatal_lform, upper_sorbian_palatal_prs, bos_cro_mon_ser_palatal_lform, bos_cro_mon_ser_palatal_prs, carpathian_rusyn_palatal_lform, carpathian_rusyn_palatal_prs, russian_palatal_lform, russian_palatal_prs, slovenian_palatal_lform, slovenian_palatal_prs, bulgarian_palatal_lform, bulgarian_palatal_prs, lemko_rusyn_palatal_lform, lemko_rusyn_palatal_prs, macedonian_palatal_lform, macedonian_palatal_prs, ukrainian_palatal_lform, ukrainian_palatal_prs]
+/-- The source's analysis of a form, its parse rather than data. -/
+structure Analysis where
+  /-- The form analysed. -/
+  form : Form Cell
+  /-- The `Root` column, the root class the paper assigns. -/
+  root : Root
+  /-- The `Verbalizer` column. -/
+  verbalizer : Option String := none
+  deriving DecidableEq, Repr
 
-def relations : List FormRelation := []
+def belarusian_plain_lform.analysis : Analysis :=
+  { form := belarusian_plain_lform,
+    root := Root.plain,
+    verbalizer := some "orthographic" }
+
+def belarusian_plain_prs.analysis : Analysis :=
+  { form := belarusian_plain_prs,
+    root := Root.plain }
+
+def bos_cro_mon_ser_plain_lform.analysis : Analysis :=
+  { form := bos_cro_mon_ser_plain_lform,
+    root := Root.plain }
+
+def bos_cro_mon_ser_plain_prs.analysis : Analysis :=
+  { form := bos_cro_mon_ser_plain_prs,
+    root := Root.plain }
+
+def bulgarian_plain_lform.analysis : Analysis :=
+  { form := bulgarian_plain_lform,
+    root := Root.plain }
+
+def bulgarian_plain_prs.analysis : Analysis :=
+  { form := bulgarian_plain_prs,
+    root := Root.plain }
+
+def bunyev_ac_plain_lform.analysis : Analysis :=
+  { form := bunyev_ac_plain_lform,
+    root := Root.plain }
+
+def bunyev_ac_plain_prs.analysis : Analysis :=
+  { form := bunyev_ac_plain_prs,
+    root := Root.plain }
+
+def carpathian_rusyn_plain_lform.analysis : Analysis :=
+  { form := carpathian_rusyn_plain_lform,
+    root := Root.plain }
+
+def carpathian_rusyn_plain_prs.analysis : Analysis :=
+  { form := carpathian_rusyn_plain_prs,
+    root := Root.plain }
+
+def czech_plain_lform.analysis : Analysis :=
+  { form := czech_plain_lform,
+    root := Root.plain }
+
+def czech_plain_prs.analysis : Analysis :=
+  { form := czech_plain_prs,
+    root := Root.plain }
+
+def kashubian_plain_lform.analysis : Analysis :=
+  { form := kashubian_plain_lform,
+    root := Root.plain }
+
+def kashubian_plain_prs.analysis : Analysis :=
+  { form := kashubian_plain_prs,
+    root := Root.plain }
+
+def lemko_rusyn_plain_lform.analysis : Analysis :=
+  { form := lemko_rusyn_plain_lform,
+    root := Root.plain }
+
+def lemko_rusyn_plain_prs.analysis : Analysis :=
+  { form := lemko_rusyn_plain_prs,
+    root := Root.plain }
+
+def lower_sorbian_plain_lform.analysis : Analysis :=
+  { form := lower_sorbian_plain_lform,
+    root := Root.plain }
+
+def lower_sorbian_plain_prs.analysis : Analysis :=
+  { form := lower_sorbian_plain_prs,
+    root := Root.plain }
+
+def macedonian_plain_lform.analysis : Analysis :=
+  { form := macedonian_plain_lform,
+    root := Root.plain }
+
+def macedonian_plain_prs.analysis : Analysis :=
+  { form := macedonian_plain_prs,
+    root := Root.plain }
+
+def pannonian_rusyn_plain_lform.analysis : Analysis :=
+  { form := pannonian_rusyn_plain_lform,
+    root := Root.plain }
+
+def pannonian_rusyn_plain_prs.analysis : Analysis :=
+  { form := pannonian_rusyn_plain_prs,
+    root := Root.plain }
+
+def podlachian_plain_lform.analysis : Analysis :=
+  { form := podlachian_plain_lform,
+    root := Root.plain }
+
+def podlachian_plain_prs.analysis : Analysis :=
+  { form := podlachian_plain_prs,
+    root := Root.plain }
+
+def polish_plain_lform.analysis : Analysis :=
+  { form := polish_plain_lform,
+    root := Root.plain }
+
+def polish_plain_prs.analysis : Analysis :=
+  { form := polish_plain_prs,
+    root := Root.plain }
+
+def russian_plain_lform.analysis : Analysis :=
+  { form := russian_plain_lform,
+    root := Root.plain,
+    verbalizer := some "orthographic" }
+
+def russian_plain_prs.analysis : Analysis :=
+  { form := russian_plain_prs,
+    root := Root.plain }
+
+def silesian_plain_lform.analysis : Analysis :=
+  { form := silesian_plain_lform,
+    root := Root.plain }
+
+def silesian_plain_prs.analysis : Analysis :=
+  { form := silesian_plain_prs,
+    root := Root.plain }
+
+def slovak_plain_lform.analysis : Analysis :=
+  { form := slovak_plain_lform,
+    root := Root.plain }
+
+def slovak_plain_prs.analysis : Analysis :=
+  { form := slovak_plain_prs,
+    root := Root.plain }
+
+def slovenian_plain_lform.analysis : Analysis :=
+  { form := slovenian_plain_lform,
+    root := Root.plain }
+
+def slovenian_plain_prs.analysis : Analysis :=
+  { form := slovenian_plain_prs,
+    root := Root.plain }
+
+def ukrainian_plain_lform.analysis : Analysis :=
+  { form := ukrainian_plain_lform,
+    root := Root.plain }
+
+def ukrainian_plain_prs.analysis : Analysis :=
+  { form := ukrainian_plain_prs,
+    root := Root.plain }
+
+def upper_sorbian_plain_lform.analysis : Analysis :=
+  { form := upper_sorbian_plain_lform,
+    root := Root.plain }
+
+def upper_sorbian_plain_prs.analysis : Analysis :=
+  { form := upper_sorbian_plain_prs,
+    root := Root.plain }
+
+def belarusian_palatal_lform.analysis : Analysis :=
+  { form := belarusian_palatal_lform,
+    root := Root.palatal,
+    verbalizer := some "orthographic" }
+
+def belarusian_palatal_prs.analysis : Analysis :=
+  { form := belarusian_palatal_prs,
+    root := Root.palatal }
+
+def bunyev_ac_palatal_lform.analysis : Analysis :=
+  { form := bunyev_ac_palatal_lform,
+    root := Root.palatal }
+
+def bunyev_ac_palatal_prs.analysis : Analysis :=
+  { form := bunyev_ac_palatal_prs,
+    root := Root.palatal }
+
+def czech_palatal_lform.analysis : Analysis :=
+  { form := czech_palatal_lform,
+    root := Root.palatal }
+
+def czech_palatal_prs.analysis : Analysis :=
+  { form := czech_palatal_prs,
+    root := Root.palatal }
+
+def kashubian_palatal_lform.analysis : Analysis :=
+  { form := kashubian_palatal_lform,
+    root := Root.palatal }
+
+def kashubian_palatal_prs.analysis : Analysis :=
+  { form := kashubian_palatal_prs,
+    root := Root.palatal }
+
+def lower_sorbian_palatal_lform.analysis : Analysis :=
+  { form := lower_sorbian_palatal_lform,
+    root := Root.palatal }
+
+def lower_sorbian_palatal_prs.analysis : Analysis :=
+  { form := lower_sorbian_palatal_prs,
+    root := Root.palatal }
+
+def pannonian_rusyn_palatal_lform.analysis : Analysis :=
+  { form := pannonian_rusyn_palatal_lform,
+    root := Root.palatal }
+
+def pannonian_rusyn_palatal_prs.analysis : Analysis :=
+  { form := pannonian_rusyn_palatal_prs,
+    root := Root.palatal }
+
+def podlachian_palatal_lform.analysis : Analysis :=
+  { form := podlachian_palatal_lform,
+    root := Root.palatal }
+
+def podlachian_palatal_prs.analysis : Analysis :=
+  { form := podlachian_palatal_prs,
+    root := Root.palatal }
+
+def polish_palatal_lform.analysis : Analysis :=
+  { form := polish_palatal_lform,
+    root := Root.palatal }
+
+def polish_palatal_prs.analysis : Analysis :=
+  { form := polish_palatal_prs,
+    root := Root.palatal }
+
+def slovak_palatal_lform.analysis : Analysis :=
+  { form := slovak_palatal_lform,
+    root := Root.palatal }
+
+def slovak_palatal_prs.analysis : Analysis :=
+  { form := slovak_palatal_prs,
+    root := Root.palatal }
+
+def silesian_palatal_lform.analysis : Analysis :=
+  { form := silesian_palatal_lform,
+    root := Root.palatal }
+
+def silesian_palatal_prs.analysis : Analysis :=
+  { form := silesian_palatal_prs,
+    root := Root.palatal }
+
+def upper_sorbian_palatal_lform.analysis : Analysis :=
+  { form := upper_sorbian_palatal_lform,
+    root := Root.palatal }
+
+def upper_sorbian_palatal_prs.analysis : Analysis :=
+  { form := upper_sorbian_palatal_prs,
+    root := Root.palatal }
+
+def bos_cro_mon_ser_palatal_lform.analysis : Analysis :=
+  { form := bos_cro_mon_ser_palatal_lform,
+    root := Root.palatal }
+
+def bos_cro_mon_ser_palatal_prs.analysis : Analysis :=
+  { form := bos_cro_mon_ser_palatal_prs,
+    root := Root.palatal }
+
+def carpathian_rusyn_palatal_lform.analysis : Analysis :=
+  { form := carpathian_rusyn_palatal_lform,
+    root := Root.palatal }
+
+def carpathian_rusyn_palatal_prs.analysis : Analysis :=
+  { form := carpathian_rusyn_palatal_prs,
+    root := Root.palatal }
+
+def russian_palatal_lform.analysis : Analysis :=
+  { form := russian_palatal_lform,
+    root := Root.palatal,
+    verbalizer := some "orthographic" }
+
+def russian_palatal_prs.analysis : Analysis :=
+  { form := russian_palatal_prs,
+    root := Root.palatal }
+
+def slovenian_palatal_lform.analysis : Analysis :=
+  { form := slovenian_palatal_lform,
+    root := Root.palatal }
+
+def slovenian_palatal_prs.analysis : Analysis :=
+  { form := slovenian_palatal_prs,
+    root := Root.palatal }
+
+def bulgarian_palatal_lform.analysis : Analysis :=
+  { form := bulgarian_palatal_lform,
+    root := Root.palatal }
+
+def bulgarian_palatal_prs.analysis : Analysis :=
+  { form := bulgarian_palatal_prs,
+    root := Root.palatal }
+
+def lemko_rusyn_palatal_lform.analysis : Analysis :=
+  { form := lemko_rusyn_palatal_lform,
+    root := Root.palatal }
+
+def lemko_rusyn_palatal_prs.analysis : Analysis :=
+  { form := lemko_rusyn_palatal_prs,
+    root := Root.palatal }
+
+def macedonian_palatal_lform.analysis : Analysis :=
+  { form := macedonian_palatal_lform,
+    root := Root.palatal }
+
+def macedonian_palatal_prs.analysis : Analysis :=
+  { form := macedonian_palatal_prs,
+    root := Root.palatal }
+
+def ukrainian_palatal_lform.analysis : Analysis :=
+  { form := ukrainian_palatal_lform,
+    root := Root.palatal }
+
+def ukrainian_palatal_prs.analysis : Analysis :=
+  { form := ukrainian_palatal_prs,
+    root := Root.palatal }
+
+/-- Every lexeme of the data. -/
+def lexemes : List Lexeme := [Lexemes.abolish_belarusian, Lexemes.care_for_bos_cro_mon_ser,
+  Lexemes.kiss_bulgarian, Lexemes.swear_at_god_bunyev_ac, Lexemes.talk_carpathian_rusyn,
+  Lexemes.buy_czech, Lexemes.get_engaged_kashubian, Lexemes.draw_lemko_rusyn,
+  Lexemes.paint_lower_sorbian, Lexemes.believe_macedonian, Lexemes.serve_pannonian_rusyn,
+  Lexemes.aim_podlachian, Lexemes.work_polish, Lexemes.complain_russian, Lexemes.darn_silesian,
+  Lexemes.battle_slovak, Lexemes.travel_slovenian, Lexemes.squeeze_ukrainian,
+  Lexemes.buy_upper_sorbian, Lexemes.battle_belarusian, Lexemes.prune_bunyev_ac, Lexemes.whip_czech,
+  Lexemes.date_kashubian, Lexemes.wander_lower_sorbian, Lexemes.reign_pannonian_rusyn,
+  Lexemes.grub_podlachian, Lexemes.accommodate_polish, Lexemes.whip_silesian,
+  Lexemes.translate_upper_sorbian, Lexemes.be_teacher_bos_cro_mon_ser,
+  Lexemes.compare_carpathian_rusyn, Lexemes.swindle_russian, Lexemes.rain_slovenian,
+  Lexemes.jitter_bulgarian, Lexemes.adore_lemko_rusyn, Lexemes.spend_night_macedonian,
+  Lexemes.be_late_ukrainian]
+
+/-- Every form the sources accept. -/
+def all : List (Form Cell) := [belarusian_plain_lform, belarusian_plain_prs,
+  bos_cro_mon_ser_plain_lform, bos_cro_mon_ser_plain_prs, bulgarian_plain_lform,
+  bulgarian_plain_prs, bunyev_ac_plain_lform, bunyev_ac_plain_prs, carpathian_rusyn_plain_lform,
+  carpathian_rusyn_plain_prs, czech_plain_lform, czech_plain_prs, kashubian_plain_lform,
+  kashubian_plain_prs, lemko_rusyn_plain_lform, lemko_rusyn_plain_prs, lower_sorbian_plain_lform,
+  lower_sorbian_plain_prs, macedonian_plain_lform, macedonian_plain_prs,
+  pannonian_rusyn_plain_lform, pannonian_rusyn_plain_prs, podlachian_plain_lform,
+  podlachian_plain_prs, polish_plain_lform, polish_plain_prs, russian_plain_lform,
+  russian_plain_prs, silesian_plain_lform, silesian_plain_prs, slovak_plain_lform, slovak_plain_prs,
+  slovenian_plain_lform, slovenian_plain_prs, ukrainian_plain_lform, ukrainian_plain_prs,
+  upper_sorbian_plain_lform, upper_sorbian_plain_prs, belarusian_palatal_lform,
+  belarusian_palatal_prs, bunyev_ac_palatal_lform, bunyev_ac_palatal_prs, czech_palatal_lform,
+  czech_palatal_prs, kashubian_palatal_lform, kashubian_palatal_prs, lower_sorbian_palatal_lform,
+  lower_sorbian_palatal_prs, pannonian_rusyn_palatal_lform, pannonian_rusyn_palatal_prs,
+  podlachian_palatal_lform, podlachian_palatal_prs, polish_palatal_lform, polish_palatal_prs,
+  slovak_palatal_lform, slovak_palatal_prs, silesian_palatal_lform, silesian_palatal_prs,
+  upper_sorbian_palatal_lform, upper_sorbian_palatal_prs, bos_cro_mon_ser_palatal_lform,
+  bos_cro_mon_ser_palatal_prs, carpathian_rusyn_palatal_lform, carpathian_rusyn_palatal_prs,
+  russian_palatal_lform, russian_palatal_prs, slovenian_palatal_lform, slovenian_palatal_prs,
+  bulgarian_palatal_lform, bulgarian_palatal_prs, lemko_rusyn_palatal_lform,
+  lemko_rusyn_palatal_prs, macedonian_palatal_lform, macedonian_palatal_prs,
+  ukrainian_palatal_lform, ukrainian_palatal_prs]
+
+/-- Every form a source marks, as marginal, questionable, unacceptable or ungrammatical. -/
+def marked : List (Form Cell) := []
+
+/-- Every relation the sources assert between forms. -/
+def relations : List (FormRelation (Form Cell)) := []
+
+/-- Every analysis of the data. -/
+def analyses : List Analysis := [belarusian_plain_lform.analysis, belarusian_plain_prs.analysis,
+  bos_cro_mon_ser_plain_lform.analysis, bos_cro_mon_ser_plain_prs.analysis,
+  bulgarian_plain_lform.analysis, bulgarian_plain_prs.analysis, bunyev_ac_plain_lform.analysis,
+  bunyev_ac_plain_prs.analysis, carpathian_rusyn_plain_lform.analysis,
+  carpathian_rusyn_plain_prs.analysis, czech_plain_lform.analysis, czech_plain_prs.analysis,
+  kashubian_plain_lform.analysis, kashubian_plain_prs.analysis, lemko_rusyn_plain_lform.analysis,
+  lemko_rusyn_plain_prs.analysis, lower_sorbian_plain_lform.analysis,
+  lower_sorbian_plain_prs.analysis, macedonian_plain_lform.analysis, macedonian_plain_prs.analysis,
+  pannonian_rusyn_plain_lform.analysis, pannonian_rusyn_plain_prs.analysis,
+  podlachian_plain_lform.analysis, podlachian_plain_prs.analysis, polish_plain_lform.analysis,
+  polish_plain_prs.analysis, russian_plain_lform.analysis, russian_plain_prs.analysis,
+  silesian_plain_lform.analysis, silesian_plain_prs.analysis, slovak_plain_lform.analysis,
+  slovak_plain_prs.analysis, slovenian_plain_lform.analysis, slovenian_plain_prs.analysis,
+  ukrainian_plain_lform.analysis, ukrainian_plain_prs.analysis, upper_sorbian_plain_lform.analysis,
+  upper_sorbian_plain_prs.analysis, belarusian_palatal_lform.analysis,
+  belarusian_palatal_prs.analysis, bunyev_ac_palatal_lform.analysis, bunyev_ac_palatal_prs.analysis,
+  czech_palatal_lform.analysis, czech_palatal_prs.analysis, kashubian_palatal_lform.analysis,
+  kashubian_palatal_prs.analysis, lower_sorbian_palatal_lform.analysis,
+  lower_sorbian_palatal_prs.analysis, pannonian_rusyn_palatal_lform.analysis,
+  pannonian_rusyn_palatal_prs.analysis, podlachian_palatal_lform.analysis,
+  podlachian_palatal_prs.analysis, polish_palatal_lform.analysis, polish_palatal_prs.analysis,
+  slovak_palatal_lform.analysis, slovak_palatal_prs.analysis, silesian_palatal_lform.analysis,
+  silesian_palatal_prs.analysis, upper_sorbian_palatal_lform.analysis,
+  upper_sorbian_palatal_prs.analysis, bos_cro_mon_ser_palatal_lform.analysis,
+  bos_cro_mon_ser_palatal_prs.analysis, carpathian_rusyn_palatal_lform.analysis,
+  carpathian_rusyn_palatal_prs.analysis, russian_palatal_lform.analysis,
+  russian_palatal_prs.analysis, slovenian_palatal_lform.analysis, slovenian_palatal_prs.analysis,
+  bulgarian_palatal_lform.analysis, bulgarian_palatal_prs.analysis,
+  lemko_rusyn_palatal_lform.analysis, lemko_rusyn_palatal_prs.analysis,
+  macedonian_palatal_lform.analysis, macedonian_palatal_prs.analysis,
+  ukrainian_palatal_lform.analysis, ukrainian_palatal_prs.analysis]
 
 end Stojkovic2026.Forms

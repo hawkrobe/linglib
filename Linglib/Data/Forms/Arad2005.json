@@ -1,2037 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "arad2005_lamad",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "learn",
-      "Form": "lamad",
-      "Segments": [
-        "l",
-        "a",
-        "m",
-        "a",
-        "d"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (3)]"
-      ],
-      "Root": "lmd",
-      "Binyan": "1",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_nilmad",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "learn_passive",
-      "Form": "nilmad",
-      "Segments": [
-        "n",
-        "i",
-        "l",
-        "m",
-        "a",
-        "d"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (3)]"
-      ],
-      "Root": "lmd",
-      "Binyan": "2",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_siper",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "tell",
-      "Form": "siper",
-      "Segments": [
-        "s",
-        "i",
-        "p",
-        "e",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (3)]"
-      ],
-      "Root": "spr",
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_supar",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "tell_passive",
-      "Form": "supar",
-      "Segments": [
-        "s",
-        "u",
-        "p",
-        "a",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (3)]"
-      ],
-      "Root": "spr",
-      "Binyan": "4",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hiqlit",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "record",
-      "Form": "hiqlit",
-      "Segments": [
-        "h",
-        "i",
-        "q",
-        "l",
-        "i",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (3)]",
-        "arad-2005[Ch. 7 (4b)]"
-      ],
-      "Root": "qlt",
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_huqlat",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "record_passive",
-      "Form": "huqlat",
-      "Segments": [
-        "h",
-        "u",
-        "q",
-        "l",
-        "a",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (3)]"
-      ],
-      "Root": "qlt",
-      "Binyan": "6",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hitpalel",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "pray",
-      "Form": "hitpalel",
-      "Segments": [
-        "h",
-        "i",
-        "t",
-        "p",
-        "a",
-        "l",
-        "e",
-        "l"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (3)]"
-      ],
-      "Root": "pll",
-      "Binyan": "7",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_nipec",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "shatter",
-      "Form": "nipec",
-      "Segments": [
-        "n",
-        "i",
-        "p",
-        "e",
-        "c"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (6a)]"
-      ],
-      "Root": "npc",
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_nupac",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "shatter_passive",
-      "Form": "nupac",
-      "Segments": [
-        "n",
-        "u",
-        "p",
-        "a",
-        "c"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (6a)]"
-      ],
-      "Root": "npc",
-      "Binyan": "4",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_xileq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "divide",
-      "Form": "xileq",
-      "Segments": [
-        "x",
-        "i",
-        "l",
-        "e",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (6b)]"
-      ],
-      "Root": "xlq",
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_xulaq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "divide_passive",
-      "Form": "xulaq",
-      "Segments": [
-        "x",
-        "u",
-        "l",
-        "a",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (6b)]"
-      ],
-      "Root": "xlq",
-      "Binyan": "4",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_histir",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "hide",
-      "Form": "histir",
-      "Segments": [
-        "h",
-        "i",
-        "s",
-        "t",
-        "i",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (6c)]"
-      ],
-      "Root": "str",
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hustar",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "hide_passive",
-      "Form": "hustar",
-      "Segments": [
-        "h",
-        "u",
-        "s",
-        "t",
-        "a",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (6c)]"
-      ],
-      "Root": "str",
-      "Binyan": "6",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hifqid",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "deposit",
-      "Form": "hifqid",
-      "Segments": [
-        "h",
-        "i",
-        "f",
-        "q",
-        "i",
-        "d"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (6d)]"
-      ],
-      "Root": "pqd",
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hufqad",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "deposit_passive",
-      "Form": "hufqad",
-      "Segments": [
-        "h",
-        "u",
-        "f",
-        "q",
-        "a",
-        "d"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (6d)]"
-      ],
-      "Root": "pqd",
-      "Binyan": "6",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_shamar",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "guard",
-      "Form": "šamar",
-      "Segments": [
-        "š",
-        "a",
-        "m",
-        "a",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (27)]"
-      ],
-      "Root": "šmr",
-      "Binyan": "1",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_tirgem",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "translate",
-      "Form": "tirgem",
-      "Segments": [
-        "t",
-        "i",
-        "r",
-        "g",
-        "e",
-        "m"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[p. 28]"
-      ],
-      "Root": "trgm",
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_qibel",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "receive",
-      "Form": "qibel",
-      "Segments": [
-        "q",
-        "i",
-        "b",
-        "e",
-        "l"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[p. 29]"
-      ],
-      "Root": "qbl",
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hitrakex",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "become_soft",
-      "Form": "hitrakex",
-      "Segments": [
-        "h",
-        "i",
-        "t",
-        "r",
-        "a",
-        "k",
-        "e",
-        "x"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[p. 29]"
-      ],
-      "Root": "rkk",
-      "Binyan": "7",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_shemen",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "oil_grease",
-      "Form": "šemen",
-      "Segments": [
-        "š",
-        "e",
-        "m",
-        "e",
-        "n"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (2a)]"
-      ],
-      "Root": "šmn",
-      "Pattern": "CeCeC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_shamenet",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "cream",
-      "Form": "šamenet",
-      "Segments": [
-        "š",
-        "a",
-        "m",
-        "e",
-        "n",
-        "e",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (2b)]"
-      ],
-      "Root": "šmn",
-      "Pattern": "CaCCeCet",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_shuman",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "fat",
-      "Form": "šuman",
-      "Segments": [
-        "š",
-        "u",
-        "m",
-        "a",
-        "n"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (2c)]"
-      ],
-      "Root": "šmn",
-      "Pattern": "CuCaC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_shamen",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "fat_adj",
-      "Form": "šamen",
-      "Segments": [
-        "š",
-        "a",
-        "m",
-        "e",
-        "n"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (2d)]"
-      ],
-      "Root": "šmn",
-      "Pattern": "CaCeC",
-      "Category": "adj"
-    },
-    {
-      "ID": "arad2005_hishmin",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "grow_fat_fatten",
-      "Form": "hišmin",
-      "Segments": [
-        "h",
-        "i",
-        "š",
-        "m",
-        "i",
-        "n"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (2e)]"
-      ],
-      "Root": "šmn",
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_shimen",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "grease",
-      "Form": "šimen",
-      "Segments": [
-        "š",
-        "i",
-        "m",
-        "e",
-        "n"
-      ],
-      "Comment": "printed as a noun, (n), in a verbal pattern with a verbal gloss",
-      "Source": [
-        "arad-2005[Ch. 7 (2f)]"
-      ],
-      "Root": "šmn",
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_xashav",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_think",
-      "Form": "xašav",
-      "Segments": [
-        "x",
-        "a",
-        "š",
-        "a",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (3a)]"
-      ],
-      "Root": "xšb",
-      "Binyan": "1",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_xishev",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_calculate",
-      "Form": "xišev",
-      "Segments": [
-        "x",
-        "i",
-        "š",
-        "e",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (3b)]"
-      ],
-      "Root": "xšb",
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hexshiv",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_consider",
-      "Form": "hexšiv",
-      "Segments": [
-        "h",
-        "e",
-        "x",
-        "š",
-        "i",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (3c)]"
-      ],
-      "Root": "xšb",
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hitxashev",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_be_considerate",
-      "Form": "hitxašev",
-      "Segments": [
-        "h",
-        "i",
-        "t",
-        "x",
-        "a",
-        "š",
-        "e",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (3d)]"
-      ],
-      "Root": "xšb",
-      "Binyan": "7",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_maxshev",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "computer",
-      "Form": "maxšev",
-      "Segments": [
-        "m",
-        "a",
-        "x",
-        "š",
-        "e",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (29d)]",
-        "arad-2005[Ch. 7 (3e)]"
-      ],
-      "Root": "xšb",
-      "Pattern": "maCCeC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_maxshava",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_thought",
-      "Form": "maxšava",
-      "Segments": [
-        "m",
-        "a",
-        "x",
-        "š",
-        "a",
-        "v",
-        "a"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (3f)]"
-      ],
-      "Root": "xšb",
-      "Pattern": "maCCaCa",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_xashivut",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "importance",
-      "Form": "xašivut",
-      "Segments": [
-        "x",
-        "a",
-        "š",
-        "i",
-        "v",
-        "u",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (3g)]"
-      ],
-      "Root": "xšb",
-      "Pattern": "CCiCut",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_xeshbon",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "arithmetic_bill",
-      "Form": "xešbon",
-      "Segments": [
-        "x",
-        "e",
-        "š",
-        "b",
-        "o",
-        "n"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (3h)]"
-      ],
-      "Root": "xšb",
-      "Pattern": "CiCCon",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_taxshiv",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "calculus",
-      "Form": "taxšiv",
-      "Segments": [
-        "t",
-        "a",
-        "x",
-        "š",
-        "i",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (3i)]"
-      ],
-      "Root": "xšb",
-      "Pattern": "taCCiC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_qalat",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_absorb_receive",
-      "Form": "qalat",
-      "Segments": [
-        "q",
-        "a",
-        "l",
-        "a",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (4a)]"
-      ],
-      "Root": "qlt",
-      "Binyan": "1",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_miqlat",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_shelter",
-      "Form": "miqlat",
-      "Segments": [
-        "m",
-        "i",
-        "q",
-        "l",
-        "a",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (4c)]"
-      ],
-      "Root": "qlt",
-      "Pattern": "miCCaC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_maqlet",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_receiver",
-      "Form": "maqlet",
-      "Segments": [
-        "m",
-        "a",
-        "q",
-        "l",
-        "e",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (4d)]"
-      ],
-      "Root": "qlt",
-      "Pattern": "maCCeC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_taqlit",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_record",
-      "Form": "taqlit",
-      "Segments": [
-        "t",
-        "a",
-        "q",
-        "l",
-        "i",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (4e)]"
-      ],
-      "Root": "qlt",
-      "Pattern": "taCCiC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_qaletet",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_cassette",
-      "Form": "qaletet",
-      "Segments": [
-        "q",
-        "a",
-        "l",
-        "e",
-        "t",
-        "e",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (4f)]"
-      ],
-      "Root": "qlt",
-      "Pattern": "CaCCeCet",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_qelet",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "input",
-      "Form": "qelet",
-      "Segments": [
-        "q",
-        "e",
-        "l",
-        "e",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (4g)]"
-      ],
-      "Root": "qlt",
-      "Pattern": "CeCeC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_sagar",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "close",
-      "Form": "sagar",
-      "Segments": [
-        "s",
-        "a",
-        "g",
-        "a",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (5a)]"
-      ],
-      "Root": "sgr",
-      "Binyan": "1",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_hisgir",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "extradite",
-      "Form": "hisgir",
-      "Segments": [
-        "h",
-        "i",
-        "s",
-        "g",
-        "i",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (5b)]"
-      ],
-      "Root": "sgr",
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_histager",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "cocoon_oneself",
-      "Form": "histager",
-      "Segments": [
-        "h",
-        "i",
-        "s",
-        "t",
-        "a",
-        "g",
-        "e",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (5c)]"
-      ],
-      "Root": "sgr",
-      "Binyan": "7",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_seger",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "closure",
-      "Form": "seger",
-      "Segments": [
-        "s",
-        "e",
-        "g",
-        "e",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (5d)]"
-      ],
-      "Root": "sgr",
-      "Pattern": "CeCeC",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_sograyim",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "parentheses",
-      "Form": "sograyim",
-      "Segments": [
-        "s",
-        "o",
-        "g",
-        "r",
-        "a",
-        "y",
-        "i",
-        "m"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (5e)]"
-      ],
-      "Root": "sgr",
-      "Pattern": "CoCCayim",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_misgeret",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "frame",
-      "Form": "misgeret",
-      "Segments": [
-        "m",
-        "i",
-        "s",
-        "g",
-        "e",
-        "r",
-        "+",
-        "e",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (32b)]",
-        "arad-2005[Ch. 7 (5f)]",
-        "arad-2005[Ch. 7 (6a)]"
-      ],
-      "Root": "sgr",
-      "Pattern": "miCCeCet",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_patax",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "open_causative",
-      "Form": "patax",
-      "Segments": [
-        "p",
-        "a",
-        "t",
-        "a",
-        "x"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (47)]"
-      ],
-      "Root": "ptx",
-      "Binyan": "1",
-      "Category": "v",
-      "Conjugation": "1",
-      "Alternant": "causative"
-    },
-    {
-      "ID": "arad2005_niftax",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "open_inchoative",
-      "Form": "niftax",
-      "Segments": [
-        "n",
-        "i",
-        "f",
-        "t",
-        "a",
-        "x"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (47)]"
-      ],
-      "Root": "ptx",
-      "Binyan": "2",
-      "Category": "v",
-      "Conjugation": "1",
-      "Alternant": "inchoative"
-    },
-    {
-      "ID": "arad2005_qafa",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "freeze_inchoative",
-      "Form": "qafaʔ",
-      "Segments": [
-        "q",
-        "a",
-        "f",
-        "a",
-        "ʔ"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (48)]"
-      ],
-      "Root": "qpʔ",
-      "Binyan": "1",
-      "Category": "v",
-      "Conjugation": "2",
-      "Alternant": "non-causative"
-    },
-    {
-      "ID": "arad2005_hiqpi",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "freeze_causative",
-      "Form": "hiqpiʔ",
-      "Segments": [
-        "h",
-        "i",
-        "q",
-        "p",
-        "i",
-        "ʔ"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (48)]"
-      ],
-      "Root": "qpʔ",
-      "Binyan": "5",
-      "Category": "v",
-      "Conjugation": "2",
-      "Alternant": "causative"
-    },
-    {
-      "ID": "arad2005_namas",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "melt_inchoative",
-      "Form": "namas",
-      "Segments": [
-        "n",
-        "a",
-        "m",
-        "a",
-        "s"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (49)]"
-      ],
-      "Root": "mss",
-      "Binyan": "2",
-      "Category": "v",
-      "Conjugation": "3",
-      "Alternant": "inchoative"
-    },
-    {
-      "ID": "arad2005_hemes",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "melt_causative",
-      "Form": "hemes",
-      "Segments": [
-        "h",
-        "e",
-        "m",
-        "e",
-        "s"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (49)]"
-      ],
-      "Root": "mss",
-      "Binyan": "5",
-      "Category": "v",
-      "Conjugation": "3",
-      "Alternant": "causative"
-    },
-    {
-      "ID": "arad2005_hitxamem",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "heat_inchoative",
-      "Form": "hitxamem",
-      "Segments": [
-        "h",
-        "i",
-        "t",
-        "x",
-        "a",
-        "m",
-        "e",
-        "m"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (50)]"
-      ],
-      "Root": "xmm",
-      "Binyan": "7",
-      "Category": "v",
-      "Conjugation": "4",
-      "Alternant": "inchoative"
-    },
-    {
-      "ID": "arad2005_ximem",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "heat_causative",
-      "Form": "ximem",
-      "Segments": [
-        "x",
-        "i",
-        "m",
-        "e",
-        "m"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (50)]"
-      ],
-      "Root": "xmm",
-      "Binyan": "3",
-      "Category": "v",
-      "Conjugation": "4",
-      "Alternant": "causative"
-    },
-    {
-      "ID": "arad2005_hitbaher",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "become_clear",
-      "Form": "hitbaher",
-      "Segments": [
-        "h",
-        "i",
-        "t",
-        "b",
-        "a",
-        "h",
-        "e",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (51)]"
-      ],
-      "Root": "bhr",
-      "Binyan": "7",
-      "Category": "v",
-      "Conjugation": "5",
-      "Alternant": "inchoative"
-    },
-    {
-      "ID": "arad2005_hivhir",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "make_clear",
-      "Form": "hivhir",
-      "Segments": [
-        "h",
-        "i",
-        "v",
-        "h",
-        "i",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (51)]"
-      ],
-      "Root": "bhr",
-      "Binyan": "5",
-      "Category": "v",
-      "Conjugation": "5",
-      "Alternant": "causative"
-    },
-    {
-      "ID": "arad2005_heedim_inchoative",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "be_red",
-      "Form": "heʔedim",
-      "Segments": [
-        "h",
-        "e",
-        "ʔ",
-        "e",
-        "d",
-        "i",
-        "m"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (52)]"
-      ],
-      "Root": "ʔdm",
-      "Binyan": "5",
-      "Category": "v",
-      "Conjugation": "6",
-      "Alternant": "inchoative"
-    },
-    {
-      "ID": "arad2005_heedim_causative",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "redden",
-      "Form": "heʔedim",
-      "Segments": [
-        "h",
-        "e",
-        "ʔ",
-        "e",
-        "d",
-        "i",
-        "m"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 6 (52)]"
-      ],
-      "Root": "ʔdm",
-      "Binyan": "5",
-      "Category": "v",
-      "Conjugation": "6",
-      "Alternant": "causative"
-    },
-    {
-      "ID": "arad2005_taqciv",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "budget",
-      "Form": "taqciv",
-      "Segments": [
-        "t",
-        "a",
-        "q",
-        "c",
-        "i",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 1 (12a)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_tiqcev",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_budget",
-      "Form": "tiqcev",
-      "Segments": [
-        "t",
-        "i",
-        "q",
-        "c",
-        "e",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 1 (12a)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_telefon",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "telephone",
-      "Form": "telefon",
-      "Segments": [
-        "t",
-        "e",
-        "l",
-        "e",
-        "f",
-        "o",
-        "n"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (29a)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_tilfen",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_telephone",
-      "Form": "tilfen",
-      "Segments": [
-        "t",
-        "i",
-        "l",
-        "f",
-        "e",
-        "n"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (29a)]"
-      ],
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_mastul",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "drunk",
-      "Form": "mastul",
-      "Segments": [
-        "m",
-        "a",
-        "s",
-        "t",
-        "u",
-        "l"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (29b)]"
-      ],
-      "Category": "adj"
-    },
-    {
-      "ID": "arad2005_hitmastel",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_get_drunk",
-      "Form": "hitmastel",
-      "Segments": [
-        "h",
-        "i",
-        "t",
-        "m",
-        "a",
-        "s",
-        "t",
-        "e",
-        "l"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (29b)]"
-      ],
-      "Binyan": "7",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_xrop",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_snooze",
-      "Form": "xrop",
-      "Segments": [
-        "x",
-        "r",
-        "o",
-        "p"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (29c)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_xarap",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_snooze",
-      "Form": "xarap",
-      "Segments": [
-        "x",
-        "a",
-        "r",
-        "a",
-        "p"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (29c)]"
-      ],
-      "Binyan": "1",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_mixshev",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_computerize",
-      "Form": "mixšev",
-      "Segments": [
-        "m",
-        "i",
-        "x",
-        "š",
-        "e",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 1 (12b)]",
-        "arad-2005[Ch. 2 (29d)]"
-      ],
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_taxzuqa",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "maintenance",
-      "Form": "taxzuqa",
-      "Segments": [
-        "t",
-        "a",
-        "x",
-        "z",
-        "u",
-        "q",
-        "+",
-        "a"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (32a)]"
-      ],
-      "Root": "xzq",
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_tixzeq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_maintain",
-      "Form": "tixzeq",
-      "Segments": [
-        "t",
-        "i",
-        "x",
-        "z",
-        "e",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (32a)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_misger",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_frame",
-      "Form": "misger",
-      "Segments": [
-        "m",
-        "i",
-        "s",
-        "g",
-        "e",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (32b)]",
-        "arad-2005[Ch. 7 (6b)]"
-      ],
-      "Binyan": "3",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_musgar",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "was_framed",
-      "Form": "musgar",
-      "Segments": [
-        "m",
-        "u",
-        "s",
-        "g",
-        "a",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 fn. 2]"
-      ],
-      "Binyan": "4",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_cenzura",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "censorship",
-      "Form": "cenzura",
-      "Segments": [
-        "c",
-        "e",
-        "n",
-        "z",
-        "u",
-        "r",
-        "a"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (32c)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_cinzer",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_censor",
-      "Form": "cinzer",
-      "Segments": [
-        "c",
-        "i",
-        "n",
-        "z",
-        "e",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (32c)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_qav",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "line",
-      "Form": "qav",
-      "Segments": [
-        "q",
-        "a",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (33a)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_qivqev",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_draw_a_dotted_line",
-      "Form": "qivqev",
-      "Segments": [
-        "q",
-        "i",
-        "v",
-        "q",
-        "e",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (33a)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_xov",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "debt",
-      "Form": "xov",
-      "Segments": [
-        "x",
-        "o",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (33b)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_xiyev",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_debit_oblige",
-      "Form": "xiyev",
-      "Segments": [
-        "x",
-        "i",
-        "y",
-        "e",
-        "v"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (33b)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_faks",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "fax",
-      "Form": "faks",
-      "Segments": [
-        "f",
-        "a",
-        "k",
-        "s"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (33c)]",
-        "arad-2005[Ch. 7 (41d)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_fikses",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_fax",
-      "Form": "fikses",
-      "Segments": [
-        "f",
-        "i",
-        "k",
-        "s",
-        "e",
-        "s"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 2 (33c)]",
-        "arad-2005[Ch. 7 (41d)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_transfer",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "transfer",
-      "Form": "transfer",
-      "Segments": [
-        "t",
-        "r",
-        "a",
-        "n",
-        "s",
-        "f",
-        "e",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 1 (12d)]",
-        "arad-2005[Ch. 7 (39a)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_trinsfer",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_transfer",
-      "Form": "trinsfer",
-      "Segments": [
-        "t",
-        "r",
-        "i",
-        "n",
-        "s",
-        "f",
-        "e",
-        "r"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 1 (12d)]",
-        "arad-2005[Ch. 7 (39a)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_streptiz",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "striptease",
-      "Form": "streptiz",
-      "Segments": [
-        "s",
-        "t",
-        "r",
-        "e",
-        "p",
-        "t",
-        "i",
-        "z"
-      ],
-      "Comment": "Ch. 1 (12e) prints the base as striptiz",
-      "Source": [
-        "arad-2005[Ch. 7 (39b)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_striptez",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_perform_a_striptease",
-      "Form": "striptez",
-      "Segments": [
-        "s",
-        "t",
-        "r",
-        "i",
-        "p",
-        "t",
-        "e",
-        "z"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 1 (12e)]",
-        "arad-2005[Ch. 7 (39b)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_sinxroni",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "synchronic",
-      "Form": "sinxroni",
-      "Segments": [
-        "s",
-        "i",
-        "n",
-        "x",
-        "r",
-        "o",
-        "n",
-        "i"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (39c)]"
-      ],
-      "Category": "adj"
-    },
-    {
-      "ID": "arad2005_sinxren",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "synchronize",
-      "Form": "sinxren",
-      "Segments": [
-        "s",
-        "i",
-        "n",
-        "x",
-        "r",
-        "e",
-        "n"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (39c)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_qliq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_click",
-      "Form": "qliq",
-      "Segments": [
-        "q",
-        "l",
-        "i",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 1 (12c)]",
-        "arad-2005[Ch. 7 (40a)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_hiqliq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_click",
-      "Form": "hiqliq",
-      "Segments": [
-        "h",
-        "i",
-        "q",
-        "l",
-        "i",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 1 (12c)]",
-        "arad-2005[Ch. 7 (40a)]"
-      ],
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_fliq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_slap",
-      "Form": "fliq",
-      "Segments": [
-        "f",
-        "l",
-        "i",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (40b)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_hifliq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_slap",
-      "Form": "hifliq",
-      "Segments": [
-        "h",
-        "i",
-        "f",
-        "l",
-        "i",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (40b)]"
-      ],
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_shpritz",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "a_splash",
-      "Form": "špritz",
-      "Segments": [
-        "š",
-        "p",
-        "r",
-        "i",
-        "t",
-        "z"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (40c)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_hishpritz",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_splash",
-      "Form": "hišpritz",
-      "Segments": [
-        "h",
-        "i",
-        "š",
-        "p",
-        "r",
-        "i",
-        "t",
-        "z"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (40c)]"
-      ],
-      "Binyan": "5",
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_xoq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "law",
-      "Form": "xoq",
-      "Segments": [
-        "x",
-        "o",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (41a)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_xoqeq",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "legislate",
-      "Form": "xoqeq",
-      "Segments": [
-        "x",
-        "o",
-        "q",
-        "e",
-        "q"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (41a)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_qod",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "code",
-      "Form": "qod",
-      "Segments": [
-        "q",
-        "o",
-        "d"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (41b)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_qoded",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "codify",
-      "Form": "qoded",
-      "Segments": [
-        "q",
-        "o",
-        "d",
-        "e",
-        "d"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (41b)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_dam",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "blood",
-      "Form": "dam",
-      "Segments": [
-        "d",
-        "a",
-        "m"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (41c)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_dimem",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "bleed",
-      "Form": "dimem",
-      "Segments": [
-        "d",
-        "i",
-        "m",
-        "e",
-        "m"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (41c)]"
-      ],
-      "Category": "v"
-    },
-    {
-      "ID": "arad2005_chat",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "chat",
-      "Form": "čat",
-      "Segments": [
-        "č",
-        "a",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (41e)]"
-      ],
-      "Category": "n"
-    },
-    {
-      "ID": "arad2005_chitet",
-      "Language_ID": "hebr1245",
-      "Parameter_ID": "to_chat",
-      "Form": "čitet",
-      "Segments": [
-        "č",
-        "i",
-        "t",
-        "e",
-        "t"
-      ],
-      "Comment": "",
-      "Source": [
-        "arad-2005[Ch. 7 (41e)]"
-      ],
-      "Category": "v"
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "learn",
@@ -2529,211 +496,1836 @@
       "Description": ""
     }
   ],
+  "LexemeTable": [
+    {
+      "ID": "learn",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "learn",
+      "POS": "VERB"
+    },
+    {
+      "ID": "learn_passive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "learn_passive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "tell",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "tell",
+      "POS": "VERB"
+    },
+    {
+      "ID": "tell_passive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "tell_passive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "record",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "record",
+      "POS": "VERB"
+    },
+    {
+      "ID": "record_passive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "record_passive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "pray",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "pray",
+      "POS": "VERB"
+    },
+    {
+      "ID": "shatter",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "shatter",
+      "POS": "VERB"
+    },
+    {
+      "ID": "shatter_passive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "shatter_passive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "divide",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "divide",
+      "POS": "VERB"
+    },
+    {
+      "ID": "divide_passive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "divide_passive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "hide",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "hide",
+      "POS": "VERB"
+    },
+    {
+      "ID": "hide_passive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "hide_passive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "deposit",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "deposit",
+      "POS": "VERB"
+    },
+    {
+      "ID": "deposit_passive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "deposit_passive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "guard",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "guard",
+      "POS": "VERB"
+    },
+    {
+      "ID": "translate",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "translate",
+      "POS": "VERB"
+    },
+    {
+      "ID": "receive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "receive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "become_soft",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "become_soft",
+      "POS": "VERB"
+    },
+    {
+      "ID": "oil_grease",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "oil_grease",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "cream",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "cream",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "fat",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "fat",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "fat_adj",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "fat_adj",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "grow_fat_fatten",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "grow_fat_fatten",
+      "POS": "VERB"
+    },
+    {
+      "ID": "grease",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "grease",
+      "POS": "VERB"
+    },
+    {
+      "ID": "to_think",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_think",
+      "POS": "VERB"
+    },
+    {
+      "ID": "to_calculate",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_calculate",
+      "POS": "VERB"
+    },
+    {
+      "ID": "to_consider",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_consider",
+      "POS": "VERB"
+    },
+    {
+      "ID": "to_be_considerate",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_be_considerate",
+      "POS": "VERB"
+    },
+    {
+      "ID": "computer",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "computer",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "a_thought",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_thought",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "importance",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "importance",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "arithmetic_bill",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "arithmetic_bill",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "calculus",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "calculus",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_absorb_receive",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_absorb_receive",
+      "POS": "VERB"
+    },
+    {
+      "ID": "a_shelter",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_shelter",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "a_receiver",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_receiver",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "a_record",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_record",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "a_cassette",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_cassette",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "input",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "input",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "close",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "close",
+      "POS": "VERB"
+    },
+    {
+      "ID": "extradite",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "extradite",
+      "POS": "VERB"
+    },
+    {
+      "ID": "cocoon_oneself",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "cocoon_oneself",
+      "POS": "VERB"
+    },
+    {
+      "ID": "closure",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "closure",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "parentheses",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "parentheses",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "frame",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "frame",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "open_causative",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "open_causative",
+      "POS": "VERB"
+    },
+    {
+      "ID": "open_inchoative",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "open_inchoative",
+      "POS": "VERB"
+    },
+    {
+      "ID": "freeze_inchoative",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "freeze_inchoative",
+      "POS": "VERB"
+    },
+    {
+      "ID": "freeze_causative",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "freeze_causative",
+      "POS": "VERB"
+    },
+    {
+      "ID": "melt_inchoative",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "melt_inchoative",
+      "POS": "VERB"
+    },
+    {
+      "ID": "melt_causative",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "melt_causative",
+      "POS": "VERB"
+    },
+    {
+      "ID": "heat_inchoative",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "heat_inchoative",
+      "POS": "VERB"
+    },
+    {
+      "ID": "heat_causative",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "heat_causative",
+      "POS": "VERB"
+    },
+    {
+      "ID": "become_clear",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "become_clear",
+      "POS": "VERB"
+    },
+    {
+      "ID": "make_clear",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "make_clear",
+      "POS": "VERB"
+    },
+    {
+      "ID": "be_red",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "be_red",
+      "POS": "VERB"
+    },
+    {
+      "ID": "redden",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "redden",
+      "POS": "VERB"
+    },
+    {
+      "ID": "budget",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "budget",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_budget",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_budget",
+      "POS": "VERB"
+    },
+    {
+      "ID": "telephone",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "telephone",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_telephone",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_telephone",
+      "POS": "VERB"
+    },
+    {
+      "ID": "drunk",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "drunk",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "to_get_drunk",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_get_drunk",
+      "POS": "VERB"
+    },
+    {
+      "ID": "a_snooze",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_snooze",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_snooze",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_snooze",
+      "POS": "VERB"
+    },
+    {
+      "ID": "to_computerize",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_computerize",
+      "POS": "VERB"
+    },
+    {
+      "ID": "maintenance",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "maintenance",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_maintain",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_maintain",
+      "POS": "VERB"
+    },
+    {
+      "ID": "to_frame",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_frame",
+      "POS": "VERB"
+    },
+    {
+      "ID": "was_framed",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "was_framed",
+      "POS": "VERB"
+    },
+    {
+      "ID": "censorship",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "censorship",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_censor",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_censor",
+      "POS": "VERB"
+    },
+    {
+      "ID": "line",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "line",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_draw_a_dotted_line",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_draw_a_dotted_line",
+      "POS": "VERB"
+    },
+    {
+      "ID": "debt",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "debt",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_debit_oblige",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_debit_oblige",
+      "POS": "VERB"
+    },
+    {
+      "ID": "fax",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "fax",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_fax",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_fax",
+      "POS": "VERB"
+    },
+    {
+      "ID": "transfer",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "transfer",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_transfer",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_transfer",
+      "POS": "VERB"
+    },
+    {
+      "ID": "striptease",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "striptease",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_perform_a_striptease",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_perform_a_striptease",
+      "POS": "VERB"
+    },
+    {
+      "ID": "synchronic",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "synchronic",
+      "POS": "ADJ"
+    },
+    {
+      "ID": "synchronize",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "synchronize",
+      "POS": "VERB"
+    },
+    {
+      "ID": "a_click",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_click",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_click",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_click",
+      "POS": "VERB"
+    },
+    {
+      "ID": "a_slap",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_slap",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_slap",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_slap",
+      "POS": "VERB"
+    },
+    {
+      "ID": "a_splash",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "a_splash",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_splash",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_splash",
+      "POS": "VERB"
+    },
+    {
+      "ID": "law",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "law",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "legislate",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "legislate",
+      "POS": "VERB"
+    },
+    {
+      "ID": "code",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "code",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "codify",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "codify",
+      "POS": "VERB"
+    },
+    {
+      "ID": "blood",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "blood",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "bleed",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "bleed",
+      "POS": "VERB"
+    },
+    {
+      "ID": "chat",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "chat",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "to_chat",
+      "Language_ID": "hebr1245",
+      "Parameter_ID": "to_chat",
+      "POS": "VERB"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "arad2005_lamad",
+      "Lexeme_ID": "learn",
+      "Form": "lamad",
+      "Segments": ["l", "a", "m", "a", "d"],
+      "Source": ["arad-2005[Ch. 2 (3)]"]
+    },
+    {
+      "ID": "arad2005_nilmad",
+      "Lexeme_ID": "learn_passive",
+      "Form": "nilmad",
+      "Segments": ["n", "i", "l", "m", "a", "d"],
+      "Source": ["arad-2005[Ch. 2 (3)]"]
+    },
+    {
+      "ID": "arad2005_siper",
+      "Lexeme_ID": "tell",
+      "Form": "siper",
+      "Segments": ["s", "i", "p", "e", "r"],
+      "Source": ["arad-2005[Ch. 2 (3)]"]
+    },
+    {
+      "ID": "arad2005_supar",
+      "Lexeme_ID": "tell_passive",
+      "Form": "supar",
+      "Segments": ["s", "u", "p", "a", "r"],
+      "Source": ["arad-2005[Ch. 2 (3)]"]
+    },
+    {
+      "ID": "arad2005_hiqlit",
+      "Lexeme_ID": "record",
+      "Form": "hiqlit",
+      "Segments": ["h", "i", "q", "l", "i", "t"],
+      "Source": ["arad-2005[Ch. 2 (3)]", "arad-2005[Ch. 7 (4b)]"]
+    },
+    {
+      "ID": "arad2005_huqlat",
+      "Lexeme_ID": "record_passive",
+      "Form": "huqlat",
+      "Segments": ["h", "u", "q", "l", "a", "t"],
+      "Source": ["arad-2005[Ch. 2 (3)]"]
+    },
+    {
+      "ID": "arad2005_hitpalel",
+      "Lexeme_ID": "pray",
+      "Form": "hitpalel",
+      "Segments": ["h", "i", "t", "p", "a", "l", "e", "l"],
+      "Source": ["arad-2005[Ch. 2 (3)]"]
+    },
+    {
+      "ID": "arad2005_nipec",
+      "Lexeme_ID": "shatter",
+      "Form": "nipec",
+      "Segments": ["n", "i", "p", "e", "c"],
+      "Source": ["arad-2005[Ch. 2 (6a)]"]
+    },
+    {
+      "ID": "arad2005_nupac",
+      "Lexeme_ID": "shatter_passive",
+      "Form": "nupac",
+      "Segments": ["n", "u", "p", "a", "c"],
+      "Source": ["arad-2005[Ch. 2 (6a)]"]
+    },
+    {
+      "ID": "arad2005_xileq",
+      "Lexeme_ID": "divide",
+      "Form": "xileq",
+      "Segments": ["x", "i", "l", "e", "q"],
+      "Source": ["arad-2005[Ch. 2 (6b)]"]
+    },
+    {
+      "ID": "arad2005_xulaq",
+      "Lexeme_ID": "divide_passive",
+      "Form": "xulaq",
+      "Segments": ["x", "u", "l", "a", "q"],
+      "Source": ["arad-2005[Ch. 2 (6b)]"]
+    },
+    {
+      "ID": "arad2005_histir",
+      "Lexeme_ID": "hide",
+      "Form": "histir",
+      "Segments": ["h", "i", "s", "t", "i", "r"],
+      "Source": ["arad-2005[Ch. 2 (6c)]"]
+    },
+    {
+      "ID": "arad2005_hustar",
+      "Lexeme_ID": "hide_passive",
+      "Form": "hustar",
+      "Segments": ["h", "u", "s", "t", "a", "r"],
+      "Source": ["arad-2005[Ch. 2 (6c)]"]
+    },
+    {
+      "ID": "arad2005_hifqid",
+      "Lexeme_ID": "deposit",
+      "Form": "hifqid",
+      "Segments": ["h", "i", "f", "q", "i", "d"],
+      "Source": ["arad-2005[Ch. 2 (6d)]"]
+    },
+    {
+      "ID": "arad2005_hufqad",
+      "Lexeme_ID": "deposit_passive",
+      "Form": "hufqad",
+      "Segments": ["h", "u", "f", "q", "a", "d"],
+      "Source": ["arad-2005[Ch. 2 (6d)]"]
+    },
+    {
+      "ID": "arad2005_shamar",
+      "Lexeme_ID": "guard",
+      "Form": "šamar",
+      "Segments": ["š", "a", "m", "a", "r"],
+      "Source": ["arad-2005[Ch. 2 (27)]"]
+    },
+    {
+      "ID": "arad2005_tirgem",
+      "Lexeme_ID": "translate",
+      "Form": "tirgem",
+      "Segments": ["t", "i", "r", "g", "e", "m"],
+      "Source": ["arad-2005[p. 28]"]
+    },
+    {
+      "ID": "arad2005_qibel",
+      "Lexeme_ID": "receive",
+      "Form": "qibel",
+      "Segments": ["q", "i", "b", "e", "l"],
+      "Source": ["arad-2005[p. 29]"]
+    },
+    {
+      "ID": "arad2005_hitrakex",
+      "Lexeme_ID": "become_soft",
+      "Form": "hitrakex",
+      "Segments": ["h", "i", "t", "r", "a", "k", "e", "x"],
+      "Source": ["arad-2005[p. 29]"]
+    },
+    {
+      "ID": "arad2005_shemen",
+      "Lexeme_ID": "oil_grease",
+      "Form": "šemen",
+      "Segments": ["š", "e", "m", "e", "n"],
+      "Source": ["arad-2005[Ch. 7 (2a)]"]
+    },
+    {
+      "ID": "arad2005_shamenet",
+      "Lexeme_ID": "cream",
+      "Form": "šamenet",
+      "Segments": ["š", "a", "m", "e", "n", "e", "t"],
+      "Source": ["arad-2005[Ch. 7 (2b)]"]
+    },
+    {
+      "ID": "arad2005_shuman",
+      "Lexeme_ID": "fat",
+      "Form": "šuman",
+      "Segments": ["š", "u", "m", "a", "n"],
+      "Source": ["arad-2005[Ch. 7 (2c)]"]
+    },
+    {
+      "ID": "arad2005_shamen",
+      "Lexeme_ID": "fat_adj",
+      "Form": "šamen",
+      "Segments": ["š", "a", "m", "e", "n"],
+      "Source": ["arad-2005[Ch. 7 (2d)]"]
+    },
+    {
+      "ID": "arad2005_hishmin",
+      "Lexeme_ID": "grow_fat_fatten",
+      "Form": "hišmin",
+      "Segments": ["h", "i", "š", "m", "i", "n"],
+      "Source": ["arad-2005[Ch. 7 (2e)]"]
+    },
+    {
+      "ID": "arad2005_shimen",
+      "Lexeme_ID": "grease",
+      "Form": "šimen",
+      "Segments": ["š", "i", "m", "e", "n"],
+      "Comment": "printed as a noun, (n), in a verbal pattern with a verbal gloss",
+      "Source": ["arad-2005[Ch. 7 (2f)]"]
+    },
+    {
+      "ID": "arad2005_xashav",
+      "Lexeme_ID": "to_think",
+      "Form": "xašav",
+      "Segments": ["x", "a", "š", "a", "v"],
+      "Source": ["arad-2005[Ch. 7 (3a)]"]
+    },
+    {
+      "ID": "arad2005_xishev",
+      "Lexeme_ID": "to_calculate",
+      "Form": "xišev",
+      "Segments": ["x", "i", "š", "e", "v"],
+      "Source": ["arad-2005[Ch. 7 (3b)]"]
+    },
+    {
+      "ID": "arad2005_hexshiv",
+      "Lexeme_ID": "to_consider",
+      "Form": "hexšiv",
+      "Segments": ["h", "e", "x", "š", "i", "v"],
+      "Source": ["arad-2005[Ch. 7 (3c)]"]
+    },
+    {
+      "ID": "arad2005_hitxashev",
+      "Lexeme_ID": "to_be_considerate",
+      "Form": "hitxašev",
+      "Segments": ["h", "i", "t", "x", "a", "š", "e", "v"],
+      "Source": ["arad-2005[Ch. 7 (3d)]"]
+    },
+    {
+      "ID": "arad2005_maxshev",
+      "Lexeme_ID": "computer",
+      "Form": "maxšev",
+      "Segments": ["m", "a", "x", "š", "e", "v"],
+      "Source": ["arad-2005[Ch. 2 (29d)]", "arad-2005[Ch. 7 (3e)]"]
+    },
+    {
+      "ID": "arad2005_maxshava",
+      "Lexeme_ID": "a_thought",
+      "Form": "maxšava",
+      "Segments": ["m", "a", "x", "š", "a", "v", "a"],
+      "Source": ["arad-2005[Ch. 7 (3f)]"]
+    },
+    {
+      "ID": "arad2005_xashivut",
+      "Lexeme_ID": "importance",
+      "Form": "xašivut",
+      "Segments": ["x", "a", "š", "i", "v", "u", "t"],
+      "Source": ["arad-2005[Ch. 7 (3g)]"]
+    },
+    {
+      "ID": "arad2005_xeshbon",
+      "Lexeme_ID": "arithmetic_bill",
+      "Form": "xešbon",
+      "Segments": ["x", "e", "š", "b", "o", "n"],
+      "Source": ["arad-2005[Ch. 7 (3h)]"]
+    },
+    {
+      "ID": "arad2005_taxshiv",
+      "Lexeme_ID": "calculus",
+      "Form": "taxšiv",
+      "Segments": ["t", "a", "x", "š", "i", "v"],
+      "Source": ["arad-2005[Ch. 7 (3i)]"]
+    },
+    {
+      "ID": "arad2005_qalat",
+      "Lexeme_ID": "to_absorb_receive",
+      "Form": "qalat",
+      "Segments": ["q", "a", "l", "a", "t"],
+      "Source": ["arad-2005[Ch. 7 (4a)]"]
+    },
+    {
+      "ID": "arad2005_miqlat",
+      "Lexeme_ID": "a_shelter",
+      "Form": "miqlat",
+      "Segments": ["m", "i", "q", "l", "a", "t"],
+      "Source": ["arad-2005[Ch. 7 (4c)]"]
+    },
+    {
+      "ID": "arad2005_maqlet",
+      "Lexeme_ID": "a_receiver",
+      "Form": "maqlet",
+      "Segments": ["m", "a", "q", "l", "e", "t"],
+      "Source": ["arad-2005[Ch. 7 (4d)]"]
+    },
+    {
+      "ID": "arad2005_taqlit",
+      "Lexeme_ID": "a_record",
+      "Form": "taqlit",
+      "Segments": ["t", "a", "q", "l", "i", "t"],
+      "Source": ["arad-2005[Ch. 7 (4e)]"]
+    },
+    {
+      "ID": "arad2005_qaletet",
+      "Lexeme_ID": "a_cassette",
+      "Form": "qaletet",
+      "Segments": ["q", "a", "l", "e", "t", "e", "t"],
+      "Source": ["arad-2005[Ch. 7 (4f)]"]
+    },
+    {
+      "ID": "arad2005_qelet",
+      "Lexeme_ID": "input",
+      "Form": "qelet",
+      "Segments": ["q", "e", "l", "e", "t"],
+      "Source": ["arad-2005[Ch. 7 (4g)]"]
+    },
+    {
+      "ID": "arad2005_sagar",
+      "Lexeme_ID": "close",
+      "Form": "sagar",
+      "Segments": ["s", "a", "g", "a", "r"],
+      "Source": ["arad-2005[Ch. 7 (5a)]"]
+    },
+    {
+      "ID": "arad2005_hisgir",
+      "Lexeme_ID": "extradite",
+      "Form": "hisgir",
+      "Segments": ["h", "i", "s", "g", "i", "r"],
+      "Source": ["arad-2005[Ch. 7 (5b)]"]
+    },
+    {
+      "ID": "arad2005_histager",
+      "Lexeme_ID": "cocoon_oneself",
+      "Form": "histager",
+      "Segments": ["h", "i", "s", "t", "a", "g", "e", "r"],
+      "Source": ["arad-2005[Ch. 7 (5c)]"]
+    },
+    {
+      "ID": "arad2005_seger",
+      "Lexeme_ID": "closure",
+      "Form": "seger",
+      "Segments": ["s", "e", "g", "e", "r"],
+      "Source": ["arad-2005[Ch. 7 (5d)]"]
+    },
+    {
+      "ID": "arad2005_sograyim",
+      "Lexeme_ID": "parentheses",
+      "Form": "sograyim",
+      "Segments": ["s", "o", "g", "r", "a", "y", "i", "m"],
+      "Source": ["arad-2005[Ch. 7 (5e)]"]
+    },
+    {
+      "ID": "arad2005_misgeret",
+      "Lexeme_ID": "frame",
+      "Form": "misgeret",
+      "Segments": ["m", "i", "s", "g", "e", "r", "+", "e", "t"],
+      "Source": ["arad-2005[Ch. 2 (32b)]", "arad-2005[Ch. 7 (5f)]", "arad-2005[Ch. 7 (6a)]"]
+    },
+    {
+      "ID": "arad2005_patax",
+      "Lexeme_ID": "open_causative",
+      "Form": "patax",
+      "Segments": ["p", "a", "t", "a", "x"],
+      "Source": ["arad-2005[Ch. 6 (47)]"]
+    },
+    {
+      "ID": "arad2005_niftax",
+      "Lexeme_ID": "open_inchoative",
+      "Form": "niftax",
+      "Segments": ["n", "i", "f", "t", "a", "x"],
+      "Source": ["arad-2005[Ch. 6 (47)]"]
+    },
+    {
+      "ID": "arad2005_qafa",
+      "Lexeme_ID": "freeze_inchoative",
+      "Form": "qafaʔ",
+      "Segments": ["q", "a", "f", "a", "ʔ"],
+      "Source": ["arad-2005[Ch. 6 (48)]"]
+    },
+    {
+      "ID": "arad2005_hiqpi",
+      "Lexeme_ID": "freeze_causative",
+      "Form": "hiqpiʔ",
+      "Segments": ["h", "i", "q", "p", "i", "ʔ"],
+      "Source": ["arad-2005[Ch. 6 (48)]"]
+    },
+    {
+      "ID": "arad2005_namas",
+      "Lexeme_ID": "melt_inchoative",
+      "Form": "namas",
+      "Segments": ["n", "a", "m", "a", "s"],
+      "Source": ["arad-2005[Ch. 6 (49)]"]
+    },
+    {
+      "ID": "arad2005_hemes",
+      "Lexeme_ID": "melt_causative",
+      "Form": "hemes",
+      "Segments": ["h", "e", "m", "e", "s"],
+      "Source": ["arad-2005[Ch. 6 (49)]"]
+    },
+    {
+      "ID": "arad2005_hitxamem",
+      "Lexeme_ID": "heat_inchoative",
+      "Form": "hitxamem",
+      "Segments": ["h", "i", "t", "x", "a", "m", "e", "m"],
+      "Source": ["arad-2005[Ch. 6 (50)]"]
+    },
+    {
+      "ID": "arad2005_ximem",
+      "Lexeme_ID": "heat_causative",
+      "Form": "ximem",
+      "Segments": ["x", "i", "m", "e", "m"],
+      "Source": ["arad-2005[Ch. 6 (50)]"]
+    },
+    {
+      "ID": "arad2005_hitbaher",
+      "Lexeme_ID": "become_clear",
+      "Form": "hitbaher",
+      "Segments": ["h", "i", "t", "b", "a", "h", "e", "r"],
+      "Source": ["arad-2005[Ch. 6 (51)]"]
+    },
+    {
+      "ID": "arad2005_hivhir",
+      "Lexeme_ID": "make_clear",
+      "Form": "hivhir",
+      "Segments": ["h", "i", "v", "h", "i", "r"],
+      "Source": ["arad-2005[Ch. 6 (51)]"]
+    },
+    {
+      "ID": "arad2005_heedim_inchoative",
+      "Lexeme_ID": "be_red",
+      "Form": "heʔedim",
+      "Segments": ["h", "e", "ʔ", "e", "d", "i", "m"],
+      "Source": ["arad-2005[Ch. 6 (52)]"]
+    },
+    {
+      "ID": "arad2005_heedim_causative",
+      "Lexeme_ID": "redden",
+      "Form": "heʔedim",
+      "Segments": ["h", "e", "ʔ", "e", "d", "i", "m"],
+      "Source": ["arad-2005[Ch. 6 (52)]"]
+    },
+    {
+      "ID": "arad2005_taqciv",
+      "Lexeme_ID": "budget",
+      "Form": "taqciv",
+      "Segments": ["t", "a", "q", "c", "i", "v"],
+      "Source": ["arad-2005[Ch. 1 (12a)]"]
+    },
+    {
+      "ID": "arad2005_tiqcev",
+      "Lexeme_ID": "to_budget",
+      "Form": "tiqcev",
+      "Segments": ["t", "i", "q", "c", "e", "v"],
+      "Source": ["arad-2005[Ch. 1 (12a)]"]
+    },
+    {
+      "ID": "arad2005_telefon",
+      "Lexeme_ID": "telephone",
+      "Form": "telefon",
+      "Segments": ["t", "e", "l", "e", "f", "o", "n"],
+      "Source": ["arad-2005[Ch. 2 (29a)]"]
+    },
+    {
+      "ID": "arad2005_tilfen",
+      "Lexeme_ID": "to_telephone",
+      "Form": "tilfen",
+      "Segments": ["t", "i", "l", "f", "e", "n"],
+      "Source": ["arad-2005[Ch. 2 (29a)]"]
+    },
+    {
+      "ID": "arad2005_mastul",
+      "Lexeme_ID": "drunk",
+      "Form": "mastul",
+      "Segments": ["m", "a", "s", "t", "u", "l"],
+      "Source": ["arad-2005[Ch. 2 (29b)]"]
+    },
+    {
+      "ID": "arad2005_hitmastel",
+      "Lexeme_ID": "to_get_drunk",
+      "Form": "hitmastel",
+      "Segments": ["h", "i", "t", "m", "a", "s", "t", "e", "l"],
+      "Source": ["arad-2005[Ch. 2 (29b)]"]
+    },
+    {
+      "ID": "arad2005_xrop",
+      "Lexeme_ID": "a_snooze",
+      "Form": "xrop",
+      "Segments": ["x", "r", "o", "p"],
+      "Source": ["arad-2005[Ch. 2 (29c)]"]
+    },
+    {
+      "ID": "arad2005_xarap",
+      "Lexeme_ID": "to_snooze",
+      "Form": "xarap",
+      "Segments": ["x", "a", "r", "a", "p"],
+      "Source": ["arad-2005[Ch. 2 (29c)]"]
+    },
+    {
+      "ID": "arad2005_mixshev",
+      "Lexeme_ID": "to_computerize",
+      "Form": "mixšev",
+      "Segments": ["m", "i", "x", "š", "e", "v"],
+      "Source": ["arad-2005[Ch. 1 (12b)]", "arad-2005[Ch. 2 (29d)]"]
+    },
+    {
+      "ID": "arad2005_taxzuqa",
+      "Lexeme_ID": "maintenance",
+      "Form": "taxzuqa",
+      "Segments": ["t", "a", "x", "z", "u", "q", "+", "a"],
+      "Source": ["arad-2005[Ch. 2 (32a)]"]
+    },
+    {
+      "ID": "arad2005_tixzeq",
+      "Lexeme_ID": "to_maintain",
+      "Form": "tixzeq",
+      "Segments": ["t", "i", "x", "z", "e", "q"],
+      "Source": ["arad-2005[Ch. 2 (32a)]"]
+    },
+    {
+      "ID": "arad2005_misger",
+      "Lexeme_ID": "to_frame",
+      "Form": "misger",
+      "Segments": ["m", "i", "s", "g", "e", "r"],
+      "Source": ["arad-2005[Ch. 2 (32b)]", "arad-2005[Ch. 7 (6b)]"]
+    },
+    {
+      "ID": "arad2005_musgar",
+      "Lexeme_ID": "was_framed",
+      "Form": "musgar",
+      "Segments": ["m", "u", "s", "g", "a", "r"],
+      "Source": ["arad-2005[Ch. 7 fn. 2]"]
+    },
+    {
+      "ID": "arad2005_cenzura",
+      "Lexeme_ID": "censorship",
+      "Form": "cenzura",
+      "Segments": ["c", "e", "n", "z", "u", "r", "a"],
+      "Source": ["arad-2005[Ch. 2 (32c)]"]
+    },
+    {
+      "ID": "arad2005_cinzer",
+      "Lexeme_ID": "to_censor",
+      "Form": "cinzer",
+      "Segments": ["c", "i", "n", "z", "e", "r"],
+      "Source": ["arad-2005[Ch. 2 (32c)]"]
+    },
+    {
+      "ID": "arad2005_qav",
+      "Lexeme_ID": "line",
+      "Form": "qav",
+      "Segments": ["q", "a", "v"],
+      "Source": ["arad-2005[Ch. 2 (33a)]"]
+    },
+    {
+      "ID": "arad2005_qivqev",
+      "Lexeme_ID": "to_draw_a_dotted_line",
+      "Form": "qivqev",
+      "Segments": ["q", "i", "v", "q", "e", "v"],
+      "Source": ["arad-2005[Ch. 2 (33a)]"]
+    },
+    {
+      "ID": "arad2005_xov",
+      "Lexeme_ID": "debt",
+      "Form": "xov",
+      "Segments": ["x", "o", "v"],
+      "Source": ["arad-2005[Ch. 2 (33b)]"]
+    },
+    {
+      "ID": "arad2005_xiyev",
+      "Lexeme_ID": "to_debit_oblige",
+      "Form": "xiyev",
+      "Segments": ["x", "i", "y", "e", "v"],
+      "Source": ["arad-2005[Ch. 2 (33b)]"]
+    },
+    {
+      "ID": "arad2005_faks",
+      "Lexeme_ID": "fax",
+      "Form": "faks",
+      "Segments": ["f", "a", "k", "s"],
+      "Source": ["arad-2005[Ch. 2 (33c)]", "arad-2005[Ch. 7 (41d)]"]
+    },
+    {
+      "ID": "arad2005_fikses",
+      "Lexeme_ID": "to_fax",
+      "Form": "fikses",
+      "Segments": ["f", "i", "k", "s", "e", "s"],
+      "Source": ["arad-2005[Ch. 2 (33c)]", "arad-2005[Ch. 7 (41d)]"]
+    },
+    {
+      "ID": "arad2005_transfer",
+      "Lexeme_ID": "transfer",
+      "Form": "transfer",
+      "Segments": ["t", "r", "a", "n", "s", "f", "e", "r"],
+      "Source": ["arad-2005[Ch. 1 (12d)]", "arad-2005[Ch. 7 (39a)]"]
+    },
+    {
+      "ID": "arad2005_trinsfer",
+      "Lexeme_ID": "to_transfer",
+      "Form": "trinsfer",
+      "Segments": ["t", "r", "i", "n", "s", "f", "e", "r"],
+      "Source": ["arad-2005[Ch. 1 (12d)]", "arad-2005[Ch. 7 (39a)]"]
+    },
+    {
+      "ID": "arad2005_streptiz",
+      "Lexeme_ID": "striptease",
+      "Form": "streptiz",
+      "Segments": ["s", "t", "r", "e", "p", "t", "i", "z"],
+      "Comment": "Ch. 1 (12e) prints the base as striptiz",
+      "Source": ["arad-2005[Ch. 7 (39b)]"]
+    },
+    {
+      "ID": "arad2005_striptez",
+      "Lexeme_ID": "to_perform_a_striptease",
+      "Form": "striptez",
+      "Segments": ["s", "t", "r", "i", "p", "t", "e", "z"],
+      "Source": ["arad-2005[Ch. 1 (12e)]", "arad-2005[Ch. 7 (39b)]"]
+    },
+    {
+      "ID": "arad2005_sinxroni",
+      "Lexeme_ID": "synchronic",
+      "Form": "sinxroni",
+      "Segments": ["s", "i", "n", "x", "r", "o", "n", "i"],
+      "Source": ["arad-2005[Ch. 7 (39c)]"]
+    },
+    {
+      "ID": "arad2005_sinxren",
+      "Lexeme_ID": "synchronize",
+      "Form": "sinxren",
+      "Segments": ["s", "i", "n", "x", "r", "e", "n"],
+      "Source": ["arad-2005[Ch. 7 (39c)]"]
+    },
+    {
+      "ID": "arad2005_qliq",
+      "Lexeme_ID": "a_click",
+      "Form": "qliq",
+      "Segments": ["q", "l", "i", "q"],
+      "Source": ["arad-2005[Ch. 1 (12c)]", "arad-2005[Ch. 7 (40a)]"]
+    },
+    {
+      "ID": "arad2005_hiqliq",
+      "Lexeme_ID": "to_click",
+      "Form": "hiqliq",
+      "Segments": ["h", "i", "q", "l", "i", "q"],
+      "Source": ["arad-2005[Ch. 1 (12c)]", "arad-2005[Ch. 7 (40a)]"]
+    },
+    {
+      "ID": "arad2005_fliq",
+      "Lexeme_ID": "a_slap",
+      "Form": "fliq",
+      "Segments": ["f", "l", "i", "q"],
+      "Source": ["arad-2005[Ch. 7 (40b)]"]
+    },
+    {
+      "ID": "arad2005_hifliq",
+      "Lexeme_ID": "to_slap",
+      "Form": "hifliq",
+      "Segments": ["h", "i", "f", "l", "i", "q"],
+      "Source": ["arad-2005[Ch. 7 (40b)]"]
+    },
+    {
+      "ID": "arad2005_shpritz",
+      "Lexeme_ID": "a_splash",
+      "Form": "špritz",
+      "Segments": ["š", "p", "r", "i", "t", "z"],
+      "Source": ["arad-2005[Ch. 7 (40c)]"]
+    },
+    {
+      "ID": "arad2005_hishpritz",
+      "Lexeme_ID": "to_splash",
+      "Form": "hišpritz",
+      "Segments": ["h", "i", "š", "p", "r", "i", "t", "z"],
+      "Source": ["arad-2005[Ch. 7 (40c)]"]
+    },
+    {
+      "ID": "arad2005_xoq",
+      "Lexeme_ID": "law",
+      "Form": "xoq",
+      "Segments": ["x", "o", "q"],
+      "Source": ["arad-2005[Ch. 7 (41a)]"]
+    },
+    {
+      "ID": "arad2005_xoqeq",
+      "Lexeme_ID": "legislate",
+      "Form": "xoqeq",
+      "Segments": ["x", "o", "q", "e", "q"],
+      "Source": ["arad-2005[Ch. 7 (41a)]"]
+    },
+    {
+      "ID": "arad2005_qod",
+      "Lexeme_ID": "code",
+      "Form": "qod",
+      "Segments": ["q", "o", "d"],
+      "Source": ["arad-2005[Ch. 7 (41b)]"]
+    },
+    {
+      "ID": "arad2005_qoded",
+      "Lexeme_ID": "codify",
+      "Form": "qoded",
+      "Segments": ["q", "o", "d", "e", "d"],
+      "Source": ["arad-2005[Ch. 7 (41b)]"]
+    },
+    {
+      "ID": "arad2005_dam",
+      "Lexeme_ID": "blood",
+      "Form": "dam",
+      "Segments": ["d", "a", "m"],
+      "Source": ["arad-2005[Ch. 7 (41c)]"]
+    },
+    {
+      "ID": "arad2005_dimem",
+      "Lexeme_ID": "bleed",
+      "Form": "dimem",
+      "Segments": ["d", "i", "m", "e", "m"],
+      "Source": ["arad-2005[Ch. 7 (41c)]"]
+    },
+    {
+      "ID": "arad2005_chat",
+      "Lexeme_ID": "chat",
+      "Form": "čat",
+      "Segments": ["č", "a", "t"],
+      "Source": ["arad-2005[Ch. 7 (41e)]"]
+    },
+    {
+      "ID": "arad2005_chitet",
+      "Lexeme_ID": "to_chat",
+      "Form": "čitet",
+      "Segments": ["č", "i", "t", "e", "t"],
+      "Source": ["arad-2005[Ch. 7 (41e)]"]
+    }
+  ],
   "FormRelationTable": [
     {
       "ID": "arad2005_tiqcev_from_taqciv",
       "Form_ID": "arad2005_taqciv",
       "Target_ID": "arad2005_tiqcev",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 1 (12a)]"
-      ]
+      "Source": ["arad-2005[Ch. 1 (12a)]"]
     },
     {
       "ID": "arad2005_tilfen_from_telefon",
       "Form_ID": "arad2005_telefon",
       "Target_ID": "arad2005_tilfen",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (29a)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (29a)]"]
     },
     {
       "ID": "arad2005_hitmastel_from_mastul",
       "Form_ID": "arad2005_mastul",
       "Target_ID": "arad2005_hitmastel",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (29b)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (29b)]"]
     },
     {
       "ID": "arad2005_xarap_from_xrop",
       "Form_ID": "arad2005_xrop",
       "Target_ID": "arad2005_xarap",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (29c)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (29c)]"]
     },
     {
       "ID": "arad2005_mixshev_from_maxshev",
       "Form_ID": "arad2005_maxshev",
       "Target_ID": "arad2005_mixshev",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 1 (12b)]",
-        "arad-2005[Ch. 2 (29d)]"
-      ]
+      "Source": ["arad-2005[Ch. 1 (12b)]", "arad-2005[Ch. 2 (29d)]"]
     },
     {
       "ID": "arad2005_tixzeq_from_taxzuqa",
       "Form_ID": "arad2005_taxzuqa",
       "Target_ID": "arad2005_tixzeq",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (32a)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (32a)]"]
     },
     {
       "ID": "arad2005_misger_from_misgeret",
       "Form_ID": "arad2005_misgeret",
       "Target_ID": "arad2005_misger",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (32b)]",
-        "arad-2005[Ch. 7 (6b)]",
-        "arad-2005[Ch. 7 (7b)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (32b)]", "arad-2005[Ch. 7 (6b)]", "arad-2005[Ch. 7 (7b)]"]
     },
     {
       "ID": "arad2005_musgar_from_misgeret",
       "Form_ID": "arad2005_misgeret",
       "Target_ID": "arad2005_musgar",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 7 fn. 2]"
-      ]
+      "Source": ["arad-2005[Ch. 7 fn. 2]"]
     },
     {
       "ID": "arad2005_cinzer_from_cenzura",
       "Form_ID": "arad2005_cenzura",
       "Target_ID": "arad2005_cinzer",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (32c)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (32c)]"]
     },
     {
       "ID": "arad2005_qivqev_from_qav",
       "Form_ID": "arad2005_qav",
       "Target_ID": "arad2005_qivqev",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (33a)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (33a)]"]
     },
     {
       "ID": "arad2005_xiyev_from_xov",
       "Form_ID": "arad2005_xov",
       "Target_ID": "arad2005_xiyev",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (33b)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (33b)]"]
     },
     {
       "ID": "arad2005_fikses_from_faks",
       "Form_ID": "arad2005_faks",
       "Target_ID": "arad2005_fikses",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 2 (33c)]",
-        "arad-2005[Ch. 7 (41d)]"
-      ]
+      "Source": ["arad-2005[Ch. 2 (33c)]", "arad-2005[Ch. 7 (41d)]"]
     },
     {
       "ID": "arad2005_trinsfer_from_transfer",
       "Form_ID": "arad2005_transfer",
       "Target_ID": "arad2005_trinsfer",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 1 (12d)]",
-        "arad-2005[Ch. 7 (39a)]"
-      ]
+      "Source": ["arad-2005[Ch. 1 (12d)]", "arad-2005[Ch. 7 (39a)]"]
     },
     {
       "ID": "arad2005_striptez_from_streptiz",
       "Form_ID": "arad2005_streptiz",
       "Target_ID": "arad2005_striptez",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 1 (12e)]",
-        "arad-2005[Ch. 7 (39b)]"
-      ]
+      "Source": ["arad-2005[Ch. 1 (12e)]", "arad-2005[Ch. 7 (39b)]"]
     },
     {
       "ID": "arad2005_sinxren_from_sinxroni",
       "Form_ID": "arad2005_sinxroni",
       "Target_ID": "arad2005_sinxren",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 7 (39c)]"
-      ]
+      "Source": ["arad-2005[Ch. 7 (39c)]"]
     },
     {
       "ID": "arad2005_hiqliq_from_qliq",
       "Form_ID": "arad2005_qliq",
       "Target_ID": "arad2005_hiqliq",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 1 (12c)]",
-        "arad-2005[Ch. 7 (40a)]"
-      ]
+      "Source": ["arad-2005[Ch. 1 (12c)]", "arad-2005[Ch. 7 (40a)]"]
     },
     {
       "ID": "arad2005_hifliq_from_fliq",
       "Form_ID": "arad2005_fliq",
       "Target_ID": "arad2005_hifliq",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 7 (40b)]"
-      ]
+      "Source": ["arad-2005[Ch. 7 (40b)]"]
     },
     {
       "ID": "arad2005_hishpritz_from_shpritz",
       "Form_ID": "arad2005_shpritz",
       "Target_ID": "arad2005_hishpritz",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 7 (40c)]"
-      ]
+      "Source": ["arad-2005[Ch. 7 (40c)]"]
     },
     {
       "ID": "arad2005_xoqeq_from_xoq",
       "Form_ID": "arad2005_xoq",
       "Target_ID": "arad2005_xoqeq",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 7 (41a)]"
-      ]
+      "Source": ["arad-2005[Ch. 7 (41a)]"]
     },
     {
       "ID": "arad2005_qoded_from_qod",
       "Form_ID": "arad2005_qod",
       "Target_ID": "arad2005_qoded",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 7 (41b)]"
-      ]
+      "Source": ["arad-2005[Ch. 7 (41b)]"]
     },
     {
       "ID": "arad2005_dimem_from_dam",
       "Form_ID": "arad2005_dam",
       "Target_ID": "arad2005_dimem",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 7 (41c)]"
-      ]
+      "Source": ["arad-2005[Ch. 7 (41c)]"]
     },
     {
       "ID": "arad2005_chitet_from_chat",
       "Form_ID": "arad2005_chat",
       "Target_ID": "arad2005_chitet",
       "Relation": "denominal",
-      "Source": [
-        "arad-2005[Ch. 7 (41e)]"
-      ]
+      "Source": ["arad-2005[Ch. 7 (41e)]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Root",
+      "Lean": "root",
+      "Type": "String"
+    },
+    {
+      "Name": "Binyan",
+      "Lean": "binyan",
+      "Type": "String"
+    },
+    {
+      "Name": "Pattern",
+      "Lean": "pattern",
+      "Type": "String"
+    },
+    {
+      "Name": "Conjugation",
+      "Lean": "conjugation",
+      "Type": "String"
+    },
+    {
+      "Name": "Alternant",
+      "Lean": "alternant",
+      "Type": "String"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "arad2005_lamad",
+      "Root": "lmd",
+      "Binyan": "1"
+    },
+    {
+      "Form_ID": "arad2005_nilmad",
+      "Root": "lmd",
+      "Binyan": "2"
+    },
+    {
+      "Form_ID": "arad2005_siper",
+      "Root": "spr",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_supar",
+      "Root": "spr",
+      "Binyan": "4"
+    },
+    {
+      "Form_ID": "arad2005_hiqlit",
+      "Root": "qlt",
+      "Binyan": "5"
+    },
+    {
+      "Form_ID": "arad2005_huqlat",
+      "Root": "qlt",
+      "Binyan": "6"
+    },
+    {
+      "Form_ID": "arad2005_hitpalel",
+      "Root": "pll",
+      "Binyan": "7"
+    },
+    {
+      "Form_ID": "arad2005_nipec",
+      "Root": "npc",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_nupac",
+      "Root": "npc",
+      "Binyan": "4"
+    },
+    {
+      "Form_ID": "arad2005_xileq",
+      "Root": "xlq",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_xulaq",
+      "Root": "xlq",
+      "Binyan": "4"
+    },
+    {
+      "Form_ID": "arad2005_histir",
+      "Root": "str",
+      "Binyan": "5"
+    },
+    {
+      "Form_ID": "arad2005_hustar",
+      "Root": "str",
+      "Binyan": "6"
+    },
+    {
+      "Form_ID": "arad2005_hifqid",
+      "Root": "pqd",
+      "Binyan": "5"
+    },
+    {
+      "Form_ID": "arad2005_hufqad",
+      "Root": "pqd",
+      "Binyan": "6"
+    },
+    {
+      "Form_ID": "arad2005_shamar",
+      "Root": "šmr",
+      "Binyan": "1"
+    },
+    {
+      "Form_ID": "arad2005_tirgem",
+      "Root": "trgm",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_qibel",
+      "Root": "qbl",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_hitrakex",
+      "Root": "rkk",
+      "Binyan": "7"
+    },
+    {
+      "Form_ID": "arad2005_shemen",
+      "Root": "šmn",
+      "Pattern": "CeCeC"
+    },
+    {
+      "Form_ID": "arad2005_shamenet",
+      "Root": "šmn",
+      "Pattern": "CaCCeCet"
+    },
+    {
+      "Form_ID": "arad2005_shuman",
+      "Root": "šmn",
+      "Pattern": "CuCaC"
+    },
+    {
+      "Form_ID": "arad2005_shamen",
+      "Root": "šmn",
+      "Pattern": "CaCeC"
+    },
+    {
+      "Form_ID": "arad2005_hishmin",
+      "Root": "šmn",
+      "Binyan": "5"
+    },
+    {
+      "Form_ID": "arad2005_shimen",
+      "Root": "šmn",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_xashav",
+      "Root": "xšb",
+      "Binyan": "1"
+    },
+    {
+      "Form_ID": "arad2005_xishev",
+      "Root": "xšb",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_hexshiv",
+      "Root": "xšb",
+      "Binyan": "5"
+    },
+    {
+      "Form_ID": "arad2005_hitxashev",
+      "Root": "xšb",
+      "Binyan": "7"
+    },
+    {
+      "Form_ID": "arad2005_maxshev",
+      "Root": "xšb",
+      "Pattern": "maCCeC"
+    },
+    {
+      "Form_ID": "arad2005_maxshava",
+      "Root": "xšb",
+      "Pattern": "maCCaCa"
+    },
+    {
+      "Form_ID": "arad2005_xashivut",
+      "Root": "xšb",
+      "Pattern": "CCiCut"
+    },
+    {
+      "Form_ID": "arad2005_xeshbon",
+      "Root": "xšb",
+      "Pattern": "CiCCon"
+    },
+    {
+      "Form_ID": "arad2005_taxshiv",
+      "Root": "xšb",
+      "Pattern": "taCCiC"
+    },
+    {
+      "Form_ID": "arad2005_qalat",
+      "Root": "qlt",
+      "Binyan": "1"
+    },
+    {
+      "Form_ID": "arad2005_miqlat",
+      "Root": "qlt",
+      "Pattern": "miCCaC"
+    },
+    {
+      "Form_ID": "arad2005_maqlet",
+      "Root": "qlt",
+      "Pattern": "maCCeC"
+    },
+    {
+      "Form_ID": "arad2005_taqlit",
+      "Root": "qlt",
+      "Pattern": "taCCiC"
+    },
+    {
+      "Form_ID": "arad2005_qaletet",
+      "Root": "qlt",
+      "Pattern": "CaCCeCet"
+    },
+    {
+      "Form_ID": "arad2005_qelet",
+      "Root": "qlt",
+      "Pattern": "CeCeC"
+    },
+    {
+      "Form_ID": "arad2005_sagar",
+      "Root": "sgr",
+      "Binyan": "1"
+    },
+    {
+      "Form_ID": "arad2005_hisgir",
+      "Root": "sgr",
+      "Binyan": "5"
+    },
+    {
+      "Form_ID": "arad2005_histager",
+      "Root": "sgr",
+      "Binyan": "7"
+    },
+    {
+      "Form_ID": "arad2005_seger",
+      "Root": "sgr",
+      "Pattern": "CeCeC"
+    },
+    {
+      "Form_ID": "arad2005_sograyim",
+      "Root": "sgr",
+      "Pattern": "CoCCayim"
+    },
+    {
+      "Form_ID": "arad2005_misgeret",
+      "Root": "sgr",
+      "Pattern": "miCCeCet"
+    },
+    {
+      "Form_ID": "arad2005_patax",
+      "Root": "ptx",
+      "Binyan": "1",
+      "Conjugation": "1",
+      "Alternant": "causative"
+    },
+    {
+      "Form_ID": "arad2005_niftax",
+      "Root": "ptx",
+      "Binyan": "2",
+      "Conjugation": "1",
+      "Alternant": "inchoative"
+    },
+    {
+      "Form_ID": "arad2005_qafa",
+      "Root": "qpʔ",
+      "Binyan": "1",
+      "Conjugation": "2",
+      "Alternant": "non-causative"
+    },
+    {
+      "Form_ID": "arad2005_hiqpi",
+      "Root": "qpʔ",
+      "Binyan": "5",
+      "Conjugation": "2",
+      "Alternant": "causative"
+    },
+    {
+      "Form_ID": "arad2005_namas",
+      "Root": "mss",
+      "Binyan": "2",
+      "Conjugation": "3",
+      "Alternant": "inchoative"
+    },
+    {
+      "Form_ID": "arad2005_hemes",
+      "Root": "mss",
+      "Binyan": "5",
+      "Conjugation": "3",
+      "Alternant": "causative"
+    },
+    {
+      "Form_ID": "arad2005_hitxamem",
+      "Root": "xmm",
+      "Binyan": "7",
+      "Conjugation": "4",
+      "Alternant": "inchoative"
+    },
+    {
+      "Form_ID": "arad2005_ximem",
+      "Root": "xmm",
+      "Binyan": "3",
+      "Conjugation": "4",
+      "Alternant": "causative"
+    },
+    {
+      "Form_ID": "arad2005_hitbaher",
+      "Root": "bhr",
+      "Binyan": "7",
+      "Conjugation": "5",
+      "Alternant": "inchoative"
+    },
+    {
+      "Form_ID": "arad2005_hivhir",
+      "Root": "bhr",
+      "Binyan": "5",
+      "Conjugation": "5",
+      "Alternant": "causative"
+    },
+    {
+      "Form_ID": "arad2005_heedim_inchoative",
+      "Root": "ʔdm",
+      "Binyan": "5",
+      "Conjugation": "6",
+      "Alternant": "inchoative"
+    },
+    {
+      "Form_ID": "arad2005_heedim_causative",
+      "Root": "ʔdm",
+      "Binyan": "5",
+      "Conjugation": "6",
+      "Alternant": "causative"
+    },
+    {
+      "Form_ID": "arad2005_tilfen",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_hitmastel",
+      "Binyan": "7"
+    },
+    {
+      "Form_ID": "arad2005_xarap",
+      "Binyan": "1"
+    },
+    {
+      "Form_ID": "arad2005_mixshev",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_taxzuqa",
+      "Root": "xzq"
+    },
+    {
+      "Form_ID": "arad2005_misger",
+      "Binyan": "3"
+    },
+    {
+      "Form_ID": "arad2005_musgar",
+      "Binyan": "4"
+    },
+    {
+      "Form_ID": "arad2005_hiqliq",
+      "Binyan": "5"
+    },
+    {
+      "Form_ID": "arad2005_hifliq",
+      "Binyan": "5"
+    },
+    {
+      "Form_ID": "arad2005_hishpritz",
+      "Binyan": "5"
     }
   ]
 }

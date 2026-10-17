@@ -521,32 +521,32 @@ def root? : String → Option (ConsonantalRoot String)
   | "ʔdm" => some ⟨["ʔ", "d", "m"]⟩
   | _ => none
 
-/-- `verbCell?` reads the binyan, voice and root of a root-derived verb of the data. -/
-def verbCell? (f : Data.Forms.Form) : Option (Binyan × Voice × ConsonantalRoot String) :=
-  ((f.column? "Binyan").bind binyan?).bind fun x ↦
-    ((f.column? "Root").bind root?).map fun r ↦ (x.1, x.2, r)
+/-- `verbCell?` reads the binyan, voice and root of a root-derived verb of the book's
+analysis. -/
+def verbCell? (a : Forms.Analysis) : Option (Binyan × Voice × ConsonantalRoot String) :=
+  (a.binyan.bind binyan?).bind fun x ↦ (a.root.bind root?).map fun r ↦ (x.1, x.2, r)
 
-/-- `nounCell?` reads the mišqal and root of a root-derived noun of the data. -/
-def nounCell? (f : Data.Forms.Form) : Option (Mishqal × ConsonantalRoot String) :=
-  ((f.column? "Pattern").bind mishqal?).bind fun q ↦ ((f.column? "Root").bind root?).map (q, ·)
+/-- `nounCell?` reads the mišqal and root of a root-derived noun of the book's analysis. -/
+def nounCell? (a : Forms.Analysis) : Option (Mishqal × ConsonantalRoot String) :=
+  (a.pattern.bind mishqal?).bind fun q ↦ (a.root.bind root?).map (q, ·)
 
 /-- Every verb with a root has its cell. -/
-theorem isSome_verbCell? : ∀ f ∈ Forms.all, (f.column? "Root").isSome →
-    f.column? "Category" = some "v" → (verbCell? f).isSome := by
+theorem isSome_verbCell? : ∀ a ∈ Forms.analyses, a.root.isSome →
+    a.form.lexeme.pos = ↑UD.UPOS.VERB → (verbCell? a).isSome := by
   decide +kernel
 
 /-- The derivation produces every root-derived verb of Ch. 2 and Ch. 7 except two. *hexšiv* lowers
 *i* next to the guttural, and *histager* metathesizes *t* and the sibilant. -/
 theorem verbs_derived :
-    (Forms.all.filter fun f ↦ f.column? "Conjugation" = none ∧ ∃ x ∈ verbCell? f,
-      verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 ≠ some f.segments).map
-        (·.form) = ["hexšiv", "histager"] := by
+    (Forms.analyses.filter fun a ↦ a.conjugation = none ∧ ∃ x ∈ verbCell? a,
+      verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 ≠ some a.form.segments).map
+        (·.form.form) = ["hexšiv", "histager"] := by
   decide +kernel
 
 /-- The derivation produces every noun of the data in a mišqal of (24a) or of Ch. 7, with the
 mišqal's own vowels. -/
-theorem nouns_derived : ∀ f ∈ Forms.all, ∀ x ∈ nounCell? f,
-    surface fricative (nounStem transcribedPx Vowel.transcription x.1 x.2) = f.segments := by
+theorem nouns_derived : ∀ a ∈ Forms.analyses, ∀ x ∈ nounCell? a,
+    surface fricative (nounStem transcribedPx Vowel.transcription x.1 x.2) = a.form.segments := by
   decide +kernel
 
 /-- The passive of *lamad* is the binyan nVCCVC, *nilmad* (25), (3). -/
@@ -604,12 +604,12 @@ instance [DecidableEq α] (isV : α → Bool) (base w : List α) :
 
 /-- `baseStem f` is the stem of a base, its segments before a boundary *+*. (32) prints the suffixes
 after it outside the stem. -/
-def baseStem (f : Data.Forms.Form) : List String := f.segments.takeWhile (· ≠ "+")
+def baseStem (f : Data.Forms.Form Forms.Cell) : List String := f.segments.takeWhile (· ≠ "+")
 
-/-- `candidates f` lists the binyan and voice of a verb where the book prints them, and every active
-binyan where it does not. -/
-def candidates (f : Data.Forms.Form) : List (Binyan × Voice) :=
-  match (f.column? "Binyan").bind binyan? with
+/-- `candidates a` lists the binyan and voice of a verb where the book prints them, and every
+active binyan where it does not. -/
+def candidates (a : Forms.Analysis) : List (Binyan × Voice) :=
+  match a.binyan.bind binyan? with
   | some x => [x]
   | none => [Binyan.cvcvc, .nvccvc, .cvccvc, .hvccvc, .hitcvccvc].map (·, .active)
 
@@ -617,12 +617,14 @@ def candidates (f : Data.Forms.Form) : List (Binyan × Voice) :=
 *qoded* (41a, b), whose {o, e} (25) does not list. None is the verb the root of its base derives in
 its binyan, so *misger* is not *siger*, *musgar* not *sugar* and *mixšev* not *xišev*. -/
 theorem denominals :
-    ((Forms.relations.filter fun rel : Data.Forms.FormRelation ↦ ¬∃ x ∈ candidates rel.target,
-        IsStemModification isVowel transcribedPx Vowel.transcription x.1 x.2 (baseStem rel.form)
-          rel.target.segments).map (·.target.form) = ["xoqeq", "qoded"]) ∧
-      ∀ rel ∈ Forms.relations, ∀ r ∈ (rel.form.column? "Root").bind root?,
+    ((Forms.analysisRelations.filter fun rel : Data.Forms.FormRelation Forms.Analysis ↦
+        ¬∃ x ∈ candidates rel.target,
+        IsStemModification isVowel transcribedPx Vowel.transcription x.1 x.2
+          (baseStem rel.form.form) rel.target.form.segments).map (·.target.form.form) =
+        ["xoqeq", "qoded"]) ∧
+      ∀ rel ∈ Forms.analysisRelations, ∀ r ∈ rel.form.root.bind root?,
         ∀ x ∈ candidates rel.target, verb transcribedPx Vowel.transcription fricative x.1 x.2 r ≠
-          some rel.target.segments := by
+          some rel.target.form.segments := by
   decide +kernel
 
 /-- Without its stem boundary the suffix *-et* of *misgeret* would have to be kept, which the
@@ -706,18 +708,17 @@ theorem natural_iff : ∀ b b', Natural b b' ↔ s(b, b') ∈ natural57 := by
 /-- `conjugations` reads each conjugation of (47)–(52), with the binyan of its causative and of its
 other alternant, off the verbs of the data. -/
 def conjugations : List (String × Binyan × Binyan) :=
-  let alts := Forms.all.filterMap fun f ↦ do
-    pure (← f.column? "Conjugation", f.column? "Alternant" == some "causative",
-      (← (f.column? "Binyan").bind binyan?).1)
+  let alts := Forms.analyses.filterMap fun a ↦ do
+    pure (← a.conjugation, a.alternant == some "causative", (← a.binyan.bind binyan?).1)
   (alts.filter (·.2.1)).flatMap fun (c, _, b) ↦
     (alts.filter fun a ↦ a.1 = c ∧ !a.2.1).map fun (_, _, b') ↦ (c, b, b')
 
 /-- The derivation produces the verbs of the conjugation classes except *namas* and *hemes*, the
 biliteral allomorphy of √mss (fn. 33), and *heʔedim*, lowered next to the guttural. -/
 theorem conjugation_verbs_derived :
-    (Forms.all.filter fun f ↦ f.column? "Conjugation" ≠ none ∧ ∃ x ∈ verbCell? f,
-      verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 ≠ some f.segments).map
-        (·.form) = ["namas", "hemes", "heʔedim", "heʔedim"] := by
+    (Forms.analyses.filter fun a ↦ a.conjugation ≠ none ∧ ∃ x ∈ verbCell? a,
+      verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 ≠ some a.form.segments).map
+        (·.form.form) = ["namas", "hemes", "heʔedim", "heʔedim"] := by
   decide +kernel
 
 /-- Conjugations 1–4 are natural and every natural pair is one of them; conjugation 5 crosses
@@ -838,16 +839,17 @@ theorem root?_map_segment :
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl,
     rfl, rfl, rfl⟩
 
-private theorem verb_eq_of_not_mem_uncovered {f : Data.Forms.Form} (hf : f ∈ Forms.all)
-    {x : Binyan × Voice × ConsonantalRoot String} (hx : x ∈ verbCell? f) (hu : f.form ∉ uncovered) :
-    verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 = some f.segments := by
+private theorem verb_eq_of_not_mem_uncovered {a : Forms.Analysis} (hf : a ∈ Forms.analyses)
+    {x : Binyan × Voice × ConsonantalRoot String} (hx : x ∈ verbCell? a)
+    (hu : a.form.form ∉ uncovered) :
+    verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 = some a.form.segments := by
   by_contra hne
-  by_cases hc : f.column? "Conjugation" = none
-  · have h : f.form ∈ ["hexšiv", "histager"] := by
+  by_cases hc : a.conjugation = none
+  · have h : a.form.form ∈ ["hexšiv", "histager"] := by
       rw [← verbs_derived]
       exact List.mem_map_of_mem (List.mem_filter.2 ⟨hf, decide_eq_true ⟨hc, x, hx, hne⟩⟩)
     exact hu ((by decide : ∀ y ∈ _, y ∈ uncovered) _ h)
-  · have h : f.form ∈ ["namas", "hemes", "heʔedim", "heʔedim"] := by
+  · have h : a.form.form ∈ ["namas", "hemes", "heʔedim", "heʔedim"] := by
       rw [← conjugation_verbs_derived]
       exact List.mem_map_of_mem (List.mem_filter.2 ⟨hf, decide_eq_true ⟨hc, x, hx, hne⟩⟩)
     exact hu ((by decide : ∀ y ∈ _, y ∈ uncovered) _ h)
@@ -855,14 +857,14 @@ private theorem verb_eq_of_not_mem_uncovered {f : Data.Forms.Form} (hf : f ∈ F
 /-- Over the fragment's roots and segments, the derivation produces every root-derived word of
 the data read as segments, the alternating stops realized by continuancy, except the verbs it
 leaves out. -/
-theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ f ∈ Forms.all, f.column? "Root" = some p.1 →
-    (∀ x ∈ verbCell? f, f.form ∉ uncovered →
+theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ a ∈ Forms.analyses, a.root = some p.1 →
+    (∀ x ∈ verbCell? a, a.form.form ∉ uncovered →
       verb (transcribedPx.map segment) (segment ∘ Vowel.transcription) fillContinuant x.1 x.2.1
-        p.2 = some (f.segments.map surfaceSegment)) ∧
-    ∀ x ∈ nounCell? f, surface fillContinuant
+        p.2 = some (a.form.segments.map surfaceSegment)) ∧
+    ∀ x ∈ nounCell? a, surface fillContinuant
       (nounStem (transcribedPx.map segment) (segment ∘ Vowel.transcription) x.1 p.2) =
-        f.segments.map surfaceSegment := by
-  intro p hp f hf hroot
+        a.form.segments.map surfaceSegment := by
+  intro p hp a hf hroot
   have hr : ∀ r, root? p.1 = some r → p.2 = r.map segment := fun r h ↦ by
     simpa [h] using (root?_map_segment p hp).symm
   refine ⟨fun x hx hu ↦ ?_, fun x hx ↦ ?_⟩
@@ -880,23 +882,22 @@ theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ f ∈ Forms.all, f.colu
       obtain ⟨_, -, r, hr', rfl⟩ := hx
       exact hr'
     rw [hr _ hx', nounStem_map, surface_map segment surfaceSegment fricative fillContinuant
-      fillContinuant_segment, nouns_derived f hf x hx]
+      fillContinuant_segment, nouns_derived a hf x hx]
 
 /-! ### Multiple Contextualized Meaning (Ch. 3, Ch. 7) -/
 
-/-- `pattern? f` is the pattern of a word, its binyan number or its mišqal. -/
-def pattern? (f : Data.Forms.Form) : Option String :=
-  (f.column? "Binyan").orElse fun _ ↦ f.column? "Pattern"
+/-- `pattern? a` is the pattern of a word, its binyan number or its mišqal. -/
+def pattern? (a : Forms.Analysis) : Option String := a.binyan.orElse fun _ ↦ a.pattern
 
 /-- `rootForms` lists the words of a root in a pattern. -/
 def rootForms (root pattern : String) : Finset String :=
-  ((Forms.all.filter fun f ↦ f.column? "Root" = some root ∧ pattern? f = some pattern).map
-    (·.form)).toFinset
+  ((Forms.analyses.filter fun a ↦ a.root = some root ∧ pattern? a = some pattern).map
+    (·.form.form)).toFinset
 
 /-- `rootMeanings` lists the concepts of a root in a pattern. -/
 def rootMeanings (root pattern : String) : Finset String :=
-  ((Forms.all.filter fun f ↦ f.column? "Root" = some root ∧ pattern? f = some pattern).map
-    (·.parameterId)).toFinset
+  ((Forms.analyses.filter fun a ↦ a.root = some root ∧ pattern? a = some pattern).map
+    (·.form.parameterId)).toFinset
 
 /-- `roots` is the interpreted realization system of roots over the patterns. -/
 def roots : Realization.Interpreted String String String String where
