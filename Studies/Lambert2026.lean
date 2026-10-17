@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Computability.Variety.Definite
 public import Linglib.Core.Data.List.Sublist
 public import Linglib.Phonology.Subregular.Multitier
+public import Linglib.Phonology.Subregular.MultitierReverseDefinite
 public import Linglib.Phonology.Subregular.ForbiddenPairs
 public import Linglib.Phonology.Subregular.Agree
 public import Linglib.Phonology.Tone.Plateauing
@@ -51,8 +52,7 @@ Prove the equivalence of the order-based and tier-based formulae for Kagoshima J
 (43)) and for Karanga Shona ((46)–(49)), and the piecewise testability of the Tsuut'ina
 grammar. The description of the Karanga Shona stem by substrings ((50)), which makes it locally
 testable, are not formalized. Of the equations for the multitier classes ((60)–(63), Table 6),
-only the inclusion of the multitier reverse definite languages in the languages of (62) is
-proved.
+only (62) is proved (`Language.exists_isBTK_iff`).
 
 ## References
 
