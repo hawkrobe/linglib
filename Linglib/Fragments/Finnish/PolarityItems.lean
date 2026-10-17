@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Finnish.Indefinites
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Fragments.Finnish.TemporalConnectives
 
@@ -41,7 +42,7 @@ open PolarityItem
 /-- *kukaan* 'anyone, no one', *kuka* 'who' with the scalar clitic -kAAn, the *-kaan* series of
 [haspelmath-1997]. -/
 def kukaan : PolarityItem :=
-  { form := "kukaan"
+  { form := Indefinites.kukaan.form
   , licensor := some .weak
   , licensingContexts := [.question, .negation] }
 

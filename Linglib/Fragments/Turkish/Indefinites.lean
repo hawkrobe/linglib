@@ -44,7 +44,7 @@ open Pronoun (OntologicalCategory)
 
 /-- A member of the *bir*-series, a generic noun with *bir* 'one'. -/
 def bir (form : String) (ontology : OntologicalCategory) : IndefinitePronoun :=
-  { form, ontology, basis := .genericNoun }
+  { form, ontology }
 
 /-- *biri(si)* 'someone'. -/
 def biri : IndefinitePronoun := bir "biri" .person
@@ -64,14 +64,14 @@ def birŞekilde : IndefinitePronoun := bir "bir şekilde" .manner
 /-- The determiner *bir* 'some'. -/
 def birDeterminer : IndefinitePronoun := bir "bir" .determiner
 
-/-- The *bir*-series, listed from person to determiner. -/
+/-- The *bir*-series. -/
 def birSeries : IndefinitePronoun.Series :=
-  ⟨"bir-", [biri, birŞey, birYerde, birZaman, birŞekilde, birDeterminer]⟩
+  ⟨"bir-", {biri, birŞey, birYerde, birZaman, birŞekilde, birDeterminer}⟩
 
 /-! ### The isolated indefinite -/
 
 /-- *kimse* 'someone, anyone', used only non-specifically. -/
-def kimse : IndefinitePronoun := { form := "kimse", ontology := .person, basis := .genericNoun }
+def kimse : IndefinitePronoun := { form := "kimse", ontology := .person }
 
 /-! ### The hiç-series -/
 
@@ -84,9 +84,9 @@ def hiçbiri : IndefinitePronoun := { biri with form := "hiçbiri" }
 /-- *hiç kimse* 'nobody', the negative of the isolated indefinite. -/
 def hiçKimse : IndefinitePronoun := hiç kimse
 
-/-- The *hiç*-series, with both person members first. -/
+/-- The *hiç*-series, with two person members. -/
 def hiçSeries : IndefinitePronoun.Series :=
-  ⟨"hiç", hiçbiri :: hiçKimse :: (birSeries.members.drop 1).map hiç⟩
+  ⟨"hiç", insert hiçbiri (insert hiçKimse ((birSeries.members.erase biri).image hiç))⟩
 
 /-! ### The herhangi-series -/
 
@@ -97,7 +97,7 @@ def herhangi (p : IndefinitePronoun) : IndefinitePronoun :=
 /-- *herhangi biri* 'anyone'. -/
 def herhangiBiri : IndefinitePronoun := herhangi biri
 
-/-- The *herhangi*-series, listed from person to determiner. -/
-def herhangiSeries : IndefinitePronoun.Series := ⟨"herhangi", birSeries.members.map herhangi⟩
+/-- The *herhangi*-series. -/
+def herhangiSeries : IndefinitePronoun.Series := ⟨"herhangi", birSeries.members.image herhangi⟩
 
 end Turkish.Indefinites

@@ -388,7 +388,8 @@ theorem sample_instantiates_ordConnected {V E : Type*} (v x : V) :
 unmarked one, Georgian *-γac* the specific, Russian *-nibud'* the non-specific, German *irgend-*
 the epistemic, Russian *koe-* the specific known and Kannada *-oo* the specific unknown. -/
 theorem examples :
-    (∃ s ∈ Haspelmath1997.italian, s.name = "qualche-" ∧ Instantiates s .unmarked) ∧
+    (∃ s ∈ Haspelmath1997.italian,
+        s.toSeries = Italian.Indefinites.qualcheSeries ∧ Instantiates s .unmarked) ∧
       (∃ s ∈ Haspelmath1997.georgian,
         s.toSeries = Georgian.Indefinites.γacSeries ∧ Instantiates s .specific) ∧
       (∃ s ∈ Haspelmath1997.russian,

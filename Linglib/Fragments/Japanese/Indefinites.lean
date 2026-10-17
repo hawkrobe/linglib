@@ -7,10 +7,11 @@ public import Linglib.Syntax.Category.Pronoun.Indefinite
 # Japanese indefinite pronouns
 
 Japanese builds its indefinite series on the indeterminate pronouns with a particle: *-ka*
-(*dare-ka* 'someone'), *-mo* (*dare-mo* 'nobody' with clausemate negation, and without negation
-the universal 'everyone') and *-demo* (*dare-demo* 'anyone'). A member of a series is its marker
-applied to an interrogative of `Japanese.Pronouns`, which derives its form, category and basis;
-each series is entered with its person member.
+(*dare-ka* 'someone'), *-mo* (*dare-mo* 'nobody' with clausemate negation, and without negation the
+universal 'everyone') and *-demo* (*dare-demo* 'anyone'). A member of a series is its marker applied
+to an interrogative of `Japanese.Pronouns`, which derives its form and category. The members are
+those of Haspelmath's table, in the Hepburn spelling of the interrogatives where he writes *itu*,
+*doo* and *ikutu*.
 
 ## References
 
@@ -21,6 +22,8 @@ each series is entered with its person member.
 @[expose] public section
 
 namespace Japanese.Indefinites
+
+open Pronouns
 
 /-! ### The markers -/
 
@@ -48,12 +51,15 @@ def dareDemo : IndefinitePronoun := demo Pronouns.dare
 /-! ### The series -/
 
 /-- The *-ka* series. -/
-def kaSeries : IndefinitePronoun.Series := ⟨"-ka", [dareKa]⟩
+def kaSeries : IndefinitePronoun.Series :=
+  ⟨"-ka", ({dare, nani, doko, itsu, doo, ikura, ikutsu, dore} : Finset _).image ka⟩
 
-/-- The *-mo* series. -/
-def moSeries : IndefinitePronoun.Series := ⟨"-mo", [dareMo]⟩
+/-- The *-mo* series, which has members only for a person, a thing, a place and a
+determiner. -/
+def moSeries : IndefinitePronoun.Series := ⟨"-mo", ({dare, nani, doko, dore} : Finset _).image mo⟩
 
 /-- The *-demo* series. -/
-def demoSeries : IndefinitePronoun.Series := ⟨"-demo", [dareDemo]⟩
+def demoSeries : IndefinitePronoun.Series :=
+  ⟨"-demo", ({dare, nani, doko, itsu, doo, ikura, ikutsu, dore} : Finset _).image demo⟩
 
 end Japanese.Indefinites
