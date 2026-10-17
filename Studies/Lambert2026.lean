@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Computability.Variety.Definite
 public import Linglib.Core.Data.List.Sublist
 public import Linglib.Phonology.Subregular.Multitier
 public import Linglib.Phonology.Subregular.ForbiddenPairs
@@ -26,6 +26,10 @@ culminativity alone is not generalized definite, culminative stress-final is not
 Tsuut'ina sibilant harmony, Luganda plateauing, and Prinmi are not multitier generalized
 definite (`tsuutina_not_isBTLI`, `luganda_not_isBTLI`). Luganda's plateauing conjunct holds of
 exactly the outputs of Hyman and Katamba's plateauing map (`plateauing_iff_mem_range_utp`).
+Following §6, stress-initial is refuted from the definite class, stress-penult from the reverse
+definite class, and culminative stress-penult from the generalized definite class by an
+idempotent syntactic class that fails the class's equation (`finnish_not_isDefinite`,
+`amara_not_isReverseDefinite`, `stressPenultCulminative_not_isGeneralizedDefinite`).
 
 ## Implementation notes
 
@@ -44,8 +48,7 @@ one of Mayer and Major that the paper analyzes.
 Prove the equivalence of the order-based and tier-based formulae for Kagoshima Japanese ((42),
 (43)) and for Karanga Shona ((46)–(49)), and the piecewise testability of the Tsuut'ina
 grammar. The description of the Karanga Shona stem by substrings ((50)), which makes it locally
-testable, and the algebraic characterizations of §6 by equations on the syntactic semigroup are
-not formalized.
+testable, and the equations for the multitier classes ((60), (61), Table 6) are not formalized.
 
 ## References
 
@@ -127,6 +130,9 @@ def amara : Language Syl :=
   {w | Edge.right.takeAt 2 w ∈
     ({[.stressed], [.stressed, .unstressed], [.stressed, .stressed]} : Set (List Syl))}
 
+@[simp] theorem mem_amara {w : List Syl} : w ∈ amara ↔ Edge.right.takeAt 2 w ∈
+    ({[.stressed], [.stressed, .unstressed], [.stressed, .stressed]} : Set (List Syl)) := Iff.rfl
+
 theorem amara_isDefinite : amara.IsDefinite 2 := isDefinite_setOf_right 2 _
 
 /-- Finnish stresses the initial syllable ((6), [suomi-toivanen-ylitalo-2008]), `⋊σ́`. -/
@@ -138,7 +144,7 @@ theorem finnish_isReverseDefinite : finnish.IsReverseDefinite 1 := isReverseDefi
 def culminativity : Language Syl :=
   {w | w.filter Syl.isStressed = [] ∨ w.filter Syl.isStressed = [.stressed]}
 
-/-- Culminativity is tier-based co/finite: on the stress tier the word is empty or a single
+/-- Culminativity is tier-based co/finite, since on the stress tier the word is empty or a single
 stressed syllable. -/
 theorem culminativity_isTierBased : IsTierBased IsFiniteOrCofinite culminativity :=
   ⟨_, _, rfl, Or.inl ((Set.finite_singleton _).insert _)⟩
@@ -175,8 +181,8 @@ def stressInitialCulminative : Language Syl := finnish ⊓ tierWord Syl.isStress
 theorem stressInitialCulminative_isBTK : IsBTK 2 stressInitialCulminative :=
   IsBTC.inter (isBTK_ofPrefix _ (by decide)) (isBTK_tierWord _ _ (by decide))
 
-/-- Culminative stress-final is not definite (§2.3): `σσᵏσ́` is in and `σ́σᵏσ́` is out, with the
-same suffix of length `k`; strict locality is more powerful than definiteness. -/
+/-- Culminative stress-final is not definite (§2.3), since `σσᵏσ́` is in and `σ́σᵏσ́` is out with
+the same suffix of length `k`; strict locality is more powerful than definiteness. -/
 theorem stressFinalCulminative_not_isDefinite (k : ℕ) :
     ¬ stressFinalCulminative.IsDefinite k := by
   intro h
@@ -403,7 +409,8 @@ private lemma tsuutinaOut_notMem (k : ℕ) : tsuutinaOut k ∉ tsuutina := by
 /-- Tsuut'ina is not multitier generalized definite (§4.2), since `ʃᵏ⁺¹sᵏ⁺¹` is in and `ʃᵏsʃsᵏ`
 is out with the same affixes of length `k` on every tier. -/
 theorem tsuutina_not_isBTLI (k : ℕ) : ¬ IsBTLI k tsuutina :=
-  not_isBTC_of_indist (IsBTC.indist_isGenDef_of_tierAffixes (tsuutina_tierAffixes k))
+  not_isBTC_of_indist
+    (IsBTC.indist_isGeneralizedDefinite_of_tierAffixes (tsuutina_tierAffixes k))
     (tsuutinaIn_mem k) (tsuutinaOut_notMem k)
 
 /-- The segment classes of Uyghur backness harmony ((34)) are the harmonizing vowels and dorsal
@@ -525,7 +532,7 @@ private lemma tone_tierAffixes (k : ℕ) (T : Tone → Bool) :
 /-- The tone witnesses are not separated by any multitier generalized definite language. -/
 private lemma tone_indist (k : ℕ) :
     IsBTC.Indist (IsGeneralizedDefinite · k) (toneIn k) (toneOut k) :=
-  IsBTC.indist_isGenDef_of_tierAffixes (tone_tierAffixes k)
+  IsBTC.indist_isGeneralizedDefinite_of_tierAffixes (tone_tierAffixes k)
 
 /-- Luganda plateauing is not multitier generalized definite (§5.1). -/
 theorem luganda_not_isBTLI (k : ℕ) : ¬ IsBTLI k luganda :=
@@ -573,8 +580,8 @@ private lemma high_high_sublist_iff (w : List Tone) :
   ⟨fun h ↦ by simpa only [filter_cons_of_pos (by decide : Tone.isHigh .high = true), filter_nil]
     using h.filter Tone.isHigh, fun h ↦ h.trans filter_sublist⟩
 
-/-- Arigibi is tier-based co/finite (§5.3): on the high tier the word is empty or a single
-high, culminativity on tone. -/
+/-- Arigibi is tier-based co/finite (§5.3), since on the high tier the word is empty or a single
+high, which is culminativity on tone. -/
 theorem arigibi_isTierBased : IsTierBased IsFiniteOrCofinite arigibi := by
   refine ⟨Tone.isHigh, {xs | xs = [] ∨ xs = [.high]}, ?_,
     Or.inl ((Set.finite_singleton _).insert _)⟩
@@ -650,7 +657,7 @@ def karangaShona : Language Tone :=
       tierWord Tone.isHigh [.high, .high, .high, .high])
 
 /-- The Karanga Shona verb stem is multitier generalized definite (§5.6, refining
-[jardine-2020]): tier prefixes and tier suffixes are both needed. -/
+[jardine-2020]), and needs both tier prefixes and tier suffixes. -/
 theorem karangaShona_isBTLI : IsBTLI 5 karangaShona :=
   IsBTC.union (IsBTC.union
     (IsBTC.of_class (isDefinite_succ_of_forall_length_le (N := 4)
@@ -662,5 +669,62 @@ theorem karangaShona_isBTLI : IsBTLI 5 karangaShona :=
     (IsBTC.inter (IsBTC.inter (IsBTK.toIsBTLI (isBTK_ofPrefix _ (by decide)))
       (IsBTD.toIsBTLI (isBTD_ofSuffix _ (by decide))))
       (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide))))
+
+/-! ### Classification through equations (§6)
+
+The window characterizations ((53), (57), (58)) constrain the syntactic class of every word as
+long as the window. An idempotent class of a nonempty word is the class of arbitrarily long words,
+so it is constrained whatever the window ((56)–(58)), and an idempotent that fails the equation
+refutes the class for every window at once. -/
+
+/-- Stress-penult is not 1-definite (§2.1), since the class `[σ]` is not a right zero, with
+`[σ] [σ] ≠ [σ]` in the context `σ́ __` (§6.2). -/
+theorem amara_not_isDefinite_one : ¬ amara.IsDefinite 1 := fun h ↦ by
+  have := h.isRightZero_syntacticClass (u := [.unstressed]) le_rfl
+    (amara.syntacticClass [.unstressed])
+  rw [← syntacticClass_append, syntacticClass_eq_iff] at this
+  simpa [Edge.takeAt_right, rtake] using this [.stressed] []
+
+private lemma finnish_isIdempotentElem :
+    IsIdempotentElem (finnish.syntacticClass [.unstressed]) := by
+  rw [IsIdempotentElem, ← syntacticClass_append, syntacticClass_eq_iff]
+  rintro (_ | ⟨c, x⟩) y <;> simp [finnish]
+
+/-- Stress-initial is not definite (§2.2), since the class `[σ]` is idempotent but
+`[σ́] [σ] ≠ [σ]`, with `σ́σ` in and `σ` out (§6.2.2). -/
+theorem finnish_not_isDefinite (k : ℕ) : ¬ finnish.IsDefinite k := fun h ↦ by
+  have := h.isRightZero_syntacticClass_of_isIdempotentElem (cons_ne_nil _ _)
+    finnish_isIdempotentElem (finnish.syntacticClass [.stressed])
+  rw [← syntacticClass_append] at this
+  simpa [finnish] using mem_iff_of_syntacticClass_eq this
+
+/-- Stress-penult is not reverse definite (§6.2.2), since the class `[σσ]` is idempotent, as
+stress-penult is 2-definite, but `[σσ] [σ́] ≠ [σσ]` in the context `__ σ`. -/
+theorem amara_not_isReverseDefinite (k : ℕ) : ¬ amara.IsReverseDefinite k := fun h ↦ by
+  have he := (amara_isDefinite.isRightZero_syntacticClass
+    (u := [.unstressed, .unstressed]) le_rfl).isIdempotentElem
+  have := h.isLeftZero_syntacticClass_of_isIdempotentElem (cons_ne_nil _ _) he
+    (amara.syntacticClass [.stressed])
+  rw [← syntacticClass_append, syntacticClass_eq_iff] at this
+  simpa [Edge.takeAt_right, rtake] using this [] [.unstressed]
+
+private lemma stressPenultCulminative_isIdempotentElem :
+    IsIdempotentElem (stressPenultCulminative.syntacticClass [.unstressed, .unstressed]) := by
+  rw [IsIdempotentElem, ← syntacticClass_append, syntacticClass_eq_iff]
+  intro x y
+  rw [stressPenultCulminative, mem_inf, mem_inf]
+  refine and_congr
+    (amara_isDefinite.syntacticEquiv_append_left (u := [.unstressed, .unstressed]) le_rfl _ x y) ?_
+  simp [Syl.isStressed]
+
+/-- Culminative stress-penult is not generalized definite (§6.3), since the class `[σσ]` is
+idempotent but `[σσ] [σ́] [σσ] ≠ [σσ]` in the context `__ σ́σ`. -/
+theorem stressPenultCulminative_not_isGeneralizedDefinite (k : ℕ) :
+    ¬ stressPenultCulminative.IsGeneralizedDefinite k := fun h ↦ by
+  have := h.syntacticClass_mul_mul_self_of_isIdempotentElem (cons_ne_nil _ _)
+    stressPenultCulminative_isIdempotentElem (stressPenultCulminative.syntacticClass [.stressed])
+  rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff] at this
+  simpa [stressPenultCulminative, Edge.takeAt_right, rtake, Syl.isStressed] using
+    this [] [.stressed, .unstressed]
 
 end Lambert2026

@@ -7,18 +7,18 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Algebra.Group.Idempotent
 public import Linglib.Core.Algebra.Group.IdempotentPower
 public import Mathlib.Algebra.Group.Prod
 
 /-!
 # Definite and locally trivial semigroups
 
-This file defines three conditions on a semigroup, each stated on its idempotents. A semigroup is
-*definite* when every idempotent `e` satisfies `s * e = e`, *reverse definite* when `e * s = e`,
-and *locally trivial* when `e * s * e = e`, for every `s`. Definite and reverse definite semigroups
-are locally trivial. In a finite semigroup each condition is equivalent to an equation on all
-sufficiently long products, which is the form in which these semigroups recognize the definite,
-reverse definite and generalized definite languages.
+A semigroup is *definite* when each of its idempotents is a right zero, *reverse definite* when
+each is a left zero, and *locally trivial* when every idempotent `e` satisfies `e * s * e = e` for
+every `s`. In a finite semigroup each condition is equivalent to an equation on all sufficiently
+long products, which is the form in which these semigroups recognize the definite, reverse definite
+and generalized definite languages.
 
 ## Main definitions
 
@@ -29,16 +29,16 @@ reverse definite and generalized definite languages.
 
 * `Semigroup.IsDefinite.of_injective`, `.of_surjective`, `.prod` and their mirrors: closure under
   subsemigroups, quotients and products.
-* `Semigroup.IsDefinite.mul_map_eq`, `Semigroup.IsReverseDefinite.map_mul_eq`,
+* `Semigroup.IsDefinite.isRightZero_map`, `Semigroup.IsReverseDefinite.isLeftZero_map`,
   `Semigroup.IsLocallyTrivial.map_mul_map_eq`: in a finite semigroup satisfying the condition,
   every product of at least `|S|` elements is a right zero, a left zero, respectively absorbs
   anything placed between two copies of it.
-* `Semigroup.IsDefinite.of_mul_map_eq` and its two mirrors: the converse, for any bound.
+* `Semigroup.IsDefinite.of_isRightZero_map` and its two mirrors: the converse, for any bound.
 
 ## Implementation notes
 
 Pin calls definite semigroups *righty trivial* and reverse definite ones *lefty trivial*. The
-long-product characterizations are Propositions XI.4.15–XI.4.17 of [pin-mfa].
+long-product characterizations are Propositions XI.4.15–XI.4.17 of Pin's lecture notes.
 
 ## References
 
@@ -52,14 +52,13 @@ namespace Semigroup
 
 variable {S T : Type*} [Semigroup S] [Semigroup T]
 
-/-- A semigroup is *definite* when every idempotent `e` absorbs on the left, `s * e = e`. -/
+/-- A semigroup is *definite* when every idempotent is a right zero. -/
 def IsDefinite (S : Type*) [Semigroup S] : Prop :=
-  ∀ e : S, IsIdempotentElem e → ∀ s : S, s * e = e
+  ∀ e : S, IsIdempotentElem e → IsRightZero e
 
-/-- A semigroup is *reverse definite* when every idempotent `e` absorbs on the right,
-`e * s = e`. -/
+/-- A semigroup is *reverse definite* when every idempotent is a left zero. -/
 def IsReverseDefinite (S : Type*) [Semigroup S] : Prop :=
-  ∀ e : S, IsIdempotentElem e → ∀ s : S, e * s = e
+  ∀ e : S, IsIdempotentElem e → IsLeftZero e
 
 /-- A semigroup is *locally trivial* when every idempotent `e` absorbs anything placed between two
 copies of it, `e * s * e = e`. -/
@@ -69,11 +68,10 @@ def IsLocallyTrivial (S : Type*) [Semigroup S] : Prop :=
 /-! ### Closure properties -/
 
 theorem IsDefinite.of_injective {f : S →ₙ* T} (hf : Function.Injective f) (h : IsDefinite T) :
-    IsDefinite S := fun e he s ↦ hf <| by rw [map_mul, h (f e) (he.map f) (f s)]
+    IsDefinite S := fun e he ↦ (h (f e) (he.map f)).of_map hf
 
 theorem IsReverseDefinite.of_injective {f : S →ₙ* T} (hf : Function.Injective f)
-    (h : IsReverseDefinite T) : IsReverseDefinite S := fun e he s ↦ hf <| by
-  rw [map_mul, h (f e) (he.map f) (f s)]
+    (h : IsReverseDefinite T) : IsReverseDefinite S := fun e he ↦ (h (f e) (he.map f)).of_map hf
 
 theorem IsLocallyTrivial.of_injective {f : S →ₙ* T} (hf : Function.Injective f)
     (h : IsLocallyTrivial T) : IsLocallyTrivial S := fun e he s ↦ hf <| by
@@ -93,36 +91,19 @@ theorem IsLocallyTrivial.prod (hS : IsLocallyTrivial S) (hT : IsLocallyTrivial T
   rintro ⟨e₁, e₂⟩ he ⟨s₁, s₂⟩
   exact Prod.ext (hS e₁ (congrArg Prod.fst he) s₁) (hT e₂ (congrArg Prod.snd he) s₂)
 
-/-- A definite monoid is trivial, since the condition at the idempotent `1` gives
-`s = s * 1 = 1`. -/
-theorem IsDefinite.subsingleton {M : Type*} [Monoid M] (h : IsDefinite M) : Subsingleton M :=
-  ⟨fun a b ↦ by rw [← mul_one a, h 1 .one a, ← mul_one b, h 1 .one b]⟩
-
-/-- A definite semigroup is locally trivial. -/
-theorem IsDefinite.isLocallyTrivial (h : IsDefinite S) : IsLocallyTrivial S :=
-  fun e he s ↦ h e he (e * s)
-
-/-- A reverse definite semigroup is locally trivial. -/
-theorem IsReverseDefinite.isLocallyTrivial (h : IsReverseDefinite S) : IsLocallyTrivial S :=
-  fun e he s ↦ by rw [h e he s, h e he e]
-
 section Surjective
 
 variable [Finite S]
 
 theorem IsDefinite.of_surjective {f : S →ₙ* T} (hf : Function.Surjective f) (h : IsDefinite S) :
-    IsDefinite T := by
-  intro e' he' t
-  obtain ⟨e, he, rfl⟩ := exists_isIdempotentElem_map_eq hf he'
-  obtain ⟨s, rfl⟩ := hf t
-  rw [← map_mul, h e he s]
+    IsDefinite T := fun _ he' ↦
+  have ⟨e, he, hfe⟩ := exists_isIdempotentElem_map_eq hf he'
+  hfe ▸ (h e he).map_of_surjective hf
 
 theorem IsReverseDefinite.of_surjective {f : S →ₙ* T} (hf : Function.Surjective f)
-    (h : IsReverseDefinite S) : IsReverseDefinite T := by
-  intro e' he' t
-  obtain ⟨e, he, rfl⟩ := exists_isIdempotentElem_map_eq hf he'
-  obtain ⟨s, rfl⟩ := hf t
-  rw [← map_mul, h e he s]
+    (h : IsReverseDefinite S) : IsReverseDefinite T := fun _ he' ↦
+  have ⟨e, he, hfe⟩ := exists_isIdempotentElem_map_eq hf he'
+  hfe ▸ (h e he).map_of_surjective hf
 
 theorem IsLocallyTrivial.of_surjective {f : S →ₙ* T} (hf : Function.Surjective f)
     (h : IsLocallyTrivial S) : IsLocallyTrivial T := by
@@ -148,19 +129,19 @@ variable {α : Type*} {f : FreeSemigroup α →ₙ* S} {w : FreeSemigroup α} {k
 
 /-- A semigroup is definite when, for some bound, every product of at least that many elements is a
 right zero. -/
-theorem IsDefinite.of_mul_map_eq (hf : Function.Surjective f)
-    (h : ∀ w, k ≤ w.length → ∀ s, s * f w = f w) : IsDefinite S := by
-  intro e he s
+theorem IsDefinite.of_isRightZero_map (hf : Function.Surjective f)
+    (h : ∀ w, k ≤ w.length → IsRightZero (f w)) : IsDefinite S := by
+  intro e he
   obtain ⟨u, rfl⟩ := hf e
   obtain ⟨v, hv, hfv⟩ := FreeSemigroup.exists_le_length_map_eq f he k
-  rw [← hfv, h v hv]
+  exact hfv ▸ h v hv
 
-theorem IsReverseDefinite.of_map_mul_eq (hf : Function.Surjective f)
-    (h : ∀ w, k ≤ w.length → ∀ s, f w * s = f w) : IsReverseDefinite S := by
-  intro e he s
+theorem IsReverseDefinite.of_isLeftZero_map (hf : Function.Surjective f)
+    (h : ∀ w, k ≤ w.length → IsLeftZero (f w)) : IsReverseDefinite S := by
+  intro e he
   obtain ⟨u, rfl⟩ := hf e
   obtain ⟨v, hv, hfv⟩ := FreeSemigroup.exists_le_length_map_eq f he k
-  rw [← hfv, h v hv]
+  exact hfv ▸ h v hv
 
 theorem IsLocallyTrivial.of_map_mul_map_eq (hf : Function.Surjective f)
     (h : ∀ w, k ≤ w.length → ∀ s, f w * s * f w = f w) : IsLocallyTrivial S := by
@@ -172,17 +153,19 @@ theorem IsLocallyTrivial.of_map_mul_map_eq (hf : Function.Surjective f)
 variable [Finite S] (f)
 
 /-- In a finite definite semigroup, a product of at least `|S|` elements is a right zero. -/
-theorem IsDefinite.mul_map_eq (h : IsDefinite S) (hw : Nat.card S ≤ w.length) (s : S) :
-    s * f w = f w := by
+theorem IsDefinite.isRightZero_map (h : IsDefinite S) (hw : Nat.card S ≤ w.length) :
+    IsRightZero (f w) := by
   obtain ⟨x, e, y, he, hw⟩ := FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul f hw
-  simp only [hw, ← mul_assoc, h e he]
+  rw [hw, h e he x]
+  exact (h e he).mul_right y
 
 /-- In a finite reverse definite semigroup, a product of at least `|S|` elements is a left
 zero. -/
-theorem IsReverseDefinite.map_mul_eq (h : IsReverseDefinite S) (hw : Nat.card S ≤ w.length)
-    (s : S) : f w * s = f w := by
+theorem IsReverseDefinite.isLeftZero_map (h : IsReverseDefinite S) (hw : Nat.card S ≤ w.length) :
+    IsLeftZero (f w) := by
   obtain ⟨x, e, y, he, hw⟩ := FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul f hw
-  simp only [hw, mul_assoc, h e he]
+  rw [hw, mul_assoc, h e he y]
+  exact (h e he).mul_left x
 
 /-- In a finite locally trivial semigroup, a product of at least `|S|` elements absorbs anything
 placed between two copies of it. -/

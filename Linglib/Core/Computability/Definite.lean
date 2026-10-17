@@ -153,18 +153,20 @@ def ofPrefix (xs : List α) : Language α := {w | xs <+: w}
 /-- The words ending in `xs`. -/
 def ofSuffix (xs : List α) : Language α := {w | xs <:+ w}
 
+@[simp] theorem mem_ofPrefix {xs w : List α} : w ∈ ofPrefix xs ↔ xs <+: w := Iff.rfl
+
+@[simp] theorem mem_ofSuffix {xs w : List α} : w ∈ ofSuffix xs ↔ xs <:+ w := Iff.rfl
+
 /-- The words beginning with `xs` form a reverse definite language with window `xs.length`. -/
 theorem isReverseDefinite_ofPrefix (xs : List α) : (ofPrefix xs).IsReverseDefinite xs.length :=
   fun a b hab ↦ by
     simp only [Edge.takeAt_left] at hab
-    show (xs <+: a) = (xs <+: b)
-    rw [List.prefix_iff_eq_take, List.prefix_iff_eq_take, hab]
+    simp only [mem_ofPrefix, List.prefix_iff_eq_take, hab]
 
 /-- The words ending in `xs` form a definite language with window `xs.length`. -/
 theorem isDefinite_ofSuffix (xs : List α) : (ofSuffix xs).IsDefinite xs.length :=
   fun a b hab ↦ by
-    show (xs <:+ a) = (xs <:+ b)
-    rw [List.suffix_iff_eq_drop, List.suffix_iff_eq_drop]
+    simp only [mem_ofSuffix, List.suffix_iff_eq_drop]
     exact congrArg (xs = ·) hab
 
 /-! ### Reverse duality -/
