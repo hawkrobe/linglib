@@ -5,7 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Semantics.Polarity.LicensingContext
 public import Linglib.Semantics.Quantification.Indefinite
+public import Mathlib.Data.Finset.Grade
 public import Linglib.Data.Examples.Haspelmath1997
 public import Linglib.Fragments.English.Indefinites
 public import Linglib.Fragments.Georgian.Indefinites
@@ -35,20 +37,29 @@ the nine-function map, the two further principles of §4.5 restricting which con
 occur, and the series of eighteen languages of the 40-language sample as Appendix A draws them.
 
 `attestedCombinations` is Table 4.1, the combinations of functions attested in the sample;
-`Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_connected` shows to
-be independent of adjacency. A connected region with a second function contains a neighbour of
-each of its functions, so a series covering a leaf of the map (specific known, direct negation,
-free choice) covers the leaf's only neighbour (`mem_of_adjacent_eq_singleton`); the
-specific-known case is the ban on the ABA syncretism, so a connected region covers an interval of
-the three specificity functions (`ordConnected_specificityFunctions`).
-The paradigms verify the adjacency requirement (`sample_connected`), the overlap of series
-that the book holds against contrast-based accounts of grammatical meaning (`sample_overlap`),
-and the human/non-human distinction the book finds practically everywhere, which only the Latvian
-*kaut*-series lacks (`disjoint_forms_person_thing`).
-The book's examples for fifteen of the languages are the rows of
-`Data/Examples/Haspelmath1997.json`, one row for each variant the book prints in a line; the
-figures cover the acceptable rows and exclude the starred ones (`acceptable_covers`,
-`ungrammatical_excludes`).
+`Principle1` and `Principle2` are the restrictions of §4.5, which `excluded_connected` shows to be
+independent of adjacency. A connected region with a second function contains a neighbour of each of
+its functions, so a series covering a leaf of the map (specific known, direct negation, free choice)
+covers the leaf's only neighbour (`mem_of_adjacent_eq_singleton`); the specific-known case is the
+ban on the ABA syncretism, so a connected region covers an interval of the three specificity
+functions (`ordConnected_specificityFunctions`).
+
+The map itself is explained by the features of §5.6, binary properties of the functions such as
+specificity and the scope of negation: the functions sharing a value of a feature form a contiguous
+area (`contiguous`), the features tell every function apart but question, conditional and
+comparative (`features_eq_iff`), and an original free-choice indefinite extended toward the specific
+end loses one feature at each step (`substance_chain`), the steps that order the specificity
+functions (`strictMono_features_toFunction`). The negation feature is anti-morphic in exactly the
+licensing contexts realizing direct negation, but anti-additive in all of them only if *doubt* is
+set aside (`carries_antiAdditive_iff`).
+
+The paradigms verify the adjacency requirement (`sample_connected`), the overlap of series that the
+book holds against contrast-based accounts of grammatical meaning (`sample_overlap`), and the
+human/non-human distinction the book finds practically everywhere, which only the Latvian
+*kaut*-series lacks (`disjoint_forms_person_thing`). The book's examples for fifteen of the
+languages are the rows of `Data/Examples/Haspelmath1997.json`, one row for each variant the book
+prints in a line; the figures cover the acceptable rows and exclude the starred ones
+(`acceptable_covers`, `ungrammatical_excludes`).
 
 ## Implementation notes
 
@@ -63,6 +74,18 @@ comparative the book predicts without data; both are the book's own map-driven a
 that are not pronouns in the book's sense (Georgian free-choice *nebismieri*, Turkish *kimse*,
 the Italian determiner *qualsiasi*) are omitted, so a paradigm need not cover all nine
 functions.
+
+The features of §5.6 do not make the map a subgraph of a hypercube on their values: irrealis and
+question are adjacent and differ in scalarity and in the reversal of the scale, which classifies
+only question, and question and conditional are adjacent and differ in nothing. What holds is that
+adjacent functions differ in at most one feature classifying both (`card_distinguishes_le_one`);
+the converse fails, question and comparative differing in nothing without being adjacent.
+
+§5.6 counts both negation functions anti-additive, after van der Wouden, who holds that no verb
+with negative properties is only monotone decreasing. The *doubt* context of
+`PolarityItem.LicensingContext`, which realizes indirect negation, models *doubt* by his own sketch
+of it as not believing the complement and is only downward entailing (`carries_antiAdditive_iff`,
+`VanDerWouden1997.verb_strengths`), so the claim fails for *doubt* on that analysis.
 
 A `Series` is an indefinite series with the region its Appendix A figure encloses, named as the book
 names it. The region is the book's analysis of the series and not a lexical property of its members:
@@ -81,6 +104,7 @@ adjacency requirement on the others. Every language's series are those of its Fr
 ## References
 
 * [haspelmath-1997]
+* [vanderwouden-1997]
 -/
 
 @[expose] public section
@@ -129,6 +153,149 @@ theorem indirectNeg_mem_of_directNeg_mem (h : (implicationalMap.induce ↑s).Con
 theorem comparative_mem_of_freeChoice_mem (h : (implicationalMap.induce ↑s).Connected)
     (hs : s.Nontrivial) (hf : .freeChoice ∈ s) : .comparative ∈ s :=
   mem_of_adjacent_eq_singleton h hs hf rfl
+
+/-! ### The features behind the map
+
+Haspelmath explains the arrangement of the map by binary features of the functions: whether the
+referent is known to the speaker, whether the indefinite is specific, whether it denotes a scalar
+endpoint and whether it is in the scope of negation, with two subclassifying features, the
+reversal of the scale among the scalar endpoints and anti-morphicity among the negations. His
+requirement is that the functions sharing a value of a feature form a contiguous area of the map
+(`contiguous`). The features then tell every function apart but question, conditional and
+comparative, whose relative position he explains otherwise (`features_eq_iff`), adjacent functions
+differ in at most one feature (`card_distinguishes_le_one`), and an original free-choice
+indefinite extended toward the specific end loses one feature at each step (`substance_chain`). -/
+
+/-- The features by which Haspelmath explains the map, each named by its marked value, the one he
+counts as semantic substance lost when an indefinite is extended to a weaker function. -/
+inductive Feature where
+  /-- The referent is unknown to the speaker. -/
+  | unknown
+  /-- The indefinite is non-specific. -/
+  | nonSpecific
+  /-- The indefinite denotes a scalar endpoint. -/
+  | scalarEndpoint
+  /-- The scalar endpoint lies on a reversed scale. -/
+  | scaleReversal
+  /-- The indefinite is in the scope of negation. -/
+  | negation
+  /-- The negation is anti-morphic. -/
+  | antiMorphic
+  deriving DecidableEq, Fintype, Repr
+
+namespace Feature
+
+/-- The functions with the marked value of a feature, as Haspelmath's diagrams draw them. -/
+def marked : Feature → Finset HaspelmathFunction
+  | unknown => {.specificUnknown, .irrealis, .question, .conditional, .indirectNeg, .directNeg,
+      .comparative, .freeChoice}
+  | nonSpecific => {.irrealis, .question, .conditional, .indirectNeg, .directNeg, .comparative,
+      .freeChoice}
+  | scalarEndpoint => {.question, .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice}
+  | scaleReversal => {.question, .conditional, .indirectNeg, .directNeg, .comparative}
+  | negation => {.indirectNeg, .directNeg}
+  | antiMorphic => {.directNeg}
+
+/-- A feature classifies every function, but the reversal of the scale classifies only the scalar
+endpoints and anti-morphicity only the negations. -/
+def domain : Feature → Finset HaspelmathFunction
+  | scaleReversal => scalarEndpoint.marked
+  | antiMorphic => negation.marked
+  | _ => Finset.univ
+
+/-- The functions with the unmarked value of a feature. -/
+def unmarked (φ : Feature) : Finset HaspelmathFunction := φ.domain \ φ.marked
+
+theorem marked_subset_domain (φ : Feature) : φ.marked ⊆ φ.domain := by
+  cases φ <;> decide
+
+/-- A feature tells two functions apart when it classifies both and gives them different
+values. -/
+def Distinguishes (φ : Feature) (f g : HaspelmathFunction) : Prop :=
+  f ∈ φ.domain ∧ g ∈ φ.domain ∧ (f ∈ φ.marked ↔ g ∉ φ.marked)
+
+instance (φ : Feature) (f g : HaspelmathFunction) : Decidable (φ.Distinguishes f g) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+end Feature
+
+/-- The features whose marked value a function has. -/
+def features (f : HaspelmathFunction) : Finset Feature := Finset.univ.filter (f ∈ ·.marked)
+
+/-- The functions sharing a value of a feature form a contiguous area of the map. -/
+theorem contiguous (φ : Feature) :
+    (implicationalMap.induce ↑φ.marked).Connected ∧
+      (implicationalMap.induce ↑φ.unmarked).Connected := by
+  simp only [SimpleGraph.connected_iff_exists_forall_reachable]
+  cases φ <;> decide +kernel
+
+/-- Adjacent functions differ in at most one feature that classifies both. -/
+theorem card_distinguishes_le_one :
+    ∀ f g, implicationalMap.Adj f g →
+      (Finset.univ.filter fun φ : Feature ↦ φ.Distinguishes f g).card ≤ 1 := by
+  decide
+
+/-- Question, conditional and comparative, which the features do not tell apart. -/
+def undistinguished : Finset HaspelmathFunction := {.question, .conditional, .comparative}
+
+/-- The features tell every function apart but question, conditional and comparative, so that
+only their relative position on the map remains to be explained. -/
+theorem features_eq_iff :
+    ∀ f g, features f = features g ↔ f = g ∨ f ∈ undistinguished ∧ g ∈ undistinguished := by
+  decide
+
+/-- An original free-choice indefinite extended toward the specific end loses one feature at each
+step: scalarity, non-specificity and unknownness. -/
+theorem substance_chain :
+    features .specificKnown ⋖ features .specificUnknown ∧
+      features .specificUnknown ⋖ features .irrealis ∧
+      features .irrealis ⋖ features .freeChoice := by
+  simp only [Finset.covBy_iff_exists_insert]
+  decide +kernel
+
+/-- The specificity functions are ordered by the features they have. -/
+theorem strictMono_features_toFunction :
+    StrictMono fun u : SpecificityFunction ↦ features u.toFunction := by
+  decide
+
+/-! ### Negation and the licensing contexts
+
+Haspelmath subdivides the negation feature by two Boolean properties of the negating context: both
+negation functions are anti-additive and only direct negation is anti-morphic. Among the licensing
+contexts of `PolarityItem.LicensingContext` that realize a negation function, the anti-morphic ones
+are exactly those realizing direct negation, but anti-additivity fails for *doubt*, whose licenser,
+not believing the complement, is only downward entailing. -/
+
+section Licensing
+
+open PolarityItem LicensingContext
+
+/-- A licensing context realizing a negation function is anti-morphic exactly when it realizes
+direct negation. -/
+theorem carries_antiMorphic_iff {c : LicensingContext}
+    (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
+    c.licenser.Carries .antiMorphic ↔ c.haspelmath = some .directNeg := by
+  cases c <;> simp [LicensingContext.haspelmath, Feature.marked] at hc ⊢
+  · exact Licenser.carries_classical_iff.2
+      ⟨holds_negation .antiMorphic, not_isStrawsonUE_negation⟩
+  · exact fun h ↦ absurd (holds_withoutClause_iff.1 (Licenser.carries_classical_iff.1 h).1)
+      (by decide)
+  · exact fun h ↦ absurd (holds_doubtVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
+  · exact fun h ↦ absurd (holds_denyVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
+
+/-- A licensing context realizing a negation function is anti-additive unless it is *doubt*. -/
+theorem carries_antiAdditive_iff {c : LicensingContext}
+    (hc : ∃ f ∈ c.haspelmath, f ∈ Feature.negation.marked) :
+    c.licenser.Carries .antiAdditive ↔ c ≠ .doubtVerb := by
+  cases c <;> simp [LicensingContext.haspelmath, Feature.marked] at hc ⊢
+  · exact Licenser.carries_classical_iff.2
+      ⟨holds_negation .antiAdditive, not_isStrawsonUE_negation⟩
+  · exact Licenser.carries_classical_iff.2
+      ⟨holds_withoutClause_iff.2 le_rfl, not_isStrawsonUE_withoutClause⟩
+  · exact fun h ↦ absurd (holds_doubtVerb_iff.1 (Licenser.carries_classical_iff.1 h).1) (by decide)
+  · exact Licenser.carries_classical_iff.2 ⟨holds_denyVerb_iff.2 le_rfl, not_isStrawsonUE_denyVerb⟩
+
+end Licensing
 
 /-! ### Table 4.1 and the principles of §4.5 -/
 
