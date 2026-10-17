@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Granularity
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Partition
 public import Linglib.Semantics.Exhaustification.Pointwise
 public import Linglib.Data.Examples.ThomasDeo2020
 

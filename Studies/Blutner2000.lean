@@ -3,7 +3,7 @@ module
 public import Linglib.Pragmatics.Bidirectional
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!

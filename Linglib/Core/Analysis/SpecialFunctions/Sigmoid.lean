@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 
 /-!

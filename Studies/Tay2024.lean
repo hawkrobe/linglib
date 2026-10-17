@@ -330,7 +330,7 @@ def word (c : Resultative) : Word.Tree Morph := vvTree (.root c.v1.form) (.root 
 /-- The word differs from the fragment's root compound by the null affix alone. -/
 theorem toList_word_erase (c : Resultative) :
     (word c).toList.erase nullMorph = c.tree.toList.map (Morph.root ·.form) := by
-  simp [word, nullMorph, Morph.root, Morph.pref, Morph.bound]
+  simp [word, nullMorph, Morph.root, Morph.pref]
 
 /-! ### Typology (chapter 8) -/
 

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Partition
 public import Mathlib.Order.Closure
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Data.Examples.George2011

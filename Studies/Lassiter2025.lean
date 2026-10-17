@@ -120,9 +120,9 @@ initial *only* with subject–auxiliary inversion forces the hypothetical readin
 
 /-- The antecedent's discourse status demands a reading, the premise reading for a given
 antecedent and the hypothetical reading for an open one. -/
-def anchoring (given : Prop) (ct : Reading) : Prop := ct = .premise ↔ given
+def anchoring (isGiven : Prop) (ct : Reading) : Prop := ct = .premise ↔ isGiven
 
-instance (given : Prop) [Decidable given] : DecidablePred (anchoring given) :=
+instance (isGiven : Prop) [Decidable isGiven] : DecidablePred (anchoring isGiven) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ↔ _))
 
 section Felicity

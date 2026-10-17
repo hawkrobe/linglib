@@ -32,8 +32,6 @@ recursive probabilistic programs of [kozen-1981], stated on the monad of [giry-1
   suprema of measures.
 * `MeasureTheory.Measure.iSup_bind_of_monotone`, `MeasureTheory.Measure.bind_iSup_of_monotone`:
   `bind` commutes with monotone suprema in each argument.
-* `MeasureTheory.Measure.bind_map`, `MeasureTheory.Measure.map_bind`: `bind` and `map`
-  interchange.
 * `MeasureTheory.Measure.ωScottContinuous_bind`, `MeasureTheory.Measure.ωScottContinuous_map`,
   `MeasureTheory.Measure.ωScottContinuous_prod`: `bind` is ω-Scott-continuous jointly in the
   measure and the kernel, `map` in the measure and `prod` in both factors, so operators built
@@ -153,27 +151,6 @@ theorem bind_iSup_of_monotone {μ : Measure α} {f : ℕ → α → Measure β}
   exact lintegral_iSup (fun n => (measurable_coe hs).comp (hf n))
     fun m n h a => le_iff'.1 (hmono h a) s
 
-/-! ### Interchange -/
-
-section Interchange
-
-variable {γ : Type*} [MeasurableSpace γ]
-
-theorem bind_map {μ : Measure α} {f : α → β} {g : β → Measure γ} (hf : Measurable f)
-    (hg : Measurable g) : (μ.map f).bind g = μ.bind (g ∘ f) := by
-  ext s hs
-  rw [bind_apply hs hg.aemeasurable, bind_apply hs (hg.comp hf).aemeasurable]
-  exact lintegral_map ((measurable_coe hs).comp hg) hf
-
-theorem map_bind {μ : Measure α} {f : α → Measure β} {g : β → γ} (hf : Measurable f)
-    (hg : Measurable g) : (μ.bind f).map g = μ.bind fun a => (f a).map g := by
-  ext s hs
-  rw [map_apply hg hs, bind_apply (hg hs) hf.aemeasurable,
-    bind_apply (f := fun a => (f a).map g) hs ((measurable_map _ hg).comp hf).aemeasurable]
-  simp_rw [map_apply hg hs]
-
-end Interchange
-
 /-! ### ω-Scott continuity -/
 
 variable {γ : Type*} [OmegaCompletePartialOrder γ]
@@ -206,7 +183,7 @@ theorem ωScottContinuous_map {M : γ → Measure α} (hM : ωScottContinuous M)
 theorem ωScottContinuous_prod {M : γ → Measure α} {N : γ → Measure β} (hM : ωScottContinuous M)
     (hN : ωScottContinuous N) [∀ x, SFinite (N x)] :
     ωScottContinuous fun x => (M x).prod (N x) := by
-  simp_rw [prod_def]
+  simp_rw [prod_eq_of_sfinite]
   exact ωScottContinuous_bind hM (fun a => ωScottContinuous_map hN measurable_prodMk_left)
     fun _ => Measurable.map_prodMk_left
 

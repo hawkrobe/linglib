@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.Snyder2026
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Order.Setoid.Basic
 
 /-!
 # Snyder (2026): Numbers as Kinds

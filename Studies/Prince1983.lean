@@ -405,7 +405,7 @@ private theorem reverse_set_reverse {l : List ℕ} {i : ℕ} (hi : i < l.length)
   refine List.ext_getElem (by simp) fun j h1 h2 ↦ ?_
   simp only [List.length_reverse, List.length_set] at h1 h2
   simp only [List.getElem_reverse, List.getElem_set, List.length_reverse, List.length_set]
-  split_ifs <;> first | omega | rfl | (congr 1; omega)
+  split_ifs <;> first | omega | (congr 1; omega)
 
 /-! #### The End Rule -/
 

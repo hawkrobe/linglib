@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Nat.Bitwise
 public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.List.GetD
 public import Mathlib.Algebra.Order.Field.Rat
 public import Linglib.Data.Experiments.FrischPierrehumbertBroe2004
 public import Linglib.Fragments.Arabic.ModernStandard.Phonology

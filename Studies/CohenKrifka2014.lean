@@ -400,7 +400,7 @@ theorem granting_consistent : ∀ d ∈ granting,
 the assertion leaves behind, so the grant does not enforce the assertion ((39), p. 54). -/
 theorem granting_assert_lt_grant :
     granting.assert .speaker raining < grant granting .speaker raining :=
-  SetLike.lt_iff_le_and_exists.2
+  IsConcreteLE.lt_iff_le_and_exists.2
     ⟨assert_le_grant granting .speaker raining
         ((granting.root_assert_of_mem _ _ _ (Or.inr rfl)).symm ▸ Or.inr rfl) granting_consistent,
       granting.root, Space.root_mem _,

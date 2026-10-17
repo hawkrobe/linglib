@@ -298,7 +298,7 @@ theorem knowsAnswer_id : KnowsAnswer H w .id := by
 /-- A center with every world open knows only trivial answers. -/
 theorem knowsAnswer_univ_iff :
     KnowsAnswer H w Set.univ ↔ weakAnswer H w = Set.univ :=
-  ⟨fun h => Set.eq_univ_of_forall fun v => h trivial, fun h _ _ => h ▸ Set.mem_univ _⟩
+  ⟨fun h => Set.eq_univ_of_forall fun _ => h trivial, fun h _ _ => h ▸ Set.mem_univ _⟩
 
 end Knowing
 

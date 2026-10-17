@@ -542,9 +542,6 @@ private theorem sum_starConcept {M : Type*} [AddCommMonoid M] (f : StarConcept �
     by decide, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
     Finset.sum_insert (by decide), Finset.sum_singleton]
 
-private theorem preimage_singleton_eq {C L : Type*} (f : C → L) (y : L) :
-    f ⁻¹' {y} = {c | f c = y} := rfl
-
 /-- The fibre counts the astronomer sentence's masses reduce to, settled by `decide`. -/
 private theorem star_cards :
     ((starScenario .STARGAZING).filter (starLabel · = .marry)).card = 1 ∧
@@ -560,7 +557,7 @@ private theorem star_den (α : ℝ) (hα : 0 < α) :
   simp +decide only [sum_starScenario, Fin.prod_univ_three, starRoles, starLabels,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
     Matrix.tail_cons, SDS.emission, starSDS_scenario, starSDS_prior, polyaUrnProb_countVec_vecCons,
-    preimage_singleton_eq, starSDS_poe_real, uniformOn_finset_real_setOf, star_cards]
+    Set.preimage_singleton, starSDS_poe_real, uniformOn_finset_real_setOf, star_cards]
   simp +decide only [countVec_vecCons, countVec_zero, polyaUrnProb_zero,
     polyaUrnPredictive, Pi.zero_apply, Function.update_apply,
     sum_starScenario, Finset.sum_filter, sum_starConcept, uniformOn_finset_apply_singleton,

@@ -139,18 +139,18 @@ theorem preimage_representative_of_notMem {d : α} (hd : d ∉ AddSubgroup.zmult
     representative ε ⁻¹' {d} = ∅ :=
   eq_empty_of_forall_notMem fun v hv ↦ hd (hv ▸ representative_mem_zmultiples ε v)
 
+theorem representative_eq_self_of_mem_zmultiples (hε : ε ≠ 0)
+    (hd : d ∈ AddSubgroup.zmultiples ε) : representative ε d = d := by
+  obtain ⟨k, rfl⟩ := AddSubgroup.mem_zmultiples_iff.1 hd
+  simp only [representative, zsmul_eq_mul]
+  rw [mul_div_cancel_right₀ _ hε, round_intCast]
+
 variable [IsStrictOrderedRing α]
 
 theorem grain_iff_representative (hε : ε ≠ 0) :
     grain ε d d' ↔ representative ε d = representative ε d' := by
   simp only [grain_iff, representative, zsmul_eq_mul]
   exact ⟨fun h ↦ by rw [h], fun h ↦ by exact_mod_cast mul_right_cancel₀ hε h⟩
-
-theorem representative_eq_self_of_mem_zmultiples (hε : ε ≠ 0)
-    (hd : d ∈ AddSubgroup.zmultiples ε) : representative ε d = d := by
-  obtain ⟨k, rfl⟩ := AddSubgroup.mem_zmultiples_iff.1 hd
-  simp only [representative, zsmul_eq_mul]
-  rw [mul_div_cancel_right₀ _ hε, round_intCast]
 
 theorem abs_sub_representative_le (hε : 0 < ε) (d : α) : |d - representative ε d| ≤ ε / 2 :=
   abs_sub_round_div_zsmul_le hε d

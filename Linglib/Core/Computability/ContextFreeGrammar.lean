@@ -8,6 +8,7 @@ module
 public import Mathlib.Computability.ContextFreeGrammar
 public import Mathlib.Computability.DFA
 public import Mathlib.Basic.Countable.Basic
+public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Set.Finite.Lattice
 
 /-!

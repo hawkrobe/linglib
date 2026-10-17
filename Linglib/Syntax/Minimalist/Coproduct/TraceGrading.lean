@@ -156,7 +156,7 @@ theorem comulCAlgHomN_of'_mem_gradedSpan
   -- subtree by a unit-weight leaf, `cutSummandsCN_numEdges`), and the
   -- homogeneous tensor spans multiply additively (`gradedTensorSpan_mul`).
   rw [comulCAlgHomN_apply_of']
-  refine SetLike.le_def.mp (Submodule.span_le.mpr ?_)
+  refine IsConcreteLE.le_iff.mp (Submodule.span_le.mpr ?_)
     (comulCForestN_mem (R := R) τ F)
   rintro y ⟨F₁, F₂, hsum, rfl⟩
   exact Submodule.subset_span

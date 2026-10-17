@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Image
-public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Tactic.DeriveFintype

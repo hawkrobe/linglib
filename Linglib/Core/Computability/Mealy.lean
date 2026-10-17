@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Computability.DFA
 public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.List.Basic
 public import Mathlib.Logic.Equiv.Defs
 public import Linglib.Core.Data.Fintype.Transfer

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Card
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Partition
 public import Linglib.Semantics.Degree.Quotient
 public import Linglib.Semantics.Reference.Iota
 

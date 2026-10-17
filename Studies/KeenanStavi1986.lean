@@ -5,7 +5,7 @@ public import Linglib.Semantics.Quantification.Counting
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Order.Atoms
 public import Mathlib.Data.Sym.Card
-public import Mathlib.Data.Sym.Sym2.Order
+public import Mathlib.Order.Sym2
 public import Mathlib.Data.Fintype.Fin
 
 /-!

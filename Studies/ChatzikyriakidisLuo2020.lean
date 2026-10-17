@@ -4,7 +4,7 @@ public import Studies.ChatzikyriakidisLuo2017
 public import Linglib.Semantics.Modification.Basic
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Fintype.Quotient
-public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Order.Setoid.Basic
 
 /-!
 # Chatzikyriakidis & Luo (2020): Formal semantics in modern type theories

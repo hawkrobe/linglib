@@ -229,7 +229,7 @@ theorem PicksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
   obtain ⟨z, hz, hzmin⟩ := Equiv.Perm.exists_isMinOn_symm ⟨x, h_D (mem_inter.1 hx).2⟩ σ
   refine ⟨z, mem_inter.2 ⟨?_, hz⟩, hzmin⟩
   by_cases hz' : z ∈ active con c' .yes .no
-  · rw [Equiv.Perm.eq_of_isMinOn_symm hz' (mem_inter.1 hx).2 (hzmin.on_subset (coe_subset.2 h_D))
+  · rw [Equiv.Perm.eq_of_isMinOn_symm hz' (mem_inter.1 hx).2 (hzmin.of_subset (coe_subset.2 h_D))
       hmin]
     exact h_Y (mem_inter.1 hx).1
   · exact h_extra z hz hz'
@@ -246,7 +246,7 @@ theorem PicksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
   rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c) SubSt.noConfusion]
   obtain ⟨x, hx, hmin⟩ := h_c'
   exact ⟨x, mem_inter.2 ⟨h_Y (mem_inter.1 hx).1, h_subset (mem_inter.1 hx).1⟩,
-    hmin.on_subset (coe_subset.2 h_D)⟩
+    hmin.of_subset (coe_subset.2 h_D)⟩
 
 /-- Substitution on voiced *b* entails substitution on voiceless *p*. -/
 theorem voicing_b_implies_p (σ : Equiv.Perm (Fin 6)) :

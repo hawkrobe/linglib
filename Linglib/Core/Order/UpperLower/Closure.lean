@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Order.Minimal
 public import Mathlib.Order.UpperLower.Closure
 
 /-!

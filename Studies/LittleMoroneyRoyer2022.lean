@@ -187,6 +187,8 @@ theorem shan_numClf_fails :
       none :=
   rfl
 
+end
+
 /-! ### One denotation for *two dogs* -/
 
 /-- Measure modification by the atom count is quantized, since `Finset.card` is strictly monotone
@@ -194,6 +196,10 @@ and strict monotonicity is all `qua_pullback` needs. -/
 theorem qmod_dogs_qua : Mereology.QUA (QMOD dogs Finset.card 2 : Finset α → Prop) := by
   refine (Mereology.qua_pullback ?_ (Mereology.singleton_qua 2)).subset fun _ h ↦ h.2
   exact Finset.card_strictMono
+
+section
+
+variable [DecidableEq α]
 
 /-- Derivationally distinct, the two strategies denote the same two-dog
 pluralities (§4.5). -/

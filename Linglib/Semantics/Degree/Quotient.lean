@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Antisymmetrization
-public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Order.Setoid.Basic
 
 /-!
 # Degrees as equivalence classes

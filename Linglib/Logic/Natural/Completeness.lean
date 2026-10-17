@@ -174,7 +174,6 @@ theorem Signature.isLeast_project (R : Relation) (σ : Signature) :
   obtain ⟨f, hf, x, y, hR, hT'⟩ := counter R σ T hle
   exact hT' (hT f hf x y hR)
 
-set_option synthInstance.maxSize 400 in
 /-- The refinement order on signatures is inclusion of function classes —
 [icard-2012]'s semantic definition of ≼ (§2.2) recovered as a
 characterization of the property-set order, with countermodels on the

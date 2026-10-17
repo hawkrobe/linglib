@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Merge.Internal
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
+public import Mathlib.Algebra.Order.Monoid.Multiset
 
 /-!
 # Minimal Search as a weighting of Merge

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Discourse.Centering.Transition
 public import Linglib.Discourse.Centering.GrammaticalRole
+public import Linglib.Core.Data.List.Forall2
 public import Linglib.Data.Examples.GroszJoshiWeinstein1995
 public import Studies.Sidner1979
 import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`

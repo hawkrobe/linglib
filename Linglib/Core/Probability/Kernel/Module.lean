@@ -1,6 +1,6 @@
 module
 
-public import Mathlib.Data.FunLike.Module
+public import Mathlib.Algebra.Module.FunLike
 public import Mathlib.Probability.Kernel.Defs
 
 /-!

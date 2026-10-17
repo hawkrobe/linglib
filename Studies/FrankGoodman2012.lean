@@ -178,7 +178,7 @@ theorem speaker_real_singleton_lt_iff (hα : 0 < α) (h : r ∈ ⟦w⟧ᴹ) (h' 
   obtain ⟨a, v⟩ := w
   rw [mem_denote] at h h'
   simp only at h h' hb
-  cases a <;> cases b <;> first | exact absurd rfl hb | skip
+  cases a <;> cases b <;> try exact absurd rfl hb
   · simp only [h, h', Multiset.insert_eq_cons, Multiset.invPowSum_cons,
       Multiset.invPowSum_singleton]
     rw [ENNReal.add_lt_add_iff_left (htop _ hw), hlt _ _ (hpos r .shape) (hpos r' .shape)]
@@ -300,7 +300,7 @@ theorem fully_rational_picks_circle :
     have h1 : ⟦Word.circle⟧ᴹ.card = 1 := by decide
     have h2 : ⟦Word.blue⟧ᴹ.card = 2 := by decide
     obtain ⟨a, v⟩ := u
-    cases a <;> cases v <;>
-      first | exact absurd rfl hu | (simp +decide [h1, h2] <;> norm_num)
+    cases a <;> cases v <;> first | exact absurd rfl hu | simp +decide [h1, h2]
+    all_goals norm_num
 
 end FrankGoodman2012

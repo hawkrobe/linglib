@@ -245,10 +245,11 @@ theorem fillList_comp_generationList {κ : Kernel ι (RoseTree ι)} (ss : List (
   | cons s ss ih =>
     rw [List.map_cons, Measure.listProd_cons, ← ih, generationList_apply, List.map_cons,
       Measure.listProd_cons, ← generationList_apply, ← Measure.parallelComp_comp_prod,
-      Measure.map_comp _ _ .of_discrete, Measure.bind_map .of_discrete (Kernel.measurable _)]
+      Measure.map_comp _ _ .of_discrete,
+      Measure.bind_map Measurable.of_discrete.aemeasurable (Kernel.measurable _).aemeasurable]
     congr 1
     funext ⟨s', ss'⟩
-    rw [Function.comp_apply, Function.uncurry_apply_pair, fillList_apply, List.map_cons,
+    rw [Function.uncurry_apply_pair, fillList_apply, List.map_cons,
       Measure.listProd_cons, ← fillList_apply, Kernel.map_apply _ .of_discrete, parallelComp_apply]
 
 variable [MeasurableSingletonClass ι]
@@ -281,11 +282,12 @@ theorem fill_expand_apply (s : PartialTree ι) : fill (expand ξ κ) s = fill κ
     | inl i => rw [fill_inl, expand_apply, generation_hole, generation_inl]
     | inr i =>
       rw [fill_inr, fillList_apply, List.map_congr_left ih, ← fillList_comp_generationList,
-        generation_inr, Measure.map_bind (Kernel.measurable _) .of_discrete,
-        Measure.bind_map .of_discrete (Kernel.measurable _)]
+        generation_inr,
+        Measure.map_bind (Kernel.measurable _).aemeasurable Measurable.of_discrete.aemeasurable,
+        Measure.bind_map Measurable.of_discrete.aemeasurable (Kernel.measurable _).aemeasurable]
       congr 1
       funext a
-      rw [Function.comp_apply, fill_inr]
+      rw [fill_inr]
 
 /-- Filling with one more generation is one generation followed by filling. -/
 theorem fill_expand : fill (expand ξ κ) = fill κ ∘ₖ generation ξ :=
@@ -535,12 +537,14 @@ theorem trajectory_map_eval (s : PartialTree ι) :
           rw [trajectory, chainTraj, ← hcomp, comp_apply]
       _ = (partialTraj (X := fun _ : ℕ => PartialTree ι) (chainKernel ξ) 0 n (fun _ => s)).bind
             fun x => generation ξ (x ⟨n, mem_Iic.2 le_rfl⟩) := by
-          rw [Measure.map_bind (Kernel.measurable _) (measurable_pi_apply _)]
+          rw [Measure.map_bind (Kernel.measurable _).aemeasurable
+            (measurable_pi_apply _).aemeasurable]
           simp_rw [hpt]
       _ = ((partialTraj (X := fun _ : ℕ => PartialTree ι) (chainKernel ξ) 0 n (fun _ => s)).map
             (fun x : Π i : Iic n, (fun _ : ℕ => PartialTree ι) i => x ⟨n, mem_Iic.2 le_rfl⟩)).bind
               (generation ξ) :=
-          (Measure.bind_map (measurable_pi_apply _) (Kernel.measurable _)).symm
+          (Measure.bind_map (measurable_pi_apply _).aemeasurable
+            (Kernel.measurable _).aemeasurable).symm
       _ = generation ξ ∘ₘ (generation ξ ^ n) s := by rw [← hmarg, trajectory_map_eval s n]
       _ = (generation ξ ^ (n + 1)) s := by rw [pow_succ']; rfl
 

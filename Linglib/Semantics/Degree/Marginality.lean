@@ -6,8 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Algebra.Order.Field.Rat
-public import Mathlib.Data.Prod.Lex
-public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Order.Prod.Lex.Basic
+public import Mathlib.Order.Setoid.Basic
 public import Mathlib.GroupTheory.Coset.Defs
 public import Mathlib.Order.Comparable
 public import Mathlib.Order.Preorder.Finite

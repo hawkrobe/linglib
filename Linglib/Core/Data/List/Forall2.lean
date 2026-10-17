@@ -29,6 +29,13 @@ lexicographic order this way. [UPSTREAM] candidates for that file, beside
   instances on `Forall₂ R`.
 * `List.Forall₂.le`, `List.Forall₂.lt_of_ne`: lists ordered pointwise are ordered
   lexicographically.
+* `List.decidableForall₂`: a `Decidable (Forall₂ R l₁ l₂)` instance that `decide` can evaluate.
+
+## Implementation notes
+
+Batteries decides `Forall₂` through `List.all₂`, whose body it stopped exposing to other modules
+in batteries#2006, so `decide` gets stuck on it. `List.decidableForall₂` takes priority over that
+instance; remove it once Batteries exposes `List.all₂` again.
 -/
 
 @[expose] public section
@@ -71,6 +78,18 @@ instance Forall₂.instIsTrans [IsTrans α R] : IsTrans (List α) (Forall₂ R) 
 
 instance Forall₂.instAntisymm [Std.Antisymm R] : Std.Antisymm (Forall₂ R) :=
   ⟨fun _ _ ↦ Forall₂.antisymm⟩
+
+/-! ### Decidability -/
+
+/-- `Forall₂ R` decided by structural recursion on both lists, so that `decide` evaluates it
+outside this module. -/
+instance (priority := high) decidableForall₂ {R : α → β → Prop} [∀ a b, Decidable (R a b)] :
+    ∀ l₁ l₂, Decidable (Forall₂ R l₁ l₂)
+  | [], [] => isTrue .nil
+  | [], _ :: _ | _ :: _, [] => isFalse nofun
+  | a :: l₁, b :: l₂ =>
+    haveI := decidableForall₂ (R := R) l₁ l₂
+    decidable_of_iff (R a b ∧ Forall₂ R l₁ l₂) forall₂_cons.symm
 
 /-! ### The lexicographic order refines the pointwise order -/
 

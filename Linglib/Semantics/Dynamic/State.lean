@@ -430,7 +430,7 @@ theorem UniformAt.mul_eq_inter (hs : UniformAt X s) (hs' : UniformAt X s') :
     s * s' = s ∩ s' := by
   rw [mul_eq_sep_of_uniformAt hs', mul_stratum_eq_self fun p hp ↦ (hs p hp).symm.subset]
   exact ext fun r ↦ and_congr_right fun hr ↦ by
-    rw [Possibility.restrict_eq_self (hs r hr)] <;> exact Iff.rfl
+    rw [Possibility.restrict_eq_self (hs r hr)]
 
 /-- Restriction of a state: pointwise, by direct image. -/
 def restrict (X : Set V) (s : State W V M) : State W V M :=

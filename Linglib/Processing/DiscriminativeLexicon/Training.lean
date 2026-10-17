@@ -5,6 +5,7 @@ public import Linglib.Processing.DiscriminativeLexicon.Measures
 public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.LinearAlgebra.Dual.Lemmas
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.LinearAlgebra.Matrix.Dual
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse

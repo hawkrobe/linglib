@@ -6,8 +6,8 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Setoid.Basic
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Basic
+public import Mathlib.Order.Setoid.Partition
 
 /-!
 # Kernel monotonicity, meets, and decidable equality for setoids

@@ -500,10 +500,6 @@ private theorem setOf_mem_atoms_and (X : PolarGroup α) :
     {x | x ∈ X.atoms ∧ x ∈ X.posAtoms} = X.posAtoms :=
   Set.inter_eq_right.2 posAtoms_subset_atoms
 
-section Fintype
-
-variable [Fintype α]
-
 theorem atLeast_eq_ofGQ (n : ℕ) : (Det.atLeast n : Det α) = Det.ofGQ (GQ.atLeast n) := by
   funext X
   simp only [Det.atLeast, Det.ofGQ, atLeast_apply, setOf_mem_atoms_and]
@@ -514,7 +510,7 @@ theorem exactly_eq_ofGQ (n : ℕ) : (Det.exactly n : Det α) = Det.ofGQ (GQ.exac
 
 theorem most_eq_ofGQ : (Det.most : Det α) = Det.ofGQ GQ.most := by
   funext X
-  simp only [Det.most, Det.ofGQ, most_apply, setOf_mem_atoms_and, gt_iff_lt]
+  simp only [Det.most, Det.ofGQ, most_apply, setOf_mem_atoms_and]
   rw [← atoms_diff_posAtoms]
   rfl
 
@@ -534,8 +530,6 @@ theorem toGQ_lessThan (n : ℕ) : (Det.lessThan n : Det α).toGQ = (GQ.atLeast n
 /-- *Most boys sneezed* has the truth conditions of the relational *most*. -/
 theorem toGQ_most : (Det.most : Det α).toGQ = GQ.most := by
   rw [most_eq_ofGQ, toGQ_ofGQ_of_conservative conservative_most]
-
-end Fintype
 
 /-- *All boys sneezed* has universal truth conditions. -/
 theorem toGQ_all : (Det.all : Det α).toGQ = every := by

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Core.Combinatorics.Antimatroid
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # ERC sets and antimatroids
