@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Korean.Indefinites
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
@@ -31,20 +32,20 @@ open PolarityItem
 
 /-- Bare *nwukwu* 'who', an indefinite in questions and conditionals. -/
 def nwukwu : PolarityItem :=
-  { form := "nwukwu (누구)"
+  { form := Indefinites.nwukwu.form
   , licensor := some .weak
   , licensingContexts := [.question, .conditionalAntecedent] }
 
 /-- *nwukwu-to* 'nobody' under clausemate negation, the interrogative with the additive
 particle. -/
 def nwukwuTo : PolarityItem :=
-  { form := "nwukwu-to (누구도, neg)"
+  { form := Indefinites.nwukwuTo.form
   , licensor := some .antiMorphic
   , licensingContexts := [.negation] }
 
 /-- *nwukwu-na* 'anyone', the free-choice item; *-na* is not an additive particle. -/
 def nwukwuNa : PolarityItem :=
-  { form := "nwukwu-na (누구나)"
+  { form := Indefinites.nwukwuNa.form
   , freeChoice := true
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 

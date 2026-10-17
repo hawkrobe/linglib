@@ -59,7 +59,7 @@ def nichego : PolarityItem :=
 /-- *nikogda* (никогда) 'never', the temporal negative concord item, *nikogda ne prixodil* '(he)
 never came'. -/
 def nikogda : PolarityItem :=
-  { form := "nikogda"
+  { form := (Indefinites.ni Pronouns.kogda).form
   , licensor := some .antiMorphic
   , licensingContexts := [.negation] }
 

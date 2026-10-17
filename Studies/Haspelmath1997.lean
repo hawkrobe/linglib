@@ -9,13 +9,20 @@ public import Linglib.Semantics.Quantification.Indefinite
 public import Linglib.Data.Examples.Haspelmath1997
 public import Linglib.Fragments.English.Indefinites
 public import Linglib.Fragments.Georgian.Indefinites
+public import Linglib.Fragments.Finnish.Indefinites
+public import Linglib.Fragments.HindiUrdu.Indefinites
 public import Linglib.Fragments.Hungarian.Indefinites
 public import Linglib.Fragments.German.Indefinites
 public import Linglib.Fragments.Japanese.Indefinites
 public import Linglib.Fragments.Kannada.Indefinites
+public import Linglib.Fragments.Korean.Indefinites
 public import Linglib.Fragments.Latin.Indefinites
 public import Linglib.Fragments.Latvian.Indefinites
+public import Linglib.Fragments.Mandarin.Indefinites
+public import Linglib.Fragments.Quechua.Indefinites
+public import Linglib.Fragments.Romance.Italian.Indefinites
 public import Linglib.Fragments.Slavic.Russian.Indefinites
+public import Linglib.Fragments.Swahili.Indefinites
 public import Linglib.Fragments.Turkish.Indefinites
 public import Linglib.Fragments.Yakut.Indefinites
 
@@ -34,8 +41,10 @@ each of its functions, so a series covering a leaf of the map (specific known, d
 free choice) covers the leaf's only neighbour (`mem_of_adjacent_eq_singleton`); the
 specific-known case is the ban on the ABA syncretism, so a connected region covers an interval of
 the three specificity functions (`ordConnected_specificityFunctions`).
-The paradigms verify the adjacency requirement (`sample_connected`) and the overlap of series
-that the book holds against contrast-based accounts of grammatical meaning (`sample_overlap`).
+The paradigms verify the adjacency requirement (`sample_connected`), the overlap of series
+that the book holds against contrast-based accounts of grammatical meaning (`sample_overlap`),
+and the human/non-human distinction the book finds practically everywhere, which only the Latvian
+*kaut*-series lacks (`disjoint_forms_person_thing`).
 The book's examples for fifteen of the languages are the rows of
 `Data/Examples/Haspelmath1997.json`, one row for each variant the book prints in a line; the
 figures cover the acceptable rows and exclude the starred ones (`acceptable_covers`,
@@ -61,9 +70,7 @@ a figure records where a series is possible and not where it is preferred (Russi
 over the functions of *-nibud'*, which is preferred there), and it fills cells the book has no data
 for on the strength of the map (Yakut *da* and Mandarin bare interrogatives under indirect negation,
 the Swahili comparative). For those cells `sample_connected` restates the map; it tests the
-adjacency requirement on the others. The series of English, Georgian, German, Hungarian, Japanese,
-Kannada, Latin, Latvian, Russian, Turkish and Yakut are their Fragments' series; the other seven
-languages are entered here with one member a series.
+adjacency requirement on the others. Every language's series are those of its Fragment.
 
 ## TODO
 
@@ -215,12 +222,6 @@ structure Series extends IndefinitePronoun.Series where
   functions : Finset HaspelmathFunction
   deriving DecidableEq
 
-/-- A series of a language without a Fragment, entered with one member, of the person category
-where the series has one, and with its functions in the book's digit notation. -/
-def series (name form : String) (basis : IndefinitePronoun.Basis) (ns : List ℕ)
-    (ontology : Pronoun.OntologicalCategory := .person) : Series :=
-  { name, members := [{ form, ontology, basis }], functions := region ns }
-
 /-- The English series (A.3, §4.3.1) are *some-* 12345, *any-* 456789 and *no-* 7. -/
 def english : List Series :=
   [ { English.Indefinites.someSeries with functions := region [1, 2, 3, 4, 5] },
@@ -293,11 +294,11 @@ def japanese : List Series :=
 non-specific non-emphatic functions 34567 (with no data for indirect negation), *dōu*/*yě* 7,
 and the determiner *rènhé* 6789. -/
 def mandarin : List Series :=
-  [ series "generic noun" "rén" .genericNoun [1, 2],
-    series "bare interrogative" "shéi" .interrogative [3, 4, 5, 6, 7],
-    series "dōu" "shéi dōu" .interrogative [7],
-    series "yě" "shéi yě" .interrogative [7],
-    series "rènhé" "rènhé" .special [6, 7, 8, 9] .determiner ]
+  [ { Mandarin.Indefinites.genericNounSeries with functions := region [1, 2] },
+    { Mandarin.Indefinites.interrogativeSeries with functions := region [3, 4, 5, 6, 7] },
+    { Mandarin.Indefinites.douSeries with functions := region [7] },
+    { Mandarin.Indefinites.yeSeries with functions := region [7] },
+    { Mandarin.Indefinites.renheSeries with functions := region [6, 7, 8, 9] } ]
 
 /-- The Turkish series (A.23) are *bir-* 1234567, *hiç* 467 and *herhangi* 23456789. The figure
 starts the *herhangi* outline at irrealis non-specific; the text admits either series in every
@@ -310,32 +311,32 @@ def turkish : List Series :=
 
 /-- The Hindi/Urdu series (A.22) are *koii* 1234567 and *koii bhii* 3456789. -/
 def hindi : List Series :=
-  [ series "koii" "koii" .special [1, 2, 3, 4, 5, 6, 7],
-    series "bhii" "koii bhii" .special [3, 4, 5, 6, 7, 8, 9] ]
+  [ { HindiUrdu.Indefinites.koiiSeries with functions := region [1, 2, 3, 4, 5, 6, 7] },
+    { HindiUrdu.Indefinites.bhiiSeries with functions := region [3, 4, 5, 6, 7, 8, 9] } ]
 
 /-- The Italian series (A.10) are *qualche-* 123456, *nessuno* 467 (questions but not
 conditionals) and *-unque* 89. -/
 def italian : List Series :=
-  [ series "qualche-" "qualcuno" .special [1, 2, 3, 4, 5, 6],
-    series "nessuno" "nessuno" .special [4, 6, 7],
-    series "-unque" "chiunque" .interrogative [8, 9] ]
+  [ { Italian.Indefinites.qualcheSeries with functions := region [1, 2, 3, 4, 5, 6] },
+    { Italian.Indefinites.nessunoSeries with functions := region [4, 6, 7] },
+    { Italian.Indefinites.unqueSeries with functions := region [8, 9] } ]
 
 /-- The Finnish series (A.27) are *eräs* 1, *-kin* 2345, *-kaan* 4678, and *hyvänsä* 589 with
 the comparative only as an equative standard. -/
 def finnish : List Series :=
-  [ series "eräs" "eräs" .special [1],
-    series "-kin" "joku" .special [2, 3, 4, 5],
-    series "-kaan" "kukaan" .interrogative [4, 6, 7, 8],
-    series "hyvänsä" "kuka hyvänsä" .interrogative [5, 8, 9] ]
+  [ { Finnish.Indefinites.eräsSeries with functions := region [1] },
+    { Finnish.Indefinites.kinSeries with functions := region [2, 3, 4, 5] },
+    { Finnish.Indefinites.kaanSeries with functions := region [4, 6, 7, 8] },
+    { Finnish.Indefinites.hyvänsäSeries with functions := region [5, 8, 9] } ]
 
 /-- The Korean series (A.39) are the bare interrogatives and *-nka*, alike at 123456, *-to* 678,
 and *-na* and *-tunci* 9. -/
 def korean : List Series :=
-  [ series "bare interrogative" "nwukwu" .interrogative [1, 2, 3, 4, 5, 6],
-    series "-nka" "nwukwu-nka" .interrogative [1, 2, 3, 4, 5, 6],
-    series "-to" "nwukwu-to / amu-to" .interrogative [6, 7, 8],
-    series "-na" "nwukwu-na" .interrogative [9],
-    series "-tunci" "nwukwu-tunci" .interrogative [9] ]
+  [ { Korean.Indefinites.interrogativeSeries with functions := region [1, 2, 3, 4, 5, 6] },
+    { Korean.Indefinites.nkaSeries with functions := region [1, 2, 3, 4, 5, 6] },
+    { Korean.Indefinites.toSeries with functions := region [6, 7, 8] },
+    { Korean.Indefinites.naSeries with functions := region [9] },
+    { Korean.Indefinites.tunciSeries with functions := region [9] } ]
 
 /-- The Hungarian series (A.26) are *vala-* 123456, *sem-* 7, and *akár-* and *bár-* 5689,
 excluded from questions. The figure does not draw the marginal *né*-series. -/
@@ -356,14 +357,14 @@ def georgian : List Series :=
 /-- The Ancash Quechua series (A.37) are the bare interrogatives for the specific functions,
 which the map of the language does not distinguish, and *-pis* 3456789. -/
 def quechua : List Series :=
-  [ series "bare interrogative" "pi" .interrogative [1, 2],
-    series "-pis" "pi-pis" .interrogative [3, 4, 5, 6, 7, 8, 9] ]
+  [ { Quechua.Indefinites.interrogativeSeries with functions := region [1, 2] },
+    { Quechua.Indefinites.pisSeries with functions := region [3, 4, 5, 6, 7, 8, 9] } ]
 
 /-- The Swahili series (A.33) are generic nouns 1234567 and CL-o CL-ote 456789, with the
 comparative predicted. -/
 def swahili : List Series :=
-  [ series "generic noun" "mtu" .genericNoun [1, 2, 3, 4, 5, 6, 7],
-    series "CL-o CL-ote" "mtu ye yote" .special [4, 5, 6, 7, 8, 9] ]
+  [ { Swahili.Indefinites.genericNounSeries with functions := region [1, 2, 3, 4, 5, 6, 7] },
+    { Swahili.Indefinites.oOteSeries with functions := region [4, 5, 6, 7, 8, 9] } ]
 
 /-- The eighteen languages. -/
 def sample : List (List Series) :=
@@ -387,6 +388,20 @@ paradigms have a function expressed by more than one series. -/
 theorem sample_overlap :
     ∀ p ∈ [english, russian, german, latin, yakut, mandarin, turkish, hindi, italian, finnish,
       korean, hungarian, swahili], ¬ p.Pairwise (Disjoint ·.functions ·.functions) := by
+  decide
+
+/-- The distinction between human and non-human referents is made practically everywhere, so
+every series of the sample has distinct forms for a person and a thing, but for the Latvian
+*kaut*-series, whose *kaut kas* stands for both, Latvian *kas* asking about both. -/
+theorem disjoint_forms_person_thing :
+    ∀ p ∈ sample, ∀ s ∈ p, s.toSeries ≠ Latvian.Indefinites.kautSeries →
+      Disjoint (s.forms .person) (s.forms .thing) := by
+  decide +kernel
+
+/-- The Latvian *kaut*-series has a form for a person that is also its form for a thing. -/
+theorem not_disjoint_kaut_forms_person_thing :
+    ¬ Disjoint (Latvian.Indefinites.kautSeries.forms .person)
+      (Latvian.Indefinites.kautSeries.forms .thing) := by
   decide
 
 /-- The comparative's other neighbour is indirect negation, and a series may cover it with the

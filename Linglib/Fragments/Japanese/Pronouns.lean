@@ -132,6 +132,15 @@ def doo : InterrogativePronoun := { form := "dō", script := some "どう", onto
 /-- 何 *nan-* 'how many', before a classifier. -/
 def nan : InterrogativePronoun := { form := "nan", script := some "何", ontology := .amount }
 
+/-- *dore* 'which one', the determiner of Haspelmath's table. -/
+def dore : InterrogativePronoun := { form := "dore", ontology := .determiner }
+
+/-- *ikura* 'how much'. -/
+def ikura : InterrogativePronoun := { form := "ikura", ontology := .amount }
+
+/-- *ikutsu* 'how many'. -/
+def ikutsu : InterrogativePronoun := { form := "ikutsu", ontology := .amount }
+
 /-- The addressee-honorific suffix *-mas-* on the verb, of the polite grade. -/
 def mas : Morphology.Morph := .suff "mas"
 

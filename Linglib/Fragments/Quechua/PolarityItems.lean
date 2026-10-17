@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Quechua.Indefinites
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
@@ -25,7 +26,7 @@ open PolarityItem
 /-- *pi-pis*, wh + 'also/even', is a dual NPI/FCI covering the map's whole
     non-specific span (A.37). -/
 def piPis : PolarityItem :=
-  { form := "pi-pis"
+  { form := Indefinites.piPis.form
   , licensor := some .weak
   , freeChoice := true
   , licensingContexts :=

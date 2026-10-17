@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Mandarin.Indefinites
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
@@ -41,7 +42,7 @@ open PolarityItem
     *?Tā bù xǐhuan shéi* is degraded while *shénme* is perfect (A267,
     [li-1992] p. 150); that slot belongs to the emphatic series. -/
 def shei : PolarityItem :=
-  { form := "shéi"
+  { form := Indefinites.shei.form
   , licensor := some .weak
   , freeChoice := true
   , licensingContexts :=
@@ -54,7 +55,7 @@ def shei : PolarityItem :=
     diǎn shénme zài zǒu ba!* 'Please eat a little something before you
     leave' (A264, [li-1992] p. 152) and in conditionals (A266). -/
 def shenme : PolarityItem :=
-  { form := "shénme"
+  { form := Indefinites.shenme.form
   , licensor := some .weak
   , freeChoice := true
   , licensingContexts :=
@@ -72,7 +73,7 @@ def shenme : PolarityItem :=
     and [haspelmath-1997] (p. 309) leaves open whether the negated uses are
     indefinites or wide-scope universals. -/
 def sheiDou : PolarityItem :=
-  { form := "shéi dōu"
+  { form := Indefinites.sheiDou.form
   , licensor := some .antiMorphic
   , licensingContexts := [.negation] }
 
@@ -87,7 +88,7 @@ def sheiDou : PolarityItem :=
     Etymologically *rèn* 'allow; appoint' + old interrogative *hé* 'what'
     ([haspelmath-1997] A.36.2). -/
 def renhe : PolarityItem :=
-  { form := "rènhé"
+  { form := Indefinites.renhe.form
   , licensor := some .weak
   , freeChoice := true
   , licensingContexts := [.negation, .modalPossibility, .clausalComparative] }

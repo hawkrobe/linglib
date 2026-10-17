@@ -83,31 +83,29 @@ def bárki : IndefinitePronoun := bár ki
 
 /-! ### The series -/
 
-/-- The *vala*-series has a member for each interrogative, listed from person to determiner. -/
+/-- The *vala*-series has a member for each interrogative. -/
 def valaSeries : IndefinitePronoun.Series :=
-  ⟨"vala-", [valaki, vala mi, vala milyen, vala hol, vala hova, vala honnan, vala mikor, vala hogy,
-    vala hány, vala mennyi, vala melyik]⟩
+  ⟨"vala-", {valaki, vala mi, vala milyen, vala hol, vala hova, vala honnan, vala mikor, vala hogy,
+    vala hány, vala mennyi, vala melyik}⟩
 
-/-- The negative series has a member for each interrogative, listed from person to
-determiner. -/
+/-- The negative series has a member for each interrogative. -/
 def semSeries : IndefinitePronoun.Series :=
-  ⟨"sem-", [senki, sem "sem" mi, sem "sem" milyen, sem "se" hol, sem "se" hova, sem "se" honnan,
-    sem "sem" mikor, sem "se" hogy, sem "se" hány, sem "se" mennyi, sem "se" melyik]⟩
+  ⟨"sem-", {senki, sem "sem" mi, sem "sem" milyen, sem "se" hol, sem "se" hova, sem "se" honnan,
+    sem "sem" mikor, sem "se" hogy, sem "se" hány, sem "se" mennyi, sem "se" melyik}⟩
 
-/-- The *akár*-series has a member for each interrogative, listed from person to determiner. -/
+/-- The *akár*-series has a member for each interrogative. -/
 def akárSeries : IndefinitePronoun.Series :=
-  ⟨"akár-", [akárki, akár mi, akár milyen, akár hol, akár hova, akár honnan, akár mikor, akár hogy,
-    akár hány, akár mennyi, akár melyik]⟩
+  ⟨"akár-", {akárki, akár mi, akár milyen, akár hol, akár hova, akár honnan, akár mikor, akár hogy,
+    akár hány, akár mennyi, akár melyik}⟩
 
-/-- The *bár*-series has a member for each interrogative but *hány*, listed from person to
-determiner. -/
+/-- The *bár*-series has a member for each interrogative but *hány*. -/
 def bárSeries : IndefinitePronoun.Series :=
-  ⟨"bár-", [bárki, bár mi, bár milyen, bár hol, bár hova, bár honnan, bár mikor, bár hogy,
-    bár mennyi, bár melyik]⟩
+  ⟨"bár-", {bárki, bár mi, bár milyen, bár hol, bár hova, bár honnan, bár mikor, bár hogy,
+    bár mennyi, bár melyik}⟩
 
 /-- The *né*-series has the members *némi* 'something, a little', *néhol* 'in some places',
 *néhány* 'some, a few' and *némelyik* 'some'. -/
 def néSeries : IndefinitePronoun.Series :=
-  ⟨"né-", [né mi, né hol, né hány, né melyik]⟩
+  ⟨"né-", {né mi, né hol, né hány, né melyik}⟩
 
 end Hungarian.Indefinites

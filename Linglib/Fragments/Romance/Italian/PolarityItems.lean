@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Romance.Italian.Indefinites
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
@@ -54,7 +55,7 @@ negation the double negation reading *Nessuno non ha protestato* 'everybody prot
 follows *senza*, *senza incontrare nessuno* 'without meeting anyone', and colloquially means
 'anybody' in a question, *C'è nessuno lì dentro?* 'Is there anybody in there?'. -/
 def nessuno : PolarityItem :=
-  { form := "nessuno"
+  { form := Indefinites.nessuno.form
   , licensor := some .weak
   , licensingContexts := [.negation, .nobody, .withoutClause, .question] }
 

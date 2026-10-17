@@ -5,16 +5,18 @@ public import Linglib.Syntax.Category.Pronoun.Indefinite
 /-!
 # German indefinite pronouns
 
-German has indefinite pronouns of two morphological kinds. *Jemand* 'someone', *etwas*
-'something' and negative *niemand*, *nichts* are built on generic nouns (*jemand* from *je-man*
-'ever-person'); the *irgend-* series, *irgendwer*, *irgendwas*, temporal *je* 'ever' and
-*jeder* 'any, every' are built with dedicated markers. *Jemand* runs from the specific
-functions to indirect negation. *Irgend-* is excluded where the speaker has the referent in
-mind and under direct negation and covers the rest of the map, a distribution it reached from
-an earlier non-specific use, as Aloni and Port describe; the two series overlap from specific
-unknown to indirect negation. The determiner *irgendein* is `German.PolarityItems.irgendein`.
-Each series is entered with its person member, *je* with its temporal one, and named as
-Haspelmath names it.
+German has indefinite pronouns of two morphological kinds. *Jemand* 'someone', *etwas* 'something'
+and negative *niemand*, *nichts* are built on generic nouns (*jemand* from *je-man* 'ever-person');
+the *irgend-* series, *irgendwer*, *irgendwas*, temporal *je* 'ever' and *jeder* 'any, every' are
+built with dedicated markers. *Jemand* runs from the specific functions to indirect negation.
+*Irgend-* is excluded where the speaker has the referent in mind and under direct negation and
+covers the rest of the map, a distribution it reached from an earlier non-specific use, as Aloni and
+Port describe; the two series overlap from specific unknown to indirect negation. The determiner
+*irgendein* is `German.PolarityItems.irgendein`. The members are those of Haspelmath's table, in
+their usual spelling where he hyphenates (*irgend-wer*), and the series are named as he names them.
+He parenthesizes the determiner *ein* of the *etwas-* series and *auf keine Weise* of the *n-*
+series as no members of them, and counts *je* and *jeder* in no series, though his figure draws a
+region for each.
 
 ## References
 
@@ -27,51 +29,42 @@ Haspelmath names it.
 
 namespace German.Indefinites
 
-/-- *jemand* 'someone', built on a generic noun. -/
-def jemand : IndefinitePronoun where
-  form := "jemand"
-  ontology := .person
-  basis := .genericNoun
+/-- *jemand* 'someone', of the *etwas-* series. -/
+def jemand : IndefinitePronoun := { form := "jemand", ontology := .person }
 
-/-- *irgendwer*, built with the dedicated prefix *irgend-*. -/
-def irgendwer : IndefinitePronoun where
-  form := "irgendwer"
-  ontology := .person
-  basis := .special
+/-- *irgendwer*, of the *irgend-* series. -/
+def irgendwer : IndefinitePronoun := { form := "irgendwer", ontology := .person }
 
 /-- Temporal *je* 'ever'. -/
-def je : IndefinitePronoun where
-  form := "je"
-  ontology := .time
-  basis := .special
+def je : IndefinitePronoun := { form := "je", ontology := .time }
 
-/-- *jeder* 'any, every'. -/
-def jeder : IndefinitePronoun where
-  form := "jeder"
-  ontology := .person
-  basis := .special
+/-- The determiner *jeder* 'any, every'. -/
+def jeder : IndefinitePronoun := { form := "jeder", ontology := .determiner }
 
-/-- *niemand* 'nobody', built on a generic noun. -/
-def niemand : IndefinitePronoun where
-  form := "niemand"
-  ontology := .person
-  basis := .genericNoun
+/-- *niemand* 'nobody', of the *n-* series. -/
+def niemand : IndefinitePronoun := { form := "niemand", ontology := .person }
 
 /-! ### The series -/
 
 /-- The series of *jemand* and *etwas*, which Haspelmath names the *etwas-* series. -/
-def etwasSeries : IndefinitePronoun.Series := ⟨"etwas-", [jemand]⟩
+def etwasSeries : IndefinitePronoun.Series := ⟨"etwas-", {jemand, ⟨{ form := "etwas" }, .thing⟩}⟩
 
 /-- The *irgend-* series. -/
-def irgendSeries : IndefinitePronoun.Series := ⟨"irgend-", [irgendwer]⟩
+def irgendSeries : IndefinitePronoun.Series :=
+  ⟨"irgend-", {irgendwer, ⟨{ form := "irgendjemand" }, .person⟩, ⟨{ form := "irgendwas" }, .thing⟩,
+    ⟨{ form := "irgendetwas" }, .thing⟩, ⟨{ form := "irgendwo" }, .place⟩,
+    ⟨{ form := "irgendwann" }, .time⟩, ⟨{ form := "irgendwie" }, .manner⟩,
+    ⟨{ form := "irgendein" }, .determiner⟩, ⟨{ form := "irgendwelche" }, .determiner⟩}⟩
 
 /-- The series of temporal *je*. -/
-def jeSeries : IndefinitePronoun.Series := ⟨"je", [je]⟩
+def jeSeries : IndefinitePronoun.Series := ⟨"je", {je}⟩
 
 /-- The series of *jeder*. -/
-def jederSeries : IndefinitePronoun.Series := ⟨"jeder", [jeder]⟩
+def jederSeries : IndefinitePronoun.Series := ⟨"jeder", {jeder}⟩
 
-/-- The negative *n-* series of *niemand* and *nichts*. -/
-def nSeries : IndefinitePronoun.Series := ⟨"n-", [niemand]⟩
+/-- The negative *n-* series. -/
+def nSeries : IndefinitePronoun.Series :=
+  ⟨"n-", {niemand, ⟨{ form := "nichts" }, .thing⟩, ⟨{ form := "nirgends" }, .place⟩,
+    ⟨{ form := "nie" }, .time⟩, ⟨{ form := "kein" }, .determiner⟩}⟩
 
 end German.Indefinites

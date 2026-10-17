@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.HindiUrdu.Indefinites
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
@@ -31,7 +32,7 @@ open PolarityItem
 (10)–(12), (29), (31b), (32), (34) for the downward-entailing uses; (35), (36b), (39b) for free
 choice; out under a necessity modal, (36d)). -/
 def koiiBhii : PolarityItem :=
-  { form := "koii bhii"
+  { form := Indefinites.koiiBhii.form
   , licensor := some .weak
   , freeChoice := true
   , licensingContexts :=
@@ -52,7 +53,7 @@ def ekBhii : PolarityItem :=
 /-- *kuch bhii* 'anything, any (mass)' ([lahiri-1998] (8), (10f), (34c),
 (35c), (39a)). -/
 def kuchBhii : PolarityItem :=
-  { form := "kuch bhii"
+  { form := (Indefinites.bhii Indefinites.kuch).form
   , licensor := some .weak
   , freeChoice := true
   , licensingContexts :=
@@ -69,7 +70,7 @@ def zaraaBhii : PolarityItem :=
 
 /-- *kabhii bhii* 'ever, anytime' ([lahiri-1998] (36c)). -/
 def kabhiiBhii : PolarityItem :=
-  { form := "kabhii bhii"
+  { form := (Indefinites.bhii Indefinites.kabhii).form
   , licensor := some .weak
   , freeChoice := true
   , licensingContexts := [.modalPossibility] }

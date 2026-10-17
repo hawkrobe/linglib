@@ -10,7 +10,9 @@ Russian builds its indefinite series on the interrogative pronouns *kto* 'who' a
 `Russian.Pronouns`: a marker maps each interrogative to an indefinite, and a series collects the
 indefinites one marker builds. A series marks the interrogative with a prefix, *koe-* or *ni-*, with
 a suffix, *-to*, *-nibud'* or *-libo*, or with a following phrase, *by to ni bylo* or *ugodno*. The
-free-choice determiner *ljuboj* 'any' forms a series of its own.
+free-choice determiner *ljuboj* 'any' forms a series of its own. The members are those of
+Haspelmath's table, which omits the *by to ni bylo* and *ugodno* series; these are entered with
+their person and thing members.
 
 ## References
 
@@ -77,33 +79,33 @@ def nikto : IndefinitePronoun := ni kto
 def ktoUgodno : IndefinitePronoun := ugodno kto
 
 /-- *ljuboj* 'any', a free-choice determiner. -/
-def ljuboj : IndefinitePronoun := { form := "ljuboj", ontology := .determiner, basis := .special }
+def ljuboj : IndefinitePronoun := { form := "ljuboj", ontology := .determiner }
 
 /-! ### The series -/
 
-/-- The *koe-* series, *koe-kto* 'someone' and *koe-čto* 'something'. -/
-def koeSeries : IndefinitePronoun.Series := ⟨"koe-", [kto, čto].map koe⟩
+/-- The *koe-* series, which has no member for an amount. -/
+def koeSeries : IndefinitePronoun.Series := ⟨"koe-", (interrogatives.erase skol'ko).image koe⟩
 
-/-- The *-to* series, *kto-to* 'someone' and *čto-to* 'something'. -/
-def toSeries : IndefinitePronoun.Series := ⟨"-to", [kto, čto].map to_⟩
+/-- The *-to* series. -/
+def toSeries : IndefinitePronoun.Series := ⟨"-to", interrogatives.image to_⟩
 
-/-- The *-nibud'* series, *kto-nibud'* and *čto-nibud'*. -/
-def nibudSeries : IndefinitePronoun.Series := ⟨"-nibud'", [kto, čto].map nibud⟩
+/-- The *-nibud'* series. -/
+def nibudSeries : IndefinitePronoun.Series := ⟨"-nibud'", interrogatives.image nibud⟩
 
-/-- The *-libo* series, *kto-libo* and *čto-libo*. -/
-def liboSeries : IndefinitePronoun.Series := ⟨"-libo", [kto, čto].map libo⟩
+/-- The *-libo* series, which has no member for an amount. -/
+def liboSeries : IndefinitePronoun.Series := ⟨"-libo", (interrogatives.erase skol'ko).image libo⟩
 
-/-- The *by to ni bylo* series, *kto by to ni bylo* and *čto by to ni bylo*. -/
+/-- The *by to ni bylo* series, entered with its person and thing members. -/
 def byToNiByloSeries : IndefinitePronoun.Series :=
-  ⟨"by to ni bylo", [kto, čto].map byToNiBylo⟩
+  ⟨"by to ni bylo", ({kto, čto} : Finset _).image byToNiBylo⟩
 
-/-- The negative series, *nikto* 'nobody' and *ničto* 'nothing'. -/
-def niSeries : IndefinitePronoun.Series := ⟨"ni-", [kto, čto].map ni⟩
+/-- The negative series. -/
+def niSeries : IndefinitePronoun.Series := ⟨"ni-", interrogatives.image ni⟩
 
-/-- The *ugodno* series, *kto ugodno* and *čto ugodno*. -/
-def ugodnoSeries : IndefinitePronoun.Series := ⟨"ugodno", [kto, čto].map ugodno⟩
+/-- The *ugodno* series, entered with its person and thing members. -/
+def ugodnoSeries : IndefinitePronoun.Series := ⟨"ugodno", ({kto, čto} : Finset _).image ugodno⟩
 
 /-- The series of the determiner *ljuboj*. -/
-def ljubojSeries : IndefinitePronoun.Series := ⟨"ljuboj", [ljuboj]⟩
+def ljubojSeries : IndefinitePronoun.Series := ⟨"ljuboj", {ljuboj}⟩
 
 end Russian.Indefinites
