@@ -28,7 +28,7 @@ and so lies in `S e S`.
 ## Main results
 
 * `Monoid.exists_pos_pow_isIdempotent`: every element of a finite monoid has an idempotent
-  positive power, unique by `IsIdempotentElem.pow_eq_pow`.
+  positive power.
 * `Semigroup.exists_isIdempotentElem`: a nonempty finite semigroup contains an idempotent.
 * `Semigroup.exists_isIdempotentElem_map_eq`: a surjective homomorphism of finite semigroups lifts
   idempotents to idempotents.
@@ -40,9 +40,9 @@ and so lies in `S e S`.
 
 ## Implementation notes
 
-The last two results are Proposition II.6.34 and Corollary II.6.35 of [pin-mfa]. Products of
-sequences are expressed through a homomorphism out of `FreeSemigroup α`, which covers products of
-arbitrary elements by taking `α = S` and `FreeSemigroup.lift id`.
+The last two results are Proposition II.6.34 and Corollary II.6.35 of Pin's lecture notes.
+Products of sequences are expressed through a homomorphism out of `FreeSemigroup α`, which covers
+products of arbitrary elements by taking `α = S` and `FreeSemigroup.lift id`.
 
 ## References
 
@@ -75,15 +75,6 @@ private lemma pow_period {x : M} {i j : ℕ} (h_le : i ≤ j) (h_eq : x ^ i = x 
         show j + (n - i + m * (j - i)) = n + m * (j - i) + (j - i) by omega] at step
     rw [Nat.succ_mul, ← Nat.add_assoc]
     exact ih.trans step
-
-/-- Idempotent positive powers of the same element coincide, since
-`x ^ a = (x ^ a) ^ b = (x ^ b) ^ a = x ^ b`. -/
-theorem _root_.IsIdempotentElem.pow_eq_pow {x : M} {a b : ℕ}
-    (hxa : IsIdempotentElem (x ^ a)) (hxb : IsIdempotentElem (x ^ b))
-    (ha : a ≠ 0) (hb : b ≠ 0) : x ^ a = x ^ b :=
-  calc x ^ a = (x ^ a) ^ b := (hxa.pow_eq hb).symm
-    _ = (x ^ b) ^ a := by rw [← pow_mul, mul_comm a b, pow_mul]
-    _ = x ^ b := hxb.pow_eq ha
 
 variable [Finite M]
 

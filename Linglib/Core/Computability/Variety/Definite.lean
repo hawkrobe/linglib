@@ -25,6 +25,8 @@ zero, and similarly for the other two classes.
 ## Main results
 
 * `Language.isDefinite_iff_forall_isRightZero_syntacticClass` and its two mirrors: the windows.
+* `Language.IsDefinite.isRightZero_syntacticClass_of_isIdempotentElem` and its two mirrors: an
+  idempotent class of a nonempty word satisfies the window condition.
 * `Language.isDefinite_natCard_of_isDefinite_syntacticSemigroup` and its two mirrors: a syntactic
   semigroup `S` in the pseudovariety bounds the window by `|S|`.
 * `Language.langs_definiteVariety_iff`, `Language.langs_reverseDefiniteVariety_iff`,
@@ -168,6 +170,42 @@ theorem isGeneralizedDefinite_iff_forall_syntacticClass_mul_mul_self :
   · rw [List.take_of_length_le ha.le, List.take_of_length_le (by omega)] at hpre
     rw [hpre]
 
+/-! ### Idempotent classes
+
+An idempotent class of a nonempty word is also the class of arbitrarily long words, so it satisfies
+the window condition of every window. -/
+
+private theorem exists_le_length_syntacticClass_eq {u : List α} (hu : u ≠ [])
+    (he : IsIdempotentElem (L.syntacticClass u)) (n : ℕ) :
+    ∃ v : List α, n ≤ v.length ∧ L.syntacticClass v = L.syntacticClass u := by
+  refine ⟨(List.replicate (n + 1) u).flatten, ?_, ?_⟩
+  · simp only [List.length_flatten, List.map_replicate, List.sum_replicate, smul_eq_mul]
+    exact n.le_succ.trans (Nat.le_mul_of_pos_right _ (List.length_pos_iff.2 hu))
+  · rw [syntacticClass_flatten, List.map_replicate, List.prod_replicate, he.pow_succ_eq]
+
+/-- In a definite language, an idempotent class of a nonempty word is a right zero. -/
+theorem IsDefinite.isRightZero_syntacticClass_of_isIdempotentElem (h : L.IsDefinite k)
+    {u : List α} (hu : u ≠ []) (he : IsIdempotentElem (L.syntacticClass u)) :
+    IsRightZero (L.syntacticClass u) :=
+  have ⟨_, hv, hvu⟩ := exists_le_length_syntacticClass_eq hu he k
+  hvu ▸ h.isRightZero_syntacticClass hv
+
+/-- In a reverse definite language, an idempotent class of a nonempty word is a left zero. -/
+theorem IsReverseDefinite.isLeftZero_syntacticClass_of_isIdempotentElem
+    (h : L.IsReverseDefinite k) {u : List α} (hu : u ≠ [])
+    (he : IsIdempotentElem (L.syntacticClass u)) : IsLeftZero (L.syntacticClass u) :=
+  have ⟨_, hv, hvu⟩ := exists_le_length_syntacticClass_eq hu he k
+  hvu ▸ h.isLeftZero_syntacticClass hv
+
+/-- In a generalized definite language, an idempotent class of a nonempty word absorbs anything
+placed between two copies of it. -/
+theorem IsGeneralizedDefinite.syntacticClass_mul_mul_self_of_isIdempotentElem
+    (h : L.IsGeneralizedDefinite k) {u : List α} (hu : u ≠ [])
+    (he : IsIdempotentElem (L.syntacticClass u)) (s : L.SyntacticMonoid) :
+    L.syntacticClass u * s * L.syntacticClass u = L.syntacticClass u :=
+  have ⟨_, hv, hvu⟩ := exists_le_length_syntacticClass_eq hu he k
+  hvu ▸ h.syntacticClass_mul_mul_self hv s
+
 /-! ### The syntactic semigroup -/
 
 /-- An element of the syntactic monoid is a right zero once it absorbs the image of the syntactic
@@ -189,20 +227,20 @@ theorem isLeftZero_iff_forall_mul_syntacticSemigroupToMonoid {x : L.SyntacticMon
 /-- The syntactic semigroup of a definite language is definite. -/
 theorem IsDefinite.isDefinite_syntacticSemigroup (h : L.IsDefinite k) :
     Semigroup.IsDefinite L.SyntacticSemigroup :=
-  .of_mul_map_eq L.toSyntacticSemigroup_surjective fun w hw s ↦
-    L.syntacticSemigroupToMonoid_injective <| by
-      obtain ⟨a, l⟩ := w
-      rw [map_mul, syntacticSemigroupToMonoid_mk]
-      exact h.isRightZero_syntacticClass hw _
+  .of_isRightZero_map L.toSyntacticSemigroup_surjective fun w hw ↦ by
+    obtain ⟨a, l⟩ := w
+    refine .of_map ?_ L.syntacticSemigroupToMonoid_injective
+    rw [syntacticSemigroupToMonoid_mk]
+    exact h.isRightZero_syntacticClass hw
 
 /-- The syntactic semigroup of a reverse definite language is reverse definite. -/
 theorem IsReverseDefinite.isReverseDefinite_syntacticSemigroup (h : L.IsReverseDefinite k) :
     Semigroup.IsReverseDefinite L.SyntacticSemigroup :=
-  .of_map_mul_eq L.toSyntacticSemigroup_surjective fun w hw s ↦
-    L.syntacticSemigroupToMonoid_injective <| by
-      obtain ⟨a, l⟩ := w
-      rw [map_mul, syntacticSemigroupToMonoid_mk]
-      exact h.isLeftZero_syntacticClass hw _
+  .of_isLeftZero_map L.toSyntacticSemigroup_surjective fun w hw ↦ by
+    obtain ⟨a, l⟩ := w
+    refine .of_map ?_ L.syntacticSemigroupToMonoid_injective
+    rw [syntacticSemigroupToMonoid_mk]
+    exact h.isLeftZero_syntacticClass hw
 
 /-- The syntactic semigroup of a generalized definite language is locally trivial. -/
 theorem IsGeneralizedDefinite.isLocallyTrivial_syntacticSemigroup
@@ -233,7 +271,7 @@ theorem isDefinite_natCard_of_isDefinite_syntacticSemigroup
   rcases u with _ | ⟨a, l⟩
   · exact (isEmpty_of_natCard_le_length_nil hu).elim
   · intro s
-    rw [← syntacticSemigroupToMonoid_mk, ← map_mul, h.mul_map_eq _ (w := ⟨a, l⟩) hu]
+    rw [← syntacticSemigroupToMonoid_mk, ← map_mul, h.isRightZero_map _ (w := ⟨a, l⟩) hu s]
 
 /-- A language with a reverse definite syntactic semigroup `S` is reverse `|S|`-definite. -/
 theorem isReverseDefinite_natCard_of_isReverseDefinite_syntacticSemigroup
@@ -244,7 +282,7 @@ theorem isReverseDefinite_natCard_of_isReverseDefinite_syntacticSemigroup
   rcases u with _ | ⟨a, l⟩
   · exact (isEmpty_of_natCard_le_length_nil hu).elim
   · intro s
-    rw [← syntacticSemigroupToMonoid_mk, ← map_mul, h.map_mul_eq _ (w := ⟨a, l⟩) hu]
+    rw [← syntacticSemigroupToMonoid_mk, ← map_mul, h.isLeftZero_map _ (w := ⟨a, l⟩) hu s]
 
 /-- A language with a locally trivial syntactic semigroup `S` is generalized `|S|`-definite. -/
 theorem isGeneralizedDefinite_natCard_of_isLocallyTrivial_syntacticSemigroup
