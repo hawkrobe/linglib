@@ -4,9 +4,9 @@
 Every entry of `references.bib` is shown with where linglib uses it. The places are read from
 the repository, not from the entries' hand-kept `sources` fields: the `[key]` citations in the
 tracked Lean files of `Linglib`, `Studies`, `Eval` and `Lab`, and the `bibkey` of the data files
-under `Linglib/Data`. Each entry says whether its metadata has been checked against the
-publication (`validated = {true}`), since an unchecked entry may be wrong. TeX accents are
-rendered as Unicode; `--check` lists entries whose TeX the page cannot render.
+under `Linglib/Data`. Each entry is formalized, foundational or cited: formalized when its `role`
+says so or a study is named after it, foundational when its `role` says so, cited otherwise. TeX
+accents are rendered as Unicode; `--check` lists entries whose TeX the page cannot render.
 
 Usage, from the repository root:
 
@@ -30,7 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BIB = ROOT / "references.bib"
 TEMPLATE = ROOT / "scripts" / "bibliography_page" / "template.html"
-SITE_CSS = ROOT / "scripts" / "site.css"
+PAPERMOD_CSS = ROOT / "scripts" / "papermod.css"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "bibliography"
 LEAN_LIBS = ("Linglib", "Studies", "Eval", "Lab")
 REPO = "https://github.com/linglib-community/linglib"
@@ -105,8 +105,8 @@ def detex(s):
     s = re.sub(r"\{\\(?:em|it|itshape)\s+", ITAL_ON + "{", s)
     s = re.sub(r"\\(?:textsc|textrm|textup|textbf|textnormal|mbox|url|text)\s*\{", "{", s)
     for _ in range(3):
-        s = re.sub(r"\\([`'^\"~=.])\s*\{?\s*\\?([A-Za-z])\s*\}?",
-                   lambda m: m.group(2) + ACCENTS[m.group(1)], s)
+        s = re.sub(r"\\([`'^\"~=.])\s*(?:\{\s*\\?([A-Za-z])\s*\}|\\?([A-Za-z]))",
+                   lambda m: (m.group(2) or m.group(3)) + ACCENTS[m.group(1)], s)
         s = re.sub(r"\\([uvHckdrb])\s*\{\s*\\?([A-Za-z])\s*\}",
                    lambda m: m.group(2) + ACCENTS[m.group(1)], s)
         s = re.sub(r"\\([uvHckdrb]) ([A-Za-z])", lambda m: m.group(2) + ACCENTS[m.group(1)], s)
@@ -120,6 +120,7 @@ def detex(s):
     s = re.sub(r"\\[ ,;]", " ", s).replace("$", "")
     s = re.sub(r"\\([&%_#{}])", r"\1", s)
     s = s.replace("---", "—").replace("--", "–").replace("``", "“").replace("''", "”")
+    s = s.replace("`", "‘").replace("'", "’")
     s = s.replace("~", "\u00a0")
     # Close each italic span at the end of its braced group, then drop the braces.
     out, stack = [], []
@@ -142,18 +143,49 @@ def tex_text(s):
     return detex(s).replace(ITAL_ON, "").replace(ITAL_OFF, "")
 
 
-def names(field):
-    """Author or editor names as written: `Last, First` becomes `First Last`."""
-    out = []
-    for n in re.split(r"\s+and\s+", field):
-        n = tex_text(n).strip()
-        if n == "others":
-            out.append("et al.")
-        elif "," in n:
-            last, first = n.split(",", 1)
-            out.append(f"{first.strip()} {last.strip()}".strip())
-        elif n:
-            out.append(n)
+def initials(first):
+    """`Bas` becomes `B.`, `Jean-Pierre` becomes `J.-P.`."""
+    return " ".join("-".join(p[0] + "." for p in w.split("-") if p) for w in first.split())
+
+
+def short_name(raw):
+    """A BibTeX name as `Surname, I.`; `Last, Jr., First` becomes `Last, F., Jr.`. A one-word or
+    brace-wrapped corporate name is kept as written, and `others` is `None`."""
+    n = tex_text(raw).strip()
+    if n == "others":
+        return None
+    parts = [p.strip() for p in n.split(",")]
+    if len(parts) == 1:
+        words = parts[0].split()
+        if len(words) <= 1 or raw.strip().startswith("{"):
+            return parts[0]
+        return f"{words[-1]}, {initials(' '.join(words[:-1]))}"
+    if len(parts) == 2:
+        return f"{parts[0]}, {initials(parts[1])}" if parts[1] else parts[0]
+    return f"{parts[0]}, {initials(', '.join(parts[2:]))}, {parts[1]}"
+
+
+def authors(f):
+    """The authors as `A, B & C`, or the editors with `(Ed.)` or `(Eds.)`; past eight names, the
+    first seven, an ellipsis and the last."""
+    src, eds = f.get("author"), False
+    if not src and f.get("editor"):
+        src, eds = f["editor"], True
+    if not src:
+        return ""
+    ns = [short_name(r) for r in re.split(r"\s+and\s+", src)]
+    etal = None in ns
+    ns = [n for n in ns if n]
+    if len(ns) > 8:
+        out = ", ".join(ns[:7]) + ", … " + ns[-1]
+    elif etal:
+        out = ", ".join(ns) + ", et al."
+    elif len(ns) <= 1:
+        out = "".join(ns)
+    else:
+        out = ", ".join(ns[:-1]) + " & " + ns[-1]
+    if eds:
+        out += " (Ed.)" if len(ns) == 1 and not etal else " (Eds.)"
     return out
 
 
@@ -164,42 +196,65 @@ def surname(field):
     return unicodedata.normalize("NFD", n).encode("ascii", "ignore").decode().lower()
 
 
-def join_names(ns):
-    if len(ns) <= 2:
-        return " and ".join(ns)
-    return ", ".join(ns[:-1]) + ", and " + ns[-1]
-
-
 def venue(kind, f):
-    """Where a work appeared, as HTML."""
-    parts = []
+    """Where a work appeared, as HTML in APA punctuation with only the container title italic:
+    `<i>Journal</i>, 25(2), 277–290`, `In <i>Book</i> (pp. 1–13). Publisher`, `Publisher`."""
+    pages = html.escape(tex_text(f.get("pages", "")))
+    pub = tex_html(f.get("publisher", ""))
     if kind == "article":
-        j = tex_html(f.get("journal", ""))
-        vol = f.get("volume", "")
-        num = f"({f['number']})" if f.get("number") else ""
-        parts.append(f"<i>{j}</i>" + (f" {html.escape(vol + num)}" if vol else ""))
-    elif kind in ("incollection", "inproceedings", "inbook"):
-        if f.get("booktitle"):
-            ed = names(f.get("editor", ""))
-            eds = f"{html.escape(join_names(ed))} (ed{'s' if len(ed) > 1 else ''}.), " if ed else ""
-            parts.append(f"In {eds}<i>{tex_html(f['booktitle'])}</i>")
-    elif kind in ("phdthesis", "mastersthesis"):
+        out = f"<i>{tex_html(f['journal'])}</i>" if f.get("journal") else ""
+        if f.get("volume"):
+            out += ", " + html.escape(f["volume"])
+            out += f"({html.escape(f['number'])})" if f.get("number") else ""
+        return out + (", " + pages if pages else "")
+    if kind in ("incollection", "inproceedings", "inbook") and f.get("booktitle"):
+        out = f"In <i>{tex_html(f['booktitle'])}</i>"
+        if pages:
+            pp = "pp." if re.search(r"\d\s*[–-]\s*\d", pages) else "p."
+            out += f" ({pp}\u00a0{pages})"
+        return out + (f". {pub}" if pub else "")
+    if kind in ("phdthesis", "mastersthesis"):
         label = "PhD thesis" if kind == "phdthesis" else "Master's thesis"
-        parts.append(label + (", " + tex_html(f["school"]) if f.get("school") else ""))
-    elif kind == "techreport":
-        parts.append("Technical report" + (", " + tex_html(f["institution"])
-                                           if f.get("institution") else ""))
-    if f.get("pages"):
-        parts.append(html.escape(tex_text(f["pages"])))
-    published = kind in ("book", "incollection", "inbook")
-    if published or (kind == "inproceedings" and f.get("publisher")):
-        pub = ", ".join(tex_html(f[k]) for k in ("address", "publisher") if f.get(k))
-        if pub:
-            parts.append(pub)
+        return label + (", " + tex_html(f["school"]) if f.get("school") else "")
+    if kind == "techreport":
+        return "Technical report" + (", " + tex_html(f["institution"])
+                                     if f.get("institution") else "")
+    if kind == "book":
+        return pub
     for k in ("howpublished", "note"):
         if f.get(k):
-            parts.append(tex_html(f[k]))
-    return ". ".join(p for p in parts if p)
+            return tex_html(f[k])
+    return pub
+
+
+# ---------------------------------------------------------------- role
+
+
+FORMALIZED_ROLES = {"formalized", "primary", "target"}
+
+
+def study_name(key):
+    """The study a key names: `abney-keshet-2025` is `AbneyKeshet2025`, `et-al` is `EtAl`."""
+    segs = re.sub(r"(^|-)et-?al(-|$)", r"\1etal\2", key).split("-")
+    return "".join("EtAl" if p == "etal" else p[:1].upper() + p[1:] for p in segs)
+
+
+def study_names():
+    d = ROOT / "Studies"
+    return {p.stem if p.suffix == ".lean" else p.name
+            for p in d.iterdir() if p.suffix == ".lean" or p.is_dir()}
+
+
+def role(key, f, studies):
+    """Formalized when the entry's `role` says so or a study is named after it
+    (`Studies/AbneyKeshet2025.lean`, `Studies/Cooper2023Ch6.lean`), foundational when its `role`
+    says so, cited otherwise."""
+    n = study_name(key)
+    eponymous = n in studies or any(s.startswith(n) and s[len(n):][:1].isupper() for s in studies)
+    r = f.get("role", "").strip().lower()
+    if r in FORMALIZED_ROLES or eponymous:
+        return "formalized"
+    return "foundational" if r == "foundational" else "cited"
 
 
 # ---------------------------------------------------------------- where entries are used
@@ -233,12 +288,11 @@ def citations(keys):
 
 def place(path, sha, docs_base):
     """A file that uses an entry, linked to its documentation or its source."""
-    library = path.split("/")[0]
     if path.endswith(".lean"):
         href = docs_base + path[:-len(".lean")] + ".html"
     else:
         href = f"{REPO}/blob/{sha or 'main'}/{path}"
-    return {"path": path, "library": library, "href": href}
+    return {"path": path, "href": href}
 
 
 # ---------------------------------------------------------------- page
@@ -247,31 +301,27 @@ def place(path, sha, docs_base):
 def build(sha, docs_base):
     entries = parse_bib(BIB.read_text(encoding="utf-8"))
     used = citations({key for _, key, _ in entries})
+    studies = study_names()
     order = {"Studies": 0, "Eval": 1, "Lab": 2, "Linglib": 3}
     rows, unrendered = [], []
     for kind, key, f in entries:
-        authors = join_names(names(f.get("author", "")))
-        if not authors and f.get("editor"):
-            eds = names(f["editor"])
-            authors = join_names(eds) + (" (eds.)" if len(eds) > 1 else " (ed.)")
-        title = tex_html(f.get("title", ""))
-        ven = venue(kind, f)
         for field in ("author", "editor", "title", "journal", "booktitle", "publisher", "note"):
             if "\\" in tex_text(f.get(field, "")):
                 unrendered.append((key, field, f[field]))
         places = sorted((place(p, sha, docs_base) for p in used.get(key, ())),
-                        key=lambda p: (order.get(p["library"], 4), p["path"]))
+                        key=lambda p: (order.get(p["path"].split("/")[0], 4), p["path"]))
         sub = f.get("subfield", "")
+        search = " ".join([key, tex_text(f.get("author", "")), tex_text(f.get("editor", "")),
+                           f.get("year", ""), tex_text(f.get("title", "")),
+                           tex_text(f.get("journal", "")), tex_text(f.get("booktitle", "")), sub])
         rows.append({
-            "key": key, "kind": kind, "authors": authors, "year": f.get("year", ""),
+            "key": key, "authors": authors(f), "year": f.get("year", ""),
             "sort": [surname(f.get("author") or f.get("editor") or key), f.get("year", ""), key],
-            "title": title, "venue": ven, "doi": f.get("doi", ""), "url": f.get("url", ""),
-            "subfield": sub, "area": sub.split("/")[0].split(";")[0].strip() if sub else "",
-            "checked": f.get("validated", "").lower() == "true", "places": places,
-            "search": " ".join([key, tex_text(f.get("author", "")), tex_text(f.get("editor", "")),
-                                f.get("year", ""), tex_text(f.get("title", "")),
-                                tex_text(f.get("journal", "")), tex_text(f.get("booktitle", "")),
-                                sub]).lower()})
+            "title": tex_html(f.get("title", "")), "venue": venue(kind, f),
+            "doi": f.get("doi", ""), "url": f.get("url", ""),
+            "area": sub.split("/")[0].split(";")[0].strip() if sub else "",
+            "role": role(key, f, studies), "places": places,
+            "search": search.replace("‘", "'").replace("’", "'").lower()})
     rows.sort(key=lambda r: r.pop("sort"))
     return rows, unrendered
 
@@ -309,7 +359,7 @@ def main():
                        "href": f"{REPO}/tree/{sha}" if sha else ""}}
     data = json.dumps(page, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     out = (TEMPLATE.read_text(encoding="utf-8")
-           .replace("/*SITE_CSS*/", SITE_CSS.read_text(encoding="utf-8"))
+           .replace("/*PAPERMOD_CSS*/", PAPERMOD_CSS.read_text(encoding="utf-8"))
            .replace("/*BIB_DATA*/{}", data))
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "index.html").write_text(out, encoding="utf-8")
