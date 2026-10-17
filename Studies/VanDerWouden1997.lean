@@ -8,14 +8,17 @@ public import Linglib.Data.Examples.VanDerWouden1997
 # van der Wouden (1997): Negative Contexts: Collocation, Polarity and Multiple Negation
 
 Van der Wouden ranks negative contexts by strength, monotone decreasing, anti-additive and
-antimorphic, and classes polarity items by the weakest context that licenses or blocks them.
-Dutch *ooit* 'ever' is his bipolar element: a weak negative polarity item, out in a clause that is
-not monotone decreasing and fine under *weinig* 'few' and *geen van* 'none of', and a weak positive
+antimorphic, and classes polarity items by the weakest context that licenses or blocks them. Dutch
+*ooit* 'ever' is his bipolar element: a weak negative polarity item, out in a clause that is not
+monotone decreasing and fine under *weinig* 'few' and *geen van* 'none of', and a weak positive
 polarity item, blocked by the antimorphic negation *niet*. The library's contexts for these
-operators have the strengths he assigns them (`context_strengths`), and with *ooit*'s Fragment
-entry every judgment of his (184) is the licensing theory's (`judgments_predicted`). An entry that
-were only a negative polarity item, as on the analysis with two items *ooit*, would be admitted
-under *niet*, against (184d) (`negativeOnly_admits_niet`).
+operators have the strengths he assigns them (`context_strengths`). He holds that a verb with
+negative properties is anti-additive, none being only monotone decreasing; *deny* bears this out,
+but *doubt*, on his own sketch of it as not believing the complement, is only monotone decreasing
+(`verb_strengths`). With *ooit*'s Fragment entry every judgment of his (184) is the licensing
+theory's (`judgments_predicted`). An entry that were only a negative polarity item, as on the
+analysis with two items *ooit*, would be admitted under *niet*, against (184d)
+(`negativeOnly_admits_niet`).
 
 ## References
 
@@ -59,6 +62,20 @@ theorem context_strengths :
     LicensingContext.holds_nobody_iff (s := .antiAdditive) |>.2 le_rfl,
     fun h ↦ absurd (LicensingContext.holds_nobody_iff (s := .antiMorphic) |>.1 h) (by decide),
     LicensingContext.holds_negation .antiMorphic⟩
+
+/-- Van der Wouden holds that a verb with negative properties is anti-additive, no verb being only
+monotone decreasing. *Deny* bears this out, being anti-additive and not antimorphic. *Doubt*, on
+his sketch of it as not believing that the complement is true, which is the library's model of it,
+is monotone decreasing and not anti-additive. -/
+theorem verb_strengths :
+    LicensingContext.denyVerb.licenser.Holds .antiAdd ∧
+      ¬ LicensingContext.denyVerb.licenser.Holds .antiAddMult ∧
+      LicensingContext.doubtVerb.licenser.Holds .anti ∧
+      ¬ LicensingContext.doubtVerb.licenser.Holds .antiAdd :=
+  ⟨LicensingContext.holds_denyVerb_iff (s := .antiAdditive) |>.2 le_rfl,
+    fun h ↦ absurd (LicensingContext.holds_denyVerb_iff (s := .antiMorphic) |>.1 h) (by decide),
+    LicensingContext.holds_doubtVerb_iff (s := .weak) |>.2 le_rfl,
+    fun h ↦ absurd (LicensingContext.holds_doubtVerb_iff (s := .antiAdditive) |>.1 h) (by decide)⟩
 
 /-- The context a row's class names. -/
 def Context.ofKey : String → Option Context

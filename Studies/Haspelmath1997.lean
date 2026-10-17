@@ -81,6 +81,12 @@ only question, and question and conditional are adjacent and differ in nothing. 
 adjacent functions differ in at most one feature classifying both (`card_distinguishes_le_one`);
 the converse fails, question and comparative differing in nothing without being adjacent.
 
+§5.6 counts both negation functions anti-additive, after van der Wouden, who holds that no verb
+with negative properties is only monotone decreasing. The *doubt* context of
+`PolarityItem.LicensingContext`, which realizes indirect negation, models *doubt* by his own sketch
+of it as not believing the complement and is only downward entailing (`carries_antiAdditive_iff`,
+`VanDerWouden1997.verb_strengths`), so the claim fails for *doubt* on that analysis.
+
 A `Series` is an indefinite series with the region its Appendix A figure encloses, named as the book
 names it. The region is the book's analysis of the series and not a lexical property of its members:
 a figure records where a series is possible and not where it is preferred (Russian *-to* is drawn
@@ -91,9 +97,6 @@ adjacency requirement on the others. Every language's series are those of its Fr
 
 ## TODO
 
-* §5.6 counts both negation functions anti-additive, but the *doubt* context of
-  `PolarityItem.LicensingContext`, tagged as realizing indirect negation, is only downward
-  entailing; either the tag or the claim must give way.
 * The book counts 95 geometrically possible combinations under the adjacency requirement; the
   encoded map has 108 connected regions, and no reading of the edges of Fig. 4.4 recovers the
   book's count.
@@ -101,6 +104,7 @@ adjacency requirement on the others. Every language's series are those of its Fr
 ## References
 
 * [haspelmath-1997]
+* [vanderwouden-1997]
 -/
 
 @[expose] public section
