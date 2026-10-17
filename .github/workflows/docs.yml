@@ -120,12 +120,11 @@ jobs:
 
       - name: Compose site
         run: |
-          # doc-gen4 output is the site; keep the /docs/ prefix so
-          # existing deep links survive, with a root redirect into it.
+          # doc-gen4 output lives under /docs/, so existing deep links survive.
           mkdir -p .lake/build/doc-site/docs
           cp -r .lake/build/doc/* .lake/build/doc-site/docs/
-          printf '<!doctype html><meta http-equiv="refresh" content="0; url=docs/">' \
-            > .lake/build/doc-site/index.html
+          # The landing page at /.
+          python3 scripts/gen_home_page.py --out .lake/build/doc-site
           # The projection scoreboard at /eval/, its verdicts reduced from Eval's theorems.
           python3 scripts/gen_eval_page.py --export --out .lake/build/doc-site/eval
           # The bibliography at /bibliography/, with where each work is cited.

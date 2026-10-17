@@ -30,6 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BIB = ROOT / "references.bib"
 TEMPLATE = ROOT / "scripts" / "bibliography_page" / "template.html"
+PAPERMOD_CSS = ROOT / "scripts" / "papermod.css"
 DEFAULT_OUT = ROOT / ".lake" / "build" / "bibliography"
 LEAN_LIBS = ("Linglib", "Studies", "Eval", "Lab")
 REPO = "https://github.com/linglib-community/linglib"
@@ -357,7 +358,9 @@ def main():
             "commit": {"sha": sha, "short": sha[:9],
                        "href": f"{REPO}/tree/{sha}" if sha else ""}}
     data = json.dumps(page, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-    out = TEMPLATE.read_text(encoding="utf-8").replace("/*BIB_DATA*/{}", data)
+    out = (TEMPLATE.read_text(encoding="utf-8")
+           .replace("/*PAPERMOD_CSS*/", PAPERMOD_CSS.read_text(encoding="utf-8"))
+           .replace("/*BIB_DATA*/{}", data))
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / "index.html").write_text(out, encoding="utf-8")
     used = sum(1 for r in rows if r["places"])

@@ -8,70 +8,16 @@
 <link rel="icon" href="../docs/favicon.svg">
 <script>try { var t = localStorage.getItem("pref-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <style>
-:root {
-  --gap: 24px;
-  --theme: #ffffff;
-  --entry: #ffffff;
-  --primary: #1e1e1e;
-  --secondary: #6c6c6c;
-  --tertiary: #d6d6d6;
-  --content: #1f1f1f;
-  --border: #eeeeee;
-  --code-bg: #f5f5f5;
-  --formalized: #22c55e;
-  --foundational: #a78bfa;
-  --cited: #d6d6d6;
-  --control: #e2e2e2;
-  color-scheme: light;
-}
+/*PAPERMOD_CSS*/
+
+/* Bibliography */
+:root { --formalized: #22c55e; --foundational: #a78bfa; --cited: #d6d6d6; --control: #e2e2e2; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --theme: #1d1e20; --entry: #2e2e33; --primary: #dadadb; --secondary: #9b9c9d; --tertiary: #414244;
-    --content: #c4c4c5; --border: #333333; --code-bg: #37383e; --cited: #4a4b4e; --control: #414244;
-    color-scheme: dark;
-  }
+  :root:not([data-theme="light"]) { --cited: #4a4b4e; --control: #414244; }
 }
-:root[data-theme="dark"] {
-  --theme: #1d1e20; --entry: #2e2e33; --primary: #dadadb; --secondary: #9b9c9d; --tertiary: #414244;
-  --content: #c4c4c5; --border: #333333; --code-bg: #37383e; --cited: #4a4b4e; --control: #414244;
-  color-scheme: dark;
-}
+:root[data-theme="dark"] { --cited: #4a4b4e; --control: #414244; }
 
-*, ::before, ::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-y: scroll; }
-body {
-  margin: 0; background: var(--theme); color: var(--content);
-  font: 18px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-    "Open Sans", "Helvetica Neue", sans-serif;
-  overflow-wrap: break-word;
-}
-a { color: var(--primary); text-decoration: none; }
-button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
-:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
-
-/* Header, as PaperMod draws it */
-.nav {
-  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
-  max-width: calc(1024px + var(--gap) * 2); margin-inline: auto; min-height: 60px;
-}
-.logo, .menu { display: flex; align-items: center; margin: 0 var(--gap); }
-.logo a { font-size: 24px; font-weight: 700; color: var(--primary); }
-#theme-toggle { display: inline-flex; margin-left: 10px; color: var(--primary); padding: 4px; }
-#theme-toggle svg { width: 22px; height: 18px; }
-#sun { display: none; }
-:root[data-theme="dark"] #moon { display: none; }
-:root[data-theme="dark"] #sun { display: block; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) #moon { display: none; }
-  :root:not([data-theme="light"]) #sun { display: block; }
-}
-.menu { list-style: none; padding: 0; gap: var(--gap); }
-.menu a { font-size: 16px; color: var(--primary); padding-block: 4px; }
-.menu a[aria-current="page"] { font-weight: 500; border-bottom: 2px solid; }
-
-/* Page */
-.main { max-width: calc(720px + var(--gap) * 2); margin: 0 auto; padding: var(--gap); min-height: calc(100vh - 120px); }
-h1 { font-size: 40px; line-height: 1.2; font-weight: 700; color: var(--primary); margin: 24px 0 12px; }
+h1 { font-size: 40px; margin: 24px 0 12px; }
 
 /* Toolbar */
 .search { position: sticky; top: 0; z-index: 2; background: var(--theme); padding: 12px 0 8px; }
@@ -123,45 +69,23 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
 .files button:hover { color: var(--primary); }
 .empty { color: var(--secondary); }
 
-/* Footer, back to top */
-.footer { max-width: calc(720px + var(--gap) * 2); margin: 0 auto; padding: 18px var(--gap) 24px; text-align: center; font-size: 12px; line-height: 24px; color: var(--secondary); }
-.footer a { color: inherit; border-bottom: 1px solid var(--secondary); }
-.footer a:hover { color: var(--primary); border-bottom-color: var(--primary); }
-.top-link {
-  position: fixed; right: 30px; bottom: 60px; z-index: 3; width: 42px; height: 42px; padding: 12px;
-  border-radius: 50%; background: var(--tertiary); color: var(--primary); visibility: hidden; opacity: 0;
-  transition: visibility 0.5s, opacity 0.8s linear;
-}
-.top-link.on { visibility: visible; opacity: 1; }
-.top-link svg { display: block; width: 18px; height: 9px; margin: 4px auto 0; }
-
 @media (max-width: 768px) {
-  :root { --gap: 16px; }
-  .nav { min-height: 56px; padding-block: 6px; row-gap: 2px; }
-  .logo a { font-size: 22px; }
-  .menu a { font-size: 15px; }
   h1 { font-size: 32px; margin-top: 12px; }
-  .top-link { right: 16px; bottom: 24px; }
 }
 @media (max-width: 600px) {
-  body { font-size: 16px; }
   #q { font-size: 16px; }
   .filter { font-size: 14px; padding: 2px 9px; }
   .filter .n { display: none; }
   .status { font-size: 14px; }
   .files { font-size: 13px; }
 }
-@media (max-width: 380px) {
-  .menu { gap: 14px; }
-}
-@media (prefers-reduced-motion: reduce) { .top-link { transition: none; } }
 </style>
 </head>
 <body id="top">
 <header>
   <nav class="nav" aria-label="Site">
     <div class="logo">
-      <a href="../docs/">Linglib</a>
+      <a href="../">Linglib</a>
       <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg id="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         <svg id="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
