@@ -8,7 +8,8 @@ module
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Linglib.Core.Computability.PiecewiseTestable
-public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Computability.Variety.Definite
+public import Linglib.Core.Computability.Variety.Eilenberg
 public import Linglib.Core.Computability.LocallyTestable
 public import Mathlib.Computability.Language
 public import Mathlib.Order.BooleanSubalgebra
@@ -31,13 +32,19 @@ of `𝒞`-languages under tier projections.
   finite-or-cofinite languages. Lambert calls the first the multitier locally testable languages.
 * `IsBTC.Indist`: tier-indistinguishability, the congruence behind membership refutation.
 * `tierWord`, `tierPrefix`, `tierSuffix`: the literals of a propositional logic over tier affixes.
+* `Monoid.IsMultitierReverseDefinite`, `Monoid.multitierReverseDefiniteVariety`: the monoids
+  satisfying `x^ω y x = x^ω y`.
 
 ## Main results
 
 * `IsBTC.mono`: monotonicity in the base class.
 * `isTierStrictlyLocal_iff_isTierBased`: TSL_k is the tier-based closure of SL_k.
-* `IsBTC.isStarFree`: the multitier closure of a star-free base class is star-free, so all six
-  specializations are star-free over a finite alphabet.
+* `IsBTC.mem_languageVariety`: the multitier closure of a class lies in every variety of
+  languages containing it, since a tier projection is a homomorphism of free monoids.
+* `IsBTC.isStarFree`: its instance at the aperiodic monoids, so all six specializations are
+  star-free over a finite alphabet.
+* `IsBTK.mem_multitierReverseDefiniteVariety`: the syntactic monoid of a multitier reverse definite
+  language satisfies `x^ω y x = x^ω y`.
 * `IsBTC.mem_iff_of_indist` and `not_isBTC_of_indist`: membership respects
   tier-indistinguishability, yielding the standard non-membership argument.
 
@@ -46,12 +53,20 @@ of `𝒞`-languages under tier projections.
 `IsTierBased`/`IsBTC.Indist` quantify over `Bool` tiers `T : α → Bool`, avoiding an
 `∃ T, ∃ _ : DecidablePred T, …` witness. A `Prop` tier with `[DecidablePred]`, as in
 `TierStrictlyLocalGrammar`, projects by the filter of its `decide`, which is already a `Bool`
-tier, so `isTierStrictlyLocal_iff_isTierBased` needs no conversion lemma.
+tier, so `isTierStrictlyLocal_iff_isTierBased` needs no conversion lemma. The equation
+`x^ω y x = x^ω y` is stated through idempotent powers rather than the omega power.
+
+## TODO
+
+Lambert, following Almeida, characterizes each multitier class by equations on the syntactic
+monoid; only the inclusion of the multitier reverse definite languages in the languages of their
+equation is proved here. The converse and the equations for the other classes are open.
 
 ## References
 
 * [lambert-2026]
 * [heinz-rawal-tanner-2011]
+* [almeida-1995]
 -/
 
 @[expose] public section
@@ -285,24 +300,22 @@ theorem IsBTC.indist_isGeneralizedDefinite_of_tierAffixes
   obtain ⟨h_pre, h_suf⟩ := h T
   exact Language.isGeneralizedDefinite_iff_edges.mp hL' h_pre h_suf
 
-/-! ### Star-freeness
+/-! ### Varieties of languages
 
-Star-free languages are closed under preimage by erasure (`IsStarFree.preimage_filter`) and under
-the Boolean operations, so the multitier closure of a star-free base class stays star-free. -/
+A tier projection is the free monoid endomorphism `FreeMonoid.filter T`, and a variety of
+languages is a Boolean algebra closed under inverse images of such endomorphisms, so it contains
+the multitier closure of any class it contains. -/
 
-/-- A tier-based language over a star-free base class is star-free. -/
-theorem IsTierBased.isStarFree (h𝒞 : ∀ L, 𝒞 L → L.IsStarFree) (h : IsTierBased 𝒞 L) :
-    L.IsStarFree := by
-  obtain ⟨T, L', rfl, hL'⟩ := h
-  exact (h𝒞 L' hL').preimage_filter T
+/-- The multitier closure of `𝒞` lies in every variety of languages containing `𝒞`. -/
+theorem IsBTC.mem_languageVariety {𝒱 : Monoid.LanguageVariety} (h𝒞 : ∀ L, 𝒞 L → L ∈ 𝒱 α)
+    (h : IsBTC 𝒞 L) : L ∈ 𝒱 α :=
+  BooleanSubalgebra.closure_le.2 (by
+    rintro _ ⟨T, L', rfl, hL'⟩
+    exact 𝒱.comap_mem (FreeMonoid.filter T) (h𝒞 L' hL')) h
 
 /-- The multitier closure of a star-free base class is star-free. -/
-theorem IsBTC.isStarFree (h𝒞 : ∀ L, 𝒞 L → L.IsStarFree) (h : IsBTC 𝒞 L) : L.IsStarFree := by
-  induction h using BooleanSubalgebra.closure_bot_sup_induction with
-  | mem L' hL' => exact hL'.isStarFree h𝒞
-  | bot => exact Monoid.aperiodicVariety.langs_bot
-  | sup _ _ _ _ ih₁ ih₂ => exact ih₁.union ih₂
-  | compl _ _ ih => exact ih.compl
+theorem IsBTC.isStarFree (h𝒞 : ∀ L, 𝒞 L → L.IsStarFree) (h : IsBTC 𝒞 L) : L.IsStarFree :=
+  h.mem_languageVariety (𝒱 := Monoid.aperiodicVariety.toLanguageVariety) h𝒞
 
 section Finite
 
@@ -325,5 +338,92 @@ theorem IsBTN.isStarFree (h : IsBTN L) : L.IsStarFree :=
   IsBTC.isStarFree (fun _ ↦ IsFiniteOrCofinite.isStarFree) h
 
 end Finite
+
+end Language
+
+/-! ### The equation of the multitier reverse definite languages
+
+Lambert's (62), which he attributes to Almeida, characterizes the multitier reverse definite
+languages by the equation `x^ω y x = x^ω y` on the syntactic monoid: after an idempotent power of
+`x`, a further `x` is absorbed. The syntactic monoid of a reverse definite language satisfies it,
+since an idempotent power of the class of a nonempty word is a left zero, and the equation defines a
+pseudovariety, so `IsBTC.mem_languageVariety` lifts it to the multitier closure. -/
+
+namespace Monoid
+
+universe u
+
+/-- A monoid is *multitier reverse definite* when every idempotent power `e` of an element `x`
+satisfies `e * y * x = e * y` for every `y`. -/
+def IsMultitierReverseDefinite (M : Type*) [Monoid M] : Prop :=
+  ∀ (x y : M) (n : ℕ), n ≠ 0 → IsIdempotentElem (x ^ n) → x ^ n * y * x = x ^ n * y
+
+namespace IsMultitierReverseDefinite
+
+variable {M N : Type*} [Monoid M] [Monoid N]
+
+theorem of_injective {f : M →* N} (hf : Function.Injective f) (h : IsMultitierReverseDefinite N) :
+    IsMultitierReverseDefinite M := fun x y n hn he ↦ hf <| by
+  simpa only [map_mul, map_pow] using h (f x) (f y) n hn (by simpa only [map_pow] using he.map f)
+
+/-- A surjective image of a finite multitier reverse definite monoid is multitier reverse
+definite, since `x ^ (m * n)` is idempotent for an idempotent power `x ^ m` and is sent to
+`f x ^ n` whenever `f x ^ n` is idempotent. -/
+theorem of_surjective [Finite M] {f : M →* N} (hf : Function.Surjective f)
+    (h : IsMultitierReverseDefinite M) : IsMultitierReverseDefinite N := by
+  intro x' y' n hn he'
+  obtain ⟨x, rfl⟩ := hf x'
+  obtain ⟨y, rfl⟩ := hf y'
+  obtain ⟨m, hm, he⟩ := exists_pos_pow_isIdempotent x
+  have hmn : f x ^ (m * n) = f x ^ n := by rw [mul_comm, pow_mul, he'.pow_eq hm.ne']
+  have := h x y (m * n) (mul_ne_zero hm.ne' hn) (by rw [pow_mul, he.pow_eq hn]; exact he)
+  simpa only [map_mul, map_pow, hmn] using congrArg f this
+
+theorem prod (hM : IsMultitierReverseDefinite M) (hN : IsMultitierReverseDefinite N) :
+    IsMultitierReverseDefinite (M × N) := fun x y n hn he ↦
+  Prod.ext (hM x.1 y.1 n hn (congrArg Prod.fst he)) (hN x.2 y.2 n hn (congrArg Prod.snd he))
+
+theorem of_subsingleton [Subsingleton M] : IsMultitierReverseDefinite M :=
+  fun _ _ _ _ _ ↦ Subsingleton.elim _ _
+
+end IsMultitierReverseDefinite
+
+/-- The pseudovariety of finite multitier reverse definite monoids. -/
+def multitierReverseDefiniteVariety : Pseudovariety.{u} where
+  mem M _ := Finite M ∧ IsMultitierReverseDefinite M
+  finite_of_mem h := h.1
+  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
+  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
+  prod hM hN := have := hM.1; have := hN.1; ⟨inferInstance, hM.2.prod hN.2⟩
+  memUnit := ⟨inferInstance, .of_subsingleton⟩
+
+@[simp] theorem mem_multitierReverseDefiniteVariety {M : Type u} [Monoid M] :
+    multitierReverseDefiniteVariety.mem M ↔ Finite M ∧ IsMultitierReverseDefinite M := Iff.rfl
+
+end Monoid
+
+namespace Language
+
+variable {α : Type*} {L : Language α} {k : ℕ}
+
+/-- The syntactic monoid of a reverse definite language is multitier reverse definite. -/
+theorem IsReverseDefinite.isMultitierReverseDefinite_syntacticMonoid (h : L.IsReverseDefinite k) :
+    Monoid.IsMultitierReverseDefinite L.SyntacticMonoid := by
+  intro x y n hn he
+  obtain ⟨u, rfl⟩ := L.syntacticClass_surjective x
+  rcases eq_or_ne u [] with rfl | hu
+  · simp
+  have hpow : L.syntacticClass u ^ n = L.syntacticClass (List.replicate n u).flatten := by
+    rw [syntacticClass_flatten, List.map_replicate, List.prod_replicate]
+  rw [hpow] at he ⊢
+  have hz := h.isLeftZero_syntacticClass_of_isIdempotentElem (by simp [hn, hu]) he
+  rw [mul_assoc, hz, hz]
+
+/-- Over a finite alphabet, a multitier reverse definite language lies in the variety of the
+multitier reverse definite monoids. -/
+theorem IsBTK.mem_multitierReverseDefiniteVariety [Finite α] (h : IsBTK k L) :
+    Monoid.multitierReverseDefiniteVariety.langs L :=
+  h.mem_languageVariety (𝒱 := Monoid.multitierReverseDefiniteVariety.toLanguageVariety)
+    fun _ hL ↦ ⟨hL.isRegular.finite_syntacticMonoid, hL.isMultitierReverseDefinite_syntacticMonoid⟩
 
 end Language

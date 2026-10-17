@@ -29,7 +29,9 @@ exactly the outputs of Hyman and Katamba's plateauing map (`plateauing_iff_mem_r
 Following §6, stress-initial is refuted from the definite class, stress-penult from the reverse
 definite class, and culminative stress-penult from the generalized definite class by an
 idempotent syntactic class that fails the class's equation (`finnish_not_isDefinite`,
-`amara_not_isReverseDefinite`, `stressPenultCulminative_not_isGeneralizedDefinite`).
+`amara_not_isReverseDefinite`, `stressPenultCulminative_not_isGeneralizedDefinite`), and
+culminative stress-penult from the multitier reverse definite class by the equation of (62)
+(`stressPenultCulminative_not_isBTK`).
 
 ## Implementation notes
 
@@ -48,7 +50,9 @@ one of Mayer and Major that the paper analyzes.
 Prove the equivalence of the order-based and tier-based formulae for Kagoshima Japanese ((42),
 (43)) and for Karanga Shona ((46)–(49)), and the piecewise testability of the Tsuut'ina
 grammar. The description of the Karanga Shona stem by substrings ((50)), which makes it locally
-testable, and the equations for the multitier classes ((60), (61), Table 6) are not formalized.
+testable, are not formalized. Of the equations for the multitier classes ((60)–(63), Table 6),
+only the inclusion of the multitier reverse definite languages in the languages of (62) is
+proved.
 
 ## References
 
@@ -113,7 +117,7 @@ classes to the multitier ones ((13)); with it stress-final is no longer definite
 inductive Syl
   | unstressed
   | stressed
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- The stress tier. -/
 def Syl.isStressed : Syl → Bool
@@ -726,5 +730,17 @@ theorem stressPenultCulminative_not_isGeneralizedDefinite (k : ℕ) :
   rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff] at this
   simpa [stressPenultCulminative, Edge.takeAt_right, rtake, Syl.isStressed] using
     this [] [.stressed, .unstressed]
+
+/-- Culminative stress-penult is not multitier reverse definite (§6.3), since in its syntactic
+monoid `[σσ]` is idempotent but `[σσ] [σ́] [σσ] ≠ [σσ] [σ́]` in the context `__ σ`, against the
+equation `x^ω y x = x^ω y` of (62). -/
+theorem stressPenultCulminative_not_isBTK (k : ℕ) : ¬ IsBTK k stressPenultCulminative := fun h ↦ by
+  have := h.mem_multitierReverseDefiniteVariety.2
+    (stressPenultCulminative.syntacticClass [.unstressed, .unstressed])
+    (stressPenultCulminative.syntacticClass [.stressed]) 1 one_ne_zero
+    (by rw [pow_one]; exact stressPenultCulminative_isIdempotentElem)
+  rw [pow_one, ← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff] at this
+  simpa [stressPenultCulminative, Edge.takeAt_right, rtake, Syl.isStressed] using
+    this [] [.unstressed]
 
 end Lambert2026
