@@ -31,6 +31,8 @@ is ordered.
 
 * `containment_of_two_exponents`, `no_containment_of_bottom_entries`: a layer with an exponent
   of its own is a suffix on the form below it, and Dekier's lexicons have no such layer.
+* `ordConnected_coverage`: a hierarchy ordered either way along the map gives each form an
+  interval of the uses, so it excludes ABA as the semantic account does.
 * `no_hierarchy_derives_both_changes`, `entry_loss_is_weakening`: on no hierarchy does entry
   loss derive both attested changes to the epistemic type, and what it derives is a semantic
   weakening.
@@ -139,6 +141,17 @@ def coverage (ℓ : SpecificityFunction → Fin n) (L : RuleSet (SupersetRule n 
 
 @[simp]
 theorem mem_coverage : u ∈ coverage ℓ L φ ↔ spellout L (ℓ u) = some φ := by simp [coverage]
+
+/-- A hierarchy ordering its layers as the map orders the uses, Dekier's or its reverse, complies
+with the ban on ABA, since it gives each form an interval of the uses and so only a type whose
+requirement is convex (`IndefiniteType.ordConnected_requires`). -/
+theorem ordConnected_coverage (hℓ : Monotone ℓ ∨ Antitone ℓ) (hL : L.Antihomophonous) :
+    (coverage ℓ L φ : Set SpecificityFunction).OrdConnected := by
+  have h :=
+    (Morphology.isContiguous_iff_ordConnected_preimage _).1 (isContiguous_spellout hL) (some φ)
+  have he : (coverage ℓ L φ : Set SpecificityFunction) = ℓ ⁻¹' (spellout L ⁻¹' {some φ}) := by
+    ext; simp
+  exact he ▸ hℓ.elim h.preimage_mono h.preimage_anti
 
 /-- Entry loss derives the change from one type to another on a hierarchy when some lexicon
 gives a form the first type and, with some of its entries lost, the second. -/
