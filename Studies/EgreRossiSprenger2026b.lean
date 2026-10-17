@@ -40,7 +40,8 @@ contradictions) come out at the level of acceptance and inference, not truth con
   `modus_ponens` (Fact 10), `modus_tollens` and its failures (Fact 11), the structural rules and
   failures of Proposition 4, and `entails_insert_iff` (Theorem 3) with the Conditional Proof
   counterexample.
-* `prob_cond_ofSet` (Adams's Thesis), `prob_cond_contra` (footnote 11), `prob_contra'_coin`
+* `cond_ofSet`, `prob_cond_ofSet` (Adams's Thesis, through [egre-rossi-sprenger-2026a]'s
+  conditional events), `prob_cond_contra` (footnote 11), `prob_contra'_coin`
   (footnote 12), `die_bare_vs_must` ((20) and (21)).
 
 ## Implementation notes
@@ -1125,6 +1126,14 @@ section Predictions
 
 open Sentence Classical
 
+/-- The conditional between conditional-free sentences denotes, in every context, the conditional
+event of [egre-rossi-sprenger-2026a]'s reading of an Adams formula. -/
+theorem cond_ofSet (a b : Set W) :
+    cond (ofSet a) (ofSet b) = ofCooper (EgreRossiSprenger2026a.ofAdams ⟨a, b⟩) := by
+  change cond (ofCooper fun w ↦ ofProp (w ∈ a)) (ofCooper fun w ↦ ofProp (w ∈ b)) = _
+  rw [cond_ofCooper]
+  rfl
+
 variable [MeasurableSpace W]
 
 /-- A conditional whose antecedent is an epistemic contradiction is void throughout, so its
@@ -1145,13 +1154,8 @@ variable [DiscreteMeasurableSpace W]
 degenerate clause makes nonmodal sentences context-independent. -/
 theorem prob_cond_ofSet {μ : Measure W} {a : Set W} (b : Set W) (h : μ a ≠ 0) (s : Set W) :
     prob μ (cond (ofSet a) (ofSet b) s) = μ[b | a] := by
-  have hval : cond (ofSet a) (ofSet b) s = a.indicator fun w ↦ ofProp (w ∈ b) := by
-    change cond (ofCooper fun w ↦ ofProp (w ∈ a)) (ofCooper fun w ↦ ofProp (w ∈ b)) s = _
-    rw [cond_ofCooper]
-    funext w
-    by_cases hw : w ∈ a <;> simp [hw]
-  rw [hval, prob_indicator_ofProp _ _ h]
-  rfl
+  rw [cond_ofSet]
+  exact EgreRossiSprenger2026a.prob_ofAdams h
 
 /-- On a fair coin the epistemic contradiction *the coin is facing heads and might not face heads*
 has probability `1/2`, true at the heads world and false at the tails world (footnote 12). -/

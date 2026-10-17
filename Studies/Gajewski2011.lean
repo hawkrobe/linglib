@@ -205,7 +205,7 @@ the paper's licensers the two agree, as the paper's conjecture (48) has it for s
 
 /-- The library's context for each licenser that has one. *Some* NP licenses nothing and has
 none. -/
-noncomputable def Licenser.context : Licenser → Option PolarityItem.LicensingContext
+def Licenser.context : Licenser → Option PolarityItem.LicensingContext
   | .no => Option.some .nobody
   | .atMostFive => Option.some .atMost
   | .some => Option.none
@@ -221,7 +221,7 @@ def Strength.item : Strength → PolarityItem
 /-- The two principles agree with the library's licensing on every licenser it has a context
 for. -/
 theorem licensed_iff_licenses (L : Licenser) (s : Strength) {c : PolarityItem.LicensingContext}
-    (hc : L.context = some c) : Licensed L s ↔ c.Licenses s.item := by
+    (hc : L.context = some c) : Licensed L s ↔ c.licenser.Licenses s.item := by
   rw [licensed_iff]
   cases L <;> cases s <;> simp only [Licenser.context, Option.some.injEq, reduceCtorEq] at hc <;>
     subst hc <;> simp [Strength.item, English.PolarityItems.ever, English.PolarityItems.inYears] <;>

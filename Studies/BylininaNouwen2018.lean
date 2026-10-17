@@ -55,7 +55,7 @@ the Heim-Kennedy generalization ((80)).
 * Degrees are natural numbers; Kennedy's numeral is `Degree.MaxIn {n}` and its two scopes are
   `Degree.LowScope` and `Degree.HighScope`. Exhaustification against the higher numerals is
   `Exhaustification.exhAgainst (· < ·)`.
-* Licensing is the library's: *zero* is a scalar `PolarityItem.LicensingContext`, and every item
+* Licensing is the library's: *zero* is a scalar `PolarityItem.Licenser`, and every item
   needs the meaning below the exhaustivity operator non-trivially downward entailing. For strong
   items the library asks Zwarts's anti-additivity of the meaning above it where (53) asks for
   non-trivial downward entailment; *zero* fails the first condition, so the two agree on it.
@@ -85,7 +85,7 @@ variable {α : Type*} [DecidableEq α]
 
 /-! ### Pluralities and numerals -/
 
-/-- The pluralities of members of `Z`, the full closure `×Z` of its singletons ((30)): the sums
+/-- The pluralities of members of `Z`, the full closure `×Z` of its singletons ((30)), are the sums
 `⊔X` of the subsets `X ⊆ Z`, the empty sum `⊥` among them. -/
 def plural (Z : Set α) : Set (Finset α) := {x | FullAlgClosure (· ∈ ({·} : α → Finset α) '' Z) x}
 
@@ -162,7 +162,7 @@ theorem maxIn_zero_countDegrees_iff {A B : Set α} :
     exact Nat.le_zero.2 <| Finset.card_eq_zero.2 <| Finset.eq_empty_of_forall_notMem
       fun a hx ↦ h a (mem_plural.1 hA hx) (mem_plural.1 hB hx)
 
-/-- Under `*`, Kennedy's *zero A B* is never true ((72)): the degree property lacks `0`. -/
+/-- Under `*`, Kennedy's *zero A B* is never true ((72)), since the degree property lacks `0`. -/
 theorem not_maxIn_zero_countDegrees_sdiff (A B : Set α) :
     ¬ MaxIn {0} (countDegrees A (plural B \ {∅})) :=
   fun h ↦ zero_notMem_countDegrees_sdiff A B (maxIn_singleton.1 h).1
@@ -186,20 +186,20 @@ open scoped Classical
 
 /-- *Zero* NP over a restrictor, the at least numeral and its exhaustification against the higher
 numerals ((39), (40)). -/
-def zero : LicensingContext :=
-  ⟨.scalar ⟨⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
+def zero : PolarityItem.Licenser :=
+  .scalar ⟨⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
       fun p B ↦ 0 ∈ countDegrees p.A (plural B)⟩,
-    fun p B ↦ exhAgainst (· < ·) (· ∈ countDegrees p.A (plural B)) 0⟩, none⟩
+    fun p B ↦ exhAgainst (· < ·) (· ∈ countDegrees p.A (plural B)) 0⟩
 
 /-- Above the exhaustivity operator *zero* is *no*, non-trivially downward entailing ((54a)). -/
-theorem exhaustified_zero : zero.licenser.exhaustified = nobody.licenser := by
-  simp only [zero, nobody, PolarityItem.Licenser.exhaustified]
+theorem exhaustified_zero : zero.exhaustified = nobody.licenser := by
+  simp only [zero, licenser, PolarityItem.Licenser.exhaustified]
   congr
   funext p B
   exact propext exhAgainst_zero_iff_no
 
 /-- Below it *zero* is a tautology, downward and upward entailing at once ((54b)). -/
-theorem isStrawsonUE_zero : zero.licenser.IsStrawsonUE :=
+theorem isStrawsonUE_zero : zero.IsStrawsonUE :=
   fun p _ B _ _ ↦ zero_mem_countDegrees p.A B
 
 /-- So *zero* licenses no negative polarity item, weak or strong. -/
@@ -211,14 +211,14 @@ instance : DecidablePred zero.Licenses := fun e ↦ isFalse (not_licenses_zero e
 
 /-- Kennedy's *zero*, with its exactly meaning basic and so no exhaustivity operator to split its
 meaning. -/
-def kennedyZero : LicensingContext :=
-  ⟨.classical ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
-    fun p B ↦ MaxIn {0} (countDegrees p.A (plural B))⟩, none⟩
+def kennedyZero : PolarityItem.Licenser :=
+  .classical ⟨NonemptyPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
+    fun p B ↦ MaxIn {0} (countDegrees p.A (plural B))⟩
 
 /-- Kennedy's *zero* is *no* ((73)), so it licenses what *no* licenses, strong items included,
 against (13), (15) and (16) (Section 6.3). -/
-theorem kennedyZero_eq_nobody : kennedyZero = nobody := by
-  simp only [kennedyZero, nobody]
+theorem kennedyZero_eq_nobody : kennedyZero = nobody.licenser := by
+  simp only [kennedyZero, licenser]
   congr
   funext p B
   exact propext maxIn_zero_countDegrees_iff
@@ -228,14 +228,14 @@ inductive Licenser
   | no | few | zero
   deriving DecidableEq, Repr
 
-/-- The library's context for each licenser. -/
-def Licenser.context : Licenser → LicensingContext
-  | .no => .nobody
-  | .few => .few
+/-- The library's operator for each licenser. -/
+noncomputable def Licenser.denote : Licenser → PolarityItem.Licenser
+  | .no => LicensingContext.nobody.licenser
+  | .few => LicensingContext.few.licenser
   | .zero => BylininaNouwen2018.zero
 
-instance (L : Licenser) : DecidablePred L.context.Licenses := by
-  cases L <;> dsimp only [Licenser.context] <;> infer_instance
+instance (L : Licenser) : DecidablePred L.denote.Licenses := by
+  cases L <;> dsimp only [Licenser.denote] <;> infer_instance
 
 /-- A sentence of the paper records its licenser, its polarity item as an entry of the English
 fragment, and the judgment. -/
@@ -257,10 +257,10 @@ def Row.ofDatum (ex : Datum) : List Row :=
 
 def rows : List Row := Examples.all.flatMap Row.ofDatum
 
-/-- Every judgment is the library's verdict: a sentence is acceptable exactly when its licenser
+/-- Every judgment is the library's verdict, a sentence being acceptable exactly when its licenser
 licenses its item. -/
 theorem rows_predicted :
-    ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.licenser.context.Licenses r.item) := by
+    ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.licenser.denote.Licenses r.item) := by
   decide
 
 end Polarity
@@ -307,10 +307,10 @@ theorem exhAgainst_iff_lowScope :
 
 end Scope
 
-/-- A count's measured degree property is that of its full pluralities: with finitely many
-members of each `A ∩ B i`, the pluralities of `A` that are `B i` have the degrees `Iic` of their
-number, so `Degree.LowScope` and `Degree.HighScope` at `Iic ∘` the count are the readings of the
-plural model. -/
+/-- A count's measured degree property is that of its full pluralities. With finitely many members
+of each `A ∩ B i`, the pluralities of `A` that are `B i` have the degrees `Iic` of their number,
+so `Degree.LowScope` and `Degree.HighScope` at `Iic ∘` the count are the readings of the plural
+model. -/
 theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Set α}
     (h : ∀ i, (A ∩ B i).Finite) :
     (fun i ↦ countDegrees A (plural (B i))) = Iic ∘ fun i ↦ (A ∩ B i).ncard :=

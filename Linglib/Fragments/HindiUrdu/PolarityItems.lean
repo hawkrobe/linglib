@@ -31,7 +31,7 @@ open PolarityItem
 /-- *koii bhii* 'anyone', a negative polarity and free choice item ([lahiri-1998] (6),
 (10)–(12), (29), (31b), (32), (34) for the downward-entailing uses; (35), (36b), (39b) for free
 choice; out under a necessity modal, (36d)). -/
-noncomputable def koiiBhii : PolarityItem :=
+def koiiBhii : PolarityItem :=
   { form := Indefinites.koiiBhii.form
   , licensor := some .weak
   , freeChoice := true
@@ -42,7 +42,7 @@ noncomputable def koiiBhii : PolarityItem :=
 
 /-- *ek bhii* 'even one', a negative polarity and free choice item, odd in imperatives
 ([lahiri-1998] (7), (10d), (11a), (29a), (29f), (34b), (35d), (36a); imperative (40b)). -/
-noncomputable def ekBhii : PolarityItem :=
+def ekBhii : PolarityItem :=
   { form := "ek bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -52,7 +52,7 @@ noncomputable def ekBhii : PolarityItem :=
 
 /-- *kuch bhii* 'anything, any (mass)' ([lahiri-1998] (8), (10f), (34c),
 (35c), (39a)). -/
-noncomputable def kuchBhii : PolarityItem :=
+def kuchBhii : PolarityItem :=
   { form := (Indefinites.bhii Indefinites.kuch).form
   , licensor := some .weak
   , freeChoice := true
@@ -61,7 +61,7 @@ noncomputable def kuchBhii : PolarityItem :=
 
 /-- *zaraa bhii* 'even a little', a negative polarity and free choice item, odd in imperatives
 ([lahiri-1998] (9), (10e), §4.5, (34d), (35e); imperative (40a)). -/
-noncomputable def zaraaBhii : PolarityItem :=
+def zaraaBhii : PolarityItem :=
   { form := "zaraa bhii"
   , licensor := some .weak
   , freeChoice := true
@@ -76,14 +76,12 @@ def kabhiiBhii : PolarityItem :=
   , licensingContexts := [.modalPossibility] }
 
 /-- The *bhii*-compound entries. -/
-noncomputable def bhiiItems : List PolarityItem :=
+def bhiiItems : List PolarityItem :=
   [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii]
 
 /-- Every attested context of every entry admits it. -/
 theorem hindi_licensing_sound :
-    ∀ e ∈ bhiiItems, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp only [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii, bhiiItems, List.forall_mem_cons,
-    List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ bhiiItems, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
+  decide
 
 end HindiUrdu.PolarityItems

@@ -156,7 +156,7 @@ inductive Position where
   deriving DecidableEq, Repr
 
 /-- The licensing context a position is, if it is one. -/
-noncomputable def Position.context : Position → Option LicensingContext
+def Position.context : Position → Option LicensingContext
   | .conditionalAntecedent => some .conditionalAntecedent
   | .universalRestrictor => some .universalRestrictor
   | .negation => some .negation
@@ -216,10 +216,11 @@ instance : DecidablePred Position.Downward
 def Position.polarity (p : Position) : SignType := if p.Downward then -1 else 1
 
 /-- A position licenses an item when it is a licensing context that licenses it. -/
-def Position.Licenses (p : Position) (e : PolarityItem) : Prop := ∃ c ∈ p.context, c.Licenses e
+def Position.Licenses (p : Position) (e : PolarityItem) : Prop :=
+  ∃ c ∈ p.context, c.licenser.Licenses e
 
 theorem Position.licenses_iff {p : Position} {c : LicensingContext} (h : p.context = some c)
-    {e : PolarityItem} : p.Licenses e ↔ c.Licenses e := by
+    {e : PolarityItem} : p.Licenses e ↔ c.licenser.Licenses e := by
   simp [Position.Licenses, h]
 
 instance : ∀ p : Position, DecidablePred p.Licenses
@@ -240,7 +241,8 @@ theorem licenses_ever_of_downward (pos : Position) (h : pos.polarity = -1) :
 /-- *Any* parts ways with *ever* exactly where the context licenses free choice, as a possibility
 modal, an imperative or a generic does. -/
 theorem licenses_any_not_ever_iff (c : LicensingContext) :
-    c.Licenses English.PolarityItems.any ∧ ¬ c.Licenses English.PolarityItems.ever ↔
+    c.licenser.Licenses English.PolarityItems.any ∧
+        ¬ c.licenser.Licenses English.PolarityItems.ever ↔
       c.licenser.LicensesFreeChoice := by
   have hfc : c.licenser.LicensesFreeChoice →
       ¬ c.licenser.Carries .weak ∧ ¬ c.licenser.LicensesByRelevance := by
@@ -248,12 +250,12 @@ theorem licenses_any_not_ever_iff (c : LicensingContext) :
     cases L with
     | modal => exact fun _ ↦ ⟨fun h ↦ h.1, id⟩
     | classical | scalar | strawson | question => exact fun h ↦ (h : False).elim
-  have ha : c.Licenses English.PolarityItems.any ↔ c.licenser.Carries .weak ∨
+  have ha : c.licenser.Licenses English.PolarityItems.any ↔ c.licenser.Carries .weak ∨
       c.licenser.LicensesFreeChoice ∨ c.licenser.LicensesByRelevance := by
-    simp [LicensingContext.Licenses, English.PolarityItems.any, PolarityItem.IsFCI]
-  have he : c.Licenses English.PolarityItems.ever ↔ c.licenser.Carries .weak ∨
+    simp [PolarityItem.Licenser.Licenses, English.PolarityItems.any, PolarityItem.IsFCI]
+  have he : c.licenser.Licenses English.PolarityItems.ever ↔ c.licenser.Carries .weak ∨
       c.licenser.LicensesByRelevance := by
-    simp [LicensingContext.Licenses, English.PolarityItems.ever, PolarityItem.IsFCI]
+    simp [PolarityItem.Licenser.Licenses, English.PolarityItems.ever, PolarityItem.IsFCI]
   rw [ha, he]
   refine ⟨fun ⟨h, hn⟩ ↦ h.elim (fun h' ↦ absurd (.inl h') hn) fun h' ↦
     h'.resolve_right fun h'' ↦ hn (.inr h''), fun h ↦ ⟨.inr (.inl h), ?_⟩⟩

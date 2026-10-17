@@ -31,7 +31,7 @@ namespace Korean.PolarityItems
 open PolarityItem
 
 /-- Bare *nwukwu* 'who', an indefinite in questions and conditionals. -/
-noncomputable def nwukwu : PolarityItem :=
+def nwukwu : PolarityItem :=
   { form := Indefinites.nwukwu.form
   , licensor := some .weak
   , licensingContexts := [.question, .conditionalAntecedent] }
@@ -52,14 +52,12 @@ def nwukwuNa : PolarityItem :=
 /-- *Nwukwu-to* needs clausemate negation, so it is licensed exactly by the contexts carrying
 anti-morphic strength, which among the named contexts is clausal negation alone. -/
 theorem nwukwuTo_licensing_characterized (c : LicensingContext) :
-    c.Licenses nwukwuTo ↔ c.licenser.Carries .antiMorphic :=
-  LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
+    c.licenser.Licenses nwukwuTo ↔ c.licenser.Carries .antiMorphic :=
+  Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- Every attested environment of every item admits it. -/
 theorem korean_licensing_sound :
-    ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp only [nwukwu, nwukwuTo, nwukwuNa, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
-    implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
+  decide
 
 end Korean.PolarityItems

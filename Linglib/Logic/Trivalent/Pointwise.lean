@@ -15,8 +15,10 @@ public import Mathlib.Algebra.Notation.Indicator
 A trivalent proposition is a function `W → SignType`, true, false or undefined at each world.
 Its worlds split into a positive extension, a negative extension and a gap, and Beaver and
 Krahmer's assertion operator applied pointwise collapses the gap into the negative extension.
-Strong Kleene conjunction and disjunction of propositions are the pointwise `⊓` and `⊔`. This file
-adds the extensions, bivalence, and the three families of trivalent quantifiers.
+Strong Kleene conjunction and disjunction of propositions are the pointwise `⊓` and `⊔`. A
+trivalent proposition is also a conditional event in de Finetti's sense, fixed by where it is
+defined and where it is true. This file adds the extensions, bivalence, the conditional-event
+decomposition, and the three families of trivalent quantifiers.
 
 ## Main definitions
 
@@ -28,6 +30,12 @@ adds the extensions, bivalence, and the three families of trivalent quantifiers.
   indexed `⊓` and `⊔`.
 * `Trivalent.forallHaug`, `Trivalent.existsHaug`: Haug's quantifiers, undefined only when
   every instance is, with `existsHaug_meetWeak_presuppose` as Quantifier Projection.
+
+## Main results
+
+* `Trivalent.indicator_support_ofProp_eq_one`, `Trivalent.indicator_ofProp_eq_indicator_ofProp_iff`:
+  every trivalent proposition is the conditional event of its truth on its definedness, and two
+  conditional events coincide exactly when they have the same condition and agree on it.
 
 Each family is the quantifier of a theory of how a presupposition projects from the scope of a
 quantifier. Over the domain's subtype, the Weak Kleene quantifiers project universally, as
@@ -52,6 +60,7 @@ instance search prefers, making every later `⊓` noncomputable.
 * [mayr-sauerland-2015]
 * [spector-sudo-2017]
 * [fox-2013]
+* [de-finetti-1936]
 -/
 
 @[expose] public section
@@ -167,6 +176,47 @@ restricted to `s` is defined exactly on `s`. -/
 theorem support_eq_compl_gapExt (p : W → SignType) : Function.support p = (gapExt p)ᶜ := rfl
 
 end Indicator
+
+/-! ### Conditional events
+
+A trivalent proposition is fixed by where it is defined and where it is true, and every such pair
+arises: the indicator of `B` on `A` is defined on `A` and true on `A ∩ B`. So trivalent
+propositions are the conditional events `B | A` of [de-finetti-1936], conditional assertions of a
+two-valued content on a two-valued condition, and two of them coincide exactly when they have the
+same condition and agree on it. -/
+
+section ConditionalEvent
+
+/-- Every trivalent proposition is the conditional event of its truth on its definedness. -/
+theorem indicator_support_ofProp_eq_one (p : W → SignType) :
+    (Function.support p).indicator (fun w ↦ ofProp (p w = 1)) = p := by
+  funext w
+  by_cases h : p w = 0
+  · rw [Set.indicator_of_notMem (by simpa using h), h]
+  · rw [Set.indicator_of_mem h]
+    cases hp : p w <;> simp_all
+
+/-- Two conditional events coincide exactly when they have the same condition and agree on it. -/
+theorem indicator_ofProp_eq_indicator_ofProp_iff {A A' : Set W} {B B' : W → Prop}
+    [DecidablePred B] [DecidablePred B'] :
+    (A.indicator fun w ↦ ofProp (B w)) = A'.indicator (fun w ↦ ofProp (B' w)) ↔
+      A = A' ∧ A ∩ {w | B w} = A' ∩ {w | B' w} := by
+  constructor
+  · intro h
+    have hsupp := congrArg Function.support h
+    have hpos := congrArg posExt h
+    simp only [Set.support_indicator, support_ofProp, Set.inter_univ] at hsupp
+    refine ⟨hsupp, ?_⟩
+    simpa [Set.ext_iff, posExt] using hpos
+  · rintro ⟨rfl, h⟩
+    funext w
+    by_cases hw : w ∈ A
+    · have := Set.ext_iff.1 h w
+      simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, hw, true_and] at this
+      simp [hw, this]
+    · simp [hw]
+
+end ConditionalEvent
 
 /-! ### Extensions under assertion
 

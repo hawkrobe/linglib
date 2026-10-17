@@ -169,6 +169,11 @@ variable {P Q : Prop} [Decidable P] [Decidable Q]
 @[simp] theorem zero_le_ofProp_iff : 0 ≤ ofProp P ↔ P := by
   by_cases h : P <;> simp [ofProp, h]
 
+/-- A defined value is the value of its own truth. -/
+theorem ofProp_eq_one_of_ne_zero {a : SignType} [Decidable (a = 1)] (h : a ≠ 0) :
+    ofProp (a = 1) = a := by
+  revert h; cases a <;> simp
+
 /-- Equivalent propositions have the same value, which lets `simp` rewrite inside `ofProp`. -/
 @[congr] theorem ofProp_congr (h : P ↔ Q) : ofProp P = ofProp Q :=
   eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [h])
