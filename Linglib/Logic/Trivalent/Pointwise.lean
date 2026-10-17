@@ -99,6 +99,14 @@ theorem posExt_union_negExt (p : W → SignType) : posExt p ∪ negExt p = Funct
 theorem posExt_subset_support (p : W → SignType) : posExt p ⊆ Function.support p :=
   fun w (h : p w = 1) ↦ by simp [Function.mem_support, h]
 
+theorem negExt_subset_support (p : W → SignType) : negExt p ⊆ Function.support p :=
+  fun w (h : p w = -1) ↦ by simp [Function.mem_support, h]
+
+/-- Where a proposition is defined and not true, it is false. -/
+theorem support_inter_compl_posExt (p : W → SignType) :
+    Function.support p ∩ (posExt p)ᶜ = negExt p := by
+  ext w; cases h : p w <;> simp [h]
+
 /-- The three extensions cover the world space. -/
 theorem posExt_union_negExt_union_gapExt (p : W → SignType) :
     posExt p ∪ negExt p ∪ gapExt p = Set.univ := by

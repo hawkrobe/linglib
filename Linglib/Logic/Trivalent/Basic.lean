@@ -26,6 +26,8 @@ disjunctions differ from Kleene's only in when a compound is undefined.
   where a given condition fails.
 * `SignType.meetWeak`, `SignType.meetMiddle`, `SignType.meetBelnap` and their joins: the Weak
   Kleene, Middle Kleene and Belnap connectives.
+* `SignType.condAssert`: conditional assertion at a designation standard, de Finetti's conditional
+  at K3 and Cooper's at LP.
 * `SignType.supervaluation`: the value of a predicate over a finite family of valuations.
 
 ## Main results
@@ -35,6 +37,8 @@ disjunctions differ from Kleene's only in when a compound is undefined.
 * `Trivalent.Designation.dual_threshold_le_neg_iff`: negation exchanges the K3 and LP standards.
 * `SignType.meetWeak_eq_meetWith` and companions: each connective is `meetWith` or `joinWith` at
   its definedness condition.
+* `SignType.neg_condAssert`, `SignType.condAssert_condAssert`: conditional assertion commutes with
+  negation and satisfies Import-Export.
 
 ## Implementation notes
 
@@ -51,6 +55,8 @@ pattern-matched definition, so that `rfl` and `decide` evaluate it.
 * [bochvar-1938]
 * [peters-1979]
 * [belnap-1970]
+* [de-finetti-1936]
+* [cooper-1968]
 * [priest-1979]
 * [cobreros-etal-2012]
 * [kalman-1958]
@@ -157,6 +163,10 @@ variable {P Q : Prop} [Decidable P] [Decidable Q]
   by_cases h : P <;> simp [ofProp, h]
 
 @[simp] theorem ofProp_ne_zero : ofProp P ≠ 0 := by
+  by_cases h : P <;> simp [ofProp, h]
+
+/-- A two-valued proposition is non-false exactly when it holds. -/
+@[simp] theorem zero_le_ofProp_iff : 0 ≤ ofProp P ↔ P := by
   by_cases h : P <;> simp [ofProp, h]
 
 /-- Equivalent propositions have the same value, which lets `simp` rewrite inside `ofProp`. -/
@@ -556,6 +566,89 @@ theorem meetBelnap_eq_inf_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠
 theorem joinBelnap_eq_sup_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠ 0) :
     joinBelnap a b = a ⊔ b := by
   revert ha hb; cases a <;> cases b <;> decide
+
+/-- Belnap conjunction is non-false exactly when both conjuncts are. -/
+@[simp] theorem zero_le_meetBelnap_iff {a b : SignType} : 0 ≤ meetBelnap a b ↔ 0 ≤ a ∧ 0 ≤ b := by
+  cases a <;> cases b <;> decide
+
+/-! ### Conditional assertion
+
+A conditional assertion asserts its consequent where its antecedent holds and is void elsewhere
+([belnap-1970]). Over a trivalent antecedent a designation standard decides what a void antecedent
+does: at K3 only a true antecedent passes the consequent on, the conditional of [de-finetti-1936],
+and at LP a void antecedent does too, the conditional of [cooper-1968]. At either standard the
+conditional commutes with negation and imports and exports a conjunction. -/
+
+/-- The conditional assertion of `b` on `a` at the standard `d` is `b` where `a` is designated and
+`0` elsewhere. -/
+def condAssert (d : Trivalent.Designation) (a b : SignType) : SignType :=
+  if d.threshold ≤ a then b else 0
+
+section CondAssert
+
+variable {d : Trivalent.Designation} {a a' b c : SignType}
+
+theorem condAssert_of_le (h : d.threshold ≤ a) (b : SignType) : condAssert d a b = b :=
+  ite_eq_left h
+
+theorem condAssert_of_not_le (h : ¬ d.threshold ≤ a) (b : SignType) : condAssert d a b = 0 :=
+  ite_eq_right h
+
+@[simp] theorem condAssert_one_left (d : Trivalent.Designation) (b : SignType) :
+    condAssert d 1 b = b := by
+  cases d <;> rfl
+
+@[simp] theorem condAssert_neg_one_left (d : Trivalent.Designation) (b : SignType) :
+    condAssert d (-1) b = 0 := by
+  cases d <;> rfl
+
+/-- De Finetti's conditional groups a void antecedent with a false one. -/
+@[simp] theorem condAssert_k3_zero_left (b : SignType) : condAssert .k3 0 b = 0 := rfl
+
+/-- Cooper's conditional groups a void antecedent with a true one. -/
+@[simp] theorem condAssert_lp_zero_left (b : SignType) : condAssert .lp 0 b = b := rfl
+
+theorem condAssert_eq_one_iff : condAssert d a b = 1 ↔ d.threshold ≤ a ∧ b = 1 := by
+  unfold condAssert; split_ifs with h <;> simp [h]
+
+theorem condAssert_eq_neg_one_iff : condAssert d a b = -1 ↔ d.threshold ≤ a ∧ b = -1 := by
+  unfold condAssert; split_ifs with h <;> simp [h]
+
+theorem condAssert_eq_zero_iff : condAssert d a b = 0 ↔ (d.threshold ≤ a → b = 0) := by
+  unfold condAssert; split_ifs with h <;> simp [h]
+
+/-- On a two-valued antecedent the standards agree: the consequent where the antecedent holds and
+void elsewhere. -/
+@[simp] theorem condAssert_ofProp (P : Prop) [Decidable P] (b : SignType) :
+    condAssert d (ofProp P) b = if P then b else 0 := by
+  by_cases h : P <;> simp [h]
+
+/-- Antecedents designated alike give the same conditional. -/
+theorem condAssert_congr_left (h : d.threshold ≤ a ↔ d.threshold ≤ a') (b : SignType) :
+    condAssert d a b = condAssert d a' b := by
+  simp only [condAssert, h]
+
+/-- Negation commutes with the conditional. -/
+@[simp] theorem neg_condAssert : -condAssert d a b = condAssert d a (-b) := by
+  unfold condAssert; split_ifs <;> simp
+
+/-- **Import-Export**: a conditional on `a` of a conditional on `b` is the conditional on the
+Strong Kleene conjunction `a ⊓ b`, which is designated exactly when both conjuncts are. -/
+theorem condAssert_condAssert : condAssert d a (condAssert d b c) = condAssert d (a ⊓ b) c := by
+  by_cases ha : d.threshold ≤ a <;> by_cases hb : d.threshold ≤ b <;>
+    simp [condAssert, le_inf_iff, ha, hb]
+
+/-- Conditional assertion distributes over Belnap conjunction. -/
+theorem condAssert_meetBelnap :
+    condAssert d a (meetBelnap b c) = meetBelnap (condAssert d a b) (condAssert d a c) := by
+  by_cases h : d.threshold ≤ a <;> simp [condAssert_of_le, condAssert_of_not_le, h]
+
+/-- Conditional assertion distributes over Belnap disjunction. -/
+theorem condAssert_joinBelnap :
+    condAssert d a (joinBelnap b c) = joinBelnap (condAssert d a b) (condAssert d a c) := by
+  by_cases h : d.threshold ≤ a <;> simp [condAssert_of_le, condAssert_of_not_le, h]
+
+end CondAssert
 
 /-! ### Supervaluation
 
