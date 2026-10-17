@@ -2,183 +2,398 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bibliography · linglib</title>
-<meta name="description" content="Every work in linglib's bibliography, with the files of the library that use it.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bibliography | Linglib</title>
+<meta name="description" content="Papers referenced, cited, or formalized in Linglib.">
 <link rel="icon" href="../docs/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,560;1,6..72,400&display=swap">
+<script>try { var t = localStorage.getItem("pref-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <style>
-/*SITE_CSS*/
+:root {
+  --gap: 24px;
+  --theme: #ffffff;
+  --entry: #ffffff;
+  --primary: #1e1e1e;
+  --secondary: #6c6c6c;
+  --tertiary: #d6d6d6;
+  --content: #1f1f1f;
+  --border: #eeeeee;
+  --code-bg: #f5f5f5;
+  --formalized: #22c55e;
+  --foundational: #a78bfa;
+  --cited: #d6d6d6;
+  --control: #e2e2e2;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --theme: #1d1e20; --entry: #2e2e33; --primary: #dadadb; --secondary: #9b9c9d; --tertiary: #414244;
+    --content: #c4c4c5; --border: #333333; --code-bg: #37383e; --cited: #4a4b4e; --control: #414244;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --theme: #1d1e20; --entry: #2e2e33; --primary: #dadadb; --secondary: #9b9c9d; --tertiary: #414244;
+  --content: #c4c4c5; --border: #333333; --code-bg: #37383e; --cited: #4a4b4e; --control: #414244;
+  color-scheme: dark;
+}
+
+*, ::before, ::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-y: scroll; }
+body {
+  margin: 0; background: var(--theme); color: var(--content);
+  font: 18px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+    "Open Sans", "Helvetica Neue", sans-serif;
+  overflow-wrap: break-word;
+}
+a { color: var(--primary); text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
+
+/* Header, as PaperMod draws it */
+.nav {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  max-width: calc(1024px + var(--gap) * 2); margin-inline: auto; min-height: 60px;
+}
+.logo, .menu { display: flex; align-items: center; margin: 0 var(--gap); }
+.logo a { font-size: 24px; font-weight: 700; color: var(--primary); }
+#theme-toggle { display: inline-flex; margin-left: 10px; color: var(--primary); padding: 4px; }
+#theme-toggle svg { width: 22px; height: 18px; }
+#sun { display: none; }
+:root[data-theme="dark"] #moon { display: none; }
+:root[data-theme="dark"] #sun { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #moon { display: none; }
+  :root:not([data-theme="light"]) #sun { display: block; }
+}
+.menu { list-style: none; padding: 0; gap: var(--gap); }
+.menu a { font-size: 16px; color: var(--primary); padding-block: 4px; }
+.menu a[aria-current="page"] { font-weight: 500; border-bottom: 2px solid; }
+
+/* Page */
+.main { max-width: calc(720px + var(--gap) * 2); margin: 0 auto; padding: var(--gap); min-height: calc(100vh - 120px); }
+h1 { font-size: 40px; line-height: 1.2; font-weight: 700; color: var(--primary); margin: 24px 0 12px; }
 
 /* Toolbar */
-.toolbar {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--bg);
-  padding-block: 12px 10px; display: grid; gap: 10px; border-bottom: 1px solid var(--rule);
+.search { position: sticky; top: 0; z-index: 2; background: var(--theme); padding: 12px 0 8px; }
+#q {
+  width: 100%; padding: 10px 14px; font: inherit; font-size: 17px; color: var(--primary);
+  background: var(--entry); border: 1px solid var(--tertiary); border-radius: 8px; outline: none;
+  -webkit-appearance: none; appearance: none;
 }
-.toolbar input[type="search"] {
-  width: 100%; font: 400 16px/1.3 var(--sans); color: var(--ink); background: var(--surface);
-  border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px;
+#q:focus { border-color: var(--secondary); }
+#q::placeholder { color: var(--secondary); opacity: 0.8; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.filter {
+  padding: 3px 11px; font-size: 15px; line-height: 1.5; color: var(--secondary);
+  border: 1px solid var(--control); border-radius: 6px;
 }
-.toolbar input[type="search"]:focus-visible, .toolbar select:focus-visible, .toolbar input[type="checkbox"]:focus-visible, button:focus-visible {
-  outline: 2px solid var(--accent); outline-offset: 1px;
+.filter:hover { color: var(--primary); }
+.filter .n { font-variant-numeric: tabular-nums; }
+.filter.role::before {
+  content: ""; display: inline-block; width: 3px; height: 0.95em; margin-right: 7px;
+  vertical-align: -0.1em; background: var(--bar); opacity: 0.35;
 }
-.filters { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 13px; color: var(--muted); }
-.filters label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
-.filters select {
-  font: 400 13px var(--sans); color: var(--ink); background: var(--surface);
-  border: 1px solid var(--rule); border-radius: 6px; padding: 4px 6px;
-}
-.status { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.filter.role[aria-pressed="true"] { color: var(--primary); border-color: var(--tertiary); }
+.filter.role[aria-pressed="true"]::before { opacity: 1; }
+.filter.tag[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--theme); }
+#sort { margin-left: auto; }
+.status { font-size: 15px; color: var(--secondary); margin: 14px 0 22px; min-height: 1.6em; }
+.status button { color: var(--primary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.status button:hover { text-decoration-color: currentColor; }
 
 /* Entries */
 ol.entries { list-style: none; margin: 0; padding: 0; }
-.entry { padding: 16px 0; border-bottom: 1px solid var(--rule); display: grid; gap: 6px; scroll-margin-top: 140px; }
-.entry:target { background: var(--surface); box-shadow: 0 0 0 8px var(--surface); border-radius: 2px; }
-.entry .ref { font: 400 17px/1.4 var(--serif); }
-.entry .ref .title { font-weight: 560; }
-.entry .ref .venue { color: var(--muted); }
-.entry .line { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; font-size: 13px; color: var(--muted); }
-.entry .key { font-family: var(--mono); font-size: 12px; color: var(--ink); background: var(--bg); padding: 1px 5px; border-radius: 4px; text-decoration: none; }
-.badge { display: inline-block; font: 500 11px/1 var(--sans); padding: 3px 6px; border-radius: 4px; }
-.badge.checked { background: var(--right-bg); color: var(--right); }
-.badge.unchecked { background: var(--silent-bg); color: var(--muted); }
-.places { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 2px 10px; }
-.places a { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
-.places .lib { font: 500 11px/1.6 var(--sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-.places button, #more {
-  font: 500 13px var(--sans); color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer;
+.entry {
+  margin: 0 0 1.4em; padding: 0 0 0 12px; border-left: 3px solid var(--cited);
+  scroll-margin-top: 90px; content-visibility: auto; contain-intrinsic-size: auto 90px;
 }
-#more { justify-self: start; padding: 10px 0; }
-.empty { padding: 24px 0; color: var(--muted); }
+.entry.formalized { border-left-color: var(--formalized); }
+.entry.foundational { border-left-color: var(--foundational); }
+.entry.hit { background: var(--code-bg); box-shadow: 0 0 0 6px var(--code-bg); }
+.cite { margin: 0; line-height: 1.5; }
+.cite strong { font-weight: 600; color: var(--primary); }
+.cite .t { text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
+.cite .t:hover { text-decoration-color: currentColor; }
+.anchor { margin-left: 6px; color: var(--secondary); opacity: 0; font-size: 0.9em; }
+.entry:hover .anchor, .anchor:focus-visible { opacity: 1; }
+.files { margin-top: 3px; font-size: 14px; line-height: 1.6; color: var(--secondary); }
+.files a { color: var(--secondary); margin-right: 0.85em; }
+.files a:hover { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+.files button { color: var(--secondary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 2px; }
+.files button:hover { color: var(--primary); }
+.empty { color: var(--secondary); }
+
+/* Footer, back to top */
+.footer { max-width: calc(720px + var(--gap) * 2); margin: 0 auto; padding: 18px var(--gap) 24px; text-align: center; font-size: 12px; line-height: 24px; color: var(--secondary); }
+.footer a { color: inherit; border-bottom: 1px solid var(--secondary); }
+.footer a:hover { color: var(--primary); border-bottom-color: var(--primary); }
+.top-link {
+  position: fixed; right: 30px; bottom: 60px; z-index: 3; width: 42px; height: 42px; padding: 12px;
+  border-radius: 50%; background: var(--tertiary); color: var(--primary); visibility: hidden; opacity: 0;
+  transition: visibility 0.5s, opacity 0.8s linear;
+}
+.top-link.on { visibility: visible; opacity: 1; }
+.top-link svg { display: block; width: 18px; height: 9px; margin: 4px auto 0; }
+
+@media (max-width: 768px) {
+  :root { --gap: 16px; }
+  .nav { min-height: 56px; padding-block: 6px; row-gap: 2px; }
+  .logo a { font-size: 22px; }
+  .menu a { font-size: 15px; }
+  h1 { font-size: 32px; margin-top: 12px; }
+  .top-link { right: 16px; bottom: 24px; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  #q { font-size: 16px; }
+  .filter { font-size: 14px; padding: 2px 9px; }
+  .filter .n { display: none; }
+  .status { font-size: 14px; }
+  .files { font-size: 13px; }
+}
+@media (max-width: 380px) {
+  .menu { gap: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .top-link { transition: none; } }
 </style>
 </head>
-<body>
-<div class="wrap">
-  <header>
-    <nav class="site" aria-label="linglib.io"><a class="home" href="../docs/">linglib</a><a href="../docs/">Docs</a><a href="../eval/">Scoreboard</a><a href="../bibliography/" aria-current="page">Bibliography</a></nav>
-    <h1>Bibliography</h1>
-    <p class="lede prose">Every work in linglib's bibliography, <code>references.bib</code>, with the files that use it.
-      Where a work is used is read from the repository when this page is built: the <code>[key]</code> citations
-      in the Lean sources, and the data files that record a paper's examples and results. A work marked
-      <i>unchecked</i> has metadata that has not yet been checked against the publication.</p>
-    <div class="meta" id="meta"></div>
-  </header>
-
-  <section aria-label="Works">
-    <div class="toolbar">
-      <input id="q" type="search" placeholder="Search by author, title, year, venue or key" aria-label="Search the bibliography" autocomplete="off">
-      <div class="filters">
-        <label for="area">Area <select id="area"></select></label>
-        <label><input type="checkbox" id="used"> Used in linglib</label>
-        <label><input type="checkbox" id="checked"> Metadata checked</label>
-        <label for="sort">Order <select id="sort"><option value="author">By author</option><option value="year">Newest first</option></select></label>
-      </div>
-      <div class="status" id="status" aria-live="polite"></div>
+<body id="top">
+<header>
+  <nav class="nav" aria-label="Site">
+    <div class="logo">
+      <a href="../docs/">Linglib</a>
+      <button id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg id="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg id="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
     </div>
-    <ol class="entries" id="list"></ol>
-    <button id="more" type="button" hidden>Show more</button>
-  </section>
+    <ul class="menu">
+      <li><a href="../docs/">Docs</a></li>
+      <li><a href="../eval/">Scoreboard</a></li>
+      <li><a href="./" aria-current="page">Bibliography</a></li>
+    </ul>
+  </nav>
+</header>
 
-  <footer id="footer"></footer>
-</div>
+<main class="main">
+  <h1>Bibliography</h1>
+
+  <div class="search">
+    <input id="q" type="search" placeholder="Search by author, title, year, or file" aria-label="Search the bibliography" autocomplete="off" spellcheck="false">
+  </div>
+  <div class="row" id="roles" role="group" aria-label="Role"></div>
+  <div class="row" id="tags" role="group" aria-label="Area"></div>
+  <p class="status" id="status" aria-live="polite"></p>
+  <ol class="entries" id="list"></ol>
+</main>
+
+<footer class="footer" id="footer"></footer>
+<a href="#top" class="top-link" id="top-link" aria-label="Back to top" title="Back to top"><svg viewBox="0 0 12 6" fill="currentColor" aria-hidden="true"><path d="M12 6H0l6-6z"/></svg></a>
 
 <script type="application/json" id="bib-data">/*BIB_DATA*/{}</script>
 <script>
 (function () {
   "use strict";
   const data = JSON.parse(document.getElementById("bib-data").textContent);
-  const all = data.entries;
+  const all = data.entries || [];
+  const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const PAGE = 150;
-  const LIBS = { Studies: "Studies", Eval: "Eval", Lab: "Lab", Linglib: "Linglib" };
-  const byYear = [...all].sort((a, b) => (b.year || "").localeCompare(a.year || "") || a.key.localeCompare(b.key));
+  const num = (n) => n.toLocaleString("en-US");
+  const fold = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+    .replace(/ı/g, "i").replace(/ø/g, "o").replace(/ł/g, "l").replace(/ß/g, "ss").replace(/æ/g, "ae").replace(/œ/g, "oe");
 
-  const used = all.filter((e) => e.places.length).length;
-  const checked = all.filter((e) => e.checked).length;
-  document.getElementById("meta").innerHTML =
-    `<span>${all.length} works · ${used} used in linglib · ${checked} with checked metadata</span>` +
-    (data.commit.sha ? `<span>built from <a href="${esc(data.commit.href)}"><code>${esc(data.commit.short)}</code></a> on ${esc(data.built)}</span>` : "");
+  const ROLES = ["formalized", "foundational", "cited"];
+  const DEFAULT_ROLES = all.some((e) => e.role) ? ["formalized", "foundational"] : ROLES;
+  const TAGS = ["Pragmatics", "Semantics", "Syntax", "Morphology", "Phonology", "Typology", "Other"];
+  const tagOf = (area) => { const t = area ? area[0].toUpperCase() + area.slice(1) : ""; return TAGS.includes(t) && t !== "Other" ? t : "Other"; };
+  const shortPath = (p) => p.replace(/^(Linglib|Studies)\//, "").replace(/\.lean$/, "");
+  const FIRST = 5;
 
-  // Areas, by how many works they hold.
-  const counts = {};
-  for (const e of all) if (e.area) counts[e.area] = (counts[e.area] || 0) + 1;
-  document.getElementById("area").innerHTML = `<option value="">All</option>` +
-    Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([a, n]) => `<option value="${esc(a)}">${esc(a)} (${n})</option>`).join("");
-
-  const q = document.getElementById("q"), area = document.getElementById("area");
-  const onlyUsed = document.getElementById("used"), onlyChecked = document.getElementById("checked");
-  const sort = document.getElementById("sort"), list = document.getElementById("list");
-  const more = document.getElementById("more"), status = document.getElementById("status");
-  let shown = 0, matches = [];
-
-  function places(e) {
-    if (!e.places.length) return "";
-    const groups = {};
-    for (const p of e.places) (groups[p.library] = groups[p.library] || []).push(p);
-    const first = 6;
-    let n = 0, h = "", rest = "";
-    for (const [lib, ps] of Object.entries(groups)) {
-      for (const p of ps) {
-        const link = `${n === 0 || ps[0] === p ? `<span class="lib">${esc(LIBS[lib] || lib)}</span>` : ""}<a href="${esc(p.href)}">${esc(p.path.replace(/^(Linglib|Studies|Eval|Lab)\//, "").replace(/\.lean$/, ""))}</a>`;
-        if (n < first) h += link; else rest += link;
-        n++;
-      }
-    }
-    if (rest) h += `<button type="button" data-more>and ${n - first} more</button><span hidden>${rest}</span>`;
-    return `<div class="places">${h}</div>`;
+  // ---- entries, rendered once; filtering toggles `hidden`, sorting reorders the nodes
+  const list = $("list");
+  for (const e of all) {
+    e.role = ROLES.includes(e.role) ? e.role : "cited";
+    e.tag = tagOf(e.area);
+    e.hay = fold(e.search + " " + e.authors);
+    e.paths = fold(e.places.map((p) => p.path).join(" "));
   }
+  // A term searches file paths only when it looks like one (`semantics/modality`, `kratzer1998`),
+  // so an author's name does not also find everything cited in a study named after them.
+  const pathy = (t) => t.includes("/") || /[a-z]\d/.test(t);
+  const hit = (e, t) => e.hay.includes(t) || (pathy(t) && e.paths.includes(t));
+  // A data file and the module generated from it are one place: keep the module.
+  for (const e of all) {
+    const lean = new Set(e.places.filter((p) => p.path.endsWith(".lean")).map((p) => p.path.slice(0, -5)));
+    e.places = e.places.filter((p) => !p.path.endsWith(".json") || !lean.has(p.path.slice(0, -5)));
+  }
+  const link = (p) => `<a href="${esc(p.href)}" title="${esc(p.path)}">${esc(shortPath(p.path))}</a>`;
+  function files(e) {
+    const ps = e.places;
+    if (!ps.length) return "";
+    const n = ps.length > FIRST + 1 ? FIRST : ps.length;
+    return `<div class="files">${ps.slice(0, n).map(link).join(" ")}` +
+      (ps.length > n ? ` <button type="button" data-more>and ${ps.length - n} more</button>` : "") + `</div>`;
+  }
+  // An unclosed <i> would italicize every entry after it.
+  const balance = (h) => { const n = (h.match(/<i>/g) || []).length - (h.match(/<\/i>/g) || []).length; return n > 0 ? h + "</i>".repeat(n) : h; };
   function entry(e) {
-    const links = (e.doi ? `<a href="https://doi.org/${esc(e.doi)}">doi</a>` : "") + (e.url ? `<a href="${esc(e.url)}">link</a>` : "");
-    return `<li class="entry" id="${esc(e.key)}"><div class="ref">` +
-      (e.authors ? `${esc(e.authors)} ` : "") + (e.year ? `(${esc(e.year)}). ` : "") +
-      `<span class="title">${e.title}</span>.` + (e.venue ? ` <span class="venue">${e.venue}.</span>` : "") + `</div>` +
-      `<div class="line"><a class="key" href="#${esc(e.key)}">${esc(e.key)}</a>` +
-      `<span class="badge ${e.checked ? "checked" : "unchecked"}">${e.checked ? "metadata checked" : "unchecked"}</span>` +
-      (e.subfield ? `<span>${esc(e.subfield)}</span>` : "") + links + `</div>` + places(e) + `</li>`;
+    const title = balance(e.title || "");
+    e.venue = balance(e.venue || "");
+    const plain = title.replace(/<[^>]+>/g, "");
+    const href = e.doi ? `https://doi.org/${e.doi}` : e.url;
+    const t = href ? `<a class="t" href="${esc(href)}">${title}</a>` : title;
+    const end = /[.?!]$/.test(plain) ? "" : ".";
+    const venue = e.venue ? ` ${e.venue}${/[.?!]$/.test(e.venue.replace(/<[^>]+>/g, "")) ? "" : "."}` : "";
+    return `<li class="entry ${e.role}" id="${esc(e.key)}"><p class="cite">` +
+      (e.authors ? `<strong>${esc(e.authors)}</strong> ` : "") + (e.year ? `(${esc(e.year)}). ` : "") +
+      `${t}${end}${venue}<a class="anchor" href="#${esc(e.key)}" title="${esc(e.key)}" aria-label="Link to ${esc(e.key)}">#</a></p>` +
+      files(e) + `</li>`;
   }
-  function filter() {
-    const terms = q.value.toLowerCase().split(/\s+/).filter(Boolean);
-    const a = area.value;
-    matches = (sort.value === "year" ? byYear : all).filter((e) =>
-      (!a || e.area === a) && (!onlyUsed.checked || e.places.length) && (!onlyChecked.checked || e.checked) &&
-      terms.every((t) => e.search.includes(t)));
-    shown = 0;
-    list.innerHTML = "";
-    show();
+  // Nodes are made the first time an entry is shown, so the default view builds only its third.
+  let stale = true;
+  function ensure(es) {
+    const missing = es.filter((e) => !e.el);
+    if (!missing.length) return;
+    const tpl = document.createElement("template");
+    tpl.innerHTML = missing.map(entry).join("");
+    const made = Array.from(tpl.content.children);
+    missing.forEach((e, i) => { e.el = made[i]; });
+    stale = true;
   }
-  function show() {
-    const next = matches.slice(shown, shown + PAGE);
-    list.insertAdjacentHTML("beforeend", next.map(entry).join(""));
-    shown += next.length;
-    if (!matches.length) list.innerHTML = `<li class="empty">No work matches. Clear the search or the filters to see more.</li>`;
-    more.hidden = shown >= matches.length;
-    status.textContent = matches.length === all.length ? `Showing ${shown} of ${all.length}` : `${matches.length} of ${all.length} match · showing ${shown}`;
+  const byAuthor = all.slice();
+  const byYear = all.slice().sort((a, b) => (b.year || "").localeCompare(a.year || ""));
+
+  // ---- controls
+  const roleCount = {}, tagCount = {};
+  for (const e of all) { roleCount[e.role] = (roleCount[e.role] || 0) + 1; tagCount[e.tag] = (tagCount[e.tag] || 0) + 1; }
+  $("roles").innerHTML = ROLES.map((r) =>
+    `<button type="button" class="filter role" data-role="${r}" style="--bar: var(--${r})">${r} <span class="n">(${num(roleCount[r] || 0)})</span></button>`).join("") +
+    `<button type="button" class="filter" id="sort" title="Sort order"></button>`;
+  $("tags").innerHTML = TAGS.filter((t) => tagCount[t]).map((t) =>
+    `<button type="button" class="filter tag" data-tag="${t}">${t}</button>`).join("");
+
+  const q = $("q"), status = $("status"), sortBtn = $("sort");
+  let roles = new Set(DEFAULT_ROLES), tags = new Set(), sort = "az", order = "", hiding = [];
+
+  function paint() {
+    for (const b of document.querySelectorAll(".role")) b.setAttribute("aria-pressed", roles.has(b.dataset.role));
+    for (const b of document.querySelectorAll(".tag")) b.setAttribute("aria-pressed", tags.has(b.dataset.tag));
+    sortBtn.textContent = sort === "year" ? "Newest" : "A–Z";
   }
+
+  function apply() {
+    const terms = fold(q.value).split(/\s+/).filter(Boolean);
+    const on = [], hiddenBy = {};
+    for (const e of all) {
+      const match = (!tags.size || tags.has(e.tag)) && terms.every((t) => hit(e, t));
+      e.on = match && roles.has(e.role);
+      if (e.on) on.push(e);
+      else if (match) hiddenBy[e.role] = (hiddenBy[e.role] || 0) + 1;
+    }
+    ensure(on);
+    if (stale || order !== sort) {
+      const f = document.createDocumentFragment();
+      for (const e of sort === "year" ? byYear : byAuthor) if (e.el) f.appendChild(e.el);
+      list.appendChild(f);
+      order = sort;
+      stale = false;
+    }
+    for (const e of all) if (e.el && e.el.hidden === e.on) e.el.hidden = !e.on;
+    const shown = on.length;
+    const more = hiding = ROLES.filter((r) => hiddenBy[r]);
+    const extra = terms.length && more.length
+      ? ` <button type="button" id="reveal">${num(more.reduce((s, r) => s + hiddenBy[r], 0))} more in ${more.join(" and ")}</button>` : "";
+    status.innerHTML = shown || extra
+      ? `${num(shown)} ${shown === 1 ? "entry" : "entries"}${extra ? " ·" + extra : ""}`
+      : "No entries match.";
+    paint();
+  }
+  const update = () => { apply(); save(); };
+
+  // ---- URL hash: #q=…&role=…&tag=…&sort=year, or #key for one entry
+  function save() {
+    const p = new URLSearchParams();
+    if (q.value.trim()) p.set("q", q.value.trim());
+    const r = ROLES.filter((x) => roles.has(x));
+    if (r.join() !== DEFAULT_ROLES.join()) p.set("role", r.join(","));
+    if (tags.size) p.set("tag", TAGS.filter((x) => tags.has(x)).join(","));
+    if (sort !== "az") p.set("sort", sort);
+    const h = p.toString();
+    history.replaceState(null, "", h ? "#" + h : location.pathname + location.search);
+  }
+  function load() {
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (!h) return null;
+    if (!h.includes("=")) return all.some((e) => e.key === h) ? h : null;
+    const p = new URLSearchParams(h);
+    if (p.has("role")) roles = new Set(p.get("role").split(",").filter((x) => ROLES.includes(x)));
+    if (p.has("tag")) tags = new Set(p.get("tag").split(",").filter((x) => TAGS.includes(x)));
+    if (p.has("q")) q.value = p.get("q");
+    if (p.get("sort") === "year") sort = "year";
+    return null;
+  }
+
+  // ---- events
   let timer;
-  q.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(filter, 120); });
-  for (const el of [area, onlyUsed, onlyChecked, sort]) el.addEventListener("change", filter);
-  more.addEventListener("click", show);
+  q.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(update, 100); });
+  q.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && q.value) { q.value = ""; update(); } });
+  $("roles").addEventListener("click", (ev) => {
+    const b = ev.target.closest("button");
+    if (!b) return;
+    if (b === sortBtn) sort = sort === "az" ? "year" : "az";
+    else roles.has(b.dataset.role) ? roles.delete(b.dataset.role) : roles.add(b.dataset.role);
+    update();
+  });
+  $("tags").addEventListener("click", (ev) => {
+    const b = ev.target.closest("button");
+    if (!b) return;
+    tags.has(b.dataset.tag) ? tags.delete(b.dataset.tag) : tags.add(b.dataset.tag);
+    update();
+  });
+  status.addEventListener("click", (ev) => {
+    if (ev.target.id !== "reveal") return;
+    hiding.forEach((r) => roles.add(r));
+    update();
+  });
+  const byKey = new Map(all.map((e) => [e.key, e]));
   list.addEventListener("click", (ev) => {
     const b = ev.target.closest("button[data-more]");
     if (!b) return;
-    b.nextElementSibling.hidden = false;
-    b.nextElementSibling.style.display = "contents";
+    const e = byKey.get(b.closest(".entry").id);
+    b.insertAdjacentHTML("beforebegin", e.places.slice(FIRST).map(link).join(" "));
     b.remove();
   });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { ev.preventDefault(); q.focus(); }
+  });
+  $("theme-toggle").addEventListener("click", () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("pref-theme", root.dataset.theme); } catch (e) {}
+  });
+  const top = $("top-link");
+  addEventListener("scroll", () => top.classList.toggle("on", scrollY > 800), { passive: true });
 
-  // A link to an entry shows it.
-  const hash = decodeURIComponent(location.hash.slice(1));
-  if (hash && all.some((e) => e.key === hash)) {
-    q.value = hash;
-    filter();
-    requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView());
-  } else filter();
+  // A #key link shows that entry, relaxing the filters only if they hide it.
+  function go(target) {
+    if (!target) return apply();
+    const e = all.find((x) => x.key === target);
+    apply();
+    if (!e.on) { roles.add(e.role); tags.clear(); q.value = ""; apply(); }
+    for (const h of list.querySelectorAll(".hit")) h.classList.remove("hit");
+    e.el.classList.add("hit");
+    requestAnimationFrame(() => e.el.scrollIntoView());
+  }
+  addEventListener("hashchange", () => {
+    if (location.hash.includes("=")) { roles = new Set(DEFAULT_ROLES); tags = new Set(); q.value = ""; sort = "az"; }
+    go(load());
+  });
+  go(load());
 
-  document.getElementById("footer").innerHTML =
-    `<p>Generated by <code>scripts/gen_bibliography_page.py</code> from <code>references.bib</code> and the citations in the repository.</p>` +
-    `<p>Regenerate: <code>python3 scripts/gen_bibliography_page.py</code>.</p>`;
+  $("footer").innerHTML = data.commit && data.commit.sha
+    ? `Built ${esc(data.built)} from <a href="${esc(data.commit.href)}">${esc(data.commit.short)}</a>`
+    : `Built ${esc(data.built || "")}`;
 })();
 </script>
 </body>

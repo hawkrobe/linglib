@@ -1,4 +1,4 @@
-/* Shared by the pages of linglib.io outside the API docs: the scoreboard and the bibliography.
+/* The scoreboard page of linglib.io.
    Layout: one reading column, with wide tables breaking out inside their own scroll frame. */
 :root {
   --bg: #f6f7f9;
