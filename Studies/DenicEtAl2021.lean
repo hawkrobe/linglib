@@ -195,7 +195,7 @@ theorem classifies_iff (e : Environment) (k : Monotonicity) :
 /-- The licensing context of the narrowest operator over the item that the substrate counts as
 downward entailing is negation, *no*, *few*, *without*, or focus *only*, downward entailing modulo
 its presupposition; the upward-entailing environments and *exactly 12* have none. -/
-noncomputable def licensingContext : Environment → Option LicensingContext
+def licensingContext : Environment → Option LicensingContext
   | .negative | .everyNot => some .negation
   | .no => some .nobody
   | .few => some .few
@@ -206,7 +206,8 @@ noncomputable def licensingContext : Environment → Option LicensingContext
 /-- *Any*, *ever* and *at all* are licensed in the downward-entailing environments, by the inner
 operator in the doubly negative ones (§1, §5), and under *only 12*. -/
 theorem licenses_of_mem_licensingContext {e : Environment} {c : LicensingContext}
-    (h : c ∈ e.licensingContext) : c.Licenses any ∧ c.Licenses ever ∧ c.Licenses atAll := by
+    (h : c ∈ e.licensingContext) :
+    c.licenser.Licenses any ∧ c.licenser.Licenses ever ∧ c.licenser.Licenses atAll := by
   cases e <;> simp only [licensingContext, Option.mem_def, Option.some.injEq, reduceCtorEq] at h <;>
     subst h <;> decide
 

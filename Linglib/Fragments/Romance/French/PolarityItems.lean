@@ -39,7 +39,7 @@ def personne : PolarityItem :=
 /-- *rien* 'nothing, anything', as in *Je ne vois rien*, under *personne* in *Personne n'a jamais
 dit rien*, in a rhetorical question, *valait-il de lui rien sacrifier?* 'would it be worth
 sacrificing anything for it?', and in a conditional ([haspelmath-1997] A68, A66b, A67a). -/
-noncomputable def rien : PolarityItem :=
+def rien : PolarityItem :=
   { form := "rien"
   , licensor := some .weak
   , licensingContexts := [.negation, .nobody, .question, .conditionalAntecedent] }
@@ -58,14 +58,12 @@ def plus : PolarityItem :=
   , licensingContexts := [.negation] }
 
 /-- The French polarity items. -/
-noncomputable def items : List PolarityItem :=
+def items : List PolarityItem :=
   [personne, rien, jamais, plus]
 
 /-- Every attested context of every entry licenses it. -/
 theorem french_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp only [personne, rien, jamais, plus, items, List.forall_mem_cons, List.not_mem_nil,
-    IsEmpty.forall_iff, implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
+  decide
 
 end French.PolarityItems

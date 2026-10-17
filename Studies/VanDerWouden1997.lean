@@ -28,7 +28,7 @@ namespace VanDerWouden1997
 
 open PolarityItem Dutch.PolarityItems
 
-/-- The contexts of (184): a positive clause, *weinig* 'few', *geen van* 'none of' and *niet*. -/
+/-- The contexts of (184), a positive clause, *weinig* 'few', *geen van* 'none of' and *niet*. -/
 inductive Context where
   | positive
   | weinig
@@ -40,9 +40,9 @@ inductive Context where
 licensing context admits. -/
 def Context.Admits : Context → PolarityItem → Prop
   | .positive, e => ¬ (e.IsNPI ∨ e.IsFCI)
-  | .weinig, e => LicensingContext.few.Admits e
-  | .geenVan, e => LicensingContext.nobody.Admits e
-  | .niet, e => LicensingContext.negation.Admits e
+  | .weinig, e => LicensingContext.few.licenser.Admits e
+  | .geenVan, e => LicensingContext.nobody.licenser.Admits e
+  | .niet, e => LicensingContext.negation.licenser.Admits e
 
 instance (c : Context) : DecidablePred c.Admits := by
   intro e; cases c <;> dsimp only [Context.Admits] <;> infer_instance
@@ -72,7 +72,8 @@ def Context.ofKey : String → Option Context
 context admits *ooit*'s Fragment entry. -/
 theorem judgments_predicted :
     ∀ d ∈ Examples.all, d.feature? "item" = some "ooit" ∧
-      ∃ c ∈ (d.feature? "context").bind Context.ofKey, (d.judgment = .acceptable ↔ c.Admits ooit) := by
+      ∃ c ∈ (d.feature? "context").bind Context.ofKey,
+        (d.judgment = .acceptable ↔ c.Admits ooit) := by
   decide +kernel
 
 /-- A negative polarity item that is not also a positive one, as on the analysis with two items

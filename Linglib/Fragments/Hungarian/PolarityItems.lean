@@ -49,7 +49,7 @@ tanulhatott* 'Anybody could learn', and, in its series, in the free relative *Ak
 elindulok holnap* 'No matter what you say, I'm leaving tomorrow', in comparatives and in
 conditionals, and starred under direct negation and in questions ([haspelmath-1997] A199a,
 A200–A204). -/
-noncomputable def akárki : PolarityItem :=
+def akárki : PolarityItem :=
   { form := Indefinites.akárki.form
   , licensor := some .weak
   , freeChoice := true
@@ -60,7 +60,7 @@ noncomputable def akárki : PolarityItem :=
 /-- *bárki* 'anyone', a free choice item attested under a possibility modal and, in its series, in
 comparatives and in conditionals, and starred under direct negation and in questions
 ([haspelmath-1997] A199a, A201, A203, A204). -/
-noncomputable def bárki : PolarityItem :=
+def bárki : PolarityItem :=
   { form := Indefinites.bárki.form
   , licensor := some .weak
   , freeChoice := true
@@ -70,22 +70,18 @@ noncomputable def bárki : PolarityItem :=
 /-- *Senki* needs clausemate negation, so it is licensed exactly by the contexts carrying
 anti-morphic strength, which among the named contexts is clausal negation alone. -/
 theorem senki_licensing_characterized (c : LicensingContext) :
-    c.Licenses senki ↔ c.licenser.Carries .antiMorphic :=
-  LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
+    c.licenser.Licenses senki ↔ c.licenser.Carries .antiMorphic :=
+  Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- The free-choice items are admitted in every context they are attested in. -/
 theorem freeChoice_licensing_sound :
-    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp only [akárki, bárki, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
-    implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
+  decide
 
 /-- The licensing theory admits both free-choice series under clausal negation and in questions,
 where [haspelmath-1997] stars them, since a weak negative polarity item is licensed in both. -/
 theorem freeChoice_excluded_admitted :
-    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.excludedContexts, c.Admits e := by
-  simp only [akárki, bárki, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
-    implies_true, and_true]
-  and_intros <;> decide
+    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.excludedContexts, c.licenser.Admits e := by
+  decide
 
 end Hungarian.PolarityItems

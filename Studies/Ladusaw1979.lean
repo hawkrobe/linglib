@@ -38,8 +38,9 @@ namespace Ladusaw1979
 
 open PolarityItem NaturalLogic Quantifier Quantifier.GQ LicensingContext Licenser
 
-/-- An environment is downward entailing when the operator it denotes reverses entailment. -/
-def IsDownwardEntailing (c : LicensingContext) : Prop := c.licenser.Holds .anti
+/-- An environment is downward entailing when the operator it places over the item reverses
+entailment. -/
+def IsDownwardEntailing (L : Licenser) : Prop := L.Holds .anti
 
 /-- A conditional's consequent, over worlds. -/
 structure Consequent where
@@ -49,9 +50,8 @@ structure Consequent where
   q : Set W
 
 /-- The antecedent of a material conditional, Ladusaw's reading of conditional antecedents. -/
-def materialAntecedent : LicensingContext :=
-  ⟨.classical ⟨Consequent, fun p ↦ Set p.W, fun p ↦ Set p.W, fun p P ↦ Pᶜ ∪ p.q⟩,
-    some .conditional⟩
+def materialAntecedent : Licenser :=
+  .classical ⟨Consequent, fun p ↦ Set p.W, fun p ↦ Set p.W, fun p P ↦ Pᶜ ∪ p.q⟩
 
 theorem isDownwardEntailing_materialAntecedent : IsDownwardEntailing materialAntecedent :=
   fun _ ↦ Signature.holdsFor_anti_iff.mpr fun _ _ h ↦ Set.union_subset_union_left _
@@ -61,9 +61,10 @@ theorem isDownwardEntailing_materialAntecedent : IsDownwardEntailing materialAnt
 /-- The licensing environments credited to the dissertation are negation, negative quantifiers,
 *without*, the restrictor of a universal, *few*, *at most*, the antecedent of a conditional,
 *before*, *too … to*, and the clausal comparative. -/
-def environments : List LicensingContext :=
-  [.negation, .nobody, .withoutClause, .universalRestrictor, .few, .atMost, materialAntecedent,
-    .beforeClause, .tooTo, .clausalComparative]
+noncomputable def environments : List Licenser :=
+  [negation.licenser, nobody.licenser, withoutClause.licenser, universalRestrictor.licenser,
+    few.licenser, atMost.licenser, materialAntecedent, beforeClause.licenser, tooTo.licenser,
+    clausalComparative.licenser]
 
 /-- Every environment credited to the dissertation is downward entailing. -/
 theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c := by
@@ -78,14 +79,14 @@ theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c :=
     (holds_clausalComparative_iff (s := .weak)).2 (by decide)⟩
 
 /-- Questions are not downward entailing. -/
-theorem question_not_de : ¬ IsDownwardEntailing .question := id
+theorem question_not_de : ¬ IsDownwardEntailing question.licenser := id
 
 /-- A downward-entailing environment licenses the weak polarity items, the dissertation's
 generalization, which the library takes as its definition of licensing by strengthening once the
 environment is not downward entailing by being constant. -/
-theorem ladusaw_generalization (c : LicensingContext) (hc : IsDownwardEntailing c)
-    (hn : ¬ c.licenser.IsStrawsonUE) (e : PolarityItem) (he : e.licensor = some .weak) :
-    c.Licenses e :=
+theorem ladusaw_generalization (L : Licenser) (hc : IsDownwardEntailing L)
+    (hn : ¬ L.IsStrawsonUE) (e : PolarityItem) (he : e.licensor = some .weak) :
+    L.Licenses e :=
   .inl ⟨.weak, he, isStrawsonDE_of_holds_anti hc, hn⟩
 
 variable {α : Type*}

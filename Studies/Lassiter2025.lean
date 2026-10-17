@@ -40,7 +40,7 @@ model, `interpretation_rows` the reading the paper attributes to it.
 ## Implementation notes
 
 Polarity items are sorted by Israel's scalar context types rather than by the Zwarts strength
-of `PolarityItem.LicensingContext.Licenses`. That relation reads a conditional antecedent as
+of `PolarityItem.Licenser.Licenses`. That relation reads a conditional antecedent as
 anti-additive only modulo its presupposition and *lift a finger* as needing an anti-additive
 licensor outright, so it would exclude the minimizer from hypothetical antecedents, against
 Iatridou's (27a) and the paper's (32); on the scalar account a minimizer needs only a

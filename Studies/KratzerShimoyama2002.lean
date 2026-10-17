@@ -344,8 +344,6 @@ theorem rows_irgendein :
     Examples.ex23d, Examples.ex23e, Examples.ex23f, Examples.ex23g, Examples.ex24a, Examples.ex24b,
     Examples.ex24c, Examples.ex24d, Examples.ex24e, Examples.ex12, Examples.ex13, Examples.ex16,
     Examples.ex17, Examples.ex18, Examples.ex21, Examples.ex22]
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
-    exact fun h ↦ absurd (congrArg LicensingContext.haspelmath h) (by decide)
 
 /-- Under a negative operator *irgendein* is acceptable exactly when the operator closes its scope
 with [∃] and not with [Neg], so under *niemand* and *auf keinen Fall* and not under *nicht*, (12),
@@ -359,7 +357,7 @@ theorem rows_irgendein_selective :
 entailing, and (21) is ungrammatical, so strength does not exclude the item there and selectivity
 does. -/
 theorem negation_licenses_irgendein :
-    LicensingContext.negation.Licenses German.PolarityItems.irgendein ∧
+    LicensingContext.negation.licenser.Licenses German.PolarityItems.irgendein ∧
       Examples.ex21.judgment = .ungrammatical :=
   ⟨by simp [German.PolarityItems.irgendein, PolarityItem.IsNPI], rfl⟩
 

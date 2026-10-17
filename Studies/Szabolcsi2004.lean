@@ -40,13 +40,12 @@ def Operator.toLicensingContext : Operator → LicensingContext
   | .without => .withoutClause
   | .atMostFive => .atMost
 
-instance (op : Operator) : DecidablePred op.toLicensingContext.AntiLicenses := by
-  cases op <;> dsimp only [Operator.toLicensingContext] <;> infer_instance
 
 /-- *Someone* is blocked immediately below an operator of the paradigm exactly when the operator
 is anti-additive. -/
 theorem antiLicenses_someone_iff (op : Operator) :
-    op.toLicensingContext.AntiLicenses someone ↔ op.toLicensingContext.licenser.Holds .antiAdd := by
+    op.toLicensingContext.licenser.AntiLicenses someone ↔
+      op.toLicensingContext.licenser.Holds .antiAdd := by
   cases op
   · exact iff_of_true (by decide) (LicensingContext.holds_negation .antiAdditive)
   · exact iff_of_true (by decide)
@@ -69,7 +68,7 @@ operator's immediate scope is acceptable exactly when the operator does not bloc
 theorem readings_predicted :
     ∀ d ∈ Examples.all, d.feature? "item" = some "someone" ∧
       ∃ op ∈ (d.feature? "operator").bind Operator.ofKey, ∃ r ∈ d.readings.head?,
-        (r.2 = .acceptable ↔ ¬ op.toLicensingContext.AntiLicenses someone) := by
+        (r.2 = .acceptable ↔ ¬ op.toLicensingContext.licenser.AntiLicenses someone) := by
   decide +kernel
 
 end Szabolcsi2004

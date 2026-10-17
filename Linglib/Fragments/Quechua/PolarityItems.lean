@@ -24,7 +24,7 @@ open PolarityItem
 
 /-- *pi-pis*, wh + 'also/even', is a dual NPI/FCI covering the map's whole
     non-specific span (A.37). -/
-noncomputable def piPis : PolarityItem :=
+def piPis : PolarityItem :=
   { form := "pi-pis"
   , licensor := some .weak
   , freeChoice := true
@@ -36,9 +36,7 @@ noncomputable def piPis : PolarityItem :=
 
 /-- Every attested context admits the item. -/
 theorem piPis_licensing_sound :
-    ∀ c ∈ piPis.licensingContexts, c.Admits piPis := by
-  simp only [piPis, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
-    and_true]
-  and_intros <;> decide
+    ∀ c ∈ piPis.licensingContexts, c.licenser.Admits piPis := by
+  decide
 
 end Quechua.PolarityItems
