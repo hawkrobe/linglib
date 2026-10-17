@@ -31,8 +31,8 @@ named as Bobaljik names the degree patterns, contiguity excludes exactly ABA.
 * `isContiguous_comp_iff`: postcomposition with an injective map preserves and reflects
   contiguity.
 * `isContiguous_iff_ker_ne_ker_aba`: over three cells contiguity excludes exactly ABA.
-* `ker_eq_ker_aba_iff`, `ker_eq_ker_aab_iff`, `ker_eq_ker_abc_iff`: the three-cell patterns by
-  equalities of their cells.
+* `ker_eq_ker_aba_iff`, `ker_eq_ker_aab_iff`, `ker_eq_ker_abc_iff`, `ker_eq_ker_iff_fin_three`:
+  the three-cell patterns by equalities of their cells.
 * `isContiguous_iff_feasiblyMonotone`: over linearly ordered cells contiguity is feasible
   monotonicity.
 
@@ -199,6 +199,22 @@ theorem ker_eq_ker_abc_iff (p : Paradigm 3 F) :
     | exact iff_of_false h12.symm (by decide)
     | exact iff_of_false h02 (by decide)
     | exact iff_of_false h02.symm (by decide)
+
+/-- Two three-cell paradigms have the same pattern iff the same pairs of cells agree. -/
+theorem ker_eq_ker_iff_fin_three {G : Type*} (p : Paradigm 3 F) (q : Paradigm 3 G) :
+    Setoid.ker p = Setoid.ker q ↔
+      (p 0 = p 1 ↔ q 0 = q 1) ∧ (p 1 = p 2 ↔ q 1 = q 2) ∧ (p 0 = p 2 ↔ q 0 = q 2) := by
+  simp only [Setoid.ext_iff, Setoid.ker_def]
+  refine ⟨fun h ↦ ⟨h 0 1, h 1 2, h 0 2⟩, fun ⟨h01, h12, h02⟩ a b ↦ ?_⟩
+  fin_cases a <;> fin_cases b <;>
+    first
+    | exact iff_of_true rfl rfl
+    | exact h01
+    | exact h12
+    | exact h02
+    | exact (eq_comm.trans h01).trans eq_comm
+    | exact (eq_comm.trans h12).trans eq_comm
+    | exact (eq_comm.trans h02).trans eq_comm
 
 /-- ABA is the only three-cell pattern contiguity excludes. -/
 theorem isContiguous_iff_ker_ne_ker_aba (p : Paradigm 3 F) :
