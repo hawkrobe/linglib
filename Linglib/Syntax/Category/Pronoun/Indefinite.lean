@@ -38,11 +38,13 @@ structure IndefinitePronoun extends Pronoun where
 
 /-- The indefinite a series marker builds on an interrogative pronoun, as Russian *-nibud'* builds
 *kto-nibud'* on *kto*. It has the interrogative's features and category and the marked form, in a
-series of interrogative basis. -/
+series of interrogative basis. The marker acts on the romanized form, so the native script of the
+marked form is left unrecorded. -/
 @[simps ontology basis]
 def IndefinitePronoun.ofInterrogative (mark : String → String) (q : InterrogativePronoun) :
     IndefinitePronoun :=
-  { q.toPronoun with form := mark q.form, ontology := q.ontology, basis := .interrogative }
+  { q.toPronoun with
+    form := mark q.form, script := none, ontology := q.ontology, basis := .interrogative }
 
 /-- An indefinite's token is of UD pronoun type `Ind`. -/
 def IndefinitePronoun.toWord (p : IndefinitePronoun) : Morphology.Word :=

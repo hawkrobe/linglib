@@ -32,7 +32,8 @@ occur, and the series of eighteen languages of the 40-language sample as Appendi
 be independent of adjacency. A connected region with a second function contains a neighbour of
 each of its functions, so a series covering a leaf of the map (specific known, direct negation,
 free choice) covers the leaf's only neighbour (`mem_of_adjacent_eq_singleton`); the
-specific-known case is the ban on the ABA syncretism (`specificUnknown_mem_of_irrealis_mem`).
+specific-known case is the ban on the ABA syncretism, so a connected region covers an interval of
+the three specificity functions (`ordConnected_specificityFunctions`).
 The paradigms verify the adjacency requirement (`sample_connected`) and the overlap of series
 that the book holds against contrast-based accounts of grammatical meaning (`sample_overlap`).
 The book's examples for fifteen of the languages are the rows of
@@ -104,6 +105,13 @@ ABA syncretism of the three specific functions is not a connected region. -/
 theorem specificUnknown_mem_of_irrealis_mem (h : (implicationalMap.induce ↑s).Connected)
     (hk : .specificKnown ∈ s) (hi : .irrealis ∈ s) : .specificUnknown ∈ s :=
   specificUnknown_mem_of_specificKnown_mem h ⟨_, hk, _, hi, by decide⟩ hk
+
+/-- A connected region covers an interval of the specificity functions. -/
+theorem ordConnected_specificityFunctions (h : (implicationalMap.induce ↑s).Connected) :
+    (specificityFunctions s : Set SpecificityFunction).OrdConnected :=
+  SpecificityFunction.ordConnected_iff.2 fun hk hn ↦ mem_specificityFunctions.2 <|
+    specificUnknown_mem_of_irrealis_mem h (mem_specificityFunctions.1 hk)
+      (mem_specificityFunctions.1 hn)
 
 /-- Direct negation's only neighbour is indirect negation. -/
 theorem indirectNeg_mem_of_directNeg_mem (h : (implicationalMap.induce ↑s).Connected)
@@ -192,6 +200,7 @@ theorem excluded_connected :
   decide +kernel
 
 attribute [local instance high] List.decidableBAll in
+/-- Each combination a principle excludes violates it. -/
 theorem excluded_violate :
     (∀ s ∈ excludedByPrinciple1, ¬ Principle1 s) ∧
       ∀ s ∈ excludedByPrinciple2, ¬ Principle2 s := by
@@ -393,7 +402,6 @@ theorem mo_comparative_with_negation :
 
 /-! ### The book's examples -/
 
-
 /-- The paradigm of a language of the sample, by Glottocode; Latin, Yakut and Kannada have no
 example rows. -/
 def paradigm? : String → Option (List Series)
@@ -414,6 +422,7 @@ def paradigm? : String → Option (List Series)
   | "swah1253" => some swahili
   | _ => none
 
+/-- The functions by the names the example rows give them. -/
 def functionTable : List (String × HaspelmathFunction) :=
   [("specificKnown", .specificKnown), ("specificUnknown", .specificUnknown),
     ("irrealis", .irrealis), ("question", .question), ("conditional", .conditional),

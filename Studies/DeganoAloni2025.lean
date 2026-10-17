@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.Team.Atoms
 public import Studies.Haspelmath1997
 public import Mathlib.Basic.Nontrivial.Defs
+public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
@@ -18,14 +19,17 @@ individual variable: constancy across the team for specific known, constancy wit
 with variation across the team for specific unknown, and variation within a world for
 non-specific. The three conditions partition the teams.
 
-Each type requires a combination of atoms, and a team meets the requirement exactly when it
-renders one of the uses the type is built for, so a type admits the uses of its profile and no
-others. Five attested types require a single atom and the specific unknown type a conjunction of
-two. The unattested type requires constancy across the team or variation within a world, two
-atoms that exclude each other, and that disjunction is the one requirement that is not convex:
-a team between two teams meeting it need not meet it. The single atoms are closed under
-subteams or under superteams and their conjunction is an intersection of the two kinds, so the
-attested requirements are all convex, the conjunction being closed under neither.
+Each type requires a combination of atoms, and a team meets the requirement exactly when the
+type's profile lists the use the team renders. A larger team renders a use further from the
+specific end, constancy passing to subteams and variation to superteams, so the use is a
+monotone map from the teams to the uses ordered specific known, specific unknown, non-specific,
+and a requirement is the preimage of its profile. A requirement is therefore convex, a team
+between two teams meeting it meeting it too, exactly when its profile is an interval of the
+uses, and only the unattested profile is not. This is the paper's account of the order of
+Haspelmath's map: the profiles contiguous on the map are those with convex requirements, and of
+the orderings of the three uses only the map's and its reverse make every contiguous profile
+convex. Five attested types require a single atom, closed under subteams or under superteams,
+and the specific unknown type the conjunction of one of each, convex and closed under neither.
 
 German *irgend-*, Russian *koe-* and *-nibud'*, Kannada *-oo*, Italian *qualche-* and Georgian
 *-γac* instantiate the six attested types: the uses are the three specificity functions of
@@ -34,12 +38,17 @@ whose functions lie in the region the book draws for it.
 
 ## Main results
 
-* `exists_renders`, `renders_unique`: the three uses partition the teams.
-* `IndefiniteType.requires_iff`: a requirement is the disjunction of the uses of the profile.
-* `IndefiniteType.ordConnected_requires_iff`: the attested requirements are convex and the
-  unattested one is not.
-* `connected_profile_iff`, `sample_instantiates_attested`: the convex types are the connected
-  regions of the map, so no series of the sample instantiates the unattested type.
+* `renders_iff`: the three uses partition the teams, each team rendering the use `use` assigns
+  it.
+* `monotone_use`, `IndefiniteType.setOf_requires`: a requirement is the preimage of its profile
+  under a monotone map from the teams to the uses.
+* `IndefiniteType.ordConnected_requires_iff`: a requirement is convex exactly when its profile is
+  an interval, which every profile but the unattested one is
+  (`IndefiniteType.ordConnected_profile_iff`).
+* `ordConnected_requires_iff_connected`, `forall_ordConnected_requires_iff`: convexity is
+  contiguity on the map, whose order is the one on which contiguity forces convexity.
+* `sample_instantiates_ordConnected`: every series of the sample instantiates a type with a
+  convex requirement.
 
 ## TODO
 
@@ -127,15 +136,6 @@ the two atoms of the unattested type cannot hold together. -/
 theorem not_var_of_dep_empty (h : Dep T ∅ x) : ¬ Var T {v} x :=
   (h.mono (Finset.empty_subset _)).not_var
 
-/-- Every team renders some use. -/
-theorem exists_renders (T : Finset (V → E)) (v x : V) :
-    ∃ u : SpecificityFunction, Renders T v x u := by
-  by_cases hv : Dep T {v} x
-  · by_cases hc : Dep T ∅ x
-    · exact ⟨.specificKnown, hc⟩
-    · exact ⟨.specificUnknown, hv, not_dep.1 hc⟩
-  · exact ⟨.nonSpecific, not_dep.1 hv⟩
-
 /-- No team renders two uses. -/
 theorem renders_unique (h : Renders T v x u) (h' : Renders T v x u') : u = u' := by
   cases u <;> cases u' <;> first
@@ -158,12 +158,47 @@ theorem IndefiniteType.requires_iff :
       exists_eq_left, Renders, ← not_dep] <;>
     tauto
 
-/-- On a team rendering a use, a type's requirement is met exactly when its profile lists the
-use. -/
-theorem IndefiniteType.requires_iff_mem_profile (hu : Renders T v x u) :
-    t.Requires T v x ↔ u ∈ t.profile :=
-  ⟨fun h ↦ let ⟨_, hu', hT⟩ := requires_iff.1 h; renders_unique hu hT ▸ hu',
-    fun h ↦ requires_iff.2 ⟨u, h, hu⟩⟩
+/-! ### The use a team renders
+
+The three uses partition the teams, so each team renders one, `use`. A larger team renders a use
+further from the specific end, constancy passing to subteams and variation to superteams, and a
+requirement is the set of teams rendering a use of the profile. -/
+
+section Use
+
+variable [DecidableEq E]
+
+/-- A team renders the specific known use under constancy across the team, the specific unknown
+use under constancy within a world alone, and the non-specific use otherwise. -/
+def use (T : Finset (V → E)) (v x : V) : SpecificityFunction :=
+  if Dep T ∅ x then .specificKnown else if Dep T {v} x then .specificUnknown else .nonSpecific
+
+theorem renders_use (T : Finset (V → E)) (v x : V) : Renders T v x (use T v x) := by
+  unfold use
+  split_ifs with hc hv
+  exacts [hc, ⟨hv, not_dep.1 hc⟩, not_dep.1 hv]
+
+/-- A team renders exactly the use `use` assigns it. -/
+theorem renders_iff : Renders T v x u ↔ use T v x = u :=
+  ⟨renders_unique (renders_use T v x), (· ▸ renders_use T v x)⟩
+
+theorem monotone_use (v x : V) : Monotone (use (E := E) · v x) := fun T T' hT ↦ by
+  have hc (h : Dep T' ∅ x) : Dep T ∅ x := h.subset hT
+  have hv (h : Dep T' {v} x) : Dep T {v} x := h.subset hT
+  have hcv (h : Dep T' ∅ x) : Dep T {v} x := (h.mono (Finset.empty_subset _)).subset hT
+  dsimp only [use]
+  split_ifs <;> first | decide | simp_all
+
+/-- A team meets a type's requirement exactly when the type's profile lists the use it
+renders. -/
+theorem IndefiniteType.requires_iff_use_mem : t.Requires T v x ↔ use T v x ∈ t.profile := by
+  simp [requires_iff, renders_iff]
+
+theorem IndefiniteType.setOf_requires :
+    {T : Finset (V → E) | t.Requires T v x} = (use · v x) ⁻¹' t.profile :=
+  Set.ext fun _ ↦ requires_iff_use_mem
+
+end Use
 
 /-! ### Witnesses
 
@@ -186,75 +221,109 @@ theorem exists_subset_renders [Nontrivial E] (hvx : v ≠ x) :
       by simpa using hab⟩⟩
   simp [hab, hab.symm]
 
-/-- Each use has a team, given two individuals and distinct world and individual variables. -/
-theorem exists_team_renders [Nontrivial E] (hvx : v ≠ x) (u : SpecificityFunction) :
-    ∃ T : Finset (V → E), Renders T v x u := by
-  obtain ⟨T₁, T₂, T₃, -, -, h₁, h₂, h₃⟩ := exists_subset_renders (E := E) hvx
-  cases u <;> exact ⟨_, ‹_›⟩
+/-- The teams can be chosen to grow with the use they render. -/
+theorem exists_monotone_renders [Nontrivial E] (hvx : v ≠ x) :
+    ∃ g : SpecificityFunction → Finset (V → E), Monotone g ∧ ∀ u, Renders (g u) v x u := by
+  obtain ⟨T₁, T₂, T₃, h₁₂, h₂₃, h₁, h₂, h₃⟩ := exists_subset_renders (E := E) hvx
+  refine ⟨fun | .specificKnown => T₁ | .specificUnknown => T₂ | .nonSpecific => T₃, ?_, ?_⟩
+  · rintro (_ | _ | _) (_ | _ | _) h <;>
+      first
+        | exact le_rfl
+        | exact h₁₂
+        | exact h₂₃
+        | exact h₁₂.trans h₂₃
+        | exact absurd h (by decide)
+  · rintro (_ | _ | _) <;> assumption
 
-/-- A use entails a type's requirement exactly when the type's profile lists it, so the
-requirements reproduce the profiles. -/
-theorem forall_renders_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) :
-    (∀ T : Finset (V → E), Renders T v x u → t.Requires T v x) ↔ u ∈ t.profile :=
-  ⟨fun h ↦ let ⟨T, hT⟩ := exists_team_renders (E := E) hvx u
-    (IndefiniteType.requires_iff_mem_profile hT).1 (h T hT),
-    fun hu _ hT ↦ (IndefiniteType.requires_iff_mem_profile hT).2 hu⟩
+/-! ### Convexity
+
+A requirement is the preimage of its profile under `use`, which is monotone and has a monotone
+section. So a requirement is convex, closed under subteams or closed under superteams exactly
+when its profile is, and one requirement entails another exactly when its profile is included in
+the other's. -/
+
+/-- The uses of a type form an interval exactly when the type is not the unattested one. -/
+theorem IndefiniteType.ordConnected_profile_iff :
+    (t.profile : Set SpecificityFunction).OrdConnected ↔ t ≠ .skPlusNS := by
+  cases t <;> decide
+
+/-- A type whose uses form an interval has a convex requirement. -/
+theorem IndefiniteType.ordConnected_requires
+    (h : (t.profile : Set SpecificityFunction).OrdConnected) (v x : V) :
+    {T : Finset (V → E) | t.Requires T v x}.OrdConnected := by
+  classical
+  rw [setOf_requires]
+  exact h.preimage_mono (monotone_use v x)
+
+private theorem exists_monotone_section [DecidableEq E] [Nontrivial E] (hvx : v ≠ x) :
+    ∃ g : SpecificityFunction → Finset (V → E), Monotone g ∧
+      ∀ s : Set SpecificityFunction, g ⁻¹' ((use · v x) ⁻¹' s) = s := by
+  obtain ⟨g, hg, hgu⟩ := exists_monotone_renders (E := E) hvx
+  exact ⟨g, hg, fun s ↦ by ext u; simp [renders_iff.1 (hgu u)]⟩
+
+/-- A type's requirement is convex exactly when its uses form an interval, so convexity over teams
+is convexity over the uses. -/
+theorem IndefiniteType.ordConnected_requires_iff [Nontrivial E] (hvx : v ≠ x) :
+    {T : Finset (V → E) | t.Requires T v x}.OrdConnected ↔
+      (t.profile : Set SpecificityFunction).OrdConnected := by
+  classical
+  obtain ⟨g, hg, hs⟩ := exists_monotone_section (E := E) hvx
+  rw [setOf_requires]
+  exact ⟨fun h ↦ by simpa only [hs] using h.preimage_mono hg, (·.preimage_mono (monotone_use v x))⟩
+
+/-- A requirement is closed under subteams exactly when its profile is closed under earlier
+uses. -/
+theorem IndefiniteType.isLowerSet_requires_iff [Nontrivial E] (hvx : v ≠ x) :
+    IsLowerSet {T : Finset (V → E) | t.Requires T v x} ↔
+      IsLowerSet (t.profile : Set SpecificityFunction) := by
+  classical
+  obtain ⟨g, hg, hs⟩ := exists_monotone_section (E := E) hvx
+  rw [setOf_requires]
+  exact ⟨fun h ↦ by simpa only [hs] using h.preimage hg, (·.preimage (monotone_use v x))⟩
+
+/-- A requirement is closed under superteams exactly when its profile is closed under later
+uses. -/
+theorem IndefiniteType.isUpperSet_requires_iff [Nontrivial E] (hvx : v ≠ x) :
+    IsUpperSet {T : Finset (V → E) | t.Requires T v x} ↔
+      IsUpperSet (t.profile : Set SpecificityFunction) := by
+  classical
+  obtain ⟨g, hg, hs⟩ := exists_monotone_section (E := E) hvx
+  rw [setOf_requires]
+  exact ⟨fun h ↦ by simpa only [hs] using h.preimage hg, (·.preimage (monotone_use v x))⟩
 
 /-- One requirement entails another exactly when every use of the first type is a use of the
 second, so semantic weakening is inclusion of profiles. -/
-theorem forall_requires_imp_requires_iff [Nontrivial E] (hvx : v ≠ x) {t t' : IndefiniteType} :
-    (∀ T : Finset (V → E), t.Requires T v x → t'.Requires T v x) ↔ t.profile ⊆ t'.profile := by
-  refine ⟨fun h u hu ↦ ?_, fun h T ↦ ?_⟩
-  · obtain ⟨T, hT⟩ := exists_team_renders (E := E) hvx u
-    exact (IndefiniteType.requires_iff_mem_profile hT).1
-      (h T ((IndefiniteType.requires_iff_mem_profile hT).2 hu))
-  · simp only [IndefiniteType.requires_iff]
-    exact fun ⟨u, hu, hT⟩ ↦ ⟨u, h hu, hT⟩
-
-/-! ### Convexity -/
-
-/-- The attested requirements are convex, since a single atom is closed under subteams or under
-superteams and the specific unknown type intersects one of each kind. -/
-theorem IndefiniteType.ordConnected_requires (ht : t ≠ .skPlusNS) (v x : V) :
-    {T : Finset (V → E) | t.Requires T v x}.OrdConnected := by
-  cases t
-  · exact Set.ordConnected_univ
-  · exact (isLowerSet_dep _ _).ordConnected
-  · exact (isUpperSet_var _ _).ordConnected
-  · exact (isUpperSet_var _ _).ordConnected
-  · exact (isLowerSet_dep _ _).ordConnected
-  · exact absurd rfl ht
-  · exact (isLowerSet_dep _ _).ordConnected.inter (isUpperSet_var _ _).ordConnected
+theorem IndefiniteType.setOf_requires_subset_iff [Nontrivial E] (hvx : v ≠ x)
+    {t t' : IndefiniteType} :
+    {T : Finset (V → E) | t.Requires T v x} ⊆ {T | t'.Requires T v x} ↔ t.profile ⊆ t'.profile := by
+  classical
+  obtain ⟨g, -, hs⟩ := exists_monotone_section (E := E) hvx
+  rw [setOf_requires, setOf_requires, ← Finset.coe_subset]
+  exact ⟨fun h ↦ by simpa only [hs] using Set.preimage_mono (f := g) h, Set.preimage_mono⟩
 
 /-- The unattested requirement is not convex, since a specific known team lies below a specific
 unknown team, which lies below a non-specific one. -/
 theorem IndefiniteType.not_ordConnected_skPlusNS [Nontrivial E] (hvx : v ≠ x) :
-    ¬ {T : Finset (V → E) | skPlusNS.Requires T v x}.OrdConnected := fun h ↦ by
-  obtain ⟨T₁, T₂, T₃, h₁₂, h₂₃, h₁, h₂, h₃⟩ := exists_subset_renders (E := E) hvx
-  have hT₂ : skPlusNS.Requires T₂ v x := h.out (x := T₁) (.inl h₁) (y := T₃) (.inr h₃) ⟨h₁₂, h₂₃⟩
-  exact absurd ((requires_iff_mem_profile h₂).1 hT₂) (by decide)
-
-/-- Convexity separates the attested types from the unattested one. -/
-theorem IndefiniteType.ordConnected_requires_iff [Nontrivial E] (hvx : v ≠ x) :
-    {T : Finset (V → E) | t.Requires T v x}.OrdConnected ↔ t ≠ .skPlusNS :=
-  ⟨by rintro h rfl; exact not_ordConnected_skPlusNS hvx h, fun ht ↦ ordConnected_requires ht v x⟩
+    ¬ {T : Finset (V → E) | skPlusNS.Requires T v x}.OrdConnected :=
+  mt (ordConnected_requires_iff hvx).1 (by decide)
 
 /-! ### Monotonicity
 
 A constancy atom is closed under subteams and a variation atom under superteams. The specific
-unknown requirement, the conjunction of one of each, is convex and closed under neither. -/
+unknown requirement, the conjunction of one of each, is convex and closed under neither, since
+its use lies strictly between the other two. -/
 
 theorem IndefiniteType.not_isLowerSet_specificUnknown [Nontrivial E] (hvx : v ≠ x) :
-    ¬ IsLowerSet {T : Finset (V → E) | specificUnknown.Requires T v x} := fun h ↦ by
-  obtain ⟨T₁, T₂, -, h₁₂, -, h₁, h₂, -⟩ := exists_subset_renders (E := E) hvx
-  have hT₁ : specificUnknown.Requires T₁ v x := h h₁₂ h₂
-  exact absurd ((requires_iff_mem_profile h₁).1 hT₁) (by decide)
+    ¬ IsLowerSet {T : Finset (V → E) | specificUnknown.Requires T v x} :=
+  mt (isLowerSet_requires_iff hvx).1 fun h ↦ by
+    simpa [profile] using h (show SpecificityFunction.specificKnown ≤ .specificUnknown by decide)
+      (by simp [profile])
 
 theorem IndefiniteType.not_isUpperSet_specificUnknown [Nontrivial E] (hvx : v ≠ x) :
-    ¬ IsUpperSet {T : Finset (V → E) | specificUnknown.Requires T v x} := fun h ↦ by
-  obtain ⟨-, T₂, T₃, -, h₂₃, -, h₂, h₃⟩ := exists_subset_renders (E := E) hvx
-  have hT₃ : specificUnknown.Requires T₃ v x := h h₂₃ h₂
-  exact absurd ((requires_iff_mem_profile h₃).1 hT₃) (by decide)
+    ¬ IsUpperSet {T : Finset (V → E) | specificUnknown.Requires T v x} :=
+  mt (isUpperSet_requires_iff hvx).1 fun h ↦ by
+    simpa [profile] using h (show SpecificityFunction.specificUnknown ≤ .nonSpecific by decide)
+      (by simp [profile])
 
 end Teams
 
@@ -269,34 +338,51 @@ def Instantiates (s : Series) (t : IndefiniteType) : Prop :=
 instance (s : Series) (t : IndefiniteType) : Decidable (Instantiates s t) :=
   inferInstanceAs (Decidable (specificityFunctions s.functions = t.profile))
 
-/-- The unattested profile skips the specific unknown function, which lies between the two it
-covers, so no connected region of the map covers exactly its uses. -/
-theorem specificityFunctions_ne_skPlusNS_profile {s : Finset HaspelmathFunction}
-    (h : (implicationalMap.induce ↑s).Connected) :
-    specificityFunctions s ≠ IndefiniteType.skPlusNS.profile := fun he ↦ by
-  have hk : SpecificityFunction.specificKnown ∈ specificityFunctions s := he ▸ by decide
-  have hn : SpecificityFunction.nonSpecific ∈ specificityFunctions s := he ▸ by decide
-  have hu : SpecificityFunction.specificUnknown ∈ specificityFunctions s :=
-    mem_specificityFunctions.2 (Haspelmath1997.specificUnknown_mem_of_irrealis_mem h
-      (mem_specificityFunctions.1 hk) (mem_specificityFunctions.1 hn))
-  exact absurd (he ▸ hu) (by decide)
-
-/-- The map orders the uses as the meaning space does, in that a type's uses form a connected
-region of the map exactly when the type is not the unattested one, which is when its requirement
-is convex. -/
+/-- A type's uses form a connected region of the map exactly when they form an interval, the
+three specificity functions lying on the map as a path. -/
 theorem connected_profile_iff {t : IndefiniteType} :
     (implicationalMap.induce ↑(t.profile.image SpecificityFunction.toFunction)).Connected ↔
-      t ≠ .skPlusNS := by
+      (t.profile : Set SpecificityFunction).OrdConnected := by
   cases t <;> decide
 
-/-- The unattested type is unattested in the sample, since every series covering one of the
-three uses covers a connected region and so instantiates an attested type. -/
-theorem sample_instantiates_attested :
+/-- A type's requirement is convex exactly when its uses form a connected region of the map, so
+convexity over teams is contiguity on the map. -/
+theorem ordConnected_requires_iff_connected {V E : Type*} [Nontrivial E] {v x : V} (hvx : v ≠ x)
+    {t : IndefiniteType} :
+    {T : Finset (V → E) | t.Requires T v x}.OrdConnected ↔
+      (implicationalMap.induce ↑(t.profile.image SpecificityFunction.toFunction)).Connected :=
+  (IndefiniteType.ordConnected_requires_iff hvx).trans connected_profile_iff.symm
+
+/-- Whether a set of positions on a line of three is contiguous. -/
+@[instance_reducible]
+private def decidableOrdConnectedFin (s : Finset (Fin 3)) :
+    Decidable (s : Set (Fin 3)).OrdConnected :=
+  decidable_of_iff (∀ a ∈ s, ∀ b ∈ s, ∀ c, a ≤ c → c ≤ b → c ∈ s)
+    ⟨fun h ↦ ⟨fun _ ha _ hb _ hc ↦ h _ ha _ hb _ hc.1 hc.2⟩,
+      fun h _ ha _ hb _ h₁ h₂ ↦ h.out ha hb ⟨h₁, h₂⟩⟩
+
+attribute [local instance] decidableOrdConnectedFin in
+/-- The map orders the uses as convexity requires. On an ordering `σ` of the three uses, every
+type whose uses are contiguous has a convex requirement exactly when `σ` is the map's order or its
+reverse; on any other ordering the specific known and the non-specific use are contiguous, and
+their disjunction is not convex. -/
+theorem forall_ordConnected_requires_iff {V E : Type*} [Nontrivial E] {v x : V} (hvx : v ≠ x)
+    (σ : SpecificityFunction ≃ Fin 3) :
+    (∀ t : IndefiniteType, (σ '' t.profile).OrdConnected →
+      {T : Finset (V → E) | t.Requires T v x}.OrdConnected) ↔ Monotone σ ∨ Antitone σ := by
+  simp only [IndefiniteType.ordConnected_requires_iff hvx, ← Finset.coe_image]
+  revert σ
+  decide
+
+/-- Every series of the sample covering one of the three uses instantiates a type with a convex
+requirement, since it covers a connected region of the map. -/
+theorem sample_instantiates_ordConnected {V E : Type*} (v x : V) :
     ∀ p ∈ Haspelmath1997.sample, ∀ s ∈ p, (specificityFunctions s.functions).Nonempty →
-      ∃ t, t ≠ .skPlusNS ∧ Instantiates s t := fun p hp s hs hne ↦
-  let ⟨t, ht⟩ := IndefiniteType.exists_profile_eq hne
-  ⟨t, fun h ↦ specificityFunctions_ne_skPlusNS_profile
-    (Haspelmath1997.sample_connected p hp s hs) (h ▸ ht.symm), ht.symm⟩
+      ∃ t, Instantiates s t ∧ {T : Finset (V → E) | t.Requires T v x}.OrdConnected :=
+  fun p hp s hs hne ↦
+    let ⟨t, ht⟩ := IndefiniteType.exists_profile_eq hne
+    ⟨t, ht.symm, IndefiniteType.ordConnected_requires
+      (ht ▸ ordConnected_specificityFunctions (Haspelmath1997.sample_connected p hp s hs)) v x⟩
 
 /-- The paper's examples instantiate the six attested types on the map, Italian *qualche-* the
 unmarked one, Georgian *-γac* the specific, Russian *-nibud'* the non-specific, German *irgend-*

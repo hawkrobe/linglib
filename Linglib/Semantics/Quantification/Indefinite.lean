@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import Mathlib.Order.Interval.Set.OrdConnected
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -23,8 +24,9 @@ dedicated marker or an existential construction); the carrier bundling these wit
   neighbours `adjacent` of each on the map.
 * `Indefinite.implicationalMap`: the map as a `SimpleGraph`.
 * `Indefinite.SpecificityFunction`: the specific known, specific unknown and non-specific
-  functions, with their embedding `toFunction` in the map and the ones a region covers,
-  `specificityFunctions`.
+  functions in the order the map chains them, with their embedding `toFunction` in the map and
+  the ones a region covers, `specificityFunctions`. A set of them is an interval unless it has
+  the two ends without the middle (`SpecificityFunction.ordConnected_iff`).
 * `Indefinite.OntologicalCategory`, `Indefinite.MorphologicalBasis`: the two further dimensions
   of a series.
 
@@ -127,21 +129,47 @@ theorem implicationalMap_adj {f g : HaspelmathFunction} :
 /-! ### The specificity functions -/
 
 /-- The three functions at the specific end of the map, which differ in whether the indefinite
-has a specific referent and in whether the speaker can identify it. -/
+has a specific referent and in whether the speaker can identify it. They are ordered as the map
+chains them, from specific known through specific unknown to non-specific. -/
 inductive SpecificityFunction where
+  /-- The speaker has the referent in mind. -/
   | specificKnown
+  /-- The speaker presupposes a referent but cannot identify it. -/
   | specificUnknown
+  /-- No specific referent is intended. -/
   | nonSpecific
   deriving DecidableEq, Fintype, Repr
 
+namespace SpecificityFunction
+
+instance : LinearOrder SpecificityFunction :=
+  LinearOrder.lift' SpecificityFunction.ctorIdx (by decide)
+
+/-- A set of specificity functions is an interval exactly when it does not have the two ends
+without the middle. -/
+theorem ordConnected_iff {s : Set SpecificityFunction} :
+    s.OrdConnected ↔ (specificKnown ∈ s → nonSpecific ∈ s → specificUnknown ∈ s) := by
+  refine ⟨fun h hk hn ↦ h.out hk hn ⟨by decide, by decide⟩, fun h ↦ ⟨?_⟩⟩
+  rintro (_ | _ | _) ha (_ | _ | _) hb (_ | _ | _) ⟨hac, hcb⟩ <;>
+    first
+      | assumption
+      | exact h ha hb
+      | exact absurd hac (by decide)
+      | exact absurd hcb (by decide)
+
+instance (s : Finset SpecificityFunction) : Decidable (s : Set SpecificityFunction).OrdConnected :=
+  decidable_of_iff' _ ordConnected_iff
+
 /-- `toFunction` embeds the specificity functions in the map, the non-specific function as the
 irrealis one. -/
-def SpecificityFunction.toFunction : SpecificityFunction → HaspelmathFunction
+def toFunction : SpecificityFunction → HaspelmathFunction
   | .specificKnown => .specificKnown
   | .specificUnknown => .specificUnknown
   | .nonSpecific => .irrealis
 
-theorem SpecificityFunction.toFunction_injective : Function.Injective toFunction := by decide
+theorem toFunction_injective : Function.Injective toFunction := by decide
+
+end SpecificityFunction
 
 /-- The specificity functions a region of the map covers. -/
 def specificityFunctions (s : Finset HaspelmathFunction) : Finset SpecificityFunction :=
