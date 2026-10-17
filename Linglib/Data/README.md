@@ -6,8 +6,7 @@ Three sibling directories at this level:
 |---|---|---|---|
 | `Examples/` | Per-paper typed examples (`Datum` schema) | JSON, one file per paper | `Examples/{AuthorYear}.lean` |
 | `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
-| `Forms/` | Per-paper CLDF word forms (`FormTable`, `ParameterTable`, custom `FormRelationTable`) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
-| `Paradigms/` | Per-paper Paralex paradigms (`lexemes`, `cells`, `forms`, custom `root_classes`) | JSON, one file per paper | `Paradigms/{AuthorYear}.lean` |
+| `Forms/` | Per-paper word forms, CLDF Wordlist and Paralex (`LexemeTable`, `CellTable`, `FormTable`; custom relation, paradigm, root-class and analysis tables) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
 | `Structures/` | Per-paper CLDF language samples (`ContributionTable`, `LanguageTable`, `ParameterTable`, `CodeTable`, `ValueTable`) | JSON, one file per paper | `Structures/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
 | `WALS/` | World Atlas of Language Structures | CSV (raw under `WALS/raw/`) | `Features/F*.lean`, the features some module imports |
@@ -42,44 +41,32 @@ schema has nested fields. `scripts/export_examples_cldf.py` exports the whole
 set as a CLDF dataset, validated in CI, with its languages in
 `Examples/languages.csv` (Glottolog 5.3).
 
-### Forms — CLDF word-level data
+### Forms — word forms, paradigms and their analyses
 
-Per-paper word forms in the Cross-Linguistic Data Formats Wordlist shape: a
-`FormTable` (form, language, concept, segmentation, source), a
-`ParameterTable` (the concepts), and a linglib extension `FormRelationTable`
-for the paradigmatic pairs a paper asserts (stem and past, adjective and
-comparative, base and reduplicant). A `FormTable` row may carry custom
-columns, which CLDF permits in any table, for the per-form codes a paper
-assigns; they are emitted into the form's `columns`. A relation is emitted
-with its two forms, its foreign keys resolved. The `Comment` column and the
-`ParameterTable` are validated but not emitted, since no theorem reads them.
-The morphological counterpart of `Examples/`, whose datum is a sentence and
-its gloss.
+Per-paper word-level data in the shape of the Cross-Linguistic Data Formats
+Wordlist and of the Paralex standard for lexicons of inflected forms, which
+shares its column names: a `ParameterTable` (the concepts), a `LexemeTable`
+(each word of a language by its concept and citation form), a `CellTable`
+(cells as bundles of Universal Dependencies features, extended by
+dataset-specific enumerations from a `Types` table where UD has no feature),
+and a `FormTable` (a lexeme's form in a cell, its segments and printed morphs,
+the source's judgment of it, and its source). A form a source rejects is a row
+of its own, marked as CLDF marks examples, so disagreeing sources sit side by
+side; the generated `all` holds the accepted forms and `marked` the others.
+Linglib extension tables record what sources assert over forms: relations
+(stem and past, base and derivative), paradigms (the forms a table prints for
+a lexeme), and root classes (a source's judgment of which cells share a root,
+since root identity, *better* and *best*, is not identity of strings). What a
+paper's theory assigns to a form (an underlying representation, a root, a
+class) is that paper's parse: it goes to an `AnalysisTable` with typed columns,
+never to the form, and the generator resolves every reference to forms and
+analyses, so no study joins rows by identifier. Comments, cognate lists and
+the `ParameterTable` are validated but not emitted. The morphological
+counterpart of `Examples/`, whose datum is a sentence and its gloss.
 
 - **Schema**: `Linglib/Data/Forms/Schema.lean`
 - **Generator**: `scripts/gen_forms.py` (`--check` verifies sync, `--fmt` canonical JSON)
 - **Input/Output**: `Linglib/Data/Forms/{AuthorYear}.json` → `{AuthorYear}.lean`
-
-### Paradigms — Paralex inflected forms
-
-Per-paper paradigm data in the shape of the Paralex standard for lexicons of
-inflected forms: a `lexemes` table, a `cells` table whose cells are Universal
-Dependencies feature bundles (`Degree=Cmp`), and a `forms` table giving each
-lexeme's form in a cell with the source's segmentation and, in a linglib
-extension column after CLDF's `grammaticalityJudgement`, the source's
-`judgment` of the form (`ungrammatical` for a form a source rejects, so
-disagreeing sources sit side by side). A linglib extension table
-`paradigms` records the columns a source prints, the forms it gives a lexeme
-in some cells (one grammar's declension, or a colloquial one beside the
-literary), and a linglib extension
-table `root_classes`, a paradigm with a source's classes, records a source's judgment of which cells of a lexeme's
-forms share a root, citing where the source states it, since root identity
-(*better*, *best*) is not identity of strings. Comments and cognate lists are
-validated but not emitted.
-
-- **Schema**: `Linglib/Data/Paradigms/Schema.lean`
-- **Generator**: `scripts/gen_paradigms.py` (`--check` verifies sync)
-- **Input/Output**: `Linglib/Data/Paradigms/{AuthorYear}.json` → `{AuthorYear}.lean`
 
 ### Structures — CLDF language samples
 

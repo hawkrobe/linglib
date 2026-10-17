@@ -526,13 +526,18 @@ theorem negation_outside_inflection :
 def segmentPieces : List (String × Piece) :=
   [("doe", .dummy), ("ha", .finiteStem), ("s", .finite), ("d", .finite), ("n't", .contracted)]
 
+/-- The head the paper takes a contracted form's verb to be. -/
+def verbHead : Forms.Verb → Head
+  | .dummy => .V
+  | .auxiliary => .Aux
+
 /-- The paper's *doe-s-n't* and *ha-d-n't* have their pieces in the order that Negative Merger
 derives. -/
 theorem contracted_forms :
-    ∀ f ∈ Forms.all, f.languageId = "stan1293" →
-      ∃ verb ∈ f.columnAs? "Verb" [("dummy", Head.V), ("auxiliary", .Aux)],
+    ∀ a ∈ Forms.analyses, a.form.languageId = "stan1293" →
+      ∃ verb ∈ a.verb.map verbHead,
         (derive english (.negation english) verb).negativeMerger.finite.word english =
-          some (f.segments.map fun s ↦ (segmentPieces.lookup s).toList) := by
+          some (a.form.segments.map fun s ↦ (segmentPieces.lookup s).toList) := by
   decide +kernel
 
 /-! ### The paper's examples -/
@@ -675,17 +680,17 @@ def transcribe? : List Char → Option (List Segment)
   | c :: cs => do pure ((← letters.lookup c) :: (← transcribe? cs))
 
 /-- The exponents a row of the prefix table gives the heads of the relative prefix. -/
-def exponents? (f : Data.Forms.Form) : Option (Head → Exponent) := do
-  let lnk ← transcribe? (← f.column? "Lnk").toList
-  let d ← transcribe? (← f.column? "D").toList
-  let t ← transcribe? (← f.column? "T").toList
+def exponents? (a : Forms.Analysis) : Option (Head → Exponent) := do
+  let lnk ← transcribe? (← a.lnk).toList
+  let d ← transcribe? (← a.d).toList
+  let t ← transcribe? (← a.t).toList
   pure fun | .Lnk => ⟨lnk⟩ | .D => ⟨d⟩ | .T => ⟨t⟩ | _ => ⟨[]⟩
 
 /-- Cyclic coalescence over the Mirror-obeying complex head derives the relative prefix of each
 class, free of the hiatus its exponents present. -/
 theorem relative_prefixes :
-    ∀ f ∈ Forms.all, f.languageId = "nort2795" → ∃ e ∈ exponents? f,
-      some (lift e relative.mvalue).segments = transcribe? f.form.toList ∧
+    ∀ a ∈ Forms.analyses, a.form.languageId = "nort2795" → ∃ e ∈ exponents? a,
+      some (lift e relative.mvalue).segments = transcribe? a.form.form.toList ∧
         Hiatus.Free (lift e relative.mvalue).segments ∧
         ¬ Hiatus.Free (relative.terminals.reverse.flatMap fun h ↦ (e h).segments) := by
   decide +kernel
@@ -697,7 +702,7 @@ def nonMirror : FreeMagma Head := of .T * (of .C * (of .D * of .Lnk))
 bracketing of the same terminals as *i-*. -/
 theorem mirror_class9 :
     (FreeMagma.lift FreeMonoid.of nonMirror).toList = relative.terminals ∧
-      ∀ f ∈ Forms.all, f.parameterId = "rel_cl9" → ∃ e ∈ exponents? f,
+      ∃ e ∈ exponents? Forms.f_19_cl9.analysis,
         (lift e relative.mvalue).segments = [Ndebele.e] ∧
           (lift e nonMirror).segments = [Ndebele.i] := by
   decide +kernel
@@ -708,7 +713,7 @@ differently, /i/ and /i/ merging before /a/ coalesces with them in one and after
 theorem mul_not_assoc : ¬ ∀ x y z : Exponent, x * y * z = x * (y * z) := fun h ↦ by
   let _ : Semigroup Exponent := { (inferInstance : Mul Exponent) with mul_assoc := h }
   obtain ⟨hterm, hspell⟩ := mirror_class9
-  obtain ⟨e, -, he, hi⟩ := hspell Forms.f_19_cl9 (by decide) rfl
+  obtain ⟨e, -, he, hi⟩ := hspell
   have := congrArg Exponent.segments
     (lift_eq_lift_of_lift_of_eq e (FreeMonoid.toList.injective hterm))
   exact absurd (he.symm.trans (this.symm.trans hi)) (by decide)
@@ -738,8 +743,7 @@ theorem amalgamation_class9 :
       ∃ a, amalgamateSpine [.single .T none, .single .C (some .lowering),
           .single .D (some .raising), .single .Lnk (some .lowering)] = some [a] ∧
         a.members = relative.terminals ∧ a.complex ≠ relative.mvalue ∧
-        ∀ f ∈ Forms.all, f.parameterId = "rel_cl9" → ∃ e ∈ exponents? f,
-          (lift e a.complex).segments = [Ndebele.i] :=
+        ∃ e ∈ exponents? Forms.f_19_cl9.analysis, (lift e a.complex).segments = [Ndebele.i] :=
   ⟨rfl, _, rfl, rfl, by decide, by decide +kernel⟩
 
 /-- The two accounts meet on a single complex head. Wherever a chain is pronounced, [M] features

@@ -3,12 +3,10 @@ module
 public import Linglib.Data.Forms.Schema
 
 /-!
-# `Audring2019` — CLDF form data
+# `Audring2019`: word forms
 
-Auto-generated from `Linglib/Data/Forms/Audring2019.json` by
-`scripts/gen_forms.py`. Do not edit by hand; edit the JSON and re-run the
-generator. Consumers import this module; declarations live in
-`namespace Audring2019.Forms`.
+Auto-generated from `Linglib/Data/Forms/Audring2019.json` by `scripts/gen_forms.py`. Do not edit by
+hand; edit the JSON and re-run the generator. Declarations live in `namespace Audring2019.Forms`.
 -/
 
 @[expose] public section
@@ -17,91 +15,127 @@ namespace Audring2019.Forms
 
 open Data.Forms
 
-def boyish : Form :=
+/-- A cell of the source's tables, by its Universal Dependencies features. -/
+abbrev Cell := UD.MorphFeatures
+
+def Lexemes.like_a_boy : Lexeme :=
+  { id := "like_a_boy", languageId := "stan1293", parameterId := "like_a_boy" }
+
+def Lexemes.like_a_fool : Lexeme :=
+  { id := "like_a_fool", languageId := "stan1293", parameterId := "like_a_fool" }
+
+def Lexemes.like_a_child : Lexeme :=
+  { id := "like_a_child", languageId := "stan1293", parameterId := "like_a_child" }
+
+def Lexemes.like_trump : Lexeme :=
+  { id := "like_trump", languageId := "stan1293", parameterId := "like_trump" }
+
+def Lexemes.careful : Lexeme :=
+  { id := "careful", languageId := "stan1293", parameterId := "careful" }
+
+def Lexemes.careless : Lexeme :=
+  { id := "careless", languageId := "stan1293", parameterId := "careless" }
+
+def Lexemes.clueless : Lexeme :=
+  { id := "clueless", languageId := "stan1293", parameterId := "clueless" }
+
+def boyish : Form Cell :=
   { id := "audring2019_boyish"
-    languageId := "stan1293"
-    parameterId := "like_a_boy"
+    lexeme := Lexemes.like_a_boy
+    cell := {}
     form := "boyish"
     segments := ["boy", "ish"]
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
 
-def foolish : Form :=
+def foolish : Form Cell :=
   { id := "audring2019_foolish"
-    languageId := "stan1293"
-    parameterId := "like_a_fool"
+    lexeme := Lexemes.like_a_fool
+    cell := {}
     form := "foolish"
     segments := ["fool", "ish"]
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
 
-def childish : Form :=
+def childish : Form Cell :=
   { id := "audring2019_childish"
-    languageId := "stan1293"
-    parameterId := "like_a_child"
+    lexeme := Lexemes.like_a_child
+    cell := {}
     form := "childish"
     segments := ["child", "ish"]
     source := [
       ⟨"audring-2019", "(8)"⟩
     ] }
 
-def trumpish : Form :=
+def trumpish : Form Cell :=
   { id := "audring2019_trumpish"
-    languageId := "stan1293"
-    parameterId := "like_trump"
+    lexeme := Lexemes.like_trump
+    cell := {}
     form := "Trumpish"
     segments := ["Trump", "ish"]
     source := [
       ⟨"audring-2019", "4.1"⟩
     ] }
 
-def careful : Form :=
+def careful : Form Cell :=
   { id := "audring2019_careful"
-    languageId := "stan1293"
-    parameterId := "careful"
+    lexeme := Lexemes.careful
+    cell := {}
     form := "careful"
     segments := ["care", "ful"]
     source := [
       ⟨"audring-2019", "5"⟩
     ] }
 
-def careless : Form :=
+def careless : Form Cell :=
   { id := "audring2019_careless"
-    languageId := "stan1293"
-    parameterId := "careless"
+    lexeme := Lexemes.careless
+    cell := {}
     form := "careless"
     segments := ["care", "less"]
     source := [
       ⟨"audring-2019", "5"⟩
     ] }
 
-def clueless : Form :=
+def clueless : Form Cell :=
   { id := "audring2019_clueless"
-    languageId := "stan1293"
-    parameterId := "clueless"
+    lexeme := Lexemes.clueless
+    cell := {}
     form := "clueless"
     segments := ["clue", "less"]
     source := [
       ⟨"audring-2019", "4.2.2"⟩
     ] }
 
-def all : List Form := [boyish, foolish, childish, trumpish, careful, careless, clueless]
+/-- Every lexeme of the data. -/
+def lexemes : List Lexeme := [Lexemes.like_a_boy, Lexemes.like_a_fool, Lexemes.like_a_child,
+  Lexemes.like_trump, Lexemes.careful, Lexemes.careless, Lexemes.clueless]
 
-def relations : List FormRelation := [
-  { id := "audring2019_boyish_foolish", form := boyish, target := foolish, relation := "same_affix", source := [
+/-- Every form the sources accept. -/
+def all : List (Form Cell) := [boyish, foolish, childish, trumpish, careful, careless, clueless]
+
+/-- Every form a source marks, as marginal, questionable, unacceptable or ungrammatical. -/
+def marked : List (Form Cell) := []
+
+/-- Every relation the sources assert between forms. -/
+def relations : List (FormRelation (Form Cell)) := [
+  { id := "audring2019_boyish_foolish", form := boyish, target := foolish, relation := "same_affix",
+    source := [
       ⟨"audring-2019", "(8)"⟩
     ] },
-  { id := "audring2019_boyish_childish", form := boyish, target := childish, relation := "same_affix", source := [
+  { id := "audring2019_boyish_childish", form := boyish, target := childish,
+    relation := "same_affix", source := [
       ⟨"audring-2019", "(8)"⟩
     ] },
-  { id := "audring2019_foolish_childish", form := foolish, target := childish, relation := "same_affix", source := [
+  { id := "audring2019_foolish_childish", form := foolish, target := childish,
+    relation := "same_affix", source := [
       ⟨"audring-2019", "(8)"⟩
     ] },
-  { id := "audring2019_careful_careless", form := careful, target := careless, relation := "second_order_schema", source := [
+  { id := "audring2019_careful_careless", form := careful, target := careless,
+    relation := "second_order_schema", source := [
       ⟨"audring-2019", "(14)"⟩
-    ] }
-]
+    ] }]
 
 end Audring2019.Forms

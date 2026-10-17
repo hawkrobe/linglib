@@ -259,8 +259,8 @@ structure Stem where
   floating : List Place
 
 /-- The representation of a stem row whose vowels bear the given prelinked features. -/
-def Stem.ofRow (row : Data.Forms.Form) (linked : List (List Place)) (floating : List Place) :
-    Stem :=
+def Stem.ofRow (row : Data.Forms.Form Forms.Cell) (linked : List (List Place))
+    (floating : List Place) : Stem :=
   ⟨((row.segments.filter fun l ↦ (ofLetter l).isSome).map VNode.ofLetter).zip linked, floating⟩
 
 /-- Of the suffixes of the derivations, (2), the possessive ü/u and the ablative ö/o carry a
@@ -366,7 +366,7 @@ def dzsungelOpaque : Stem := ofRow Forms.dzsungel [[.dor], [.cor]] []
 end Stem
 
 /-- The stems of Table 18, each with the row of its base form. -/
-def stems : List (Data.Forms.Form × Stem) :=
+def stems : List (Data.Forms.Form Forms.Cell × Stem) :=
   [(Forms.haz, .haz), (Forms.tuz, .tuz), (Forms.viz, .viz), (Forms.piros, .piros),
     (Forms.nuansz, .nuansz), (Forms.oreg, .oreg), (Forms.szemolcs, .szemolcs),
     (Forms.sofor, .sofor), (Forms.papir, .papir), (Forms.hid, .hid), (Forms.kodex, .kodex)]
@@ -398,9 +398,9 @@ theorem dzsungel_vacillates :
 The Fragment's palatal harmony system reads the backness of the last harmonic vowel through
 the transparent neutral vowels. -/
 
-/-- The stems whose harmonic vowels govern their suffixes as section 3.2 describes: all but the
+/-- The stems whose harmonic vowels govern their suffixes as section 3.2 describes, all but the
 pure COR *víz*, the antiharmonic *híd* and the opaque *kódex*. -/
-def regular : List (Data.Forms.Form × Stem) :=
+def regular : List (Data.Forms.Form Forms.Cell × Stem) :=
   stems.filter (·.1 ∉ [Forms.viz, Forms.hid, Forms.kodex])
 
 /-- On the regular stems the surface generalization and the derivations agree. -/

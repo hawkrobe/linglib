@@ -58,16 +58,15 @@ written `O`, an unspecified one, read off the paper's autosegmental diagrams. -/
 /-- `tbuString s` is the TBU string spelled `s` in `H` and `O`. -/
 def tbuString (s : String) : List TBU := s.toList.map fun c ↦ if c = 'H' then .H else .O
 
-/-- `ofForm f` is the underlying and the surface TBU string of the word `f`. -/
-def ofForm (f : Data.Forms.Form) : Option (List TBU × List TBU) := do
-  let u ← f.column? "UnderlyingTones"
-  let s ← f.column? "SurfaceTones"
-  some (tbuString u, tbuString s)
+/-- `ofAnalysis a` is the underlying and the surface TBU string of the word `a` analyses. -/
+def ofAnalysis (a : Forms.Analysis) : List TBU × List TBU :=
+  (tbuString a.underlyingTones, tbuString a.surfaceTones)
 
 /-- The map (36) reproduces every plateau of Section 2.2, Luganda (8) to (12), Zulu (18b) and
 Saramaccan (21), with no change for at most one H and a plateau between the outermost Hs
 otherwise. -/
-theorem utp_map_forms : ∀ f ∈ Forms.all, ∃ p ∈ ofForm f, utp.map p.1 = p.2 := by decide
+theorem utp_map_forms : ∀ a ∈ Forms.analyses, utp.map (ofAnalysis a).1 = (ofAnalysis a).2 := by
+  decide
 
 variable {w : List TBU} {j k : ℕ}
 

@@ -1,920 +1,20 @@
 {
-  "FormTable": [
-    {
-      "ID": "stojkovic2026_belarusian_plain_lform",
-      "Language_ID": "bela1254",
-      "Parameter_ID": "abolish",
-      "Form": "kas-av-a-l-a",
-      "Segments": ["kas", "av", "a", "l", "a"],
-      "Comment": "orthographic <av>; the paper takes the vowel to be /o/ reduced to [a]",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Belarusian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg",
-      "Verbalizer": "orthographic"
-    },
-    {
-      "ID": "stojkovic2026_belarusian_plain_prs",
-      "Language_ID": "bela1254",
-      "Parameter_ID": "abolish",
-      "Form": "kas-u-je-ʃ",
-      "Segments": ["kas", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Belarusian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_bos_cro_mon_ser_plain_lform",
-      "Language_ID": "sout1528",
-      "Parameter_ID": "care_for",
-      "Form": "ɲeg-ov-a-l-a",
-      "Segments": ["ɲeg", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Bos/Cro/Mon/Ser",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_bos_cro_mon_ser_plain_prs",
-      "Language_ID": "sout1528",
-      "Parameter_ID": "care_for",
-      "Form": "ɲeg-u-je-ʃ",
-      "Segments": ["ɲeg", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Bos/Cro/Mon/Ser",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_bulgarian_plain_lform",
-      "Language_ID": "bulg1262",
-      "Parameter_ID": "kiss",
-      "Form": "tsel-uv-a-l-a",
-      "Segments": ["tsel", "uv", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Bulgarian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_bulgarian_plain_prs",
-      "Language_ID": "bulg1262",
-      "Parameter_ID": "kiss",
-      "Form": "tsel-uv-a-ʃ",
-      "Segments": ["tsel", "uv", "a", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Bulgarian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_bunyev_ac_plain_lform",
-      "Language_ID": "sout1528",
-      "Parameter_ID": "swear_at_god",
-      "Form": "bog-ov-a-l-a",
-      "Segments": ["bog", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Bunyev(ac)",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_bunyev_ac_plain_prs",
-      "Language_ID": "sout1528",
-      "Parameter_ID": "swear_at_god",
-      "Form": "bog-u-je-ʃ",
-      "Segments": ["bog", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Bunyev(ac)",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_carpathian_rusyn_plain_lform",
-      "Language_ID": "rusy1239",
-      "Parameter_ID": "talk",
-      "Form": "bisid-ov-a-l-a",
-      "Segments": ["bisid", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Carpathian Rusyn",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_carpathian_rusyn_plain_prs",
-      "Language_ID": "rusy1239",
-      "Parameter_ID": "talk",
-      "Form": "bisid-u-je-ʃ",
-      "Segments": ["bisid", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Carpathian Rusyn",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_czech_plain_lform",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "buy",
-      "Form": "kup-ov-a-l-a",
-      "Segments": ["kup", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Czech",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_czech_plain_prs",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "buy",
-      "Form": "kup-u-je-ʃ",
-      "Segments": ["kup", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Czech",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_kashubian_plain_lform",
-      "Language_ID": "kash1274",
-      "Parameter_ID": "get_engaged",
-      "Form": "brutk-ov-a-w-a",
-      "Segments": ["brutk", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Kashubian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_kashubian_plain_prs",
-      "Language_ID": "kash1274",
-      "Parameter_ID": "get_engaged",
-      "Form": "brutk-u-je-ʃ",
-      "Segments": ["brutk", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Kashubian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_lemko_rusyn_plain_lform",
-      "Language_ID": "rusy1239",
-      "Parameter_ID": "draw",
-      "Form": "rɨs-uv-a-l-a",
-      "Segments": ["rɨs", "uv", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Lemko Rusyn",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_lemko_rusyn_plain_prs",
-      "Language_ID": "rusy1239",
-      "Parameter_ID": "draw",
-      "Form": "rɨs-u-je-ʃ",
-      "Segments": ["rɨs", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Lemko Rusyn",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_lower_sorbian_plain_lform",
-      "Language_ID": "lowe1385",
-      "Parameter_ID": "paint",
-      "Form": "mol-ov-a-w-a",
-      "Segments": ["mol", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Lower Sorbian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_lower_sorbian_plain_prs",
-      "Language_ID": "lowe1385",
-      "Parameter_ID": "paint",
-      "Form": "mol-u-je-ʃ",
-      "Segments": ["mol", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Lower Sorbian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_macedonian_plain_lform",
-      "Language_ID": "mace1250",
-      "Parameter_ID": "believe",
-      "Form": "ver-uv-a-l-a",
-      "Segments": ["ver", "uv", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Macedonian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_macedonian_plain_prs",
-      "Language_ID": "mace1250",
-      "Parameter_ID": "believe",
-      "Form": "ver-uv-a-ʃ",
-      "Segments": ["ver", "uv", "a", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Macedonian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_pannonian_rusyn_plain_lform",
-      "Language_ID": "pann1240",
-      "Parameter_ID": "serve",
-      "Form": "rab-ov-a-l-a",
-      "Segments": ["rab", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Pannonian Rusyn",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_pannonian_rusyn_plain_prs",
-      "Language_ID": "pann1240",
-      "Parameter_ID": "serve",
-      "Form": "rab-u-je-ʃ",
-      "Segments": ["rab", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Pannonian Rusyn",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_podlachian_plain_lform",
-      "Language_ID": "east1426",
-      "Parameter_ID": "aim",
-      "Form": "tsil-ov-a-w-a",
-      "Segments": ["tsil", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Podlachian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_podlachian_plain_prs",
-      "Language_ID": "east1426",
-      "Parameter_ID": "aim",
-      "Form": "tsil-u-je-ʃ",
-      "Segments": ["tsil", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Podlachian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_polish_plain_lform",
-      "Language_ID": "poli1260",
-      "Parameter_ID": "work",
-      "Form": "prats-ov-a-w-a",
-      "Segments": ["prats", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Polish",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_polish_plain_prs",
-      "Language_ID": "poli1260",
-      "Parameter_ID": "work",
-      "Form": "prats-u-je-ʃ",
-      "Segments": ["prats", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Polish",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_russian_plain_lform",
-      "Language_ID": "russ1263",
-      "Parameter_ID": "complain",
-      "Form": "ʒal-ov-a-l-a-sʲ",
-      "Segments": ["ʒal", "ov", "a", "l", "a", "sʲ"],
-      "Comment": "orthographic form, which the paper uses to infer the quality before vowel reduction",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Russian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg",
-      "Verbalizer": "orthographic"
-    },
-    {
-      "ID": "stojkovic2026_russian_plain_prs",
-      "Language_ID": "russ1263",
-      "Parameter_ID": "complain",
-      "Form": "ʒal-u-je-ʃ-sʲ",
-      "Segments": ["ʒal", "u", "je", "ʃ", "sʲ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Russian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_silesian_plain_lform",
-      "Language_ID": "sile1253",
-      "Parameter_ID": "darn",
-      "Form": "ɕtop-ov-a-w-a",
-      "Segments": ["ɕtop", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Silesian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_silesian_plain_prs",
-      "Language_ID": "sile1253",
-      "Parameter_ID": "darn",
-      "Form": "ɕtop-u-je-ʃ",
-      "Segments": ["ɕtop", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Silesian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_slovak_plain_lform",
-      "Language_ID": "slov1269",
-      "Parameter_ID": "battle",
-      "Form": "boj-ov-a-l-a",
-      "Segments": ["boj", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Slovak",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_slovak_plain_prs",
-      "Language_ID": "slov1269",
-      "Parameter_ID": "battle",
-      "Form": "boj-u-je-ʃ",
-      "Segments": ["boj", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Slovak",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_slovenian_plain_lform",
-      "Language_ID": "slov1268",
-      "Parameter_ID": "travel",
-      "Form": "pot-ov-a-l-a",
-      "Segments": ["pot", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Slovenian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_slovenian_plain_prs",
-      "Language_ID": "slov1268",
-      "Parameter_ID": "travel",
-      "Form": "pot-u-je-ʃ",
-      "Segments": ["pot", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Slovenian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_ukrainian_plain_lform",
-      "Language_ID": "ukra1253",
-      "Parameter_ID": "squeeze",
-      "Form": "stis-uv-a-l-a",
-      "Segments": ["stis", "uv", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Ukrainian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_ukrainian_plain_prs",
-      "Language_ID": "ukra1253",
-      "Parameter_ID": "squeeze",
-      "Form": "stis-u-jeʃ",
-      "Segments": ["stis", "u", "jeʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Ukrainian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_upper_sorbian_plain_lform",
-      "Language_ID": "uppe1395",
-      "Parameter_ID": "buy",
-      "Form": "kup-ov-a-w-a",
-      "Segments": ["kup", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Upper Sorbian",
-      "Root": "plain",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_upper_sorbian_plain_prs",
-      "Language_ID": "uppe1395",
-      "Parameter_ID": "buy",
-      "Form": "kup-u-je-ʃ",
-      "Segments": ["kup", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 1]"],
-      "Variety": "Upper Sorbian",
-      "Root": "plain",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_belarusian_palatal_lform",
-      "Language_ID": "bela1254",
-      "Parameter_ID": "battle",
-      "Form": "vaj-av-a-l-a",
-      "Segments": ["vaj", "av", "a", "l", "a"],
-      "Comment": "orthographic <av>; the paper takes the vowel to be /o/ reduced to [a]",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Belarusian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg",
-      "Verbalizer": "orthographic"
-    },
-    {
-      "ID": "stojkovic2026_belarusian_palatal_prs",
-      "Language_ID": "bela1254",
-      "Parameter_ID": "battle",
-      "Form": "vaj-u-je-ʃ",
-      "Segments": ["vaj", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Belarusian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_bunyev_ac_palatal_lform",
-      "Language_ID": "sout1528",
-      "Parameter_ID": "prune",
-      "Form": "katʃ-ov-a-l-a",
-      "Segments": ["katʃ", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Bunyev(ac)",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_bunyev_ac_palatal_prs",
-      "Language_ID": "sout1528",
-      "Parameter_ID": "prune",
-      "Form": "katʃ-u-je-ʃ",
-      "Segments": ["katʃ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Bunyev(ac)",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_czech_palatal_lform",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "whip",
-      "Form": "bitʃ-ov-a-l-a",
-      "Segments": ["bitʃ", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Czech",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_czech_palatal_prs",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "whip",
-      "Form": "bitʃ-u-je-ʃ",
-      "Segments": ["bitʃ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Czech",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_kashubian_palatal_lform",
-      "Language_ID": "kash1274",
-      "Parameter_ID": "date",
-      "Form": "vrəj-ov-a-w-a",
-      "Segments": ["vrəj", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Kashubian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_kashubian_palatal_prs",
-      "Language_ID": "kash1274",
-      "Parameter_ID": "date",
-      "Form": "vrəj-u-je-ʃ",
-      "Segments": ["vrəj", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Kashubian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_lower_sorbian_palatal_lform",
-      "Language_ID": "lowe1385",
-      "Parameter_ID": "wander",
-      "Form": "puɕ-ov-a-w-a",
-      "Segments": ["puɕ", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Lower Sorbian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_lower_sorbian_palatal_prs",
-      "Language_ID": "lowe1385",
-      "Parameter_ID": "wander",
-      "Form": "puɕ-u-je-ʃ",
-      "Segments": ["puɕ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Lower Sorbian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_pannonian_rusyn_palatal_lform",
-      "Language_ID": "pann1240",
-      "Parameter_ID": "reign",
-      "Form": "kraʎ-ov-a-l-a",
-      "Segments": ["kraʎ", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Pannonian Rusyn",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_pannonian_rusyn_palatal_prs",
-      "Language_ID": "pann1240",
-      "Parameter_ID": "reign",
-      "Form": "kraʎ-u-je-ʃ",
-      "Segments": ["kraʎ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Pannonian Rusyn",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_podlachian_palatal_lform",
-      "Language_ID": "east1426",
-      "Parameter_ID": "grub",
-      "Form": "kartʃ-ov-a-w-a",
-      "Segments": ["kartʃ", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Podlachian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_podlachian_palatal_prs",
-      "Language_ID": "east1426",
-      "Parameter_ID": "grub",
-      "Form": "kartʃ-u-je-ʃ",
-      "Segments": ["kartʃ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Podlachian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_polish_palatal_lform",
-      "Language_ID": "poli1260",
-      "Parameter_ID": "accommodate",
-      "Form": "hotel'-ov-a-w-a",
-      "Segments": ["hotel'", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Polish",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_polish_palatal_prs",
-      "Language_ID": "poli1260",
-      "Parameter_ID": "accommodate",
-      "Form": "hotel'-u-je-ʃ",
-      "Segments": ["hotel'", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Polish",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_slovak_palatal_lform",
-      "Language_ID": "slov1269",
-      "Parameter_ID": "battle",
-      "Form": "boj-ov-a-l-a",
-      "Segments": ["boj", "ov", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Slovak",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_slovak_palatal_prs",
-      "Language_ID": "slov1269",
-      "Parameter_ID": "battle",
-      "Form": "boj-u-je-ʃ",
-      "Segments": ["boj", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Slovak",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_silesian_palatal_lform",
-      "Language_ID": "sile1253",
-      "Parameter_ID": "whip",
-      "Form": "pajtɕ-ov-a-w-a",
-      "Segments": ["pajtɕ", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Silesian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_silesian_palatal_prs",
-      "Language_ID": "sile1253",
-      "Parameter_ID": "whip",
-      "Form": "pajtɕ-u-je-ʃ",
-      "Segments": ["pajtɕ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Silesian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_upper_sorbian_palatal_lform",
-      "Language_ID": "uppe1395",
-      "Parameter_ID": "translate",
-      "Form": "preloʒ-ov-a-w-a",
-      "Segments": ["preloʒ", "ov", "a", "w", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Upper Sorbian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_upper_sorbian_palatal_prs",
-      "Language_ID": "uppe1395",
-      "Parameter_ID": "translate",
-      "Form": "preloʒ-u-je-ʃ",
-      "Segments": ["preloʒ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Upper Sorbian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_bos_cro_mon_ser_palatal_lform",
-      "Language_ID": "sout1528",
-      "Parameter_ID": "be_teacher",
-      "Form": "utʃiteʎ-ev-a-l-a",
-      "Segments": ["utʃiteʎ", "ev", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Bos/Cro/Mon/Ser",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_bos_cro_mon_ser_palatal_prs",
-      "Language_ID": "sout1528",
-      "Parameter_ID": "be_teacher",
-      "Form": "utʃiteʎ-u-je-ʃ",
-      "Segments": ["utʃiteʎ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Bos/Cro/Mon/Ser",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_carpathian_rusyn_palatal_lform",
-      "Language_ID": "rusy1239",
-      "Parameter_ID": "compare",
-      "Form": "stupɲ-ev-a-l-a",
-      "Segments": ["stupɲ", "ev", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Carpathian Rusyn",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_carpathian_rusyn_palatal_prs",
-      "Language_ID": "rusy1239",
-      "Parameter_ID": "compare",
-      "Form": "stupɲ-u-je-ʃ",
-      "Segments": ["stupɲ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Carpathian Rusyn",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_russian_palatal_lform",
-      "Language_ID": "russ1263",
-      "Parameter_ID": "swindle",
-      "Form": "muxlʲ-ev-a-l-a",
-      "Segments": ["muxlʲ", "ev", "a", "l", "a"],
-      "Comment": "orthographic form, which the paper uses to infer the quality before vowel reduction",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Russian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg",
-      "Verbalizer": "orthographic"
-    },
-    {
-      "ID": "stojkovic2026_russian_palatal_prs",
-      "Language_ID": "russ1263",
-      "Parameter_ID": "swindle",
-      "Form": "muxlʲ-u-je-ʃ",
-      "Segments": ["muxlʲ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Russian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_slovenian_palatal_lform",
-      "Language_ID": "slov1268",
-      "Parameter_ID": "rain",
-      "Form": "deʒ-ev-a-l-a",
-      "Segments": ["deʒ", "ev", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Slovenian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_slovenian_palatal_prs",
-      "Language_ID": "slov1268",
-      "Parameter_ID": "rain",
-      "Form": "deʒ-u-je-ʃ",
-      "Segments": ["deʒ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Slovenian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_bulgarian_palatal_lform",
-      "Language_ID": "bulg1262",
-      "Parameter_ID": "jitter",
-      "Form": "najeʒ-uv-a-l-a",
-      "Segments": ["najeʒ", "uv", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Bulgarian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_bulgarian_palatal_prs",
-      "Language_ID": "bulg1262",
-      "Parameter_ID": "jitter",
-      "Form": "najeʒ-uv-a-ʃ",
-      "Segments": ["najeʒ", "uv", "a", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Bulgarian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_lemko_rusyn_palatal_lform",
-      "Language_ID": "rusy1239",
-      "Parameter_ID": "adore",
-      "Form": "oboʒ-uv-a-l-a",
-      "Segments": ["oboʒ", "uv", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Lemko Rusyn",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_lemko_rusyn_palatal_prs",
-      "Language_ID": "rusy1239",
-      "Parameter_ID": "adore",
-      "Form": "oboʒ-u-je-ʃ",
-      "Segments": ["oboʒ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Lemko Rusyn",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_macedonian_palatal_lform",
-      "Language_ID": "mace1250",
-      "Parameter_ID": "spend_night",
-      "Form": "noc-uv-a-l-a",
-      "Segments": ["noc", "uv", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Macedonian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_macedonian_palatal_prs",
-      "Language_ID": "mace1250",
-      "Parameter_ID": "spend_night",
-      "Form": "noc-uv-a-ʃ",
-      "Segments": ["noc", "uv", "a", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Macedonian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
-    },
-    {
-      "ID": "stojkovic2026_ukrainian_palatal_lform",
-      "Language_ID": "ukra1253",
-      "Parameter_ID": "be_late",
-      "Form": "zapizɲ-uv-a-l-a",
-      "Segments": ["zapizɲ", "uv", "a", "l", "a"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Ukrainian",
-      "Root": "palatal",
-      "Cell": "l-form.f.sg"
-    },
-    {
-      "ID": "stojkovic2026_ukrainian_palatal_prs",
-      "Language_ID": "ukra1253",
-      "Parameter_ID": "be_late",
-      "Form": "zapizɲ-u-je-ʃ",
-      "Segments": ["zapizɲ", "u", "je", "ʃ"],
-      "Comment": "",
-      "Source": ["stojkovic-2026[Table 2]"],
-      "Variety": "Ukrainian",
-      "Root": "palatal",
-      "Cell": "2sg.prs"
+  "Types": {
+    "Root": [
+      {"Value": "plain", "Lean": "plain", "Description": "a plain root-final consonant"},
+      {"Value": "palatal", "Lean": "palatal", "Description": "a palatal root-final consonant"}
+    ]
+  },
+  "CellTable": [
+    {
+      "ID": "l_form_f_sg",
+      "Name": "l-form.f.sg",
+      "Features": "VerbForm=Part|Tense=Past|Gender=Fem|Number=Sing"
+    },
+    {
+      "ID": "prs_2sg",
+      "Name": "2sg.prs",
+      "Features": "Person=2|Number=Sing|Tense=Pres"
     }
   ],
   "ParameterTable": [
@@ -1087,6 +187,1167 @@
       "ID": "work",
       "Name": "work",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "abolish_belarusian",
+      "Language_ID": "bela1254",
+      "Variety": "Belarusian",
+      "Parameter_ID": "abolish"
+    },
+    {
+      "ID": "care_for_bos_cro_mon_ser",
+      "Language_ID": "sout1528",
+      "Variety": "Bos/Cro/Mon/Ser",
+      "Parameter_ID": "care_for"
+    },
+    {
+      "ID": "kiss_bulgarian",
+      "Language_ID": "bulg1262",
+      "Variety": "Bulgarian",
+      "Parameter_ID": "kiss"
+    },
+    {
+      "ID": "swear_at_god_bunyev_ac",
+      "Language_ID": "sout1528",
+      "Variety": "Bunyev(ac)",
+      "Parameter_ID": "swear_at_god"
+    },
+    {
+      "ID": "talk_carpathian_rusyn",
+      "Language_ID": "rusy1239",
+      "Variety": "Carpathian Rusyn",
+      "Parameter_ID": "talk"
+    },
+    {
+      "ID": "buy_czech",
+      "Language_ID": "czec1258",
+      "Variety": "Czech",
+      "Parameter_ID": "buy"
+    },
+    {
+      "ID": "get_engaged_kashubian",
+      "Language_ID": "kash1274",
+      "Variety": "Kashubian",
+      "Parameter_ID": "get_engaged"
+    },
+    {
+      "ID": "draw_lemko_rusyn",
+      "Language_ID": "rusy1239",
+      "Variety": "Lemko Rusyn",
+      "Parameter_ID": "draw"
+    },
+    {
+      "ID": "paint_lower_sorbian",
+      "Language_ID": "lowe1385",
+      "Variety": "Lower Sorbian",
+      "Parameter_ID": "paint"
+    },
+    {
+      "ID": "believe_macedonian",
+      "Language_ID": "mace1250",
+      "Variety": "Macedonian",
+      "Parameter_ID": "believe"
+    },
+    {
+      "ID": "serve_pannonian_rusyn",
+      "Language_ID": "pann1240",
+      "Variety": "Pannonian Rusyn",
+      "Parameter_ID": "serve"
+    },
+    {
+      "ID": "aim_podlachian",
+      "Language_ID": "east1426",
+      "Variety": "Podlachian",
+      "Parameter_ID": "aim"
+    },
+    {
+      "ID": "work_polish",
+      "Language_ID": "poli1260",
+      "Variety": "Polish",
+      "Parameter_ID": "work"
+    },
+    {
+      "ID": "complain_russian",
+      "Language_ID": "russ1263",
+      "Variety": "Russian",
+      "Parameter_ID": "complain"
+    },
+    {
+      "ID": "darn_silesian",
+      "Language_ID": "sile1253",
+      "Variety": "Silesian",
+      "Parameter_ID": "darn"
+    },
+    {
+      "ID": "battle_slovak",
+      "Language_ID": "slov1269",
+      "Variety": "Slovak",
+      "Parameter_ID": "battle"
+    },
+    {
+      "ID": "travel_slovenian",
+      "Language_ID": "slov1268",
+      "Variety": "Slovenian",
+      "Parameter_ID": "travel"
+    },
+    {
+      "ID": "squeeze_ukrainian",
+      "Language_ID": "ukra1253",
+      "Variety": "Ukrainian",
+      "Parameter_ID": "squeeze"
+    },
+    {
+      "ID": "buy_upper_sorbian",
+      "Language_ID": "uppe1395",
+      "Variety": "Upper Sorbian",
+      "Parameter_ID": "buy"
+    },
+    {
+      "ID": "battle_belarusian",
+      "Language_ID": "bela1254",
+      "Variety": "Belarusian",
+      "Parameter_ID": "battle"
+    },
+    {
+      "ID": "prune_bunyev_ac",
+      "Language_ID": "sout1528",
+      "Variety": "Bunyev(ac)",
+      "Parameter_ID": "prune"
+    },
+    {
+      "ID": "whip_czech",
+      "Language_ID": "czec1258",
+      "Variety": "Czech",
+      "Parameter_ID": "whip"
+    },
+    {
+      "ID": "date_kashubian",
+      "Language_ID": "kash1274",
+      "Variety": "Kashubian",
+      "Parameter_ID": "date"
+    },
+    {
+      "ID": "wander_lower_sorbian",
+      "Language_ID": "lowe1385",
+      "Variety": "Lower Sorbian",
+      "Parameter_ID": "wander"
+    },
+    {
+      "ID": "reign_pannonian_rusyn",
+      "Language_ID": "pann1240",
+      "Variety": "Pannonian Rusyn",
+      "Parameter_ID": "reign"
+    },
+    {
+      "ID": "grub_podlachian",
+      "Language_ID": "east1426",
+      "Variety": "Podlachian",
+      "Parameter_ID": "grub"
+    },
+    {
+      "ID": "accommodate_polish",
+      "Language_ID": "poli1260",
+      "Variety": "Polish",
+      "Parameter_ID": "accommodate"
+    },
+    {
+      "ID": "whip_silesian",
+      "Language_ID": "sile1253",
+      "Variety": "Silesian",
+      "Parameter_ID": "whip"
+    },
+    {
+      "ID": "translate_upper_sorbian",
+      "Language_ID": "uppe1395",
+      "Variety": "Upper Sorbian",
+      "Parameter_ID": "translate"
+    },
+    {
+      "ID": "be_teacher_bos_cro_mon_ser",
+      "Language_ID": "sout1528",
+      "Variety": "Bos/Cro/Mon/Ser",
+      "Parameter_ID": "be_teacher"
+    },
+    {
+      "ID": "compare_carpathian_rusyn",
+      "Language_ID": "rusy1239",
+      "Variety": "Carpathian Rusyn",
+      "Parameter_ID": "compare"
+    },
+    {
+      "ID": "swindle_russian",
+      "Language_ID": "russ1263",
+      "Variety": "Russian",
+      "Parameter_ID": "swindle"
+    },
+    {
+      "ID": "rain_slovenian",
+      "Language_ID": "slov1268",
+      "Variety": "Slovenian",
+      "Parameter_ID": "rain"
+    },
+    {
+      "ID": "jitter_bulgarian",
+      "Language_ID": "bulg1262",
+      "Variety": "Bulgarian",
+      "Parameter_ID": "jitter"
+    },
+    {
+      "ID": "adore_lemko_rusyn",
+      "Language_ID": "rusy1239",
+      "Variety": "Lemko Rusyn",
+      "Parameter_ID": "adore"
+    },
+    {
+      "ID": "spend_night_macedonian",
+      "Language_ID": "mace1250",
+      "Variety": "Macedonian",
+      "Parameter_ID": "spend_night"
+    },
+    {
+      "ID": "be_late_ukrainian",
+      "Language_ID": "ukra1253",
+      "Variety": "Ukrainian",
+      "Parameter_ID": "be_late"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "stojkovic2026_belarusian_plain_lform",
+      "Lexeme_ID": "abolish_belarusian",
+      "Cell": "l_form_f_sg",
+      "Form": "kasavala",
+      "Morphs": ["kas", "av", "a", "l", "a"],
+      "Comment": "orthographic <av>; the paper takes the vowel to be /o/ reduced to [a]",
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_belarusian_plain_prs",
+      "Lexeme_ID": "abolish_belarusian",
+      "Cell": "prs_2sg",
+      "Form": "kasujeʃ",
+      "Morphs": ["kas", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_bos_cro_mon_ser_plain_lform",
+      "Lexeme_ID": "care_for_bos_cro_mon_ser",
+      "Cell": "l_form_f_sg",
+      "Form": "ɲegovala",
+      "Morphs": ["ɲeg", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_bos_cro_mon_ser_plain_prs",
+      "Lexeme_ID": "care_for_bos_cro_mon_ser",
+      "Cell": "prs_2sg",
+      "Form": "ɲegujeʃ",
+      "Morphs": ["ɲeg", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_bulgarian_plain_lform",
+      "Lexeme_ID": "kiss_bulgarian",
+      "Cell": "l_form_f_sg",
+      "Form": "tseluvala",
+      "Morphs": ["tsel", "uv", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_bulgarian_plain_prs",
+      "Lexeme_ID": "kiss_bulgarian",
+      "Cell": "prs_2sg",
+      "Form": "tseluvaʃ",
+      "Morphs": ["tsel", "uv", "a", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_bunyev_ac_plain_lform",
+      "Lexeme_ID": "swear_at_god_bunyev_ac",
+      "Cell": "l_form_f_sg",
+      "Form": "bogovala",
+      "Morphs": ["bog", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_bunyev_ac_plain_prs",
+      "Lexeme_ID": "swear_at_god_bunyev_ac",
+      "Cell": "prs_2sg",
+      "Form": "bogujeʃ",
+      "Morphs": ["bog", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_carpathian_rusyn_plain_lform",
+      "Lexeme_ID": "talk_carpathian_rusyn",
+      "Cell": "l_form_f_sg",
+      "Form": "bisidovala",
+      "Morphs": ["bisid", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_carpathian_rusyn_plain_prs",
+      "Lexeme_ID": "talk_carpathian_rusyn",
+      "Cell": "prs_2sg",
+      "Form": "bisidujeʃ",
+      "Morphs": ["bisid", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_czech_plain_lform",
+      "Lexeme_ID": "buy_czech",
+      "Cell": "l_form_f_sg",
+      "Form": "kupovala",
+      "Morphs": ["kup", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_czech_plain_prs",
+      "Lexeme_ID": "buy_czech",
+      "Cell": "prs_2sg",
+      "Form": "kupujeʃ",
+      "Morphs": ["kup", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_kashubian_plain_lform",
+      "Lexeme_ID": "get_engaged_kashubian",
+      "Cell": "l_form_f_sg",
+      "Form": "brutkovawa",
+      "Morphs": ["brutk", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_kashubian_plain_prs",
+      "Lexeme_ID": "get_engaged_kashubian",
+      "Cell": "prs_2sg",
+      "Form": "brutkujeʃ",
+      "Morphs": ["brutk", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_lemko_rusyn_plain_lform",
+      "Lexeme_ID": "draw_lemko_rusyn",
+      "Cell": "l_form_f_sg",
+      "Form": "rɨsuvala",
+      "Morphs": ["rɨs", "uv", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_lemko_rusyn_plain_prs",
+      "Lexeme_ID": "draw_lemko_rusyn",
+      "Cell": "prs_2sg",
+      "Form": "rɨsujeʃ",
+      "Morphs": ["rɨs", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_lower_sorbian_plain_lform",
+      "Lexeme_ID": "paint_lower_sorbian",
+      "Cell": "l_form_f_sg",
+      "Form": "molovawa",
+      "Morphs": ["mol", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_lower_sorbian_plain_prs",
+      "Lexeme_ID": "paint_lower_sorbian",
+      "Cell": "prs_2sg",
+      "Form": "molujeʃ",
+      "Morphs": ["mol", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_macedonian_plain_lform",
+      "Lexeme_ID": "believe_macedonian",
+      "Cell": "l_form_f_sg",
+      "Form": "veruvala",
+      "Morphs": ["ver", "uv", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_macedonian_plain_prs",
+      "Lexeme_ID": "believe_macedonian",
+      "Cell": "prs_2sg",
+      "Form": "veruvaʃ",
+      "Morphs": ["ver", "uv", "a", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_pannonian_rusyn_plain_lform",
+      "Lexeme_ID": "serve_pannonian_rusyn",
+      "Cell": "l_form_f_sg",
+      "Form": "rabovala",
+      "Morphs": ["rab", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_pannonian_rusyn_plain_prs",
+      "Lexeme_ID": "serve_pannonian_rusyn",
+      "Cell": "prs_2sg",
+      "Form": "rabujeʃ",
+      "Morphs": ["rab", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_podlachian_plain_lform",
+      "Lexeme_ID": "aim_podlachian",
+      "Cell": "l_form_f_sg",
+      "Form": "tsilovawa",
+      "Morphs": ["tsil", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_podlachian_plain_prs",
+      "Lexeme_ID": "aim_podlachian",
+      "Cell": "prs_2sg",
+      "Form": "tsilujeʃ",
+      "Morphs": ["tsil", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_polish_plain_lform",
+      "Lexeme_ID": "work_polish",
+      "Cell": "l_form_f_sg",
+      "Form": "pratsovawa",
+      "Morphs": ["prats", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_polish_plain_prs",
+      "Lexeme_ID": "work_polish",
+      "Cell": "prs_2sg",
+      "Form": "pratsujeʃ",
+      "Morphs": ["prats", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_russian_plain_lform",
+      "Lexeme_ID": "complain_russian",
+      "Cell": "l_form_f_sg",
+      "Form": "ʒalovalasʲ",
+      "Morphs": ["ʒal", "ov", "a", "l", "a", "sʲ"],
+      "Comment": "orthographic form, which the paper uses to infer the quality before vowel reduction",
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_russian_plain_prs",
+      "Lexeme_ID": "complain_russian",
+      "Cell": "prs_2sg",
+      "Form": "ʒalujeʃsʲ",
+      "Morphs": ["ʒal", "u", "je", "ʃ", "sʲ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_silesian_plain_lform",
+      "Lexeme_ID": "darn_silesian",
+      "Cell": "l_form_f_sg",
+      "Form": "ɕtopovawa",
+      "Morphs": ["ɕtop", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_silesian_plain_prs",
+      "Lexeme_ID": "darn_silesian",
+      "Cell": "prs_2sg",
+      "Form": "ɕtopujeʃ",
+      "Morphs": ["ɕtop", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_slovak_plain_lform",
+      "Lexeme_ID": "battle_slovak",
+      "Cell": "l_form_f_sg",
+      "Form": "bojovala",
+      "Morphs": ["boj", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_slovak_plain_prs",
+      "Lexeme_ID": "battle_slovak",
+      "Cell": "prs_2sg",
+      "Form": "bojujeʃ",
+      "Morphs": ["boj", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_slovenian_plain_lform",
+      "Lexeme_ID": "travel_slovenian",
+      "Cell": "l_form_f_sg",
+      "Form": "potovala",
+      "Morphs": ["pot", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_slovenian_plain_prs",
+      "Lexeme_ID": "travel_slovenian",
+      "Cell": "prs_2sg",
+      "Form": "potujeʃ",
+      "Morphs": ["pot", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_ukrainian_plain_lform",
+      "Lexeme_ID": "squeeze_ukrainian",
+      "Cell": "l_form_f_sg",
+      "Form": "stisuvala",
+      "Morphs": ["stis", "uv", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_ukrainian_plain_prs",
+      "Lexeme_ID": "squeeze_ukrainian",
+      "Cell": "prs_2sg",
+      "Form": "stisujeʃ",
+      "Morphs": ["stis", "u", "jeʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_upper_sorbian_plain_lform",
+      "Lexeme_ID": "buy_upper_sorbian",
+      "Cell": "l_form_f_sg",
+      "Form": "kupovawa",
+      "Morphs": ["kup", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_upper_sorbian_plain_prs",
+      "Lexeme_ID": "buy_upper_sorbian",
+      "Cell": "prs_2sg",
+      "Form": "kupujeʃ",
+      "Morphs": ["kup", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 1]"]
+    },
+    {
+      "ID": "stojkovic2026_belarusian_palatal_lform",
+      "Lexeme_ID": "battle_belarusian",
+      "Cell": "l_form_f_sg",
+      "Form": "vajavala",
+      "Morphs": ["vaj", "av", "a", "l", "a"],
+      "Comment": "orthographic <av>; the paper takes the vowel to be /o/ reduced to [a]",
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_belarusian_palatal_prs",
+      "Lexeme_ID": "battle_belarusian",
+      "Cell": "prs_2sg",
+      "Form": "vajujeʃ",
+      "Morphs": ["vaj", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_bunyev_ac_palatal_lform",
+      "Lexeme_ID": "prune_bunyev_ac",
+      "Cell": "l_form_f_sg",
+      "Form": "katʃovala",
+      "Morphs": ["katʃ", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_bunyev_ac_palatal_prs",
+      "Lexeme_ID": "prune_bunyev_ac",
+      "Cell": "prs_2sg",
+      "Form": "katʃujeʃ",
+      "Morphs": ["katʃ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_czech_palatal_lform",
+      "Lexeme_ID": "whip_czech",
+      "Cell": "l_form_f_sg",
+      "Form": "bitʃovala",
+      "Morphs": ["bitʃ", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_czech_palatal_prs",
+      "Lexeme_ID": "whip_czech",
+      "Cell": "prs_2sg",
+      "Form": "bitʃujeʃ",
+      "Morphs": ["bitʃ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_kashubian_palatal_lform",
+      "Lexeme_ID": "date_kashubian",
+      "Cell": "l_form_f_sg",
+      "Form": "vrəjovawa",
+      "Morphs": ["vrəj", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_kashubian_palatal_prs",
+      "Lexeme_ID": "date_kashubian",
+      "Cell": "prs_2sg",
+      "Form": "vrəjujeʃ",
+      "Morphs": ["vrəj", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_lower_sorbian_palatal_lform",
+      "Lexeme_ID": "wander_lower_sorbian",
+      "Cell": "l_form_f_sg",
+      "Form": "puɕovawa",
+      "Morphs": ["puɕ", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_lower_sorbian_palatal_prs",
+      "Lexeme_ID": "wander_lower_sorbian",
+      "Cell": "prs_2sg",
+      "Form": "puɕujeʃ",
+      "Morphs": ["puɕ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_pannonian_rusyn_palatal_lform",
+      "Lexeme_ID": "reign_pannonian_rusyn",
+      "Cell": "l_form_f_sg",
+      "Form": "kraʎovala",
+      "Morphs": ["kraʎ", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_pannonian_rusyn_palatal_prs",
+      "Lexeme_ID": "reign_pannonian_rusyn",
+      "Cell": "prs_2sg",
+      "Form": "kraʎujeʃ",
+      "Morphs": ["kraʎ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_podlachian_palatal_lform",
+      "Lexeme_ID": "grub_podlachian",
+      "Cell": "l_form_f_sg",
+      "Form": "kartʃovawa",
+      "Morphs": ["kartʃ", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_podlachian_palatal_prs",
+      "Lexeme_ID": "grub_podlachian",
+      "Cell": "prs_2sg",
+      "Form": "kartʃujeʃ",
+      "Morphs": ["kartʃ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_polish_palatal_lform",
+      "Lexeme_ID": "accommodate_polish",
+      "Cell": "l_form_f_sg",
+      "Form": "hotel'ovawa",
+      "Morphs": ["hotel'", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_polish_palatal_prs",
+      "Lexeme_ID": "accommodate_polish",
+      "Cell": "prs_2sg",
+      "Form": "hotel'ujeʃ",
+      "Morphs": ["hotel'", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_slovak_palatal_lform",
+      "Lexeme_ID": "battle_slovak",
+      "Cell": "l_form_f_sg",
+      "Form": "bojovala",
+      "Morphs": ["boj", "ov", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_slovak_palatal_prs",
+      "Lexeme_ID": "battle_slovak",
+      "Cell": "prs_2sg",
+      "Form": "bojujeʃ",
+      "Morphs": ["boj", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_silesian_palatal_lform",
+      "Lexeme_ID": "whip_silesian",
+      "Cell": "l_form_f_sg",
+      "Form": "pajtɕovawa",
+      "Morphs": ["pajtɕ", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_silesian_palatal_prs",
+      "Lexeme_ID": "whip_silesian",
+      "Cell": "prs_2sg",
+      "Form": "pajtɕujeʃ",
+      "Morphs": ["pajtɕ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_upper_sorbian_palatal_lform",
+      "Lexeme_ID": "translate_upper_sorbian",
+      "Cell": "l_form_f_sg",
+      "Form": "preloʒovawa",
+      "Morphs": ["preloʒ", "ov", "a", "w", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_upper_sorbian_palatal_prs",
+      "Lexeme_ID": "translate_upper_sorbian",
+      "Cell": "prs_2sg",
+      "Form": "preloʒujeʃ",
+      "Morphs": ["preloʒ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_bos_cro_mon_ser_palatal_lform",
+      "Lexeme_ID": "be_teacher_bos_cro_mon_ser",
+      "Cell": "l_form_f_sg",
+      "Form": "utʃiteʎevala",
+      "Morphs": ["utʃiteʎ", "ev", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_bos_cro_mon_ser_palatal_prs",
+      "Lexeme_ID": "be_teacher_bos_cro_mon_ser",
+      "Cell": "prs_2sg",
+      "Form": "utʃiteʎujeʃ",
+      "Morphs": ["utʃiteʎ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_carpathian_rusyn_palatal_lform",
+      "Lexeme_ID": "compare_carpathian_rusyn",
+      "Cell": "l_form_f_sg",
+      "Form": "stupɲevala",
+      "Morphs": ["stupɲ", "ev", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_carpathian_rusyn_palatal_prs",
+      "Lexeme_ID": "compare_carpathian_rusyn",
+      "Cell": "prs_2sg",
+      "Form": "stupɲujeʃ",
+      "Morphs": ["stupɲ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_russian_palatal_lform",
+      "Lexeme_ID": "swindle_russian",
+      "Cell": "l_form_f_sg",
+      "Form": "muxlʲevala",
+      "Morphs": ["muxlʲ", "ev", "a", "l", "a"],
+      "Comment": "orthographic form, which the paper uses to infer the quality before vowel reduction",
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_russian_palatal_prs",
+      "Lexeme_ID": "swindle_russian",
+      "Cell": "prs_2sg",
+      "Form": "muxlʲujeʃ",
+      "Morphs": ["muxlʲ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_slovenian_palatal_lform",
+      "Lexeme_ID": "rain_slovenian",
+      "Cell": "l_form_f_sg",
+      "Form": "deʒevala",
+      "Morphs": ["deʒ", "ev", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_slovenian_palatal_prs",
+      "Lexeme_ID": "rain_slovenian",
+      "Cell": "prs_2sg",
+      "Form": "deʒujeʃ",
+      "Morphs": ["deʒ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_bulgarian_palatal_lform",
+      "Lexeme_ID": "jitter_bulgarian",
+      "Cell": "l_form_f_sg",
+      "Form": "najeʒuvala",
+      "Morphs": ["najeʒ", "uv", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_bulgarian_palatal_prs",
+      "Lexeme_ID": "jitter_bulgarian",
+      "Cell": "prs_2sg",
+      "Form": "najeʒuvaʃ",
+      "Morphs": ["najeʒ", "uv", "a", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_lemko_rusyn_palatal_lform",
+      "Lexeme_ID": "adore_lemko_rusyn",
+      "Cell": "l_form_f_sg",
+      "Form": "oboʒuvala",
+      "Morphs": ["oboʒ", "uv", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_lemko_rusyn_palatal_prs",
+      "Lexeme_ID": "adore_lemko_rusyn",
+      "Cell": "prs_2sg",
+      "Form": "oboʒujeʃ",
+      "Morphs": ["oboʒ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_macedonian_palatal_lform",
+      "Lexeme_ID": "spend_night_macedonian",
+      "Cell": "l_form_f_sg",
+      "Form": "nocuvala",
+      "Morphs": ["noc", "uv", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_macedonian_palatal_prs",
+      "Lexeme_ID": "spend_night_macedonian",
+      "Cell": "prs_2sg",
+      "Form": "nocuvaʃ",
+      "Morphs": ["noc", "uv", "a", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_ukrainian_palatal_lform",
+      "Lexeme_ID": "be_late_ukrainian",
+      "Cell": "l_form_f_sg",
+      "Form": "zapizɲuvala",
+      "Morphs": ["zapizɲ", "uv", "a", "l", "a"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    },
+    {
+      "ID": "stojkovic2026_ukrainian_palatal_prs",
+      "Lexeme_ID": "be_late_ukrainian",
+      "Cell": "prs_2sg",
+      "Form": "zapizɲujeʃ",
+      "Morphs": ["zapizɲ", "u", "je", "ʃ"],
+      "Source": ["stojkovic-2026[Table 2]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Root",
+      "Lean": "root",
+      "Type": "Root",
+      "Description": "the root class the paper assigns"
+    },
+    {
+      "Name": "Verbalizer",
+      "Lean": "verbalizer",
+      "Type": "String"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "stojkovic2026_belarusian_plain_lform",
+      "Root": "plain",
+      "Verbalizer": "orthographic"
+    },
+    {
+      "Form_ID": "stojkovic2026_belarusian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_bos_cro_mon_ser_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_bos_cro_mon_ser_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_bulgarian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_bulgarian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_bunyev_ac_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_bunyev_ac_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_carpathian_rusyn_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_carpathian_rusyn_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_czech_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_czech_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_kashubian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_kashubian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_lemko_rusyn_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_lemko_rusyn_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_lower_sorbian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_lower_sorbian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_macedonian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_macedonian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_pannonian_rusyn_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_pannonian_rusyn_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_podlachian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_podlachian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_polish_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_polish_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_russian_plain_lform",
+      "Root": "plain",
+      "Verbalizer": "orthographic"
+    },
+    {
+      "Form_ID": "stojkovic2026_russian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_silesian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_silesian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_slovak_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_slovak_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_slovenian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_slovenian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_ukrainian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_ukrainian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_upper_sorbian_plain_lform",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_upper_sorbian_plain_prs",
+      "Root": "plain"
+    },
+    {
+      "Form_ID": "stojkovic2026_belarusian_palatal_lform",
+      "Root": "palatal",
+      "Verbalizer": "orthographic"
+    },
+    {
+      "Form_ID": "stojkovic2026_belarusian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_bunyev_ac_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_bunyev_ac_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_czech_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_czech_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_kashubian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_kashubian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_lower_sorbian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_lower_sorbian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_pannonian_rusyn_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_pannonian_rusyn_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_podlachian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_podlachian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_polish_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_polish_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_slovak_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_slovak_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_silesian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_silesian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_upper_sorbian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_upper_sorbian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_bos_cro_mon_ser_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_bos_cro_mon_ser_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_carpathian_rusyn_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_carpathian_rusyn_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_russian_palatal_lform",
+      "Root": "palatal",
+      "Verbalizer": "orthographic"
+    },
+    {
+      "Form_ID": "stojkovic2026_russian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_slovenian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_slovenian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_bulgarian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_bulgarian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_lemko_rusyn_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_lemko_rusyn_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_macedonian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_macedonian_palatal_prs",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_ukrainian_palatal_lform",
+      "Root": "palatal"
+    },
+    {
+      "Form_ID": "stojkovic2026_ukrainian_palatal_prs",
+      "Root": "palatal"
     }
   ]
 }

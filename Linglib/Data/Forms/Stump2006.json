@@ -1,2990 +1,321 @@
 {
-  "FormTable": [
+  "Types": {
+    "Grade": [
+      {"Value": "strong", "Lean": "strong", "Description": "the strong grade"},
+      {"Value": "middle", "Lean": "middle", "Description": "the middle grade"},
+      {"Value": "weakest", "Lean": "weakest", "Description": "the weakest grade"}
+    ]
+  },
+  "CellTable": [
     {
-      "ID": "stump2006_room_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoj",
-      "Segments": ["p", "o", "k", "o", "j"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "nom",
-      "Number": "sg"
+      "ID": "nom_sg",
+      "Name": "nom sg",
+      "Features": "Case=Nom|Number=Sing"
     },
     {
-      "ID": "stump2006_room_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoje",
-      "Segments": ["p", "o", "k", "o", "j", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "gen",
-      "Number": "sg"
+      "ID": "gen_sg",
+      "Name": "gen sg",
+      "Features": "Case=Gen|Number=Sing"
     },
     {
-      "ID": "stump2006_room_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoji",
-      "Segments": ["p", "o", "k", "o", "j", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "dat",
-      "Number": "sg"
+      "ID": "dat_sg",
+      "Name": "dat sg",
+      "Features": "Case=Dat|Number=Sing"
     },
     {
-      "ID": "stump2006_room_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoj",
-      "Segments": ["p", "o", "k", "o", "j"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "acc",
-      "Number": "sg"
+      "ID": "acc_sg",
+      "Name": "acc sg",
+      "Features": "Case=Acc|Number=Sing"
     },
     {
-      "ID": "stump2006_room_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoji",
-      "Segments": ["p", "o", "k", "o", "j", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "voc",
-      "Number": "sg"
+      "ID": "voc_sg",
+      "Name": "voc sg",
+      "Features": "Case=Voc|Number=Sing"
     },
     {
-      "ID": "stump2006_room_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoji",
-      "Segments": ["p", "o", "k", "o", "j", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "loc",
-      "Number": "sg"
+      "ID": "loc_sg",
+      "Name": "loc sg",
+      "Features": "Case=Loc|Number=Sing"
     },
     {
-      "ID": "stump2006_room_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokojem",
-      "Segments": ["p", "o", "k", "o", "j", "e", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "ins",
-      "Number": "sg"
+      "ID": "ins_sg",
+      "Name": "ins sg",
+      "Features": "Case=Ins|Number=Sing"
     },
     {
-      "ID": "stump2006_room_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoje",
-      "Segments": ["p", "o", "k", "o", "j", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "nom",
-      "Number": "pl"
+      "ID": "nom_pl",
+      "Name": "nom pl",
+      "Features": "Case=Nom|Number=Plur"
     },
     {
-      "ID": "stump2006_room_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokojů",
-      "Segments": ["p", "o", "k", "o", "j", "ů"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "gen",
-      "Number": "pl"
+      "ID": "gen_pl",
+      "Name": "gen pl",
+      "Features": "Case=Gen|Number=Plur"
     },
     {
-      "ID": "stump2006_room_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokojům",
-      "Segments": ["p", "o", "k", "o", "j", "ů", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "dat",
-      "Number": "pl"
+      "ID": "dat_pl",
+      "Name": "dat pl",
+      "Features": "Case=Dat|Number=Plur"
     },
     {
-      "ID": "stump2006_room_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoje",
-      "Segments": ["p", "o", "k", "o", "j", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "acc",
-      "Number": "pl"
+      "ID": "acc_pl",
+      "Name": "acc pl",
+      "Features": "Case=Acc|Number=Plur"
     },
     {
-      "ID": "stump2006_room_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoje",
-      "Segments": ["p", "o", "k", "o", "j", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "voc",
-      "Number": "pl"
+      "ID": "voc_pl",
+      "Name": "voc pl",
+      "Features": "Case=Voc|Number=Plur"
     },
     {
-      "ID": "stump2006_room_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokojích",
-      "Segments": ["p", "o", "k", "o", "j", "í", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "loc",
-      "Number": "pl"
+      "ID": "loc_pl",
+      "Name": "loc pl",
+      "Features": "Case=Loc|Number=Plur"
     },
     {
-      "ID": "stump2006_room_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "room",
-      "Form": "pokoji",
-      "Segments": ["p", "o", "k", "o", "j", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "ins",
-      "Number": "pl"
+      "ID": "ins_pl",
+      "Name": "ins pl",
+      "Features": "Case=Ins|Number=Plur"
     },
     {
-      "ID": "stump2006_spring_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "pramen",
-      "Segments": ["p", "r", "a", "m", "e", "n"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "nom",
-      "Number": "sg"
+      "ID": "nom_sg_masc",
+      "Name": "nom sg masc",
+      "Features": "Case=Nom|Number=Sing|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "pramene",
-      "Segments": ["p", "r", "a", "m", "e", "n", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "gen",
-      "Number": "sg"
+      "ID": "voc_sg_masc",
+      "Name": "voc sg masc",
+      "Features": "Case=Voc|Number=Sing|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "prameni",
-      "Segments": ["p", "r", "a", "m", "e", "n", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "dat",
-      "Number": "sg"
+      "ID": "acc_sg_masc",
+      "Name": "acc sg masc",
+      "Features": "Case=Acc|Number=Sing|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "pramen",
-      "Segments": ["p", "r", "a", "m", "e", "n"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "acc",
-      "Number": "sg"
+      "ID": "ins_sg_masc",
+      "Name": "ins sg masc",
+      "Features": "Case=Ins|Number=Sing|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "prameni",
-      "Segments": ["p", "r", "a", "m", "e", "n", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "voc",
-      "Number": "sg"
+      "ID": "dat_sg_masc",
+      "Name": "dat sg masc",
+      "Features": "Case=Dat|Number=Sing|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "prameni",
-      "Segments": ["p", "r", "a", "m", "e", "n", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "loc",
-      "Number": "sg"
+      "ID": "abl_sg_masc",
+      "Name": "abl sg masc",
+      "Features": "Case=Abl|Number=Sing|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "pramenem",
-      "Segments": ["p", "r", "a", "m", "e", "n", "e", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "ins",
-      "Number": "sg"
+      "ID": "gen_sg_masc",
+      "Name": "gen sg masc",
+      "Features": "Case=Gen|Number=Sing|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "prameny",
-      "Segments": ["p", "r", "a", "m", "e", "n", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "nom",
-      "Number": "pl"
+      "ID": "loc_sg_masc",
+      "Name": "loc sg masc",
+      "Features": "Case=Loc|Number=Sing|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "pramenů",
-      "Segments": ["p", "r", "a", "m", "e", "n", "ů"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "gen",
-      "Number": "pl"
+      "ID": "nom_du_masc",
+      "Name": "nom du masc",
+      "Features": "Case=Nom|Number=Dual|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "pramenům",
-      "Segments": ["p", "r", "a", "m", "e", "n", "ů", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "dat",
-      "Number": "pl"
+      "ID": "voc_du_masc",
+      "Name": "voc du masc",
+      "Features": "Case=Voc|Number=Dual|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "prameny",
-      "Segments": ["p", "r", "a", "m", "e", "n", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "acc",
-      "Number": "pl"
+      "ID": "acc_du_masc",
+      "Name": "acc du masc",
+      "Features": "Case=Acc|Number=Dual|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "prameny",
-      "Segments": ["p", "r", "a", "m", "e", "n", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "voc",
-      "Number": "pl"
+      "ID": "ins_du_masc",
+      "Name": "ins du masc",
+      "Features": "Case=Ins|Number=Dual|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "pramenech",
-      "Segments": ["p", "r", "a", "m", "e", "n", "e", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "loc",
-      "Number": "pl"
+      "ID": "dat_du_masc",
+      "Name": "dat du masc",
+      "Features": "Case=Dat|Number=Dual|Gender=Masc"
     },
     {
-      "ID": "stump2006_spring_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "spring",
-      "Form": "prameny",
-      "Segments": ["p", "r", "a", "m", "e", "n", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "ins",
-      "Number": "pl"
+      "ID": "abl_du_masc",
+      "Name": "abl du masc",
+      "Features": "Case=Abl|Number=Dual|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "most",
-      "Segments": ["m", "o", "s", "t"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "nom",
-      "Number": "sg"
+      "ID": "gen_du_masc",
+      "Name": "gen du masc",
+      "Features": "Case=Gen|Number=Dual|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mostu",
-      "Segments": ["m", "o", "s", "t", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "gen",
-      "Number": "sg"
+      "ID": "loc_du_masc",
+      "Name": "loc du masc",
+      "Features": "Case=Loc|Number=Dual|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mostu",
-      "Segments": ["m", "o", "s", "t", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "dat",
-      "Number": "sg"
+      "ID": "nom_pl_masc",
+      "Name": "nom pl masc",
+      "Features": "Case=Nom|Number=Plur|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "most",
-      "Segments": ["m", "o", "s", "t"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "acc",
-      "Number": "sg"
+      "ID": "voc_pl_masc",
+      "Name": "voc pl masc",
+      "Features": "Case=Voc|Number=Plur|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "moste",
-      "Segments": ["m", "o", "s", "t", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "voc",
-      "Number": "sg"
+      "ID": "acc_pl_masc",
+      "Name": "acc pl masc",
+      "Features": "Case=Acc|Number=Plur|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mostě",
-      "Segments": ["m", "o", "s", "t", "ě"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "loc",
-      "Number": "sg"
+      "ID": "ins_pl_masc",
+      "Name": "ins pl masc",
+      "Features": "Case=Ins|Number=Plur|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mostem",
-      "Segments": ["m", "o", "s", "t", "e", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "ins",
-      "Number": "sg"
+      "ID": "dat_pl_masc",
+      "Name": "dat pl masc",
+      "Features": "Case=Dat|Number=Plur|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mosty",
-      "Segments": ["m", "o", "s", "t", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "nom",
-      "Number": "pl"
+      "ID": "abl_pl_masc",
+      "Name": "abl pl masc",
+      "Features": "Case=Abl|Number=Plur|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mostů",
-      "Segments": ["m", "o", "s", "t", "ů"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "gen",
-      "Number": "pl"
+      "ID": "gen_pl_masc",
+      "Name": "gen pl masc",
+      "Features": "Case=Gen|Number=Plur|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mostům",
-      "Segments": ["m", "o", "s", "t", "ů", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "dat",
-      "Number": "pl"
+      "ID": "loc_pl_masc",
+      "Name": "loc pl masc",
+      "Features": "Case=Loc|Number=Plur|Gender=Masc"
     },
     {
-      "ID": "stump2006_bridge_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mosty",
-      "Segments": ["m", "o", "s", "t", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "acc",
-      "Number": "pl"
+      "ID": "nom_sg_neut",
+      "Name": "nom sg neut",
+      "Features": "Case=Nom|Number=Sing|Gender=Neut"
     },
     {
-      "ID": "stump2006_bridge_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mosty",
-      "Segments": ["m", "o", "s", "t", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "voc",
-      "Number": "pl"
+      "ID": "voc_sg_neut",
+      "Name": "voc sg neut",
+      "Features": "Case=Voc|Number=Sing|Gender=Neut"
     },
     {
-      "ID": "stump2006_bridge_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mostech",
-      "Segments": ["m", "o", "s", "t", "e", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "loc",
-      "Number": "pl"
+      "ID": "acc_sg_neut",
+      "Name": "acc sg neut",
+      "Features": "Case=Acc|Number=Sing|Gender=Neut"
     },
     {
-      "ID": "stump2006_bridge_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bridge",
-      "Form": "mosty",
-      "Segments": ["m", "o", "s", "t", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 1]"],
-      "Case": "ins",
-      "Number": "pl"
+      "ID": "ins_sg_neut",
+      "Name": "ins sg neut",
+      "Features": "Case=Ins|Number=Sing|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "žena",
-      "Segments": ["ž", "e", "n", "a"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "nom",
-      "Number": "sg"
+      "ID": "dat_sg_neut",
+      "Name": "dat sg neut",
+      "Features": "Case=Dat|Number=Sing|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženy",
-      "Segments": ["ž", "e", "n", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "gen",
-      "Number": "sg"
+      "ID": "abl_sg_neut",
+      "Name": "abl sg neut",
+      "Features": "Case=Abl|Number=Sing|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženě",
-      "Segments": ["ž", "e", "n", "ě"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "dat",
-      "Number": "sg"
+      "ID": "gen_sg_neut",
+      "Name": "gen sg neut",
+      "Features": "Case=Gen|Number=Sing|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženu",
-      "Segments": ["ž", "e", "n", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "acc",
-      "Number": "sg"
+      "ID": "loc_sg_neut",
+      "Name": "loc sg neut",
+      "Features": "Case=Loc|Number=Sing|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženo",
-      "Segments": ["ž", "e", "n", "o"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "voc",
-      "Number": "sg"
+      "ID": "nom_du_neut",
+      "Name": "nom du neut",
+      "Features": "Case=Nom|Number=Dual|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženě",
-      "Segments": ["ž", "e", "n", "ě"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "loc",
-      "Number": "sg"
+      "ID": "voc_du_neut",
+      "Name": "voc du neut",
+      "Features": "Case=Voc|Number=Dual|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženou",
-      "Segments": ["ž", "e", "n", "o", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "ins",
-      "Number": "sg"
+      "ID": "acc_du_neut",
+      "Name": "acc du neut",
+      "Features": "Case=Acc|Number=Dual|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženy",
-      "Segments": ["ž", "e", "n", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "nom",
-      "Number": "pl"
+      "ID": "ins_du_neut",
+      "Name": "ins du neut",
+      "Features": "Case=Ins|Number=Dual|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "žen",
-      "Segments": ["ž", "e", "n"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "gen",
-      "Number": "pl"
+      "ID": "dat_du_neut",
+      "Name": "dat du neut",
+      "Features": "Case=Dat|Number=Dual|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženám",
-      "Segments": ["ž", "e", "n", "á", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "dat",
-      "Number": "pl"
+      "ID": "abl_du_neut",
+      "Name": "abl du neut",
+      "Features": "Case=Abl|Number=Dual|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženy",
-      "Segments": ["ž", "e", "n", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "acc",
-      "Number": "pl"
+      "ID": "gen_du_neut",
+      "Name": "gen du neut",
+      "Features": "Case=Gen|Number=Dual|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženy",
-      "Segments": ["ž", "e", "n", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "voc",
-      "Number": "pl"
+      "ID": "loc_du_neut",
+      "Name": "loc du neut",
+      "Features": "Case=Loc|Number=Dual|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženách",
-      "Segments": ["ž", "e", "n", "á", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "loc",
-      "Number": "pl"
+      "ID": "nom_pl_neut",
+      "Name": "nom pl neut",
+      "Features": "Case=Nom|Number=Plur|Gender=Neut"
     },
     {
-      "ID": "stump2006_woman_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "woman",
-      "Form": "ženami",
-      "Segments": ["ž", "e", "n", "a", "m", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "ins",
-      "Number": "pl"
+      "ID": "voc_pl_neut",
+      "Name": "voc pl neut",
+      "Features": "Case=Voc|Number=Plur|Gender=Neut"
     },
     {
-      "ID": "stump2006_president_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předseda",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "a"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "nom",
-      "Number": "sg"
+      "ID": "acc_pl_neut",
+      "Name": "acc pl neut",
+      "Features": "Case=Acc|Number=Plur|Gender=Neut"
     },
     {
-      "ID": "stump2006_president_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedy",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "gen",
-      "Number": "sg"
+      "ID": "ins_pl_neut",
+      "Name": "ins pl neut",
+      "Features": "Case=Ins|Number=Plur|Gender=Neut"
     },
     {
-      "ID": "stump2006_president_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedovi",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "dat",
-      "Number": "sg"
+      "ID": "dat_pl_neut",
+      "Name": "dat pl neut",
+      "Features": "Case=Dat|Number=Plur|Gender=Neut"
     },
     {
-      "ID": "stump2006_president_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedu",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "acc",
-      "Number": "sg"
+      "ID": "abl_pl_neut",
+      "Name": "abl pl neut",
+      "Features": "Case=Abl|Number=Plur|Gender=Neut"
     },
     {
-      "ID": "stump2006_president_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedo",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "voc",
-      "Number": "sg"
+      "ID": "gen_pl_neut",
+      "Name": "gen pl neut",
+      "Features": "Case=Gen|Number=Plur|Gender=Neut"
     },
     {
-      "ID": "stump2006_president_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedovi",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_president_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedou",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "ins",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_president_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedové",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "nom",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_president_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedů",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "ů"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "gen",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_president_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedům",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "ů", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "dat",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_president_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedy",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "acc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_president_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedové",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "voc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_president_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedech",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "e", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "loc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_president_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "president",
-      "Form": "předsedy",
-      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "ins",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philosopher_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosof",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "nom",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofa",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "a"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "gen",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofovi",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_dat_sg_u",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofu",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofa",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "a"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "acc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofe",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "voc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofovi",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_loc_sg_u",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofu",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofem",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "e", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "ins",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philosopher_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofové",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "nom",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philosopher_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofů",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "ů"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "gen",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philosopher_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofům",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "ů", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "dat",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philosopher_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofy",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "acc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philosopher_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofové",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "voc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philosopher_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofech",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "e", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "loc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philosopher_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philosopher",
-      "Form": "filosofy",
-      "Segments": ["f", "i", "l", "o", "s", "o", "f", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 6]"],
-      "Case": "ins",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_servant_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluha",
-      "Segments": ["s", "l", "u", "h", "a"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "nom",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_servant_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhy",
-      "Segments": ["s", "l", "u", "h", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "gen",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_servant_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhovi",
-      "Segments": ["s", "l", "u", "h", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_servant_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhu",
-      "Segments": ["s", "l", "u", "h", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "acc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_servant_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluho",
-      "Segments": ["s", "l", "u", "h", "o"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "voc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_servant_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhovi",
-      "Segments": ["s", "l", "u", "h", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_servant_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhou",
-      "Segments": ["s", "l", "u", "h", "o", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "ins",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_servant_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhové",
-      "Segments": ["s", "l", "u", "h", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "nom",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_servant_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhů",
-      "Segments": ["s", "l", "u", "h", "ů"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "gen",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_servant_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhům",
-      "Segments": ["s", "l", "u", "h", "ů", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "dat",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_servant_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhy",
-      "Segments": ["s", "l", "u", "h", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "acc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_servant_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhové",
-      "Segments": ["s", "l", "u", "h", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "voc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_servant_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluzích",
-      "Segments": ["s", "l", "u", "z", "í", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "loc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_servant_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "servant",
-      "Form": "sluhy",
-      "Segments": ["s", "l", "u", "h", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "ins",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philologist_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filolog",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "nom",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologa",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "a"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "gen",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologovi",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_dat_sg_u",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologu",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologa",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "a"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "acc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologu",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "voc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologovi",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_loc_sg_u",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologu",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "u"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologem",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "e", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "ins",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_philologist_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologové",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "nom",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philologist_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologů",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "ů"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "gen",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philologist_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologům",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "ů", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "dat",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philologist_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filology",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "acc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philologist_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filologové",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "voc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philologist_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filolozích",
-      "Segments": ["f", "i", "l", "o", "l", "o", "z", "í", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "loc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_philologist_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "philologist",
-      "Form": "filology",
-      "Segments": ["f", "i", "l", "o", "l", "o", "g", "y"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "ins",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_nom_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muž",
-      "Segments": ["m", "u", "ž"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "nom",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_gen_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muže",
-      "Segments": ["m", "u", "ž", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "gen",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_dat_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "mužovi",
-      "Segments": ["m", "u", "ž", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_dat_sg_i",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muži",
-      "Segments": ["m", "u", "ž", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_acc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muže",
-      "Segments": ["m", "u", "ž", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "acc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_voc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muži",
-      "Segments": ["m", "u", "ž", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "voc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_loc_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "mužovi",
-      "Segments": ["m", "u", "ž", "o", "v", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_loc_sg_i",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muži",
-      "Segments": ["m", "u", "ž", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_ins_sg",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "mužem",
-      "Segments": ["m", "u", "ž", "e", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "ins",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_man_nom_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muži",
-      "Segments": ["m", "u", "ž", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "nom",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_nom_pl_ove",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "mužové",
-      "Segments": ["m", "u", "ž", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "nom",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_gen_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "mužů",
-      "Segments": ["m", "u", "ž", "ů"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "gen",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_dat_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "mužům",
-      "Segments": ["m", "u", "ž", "ů", "m"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "dat",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_acc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muže",
-      "Segments": ["m", "u", "ž", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "acc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_voc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muži",
-      "Segments": ["m", "u", "ž", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "voc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_voc_pl_ove",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "mužové",
-      "Segments": ["m", "u", "ž", "o", "v", "é"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "voc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_loc_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "mužích",
-      "Segments": ["m", "u", "ž", "í", "ch"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "loc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_man_ins_pl",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "man",
-      "Form": "muži",
-      "Segments": ["m", "u", "ž", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 8]"],
-      "Case": "ins",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_westerly_masc_nom_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyaṅ",
-      "Segments": ["pratyaṅ"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "nom",
-      "Number": "sg",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_masc_voc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyaṅ",
-      "Segments": ["pratyaṅ"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "voc",
-      "Number": "sg",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_masc_acc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañcam",
-      "Segments": ["pratyañc", "am"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "acc",
-      "Number": "sg",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_masc_ins_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcā",
-      "Segments": ["pratīc", "ā"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "ins",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_dat_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīce",
-      "Segments": ["pratīc", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "dat",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_abl_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcas",
-      "Segments": ["pratīc", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "abl",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_gen_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcas",
-      "Segments": ["pratīc", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "gen",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_loc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīci",
-      "Segments": ["pratīc", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "loc",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_nom_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañcau",
-      "Segments": ["pratyañc", "au"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "nom",
-      "Number": "du",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_masc_voc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañcau",
-      "Segments": ["pratyañc", "au"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "voc",
-      "Number": "du",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_masc_acc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañcau",
-      "Segments": ["pratyañc", "au"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "acc",
-      "Number": "du",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_masc_ins_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyām",
-      "Segments": ["pratyag", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "ins",
-      "Number": "du",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_masc_dat_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyām",
-      "Segments": ["pratyag", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "dat",
-      "Number": "du",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_masc_abl_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyām",
-      "Segments": ["pratyag", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "abl",
-      "Number": "du",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_masc_gen_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcos",
-      "Segments": ["pratīc", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "gen",
-      "Number": "du",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_loc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcos",
-      "Segments": ["pratīc", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "loc",
-      "Number": "du",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_nom_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañcas",
-      "Segments": ["pratyañc", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "nom",
-      "Number": "pl",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_masc_voc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañcas",
-      "Segments": ["pratyañc", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "voc",
-      "Number": "pl",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_masc_acc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcas",
-      "Segments": ["pratīc", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "acc",
-      "Number": "pl",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_ins_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhis",
-      "Segments": ["pratyag", "bhis"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "ins",
-      "Number": "pl",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_masc_dat_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyas",
-      "Segments": ["pratyag", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "dat",
-      "Number": "pl",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_masc_abl_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyas",
-      "Segments": ["pratyag", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "abl",
-      "Number": "pl",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_masc_gen_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcām",
-      "Segments": ["pratīc", "ām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "gen",
-      "Number": "pl",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_masc_loc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyakṣu",
-      "Segments": ["pratyak", "ṣu"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "masc",
-      "Case": "loc",
-      "Number": "pl",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_nom_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyak",
-      "Segments": ["pratyak"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "sg",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_voc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyak",
-      "Segments": ["pratyak"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "sg",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_acc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyak",
-      "Segments": ["pratyak"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "sg",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_ins_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcā",
-      "Segments": ["pratīc", "ā"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_dat_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīce",
-      "Segments": ["pratīc", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_abl_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcas",
-      "Segments": ["pratīc", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_gen_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcas",
-      "Segments": ["pratīc", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_loc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīci",
-      "Segments": ["pratīc", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "sg",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_nom_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcī",
-      "Segments": ["pratīc", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "du",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_voc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcī",
-      "Segments": ["pratīc", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "du",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_acc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcī",
-      "Segments": ["pratīc", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "du",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_ins_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyām",
-      "Segments": ["pratyag", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "du",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_dat_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyām",
-      "Segments": ["pratyag", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "du",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_abl_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyām",
-      "Segments": ["pratyag", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "du",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_gen_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcos",
-      "Segments": ["pratīc", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "du",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_loc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcos",
-      "Segments": ["pratīc", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "du",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_nom_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañci",
-      "Segments": ["pratyañc", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "pl",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_neut_voc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañci",
-      "Segments": ["pratyañc", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "pl",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_neut_acc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyañci",
-      "Segments": ["pratyañc", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "pl",
-      "Grade": "strong"
-    },
-    {
-      "ID": "stump2006_westerly_neut_ins_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhis",
-      "Segments": ["pratyag", "bhis"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "pl",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_dat_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyas",
-      "Segments": ["pratyag", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "pl",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_abl_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyagbhyas",
-      "Segments": ["pratyag", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "pl",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_westerly_neut_gen_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratīcām",
-      "Segments": ["pratīc", "ām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "pl",
-      "Grade": "weakest"
-    },
-    {
-      "ID": "stump2006_westerly_neut_loc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "westerly",
-      "Form": "pratyakṣu",
-      "Segments": ["pratyak", "ṣu"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 9]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "pl",
-      "Grade": "middle"
-    },
-    {
-      "ID": "stump2006_name_nom_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāma",
-      "Segments": ["nāma"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_name_voc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāma",
-      "Segments": ["nāma"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_name_acc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāma",
-      "Segments": ["nāma"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_name_ins_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnā",
-      "Segments": ["nāmn", "ā"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_name_dat_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmne",
-      "Segments": ["nāmn", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_name_abl_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnas",
-      "Segments": ["nāmn", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_name_gen_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnas",
-      "Segments": ["nāmn", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_name_loc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmni",
-      "Segments": ["nāmn", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_name_nom_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnī",
-      "Segments": ["nāmn", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_name_voc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnī",
-      "Segments": ["nāmn", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_name_acc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnī",
-      "Segments": ["nāmn", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_name_ins_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmabhyām",
-      "Segments": ["nāma", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_name_dat_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmabhyām",
-      "Segments": ["nāma", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_name_abl_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmabhyām",
-      "Segments": ["nāma", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_name_gen_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnos",
-      "Segments": ["nāmn", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_name_loc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnos",
-      "Segments": ["nāmn", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_name_nom_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmāni",
-      "Segments": ["nāmān", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_name_voc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmāni",
-      "Segments": ["nāmān", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_name_acc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmāni",
-      "Segments": ["nāmān", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_name_ins_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmabhis",
-      "Segments": ["nāma", "bhis"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_name_dat_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmabhyas",
-      "Segments": ["nāma", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_name_abl_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmabhyas",
-      "Segments": ["nāma", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_name_gen_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmnām",
-      "Segments": ["nāmn", "ām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_name_loc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "name",
-      "Form": "nāmasu",
-      "Segments": ["nāma", "su"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_day_nom_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahas",
-      "Segments": ["ahas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "sg",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_voc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahas",
-      "Segments": ["ahas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "sg",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_acc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahas",
-      "Segments": ["ahas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "sg",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_ins_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnā",
-      "Segments": ["ahn", "ā"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "sg",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_dat_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahne",
-      "Segments": ["ahn", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "sg",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_abl_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnas",
-      "Segments": ["ahn", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "sg",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_gen_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnas",
-      "Segments": ["ahn", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "sg",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_loc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahni",
-      "Segments": ["ahn", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "sg",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_nom_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnī",
-      "Segments": ["ahn", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "du",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_voc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnī",
-      "Segments": ["ahn", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "du",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_acc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnī",
-      "Segments": ["ahn", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "du",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_ins_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahobhyām",
-      "Segments": ["aho", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "du",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_dat_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahobhyām",
-      "Segments": ["aho", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "du",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_abl_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahobhyām",
-      "Segments": ["aho", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "du",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_gen_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnos",
-      "Segments": ["ahn", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "du",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_loc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnos",
-      "Segments": ["ahn", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "du",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_nom_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahāni",
-      "Segments": ["ahān", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "pl",
-      "Stem": "ahan"
-    },
-    {
-      "ID": "stump2006_day_voc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahāni",
-      "Segments": ["ahān", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "pl",
-      "Stem": "ahan"
-    },
-    {
-      "ID": "stump2006_day_acc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahāni",
-      "Segments": ["ahān", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "pl",
-      "Stem": "ahan"
-    },
-    {
-      "ID": "stump2006_day_ins_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahobhis",
-      "Segments": ["aho", "bhis"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "pl",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_dat_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahobhyas",
-      "Segments": ["aho", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "pl",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_abl_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahobhyas",
-      "Segments": ["aho", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "pl",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_day_gen_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahnām",
-      "Segments": ["ahn", "ām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "pl",
-      "Stem": "ahn"
-    },
-    {
-      "ID": "stump2006_day_loc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "day",
-      "Form": "ahaḥsu",
-      "Segments": ["ahaḥ", "su"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "pl",
-      "Stem": "ahas"
-    },
-    {
-      "ID": "stump2006_mind_nom_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manas",
-      "Segments": ["manas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_mind_voc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manas",
-      "Segments": ["manas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_mind_acc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manas",
-      "Segments": ["manas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_mind_ins_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasā",
-      "Segments": ["manas", "ā"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_mind_dat_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manase",
-      "Segments": ["manas", "e"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_mind_abl_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasas",
-      "Segments": ["manas", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_mind_gen_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasas",
-      "Segments": ["manas", "as"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_mind_loc_sg",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasi",
-      "Segments": ["manas", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "sg"
-    },
-    {
-      "ID": "stump2006_mind_nom_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasī",
-      "Segments": ["manas", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_mind_voc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasī",
-      "Segments": ["manas", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_mind_acc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasī",
-      "Segments": ["manas", "ī"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_mind_ins_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manobhyām",
-      "Segments": ["mano", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_mind_dat_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manobhyām",
-      "Segments": ["mano", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_mind_abl_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manobhyām",
-      "Segments": ["mano", "bhyām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_mind_gen_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasos",
-      "Segments": ["manas", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_mind_loc_du",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasos",
-      "Segments": ["manas", "os"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "du"
-    },
-    {
-      "ID": "stump2006_mind_nom_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manāṃsi",
-      "Segments": ["manāṃs", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "nom",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_mind_voc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manāṃsi",
-      "Segments": ["manāṃs", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "voc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_mind_acc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manāṃsi",
-      "Segments": ["manāṃs", "i"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "acc",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_mind_ins_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manobhis",
-      "Segments": ["mano", "bhis"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "ins",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_mind_dat_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manobhyas",
-      "Segments": ["mano", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "dat",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_mind_abl_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manobhyas",
-      "Segments": ["mano", "bhyas"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "abl",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_mind_gen_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manasām",
-      "Segments": ["manas", "ām"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "gen",
-      "Number": "pl"
-    },
-    {
-      "ID": "stump2006_mind_loc_pl",
-      "Language_ID": "sans1269",
-      "Parameter_ID": "mind",
-      "Form": "manaḥsu",
-      "Segments": ["manaḥ", "su"],
-      "Comment": "",
-      "Source": ["stump-2006[Table 10]"],
-      "Gender": "neut",
-      "Case": "loc",
-      "Number": "pl"
+      "ID": "loc_pl_neut",
+      "Name": "loc pl neut",
+      "Features": "Case=Loc|Number=Plur|Gender=Neut"
     }
   ],
   "ParameterTable": [
@@ -3052,6 +383,2411 @@
       "ID": "mind",
       "Name": "mind",
       "Description": "MANAS"
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "room",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "room"
+    },
+    {
+      "ID": "spring",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "spring"
+    },
+    {
+      "ID": "bridge",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bridge"
+    },
+    {
+      "ID": "woman",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "woman"
+    },
+    {
+      "ID": "president",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "president"
+    },
+    {
+      "ID": "philosopher",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "philosopher"
+    },
+    {
+      "ID": "servant",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "servant"
+    },
+    {
+      "ID": "philologist",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "philologist"
+    },
+    {
+      "ID": "man",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "man"
+    },
+    {
+      "ID": "westerly",
+      "Language_ID": "sans1269",
+      "Parameter_ID": "westerly"
+    },
+    {
+      "ID": "name",
+      "Language_ID": "sans1269",
+      "Parameter_ID": "name"
+    },
+    {
+      "ID": "day",
+      "Language_ID": "sans1269",
+      "Parameter_ID": "day"
+    },
+    {
+      "ID": "mind",
+      "Language_ID": "sans1269",
+      "Parameter_ID": "mind"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "stump2006_room_nom_sg",
+      "Lexeme_ID": "room",
+      "Cell": "nom_sg",
+      "Form": "pokoj",
+      "Segments": ["p", "o", "k", "o", "j"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_gen_sg",
+      "Lexeme_ID": "room",
+      "Cell": "gen_sg",
+      "Form": "pokoje",
+      "Segments": ["p", "o", "k", "o", "j", "e"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_dat_sg",
+      "Lexeme_ID": "room",
+      "Cell": "dat_sg",
+      "Form": "pokoji",
+      "Segments": ["p", "o", "k", "o", "j", "i"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_acc_sg",
+      "Lexeme_ID": "room",
+      "Cell": "acc_sg",
+      "Form": "pokoj",
+      "Segments": ["p", "o", "k", "o", "j"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_voc_sg",
+      "Lexeme_ID": "room",
+      "Cell": "voc_sg",
+      "Form": "pokoji",
+      "Segments": ["p", "o", "k", "o", "j", "i"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_loc_sg",
+      "Lexeme_ID": "room",
+      "Cell": "loc_sg",
+      "Form": "pokoji",
+      "Segments": ["p", "o", "k", "o", "j", "i"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_ins_sg",
+      "Lexeme_ID": "room",
+      "Cell": "ins_sg",
+      "Form": "pokojem",
+      "Segments": ["p", "o", "k", "o", "j", "e", "m"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_nom_pl",
+      "Lexeme_ID": "room",
+      "Cell": "nom_pl",
+      "Form": "pokoje",
+      "Segments": ["p", "o", "k", "o", "j", "e"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_gen_pl",
+      "Lexeme_ID": "room",
+      "Cell": "gen_pl",
+      "Form": "pokojů",
+      "Segments": ["p", "o", "k", "o", "j", "ů"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_dat_pl",
+      "Lexeme_ID": "room",
+      "Cell": "dat_pl",
+      "Form": "pokojům",
+      "Segments": ["p", "o", "k", "o", "j", "ů", "m"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_acc_pl",
+      "Lexeme_ID": "room",
+      "Cell": "acc_pl",
+      "Form": "pokoje",
+      "Segments": ["p", "o", "k", "o", "j", "e"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_voc_pl",
+      "Lexeme_ID": "room",
+      "Cell": "voc_pl",
+      "Form": "pokoje",
+      "Segments": ["p", "o", "k", "o", "j", "e"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_loc_pl",
+      "Lexeme_ID": "room",
+      "Cell": "loc_pl",
+      "Form": "pokojích",
+      "Segments": ["p", "o", "k", "o", "j", "í", "ch"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_room_ins_pl",
+      "Lexeme_ID": "room",
+      "Cell": "ins_pl",
+      "Form": "pokoji",
+      "Segments": ["p", "o", "k", "o", "j", "i"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_nom_sg",
+      "Lexeme_ID": "spring",
+      "Cell": "nom_sg",
+      "Form": "pramen",
+      "Segments": ["p", "r", "a", "m", "e", "n"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_gen_sg",
+      "Lexeme_ID": "spring",
+      "Cell": "gen_sg",
+      "Form": "pramene",
+      "Segments": ["p", "r", "a", "m", "e", "n", "e"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_dat_sg",
+      "Lexeme_ID": "spring",
+      "Cell": "dat_sg",
+      "Form": "prameni",
+      "Segments": ["p", "r", "a", "m", "e", "n", "i"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_acc_sg",
+      "Lexeme_ID": "spring",
+      "Cell": "acc_sg",
+      "Form": "pramen",
+      "Segments": ["p", "r", "a", "m", "e", "n"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_voc_sg",
+      "Lexeme_ID": "spring",
+      "Cell": "voc_sg",
+      "Form": "prameni",
+      "Segments": ["p", "r", "a", "m", "e", "n", "i"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_loc_sg",
+      "Lexeme_ID": "spring",
+      "Cell": "loc_sg",
+      "Form": "prameni",
+      "Segments": ["p", "r", "a", "m", "e", "n", "i"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_ins_sg",
+      "Lexeme_ID": "spring",
+      "Cell": "ins_sg",
+      "Form": "pramenem",
+      "Segments": ["p", "r", "a", "m", "e", "n", "e", "m"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_nom_pl",
+      "Lexeme_ID": "spring",
+      "Cell": "nom_pl",
+      "Form": "prameny",
+      "Segments": ["p", "r", "a", "m", "e", "n", "y"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_gen_pl",
+      "Lexeme_ID": "spring",
+      "Cell": "gen_pl",
+      "Form": "pramenů",
+      "Segments": ["p", "r", "a", "m", "e", "n", "ů"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_dat_pl",
+      "Lexeme_ID": "spring",
+      "Cell": "dat_pl",
+      "Form": "pramenům",
+      "Segments": ["p", "r", "a", "m", "e", "n", "ů", "m"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_acc_pl",
+      "Lexeme_ID": "spring",
+      "Cell": "acc_pl",
+      "Form": "prameny",
+      "Segments": ["p", "r", "a", "m", "e", "n", "y"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_voc_pl",
+      "Lexeme_ID": "spring",
+      "Cell": "voc_pl",
+      "Form": "prameny",
+      "Segments": ["p", "r", "a", "m", "e", "n", "y"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_loc_pl",
+      "Lexeme_ID": "spring",
+      "Cell": "loc_pl",
+      "Form": "pramenech",
+      "Segments": ["p", "r", "a", "m", "e", "n", "e", "ch"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_spring_ins_pl",
+      "Lexeme_ID": "spring",
+      "Cell": "ins_pl",
+      "Form": "prameny",
+      "Segments": ["p", "r", "a", "m", "e", "n", "y"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_nom_sg",
+      "Lexeme_ID": "bridge",
+      "Cell": "nom_sg",
+      "Form": "most",
+      "Segments": ["m", "o", "s", "t"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_gen_sg",
+      "Lexeme_ID": "bridge",
+      "Cell": "gen_sg",
+      "Form": "mostu",
+      "Segments": ["m", "o", "s", "t", "u"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_dat_sg",
+      "Lexeme_ID": "bridge",
+      "Cell": "dat_sg",
+      "Form": "mostu",
+      "Segments": ["m", "o", "s", "t", "u"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_acc_sg",
+      "Lexeme_ID": "bridge",
+      "Cell": "acc_sg",
+      "Form": "most",
+      "Segments": ["m", "o", "s", "t"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_voc_sg",
+      "Lexeme_ID": "bridge",
+      "Cell": "voc_sg",
+      "Form": "moste",
+      "Segments": ["m", "o", "s", "t", "e"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_loc_sg",
+      "Lexeme_ID": "bridge",
+      "Cell": "loc_sg",
+      "Form": "mostě",
+      "Segments": ["m", "o", "s", "t", "ě"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_ins_sg",
+      "Lexeme_ID": "bridge",
+      "Cell": "ins_sg",
+      "Form": "mostem",
+      "Segments": ["m", "o", "s", "t", "e", "m"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_nom_pl",
+      "Lexeme_ID": "bridge",
+      "Cell": "nom_pl",
+      "Form": "mosty",
+      "Segments": ["m", "o", "s", "t", "y"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_gen_pl",
+      "Lexeme_ID": "bridge",
+      "Cell": "gen_pl",
+      "Form": "mostů",
+      "Segments": ["m", "o", "s", "t", "ů"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_dat_pl",
+      "Lexeme_ID": "bridge",
+      "Cell": "dat_pl",
+      "Form": "mostům",
+      "Segments": ["m", "o", "s", "t", "ů", "m"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_acc_pl",
+      "Lexeme_ID": "bridge",
+      "Cell": "acc_pl",
+      "Form": "mosty",
+      "Segments": ["m", "o", "s", "t", "y"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_voc_pl",
+      "Lexeme_ID": "bridge",
+      "Cell": "voc_pl",
+      "Form": "mosty",
+      "Segments": ["m", "o", "s", "t", "y"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_loc_pl",
+      "Lexeme_ID": "bridge",
+      "Cell": "loc_pl",
+      "Form": "mostech",
+      "Segments": ["m", "o", "s", "t", "e", "ch"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_bridge_ins_pl",
+      "Lexeme_ID": "bridge",
+      "Cell": "ins_pl",
+      "Form": "mosty",
+      "Segments": ["m", "o", "s", "t", "y"],
+      "Source": ["stump-2006[Table 1]"]
+    },
+    {
+      "ID": "stump2006_woman_nom_sg",
+      "Lexeme_ID": "woman",
+      "Cell": "nom_sg",
+      "Form": "žena",
+      "Segments": ["ž", "e", "n", "a"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_gen_sg",
+      "Lexeme_ID": "woman",
+      "Cell": "gen_sg",
+      "Form": "ženy",
+      "Segments": ["ž", "e", "n", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_dat_sg",
+      "Lexeme_ID": "woman",
+      "Cell": "dat_sg",
+      "Form": "ženě",
+      "Segments": ["ž", "e", "n", "ě"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_acc_sg",
+      "Lexeme_ID": "woman",
+      "Cell": "acc_sg",
+      "Form": "ženu",
+      "Segments": ["ž", "e", "n", "u"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_voc_sg",
+      "Lexeme_ID": "woman",
+      "Cell": "voc_sg",
+      "Form": "ženo",
+      "Segments": ["ž", "e", "n", "o"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_loc_sg",
+      "Lexeme_ID": "woman",
+      "Cell": "loc_sg",
+      "Form": "ženě",
+      "Segments": ["ž", "e", "n", "ě"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_ins_sg",
+      "Lexeme_ID": "woman",
+      "Cell": "ins_sg",
+      "Form": "ženou",
+      "Segments": ["ž", "e", "n", "o", "u"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_nom_pl",
+      "Lexeme_ID": "woman",
+      "Cell": "nom_pl",
+      "Form": "ženy",
+      "Segments": ["ž", "e", "n", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_gen_pl",
+      "Lexeme_ID": "woman",
+      "Cell": "gen_pl",
+      "Form": "žen",
+      "Segments": ["ž", "e", "n"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_dat_pl",
+      "Lexeme_ID": "woman",
+      "Cell": "dat_pl",
+      "Form": "ženám",
+      "Segments": ["ž", "e", "n", "á", "m"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_acc_pl",
+      "Lexeme_ID": "woman",
+      "Cell": "acc_pl",
+      "Form": "ženy",
+      "Segments": ["ž", "e", "n", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_voc_pl",
+      "Lexeme_ID": "woman",
+      "Cell": "voc_pl",
+      "Form": "ženy",
+      "Segments": ["ž", "e", "n", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_loc_pl",
+      "Lexeme_ID": "woman",
+      "Cell": "loc_pl",
+      "Form": "ženách",
+      "Segments": ["ž", "e", "n", "á", "ch"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_woman_ins_pl",
+      "Lexeme_ID": "woman",
+      "Cell": "ins_pl",
+      "Form": "ženami",
+      "Segments": ["ž", "e", "n", "a", "m", "i"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_nom_sg",
+      "Lexeme_ID": "president",
+      "Cell": "nom_sg",
+      "Form": "předseda",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "a"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_gen_sg",
+      "Lexeme_ID": "president",
+      "Cell": "gen_sg",
+      "Form": "předsedy",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_dat_sg",
+      "Lexeme_ID": "president",
+      "Cell": "dat_sg",
+      "Form": "předsedovi",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "i"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_acc_sg",
+      "Lexeme_ID": "president",
+      "Cell": "acc_sg",
+      "Form": "předsedu",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "u"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_voc_sg",
+      "Lexeme_ID": "president",
+      "Cell": "voc_sg",
+      "Form": "předsedo",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_loc_sg",
+      "Lexeme_ID": "president",
+      "Cell": "loc_sg",
+      "Form": "předsedovi",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "i"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_ins_sg",
+      "Lexeme_ID": "president",
+      "Cell": "ins_sg",
+      "Form": "předsedou",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "u"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_nom_pl",
+      "Lexeme_ID": "president",
+      "Cell": "nom_pl",
+      "Form": "předsedové",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "é"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_gen_pl",
+      "Lexeme_ID": "president",
+      "Cell": "gen_pl",
+      "Form": "předsedů",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "ů"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_dat_pl",
+      "Lexeme_ID": "president",
+      "Cell": "dat_pl",
+      "Form": "předsedům",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "ů", "m"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_acc_pl",
+      "Lexeme_ID": "president",
+      "Cell": "acc_pl",
+      "Form": "předsedy",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_voc_pl",
+      "Lexeme_ID": "president",
+      "Cell": "voc_pl",
+      "Form": "předsedové",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "o", "v", "é"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_loc_pl",
+      "Lexeme_ID": "president",
+      "Cell": "loc_pl",
+      "Form": "předsedech",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "e", "ch"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_president_ins_pl",
+      "Lexeme_ID": "president",
+      "Cell": "ins_pl",
+      "Form": "předsedy",
+      "Segments": ["p", "ř", "e", "d", "s", "e", "d", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_nom_sg",
+      "Lexeme_ID": "philosopher",
+      "Cell": "nom_sg",
+      "Form": "filosof",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_gen_sg",
+      "Lexeme_ID": "philosopher",
+      "Cell": "gen_sg",
+      "Form": "filosofa",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "a"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_dat_sg",
+      "Lexeme_ID": "philosopher",
+      "Cell": "dat_sg",
+      "Form": "filosofovi",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "o", "v", "i"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_dat_sg_u",
+      "Lexeme_ID": "philosopher",
+      "Cell": "dat_sg",
+      "Form": "filosofu",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "u"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_acc_sg",
+      "Lexeme_ID": "philosopher",
+      "Cell": "acc_sg",
+      "Form": "filosofa",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "a"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_voc_sg",
+      "Lexeme_ID": "philosopher",
+      "Cell": "voc_sg",
+      "Form": "filosofe",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "e"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_loc_sg",
+      "Lexeme_ID": "philosopher",
+      "Cell": "loc_sg",
+      "Form": "filosofovi",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "o", "v", "i"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_loc_sg_u",
+      "Lexeme_ID": "philosopher",
+      "Cell": "loc_sg",
+      "Form": "filosofu",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "u"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_ins_sg",
+      "Lexeme_ID": "philosopher",
+      "Cell": "ins_sg",
+      "Form": "filosofem",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "e", "m"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_nom_pl",
+      "Lexeme_ID": "philosopher",
+      "Cell": "nom_pl",
+      "Form": "filosofové",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "o", "v", "é"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_gen_pl",
+      "Lexeme_ID": "philosopher",
+      "Cell": "gen_pl",
+      "Form": "filosofů",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "ů"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_dat_pl",
+      "Lexeme_ID": "philosopher",
+      "Cell": "dat_pl",
+      "Form": "filosofům",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "ů", "m"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_acc_pl",
+      "Lexeme_ID": "philosopher",
+      "Cell": "acc_pl",
+      "Form": "filosofy",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_voc_pl",
+      "Lexeme_ID": "philosopher",
+      "Cell": "voc_pl",
+      "Form": "filosofové",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "o", "v", "é"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_loc_pl",
+      "Lexeme_ID": "philosopher",
+      "Cell": "loc_pl",
+      "Form": "filosofech",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "e", "ch"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_philosopher_ins_pl",
+      "Lexeme_ID": "philosopher",
+      "Cell": "ins_pl",
+      "Form": "filosofy",
+      "Segments": ["f", "i", "l", "o", "s", "o", "f", "y"],
+      "Source": ["stump-2006[Table 6]"]
+    },
+    {
+      "ID": "stump2006_servant_nom_sg",
+      "Lexeme_ID": "servant",
+      "Cell": "nom_sg",
+      "Form": "sluha",
+      "Segments": ["s", "l", "u", "h", "a"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_gen_sg",
+      "Lexeme_ID": "servant",
+      "Cell": "gen_sg",
+      "Form": "sluhy",
+      "Segments": ["s", "l", "u", "h", "y"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_dat_sg",
+      "Lexeme_ID": "servant",
+      "Cell": "dat_sg",
+      "Form": "sluhovi",
+      "Segments": ["s", "l", "u", "h", "o", "v", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_acc_sg",
+      "Lexeme_ID": "servant",
+      "Cell": "acc_sg",
+      "Form": "sluhu",
+      "Segments": ["s", "l", "u", "h", "u"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_voc_sg",
+      "Lexeme_ID": "servant",
+      "Cell": "voc_sg",
+      "Form": "sluho",
+      "Segments": ["s", "l", "u", "h", "o"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_loc_sg",
+      "Lexeme_ID": "servant",
+      "Cell": "loc_sg",
+      "Form": "sluhovi",
+      "Segments": ["s", "l", "u", "h", "o", "v", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_ins_sg",
+      "Lexeme_ID": "servant",
+      "Cell": "ins_sg",
+      "Form": "sluhou",
+      "Segments": ["s", "l", "u", "h", "o", "u"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_nom_pl",
+      "Lexeme_ID": "servant",
+      "Cell": "nom_pl",
+      "Form": "sluhové",
+      "Segments": ["s", "l", "u", "h", "o", "v", "é"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_gen_pl",
+      "Lexeme_ID": "servant",
+      "Cell": "gen_pl",
+      "Form": "sluhů",
+      "Segments": ["s", "l", "u", "h", "ů"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_dat_pl",
+      "Lexeme_ID": "servant",
+      "Cell": "dat_pl",
+      "Form": "sluhům",
+      "Segments": ["s", "l", "u", "h", "ů", "m"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_acc_pl",
+      "Lexeme_ID": "servant",
+      "Cell": "acc_pl",
+      "Form": "sluhy",
+      "Segments": ["s", "l", "u", "h", "y"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_voc_pl",
+      "Lexeme_ID": "servant",
+      "Cell": "voc_pl",
+      "Form": "sluhové",
+      "Segments": ["s", "l", "u", "h", "o", "v", "é"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_loc_pl",
+      "Lexeme_ID": "servant",
+      "Cell": "loc_pl",
+      "Form": "sluzích",
+      "Segments": ["s", "l", "u", "z", "í", "ch"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_servant_ins_pl",
+      "Lexeme_ID": "servant",
+      "Cell": "ins_pl",
+      "Form": "sluhy",
+      "Segments": ["s", "l", "u", "h", "y"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_nom_sg",
+      "Lexeme_ID": "philologist",
+      "Cell": "nom_sg",
+      "Form": "filolog",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_gen_sg",
+      "Lexeme_ID": "philologist",
+      "Cell": "gen_sg",
+      "Form": "filologa",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "a"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_dat_sg",
+      "Lexeme_ID": "philologist",
+      "Cell": "dat_sg",
+      "Form": "filologovi",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "o", "v", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_dat_sg_u",
+      "Lexeme_ID": "philologist",
+      "Cell": "dat_sg",
+      "Form": "filologu",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "u"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_acc_sg",
+      "Lexeme_ID": "philologist",
+      "Cell": "acc_sg",
+      "Form": "filologa",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "a"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_voc_sg",
+      "Lexeme_ID": "philologist",
+      "Cell": "voc_sg",
+      "Form": "filologu",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "u"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_loc_sg",
+      "Lexeme_ID": "philologist",
+      "Cell": "loc_sg",
+      "Form": "filologovi",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "o", "v", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_loc_sg_u",
+      "Lexeme_ID": "philologist",
+      "Cell": "loc_sg",
+      "Form": "filologu",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "u"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_ins_sg",
+      "Lexeme_ID": "philologist",
+      "Cell": "ins_sg",
+      "Form": "filologem",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "e", "m"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_nom_pl",
+      "Lexeme_ID": "philologist",
+      "Cell": "nom_pl",
+      "Form": "filologové",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "o", "v", "é"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_gen_pl",
+      "Lexeme_ID": "philologist",
+      "Cell": "gen_pl",
+      "Form": "filologů",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "ů"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_dat_pl",
+      "Lexeme_ID": "philologist",
+      "Cell": "dat_pl",
+      "Form": "filologům",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "ů", "m"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_acc_pl",
+      "Lexeme_ID": "philologist",
+      "Cell": "acc_pl",
+      "Form": "filology",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "y"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_voc_pl",
+      "Lexeme_ID": "philologist",
+      "Cell": "voc_pl",
+      "Form": "filologové",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "o", "v", "é"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_loc_pl",
+      "Lexeme_ID": "philologist",
+      "Cell": "loc_pl",
+      "Form": "filolozích",
+      "Segments": ["f", "i", "l", "o", "l", "o", "z", "í", "ch"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_philologist_ins_pl",
+      "Lexeme_ID": "philologist",
+      "Cell": "ins_pl",
+      "Form": "filology",
+      "Segments": ["f", "i", "l", "o", "l", "o", "g", "y"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_nom_sg",
+      "Lexeme_ID": "man",
+      "Cell": "nom_sg",
+      "Form": "muž",
+      "Segments": ["m", "u", "ž"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_gen_sg",
+      "Lexeme_ID": "man",
+      "Cell": "gen_sg",
+      "Form": "muže",
+      "Segments": ["m", "u", "ž", "e"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_dat_sg",
+      "Lexeme_ID": "man",
+      "Cell": "dat_sg",
+      "Form": "mužovi",
+      "Segments": ["m", "u", "ž", "o", "v", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_dat_sg_i",
+      "Lexeme_ID": "man",
+      "Cell": "dat_sg",
+      "Form": "muži",
+      "Segments": ["m", "u", "ž", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_acc_sg",
+      "Lexeme_ID": "man",
+      "Cell": "acc_sg",
+      "Form": "muže",
+      "Segments": ["m", "u", "ž", "e"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_voc_sg",
+      "Lexeme_ID": "man",
+      "Cell": "voc_sg",
+      "Form": "muži",
+      "Segments": ["m", "u", "ž", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_loc_sg",
+      "Lexeme_ID": "man",
+      "Cell": "loc_sg",
+      "Form": "mužovi",
+      "Segments": ["m", "u", "ž", "o", "v", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_loc_sg_i",
+      "Lexeme_ID": "man",
+      "Cell": "loc_sg",
+      "Form": "muži",
+      "Segments": ["m", "u", "ž", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_ins_sg",
+      "Lexeme_ID": "man",
+      "Cell": "ins_sg",
+      "Form": "mužem",
+      "Segments": ["m", "u", "ž", "e", "m"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_nom_pl",
+      "Lexeme_ID": "man",
+      "Cell": "nom_pl",
+      "Form": "muži",
+      "Segments": ["m", "u", "ž", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_nom_pl_ove",
+      "Lexeme_ID": "man",
+      "Cell": "nom_pl",
+      "Form": "mužové",
+      "Segments": ["m", "u", "ž", "o", "v", "é"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_gen_pl",
+      "Lexeme_ID": "man",
+      "Cell": "gen_pl",
+      "Form": "mužů",
+      "Segments": ["m", "u", "ž", "ů"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_dat_pl",
+      "Lexeme_ID": "man",
+      "Cell": "dat_pl",
+      "Form": "mužům",
+      "Segments": ["m", "u", "ž", "ů", "m"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_acc_pl",
+      "Lexeme_ID": "man",
+      "Cell": "acc_pl",
+      "Form": "muže",
+      "Segments": ["m", "u", "ž", "e"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_voc_pl",
+      "Lexeme_ID": "man",
+      "Cell": "voc_pl",
+      "Form": "muži",
+      "Segments": ["m", "u", "ž", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_voc_pl_ove",
+      "Lexeme_ID": "man",
+      "Cell": "voc_pl",
+      "Form": "mužové",
+      "Segments": ["m", "u", "ž", "o", "v", "é"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_loc_pl",
+      "Lexeme_ID": "man",
+      "Cell": "loc_pl",
+      "Form": "mužích",
+      "Segments": ["m", "u", "ž", "í", "ch"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_man_ins_pl",
+      "Lexeme_ID": "man",
+      "Cell": "ins_pl",
+      "Form": "muži",
+      "Segments": ["m", "u", "ž", "i"],
+      "Source": ["stump-2006[Table 8]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_nom_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "nom_sg_masc",
+      "Form": "pratyaṅ",
+      "Segments": ["pratyaṅ"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_voc_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "voc_sg_masc",
+      "Form": "pratyaṅ",
+      "Segments": ["pratyaṅ"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_acc_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "acc_sg_masc",
+      "Form": "pratyañcam",
+      "Segments": ["pratyañc", "am"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_ins_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "ins_sg_masc",
+      "Form": "pratīcā",
+      "Segments": ["pratīc", "ā"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_dat_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "dat_sg_masc",
+      "Form": "pratīce",
+      "Segments": ["pratīc", "e"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_abl_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "abl_sg_masc",
+      "Form": "pratīcas",
+      "Segments": ["pratīc", "as"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_gen_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "gen_sg_masc",
+      "Form": "pratīcas",
+      "Segments": ["pratīc", "as"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_loc_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "loc_sg_masc",
+      "Form": "pratīci",
+      "Segments": ["pratīc", "i"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_nom_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "nom_du_masc",
+      "Form": "pratyañcau",
+      "Segments": ["pratyañc", "au"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_voc_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "voc_du_masc",
+      "Form": "pratyañcau",
+      "Segments": ["pratyañc", "au"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_acc_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "acc_du_masc",
+      "Form": "pratyañcau",
+      "Segments": ["pratyañc", "au"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_ins_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "ins_du_masc",
+      "Form": "pratyagbhyām",
+      "Segments": ["pratyag", "bhyām"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_dat_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "dat_du_masc",
+      "Form": "pratyagbhyām",
+      "Segments": ["pratyag", "bhyām"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_abl_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "abl_du_masc",
+      "Form": "pratyagbhyām",
+      "Segments": ["pratyag", "bhyām"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_gen_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "gen_du_masc",
+      "Form": "pratīcos",
+      "Segments": ["pratīc", "os"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_loc_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "loc_du_masc",
+      "Form": "pratīcos",
+      "Segments": ["pratīc", "os"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_nom_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "nom_pl_masc",
+      "Form": "pratyañcas",
+      "Segments": ["pratyañc", "as"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_voc_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "voc_pl_masc",
+      "Form": "pratyañcas",
+      "Segments": ["pratyañc", "as"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_acc_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "acc_pl_masc",
+      "Form": "pratīcas",
+      "Segments": ["pratīc", "as"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_ins_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "ins_pl_masc",
+      "Form": "pratyagbhis",
+      "Segments": ["pratyag", "bhis"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_dat_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "dat_pl_masc",
+      "Form": "pratyagbhyas",
+      "Segments": ["pratyag", "bhyas"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_abl_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "abl_pl_masc",
+      "Form": "pratyagbhyas",
+      "Segments": ["pratyag", "bhyas"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_gen_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "gen_pl_masc",
+      "Form": "pratīcām",
+      "Segments": ["pratīc", "ām"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_masc_loc_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "loc_pl_masc",
+      "Form": "pratyakṣu",
+      "Segments": ["pratyak", "ṣu"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_nom_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "nom_sg_neut",
+      "Form": "pratyak",
+      "Segments": ["pratyak"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_voc_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "voc_sg_neut",
+      "Form": "pratyak",
+      "Segments": ["pratyak"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_acc_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "acc_sg_neut",
+      "Form": "pratyak",
+      "Segments": ["pratyak"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_ins_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "ins_sg_neut",
+      "Form": "pratīcā",
+      "Segments": ["pratīc", "ā"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_dat_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "dat_sg_neut",
+      "Form": "pratīce",
+      "Segments": ["pratīc", "e"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_abl_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "abl_sg_neut",
+      "Form": "pratīcas",
+      "Segments": ["pratīc", "as"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_gen_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "gen_sg_neut",
+      "Form": "pratīcas",
+      "Segments": ["pratīc", "as"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_loc_sg",
+      "Lexeme_ID": "westerly",
+      "Cell": "loc_sg_neut",
+      "Form": "pratīci",
+      "Segments": ["pratīc", "i"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_nom_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "nom_du_neut",
+      "Form": "pratīcī",
+      "Segments": ["pratīc", "ī"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_voc_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "voc_du_neut",
+      "Form": "pratīcī",
+      "Segments": ["pratīc", "ī"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_acc_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "acc_du_neut",
+      "Form": "pratīcī",
+      "Segments": ["pratīc", "ī"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_ins_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "ins_du_neut",
+      "Form": "pratyagbhyām",
+      "Segments": ["pratyag", "bhyām"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_dat_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "dat_du_neut",
+      "Form": "pratyagbhyām",
+      "Segments": ["pratyag", "bhyām"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_abl_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "abl_du_neut",
+      "Form": "pratyagbhyām",
+      "Segments": ["pratyag", "bhyām"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_gen_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "gen_du_neut",
+      "Form": "pratīcos",
+      "Segments": ["pratīc", "os"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_loc_du",
+      "Lexeme_ID": "westerly",
+      "Cell": "loc_du_neut",
+      "Form": "pratīcos",
+      "Segments": ["pratīc", "os"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_nom_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "nom_pl_neut",
+      "Form": "pratyañci",
+      "Segments": ["pratyañc", "i"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_voc_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "voc_pl_neut",
+      "Form": "pratyañci",
+      "Segments": ["pratyañc", "i"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_acc_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "acc_pl_neut",
+      "Form": "pratyañci",
+      "Segments": ["pratyañc", "i"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_ins_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "ins_pl_neut",
+      "Form": "pratyagbhis",
+      "Segments": ["pratyag", "bhis"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_dat_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "dat_pl_neut",
+      "Form": "pratyagbhyas",
+      "Segments": ["pratyag", "bhyas"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_abl_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "abl_pl_neut",
+      "Form": "pratyagbhyas",
+      "Segments": ["pratyag", "bhyas"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_gen_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "gen_pl_neut",
+      "Form": "pratīcām",
+      "Segments": ["pratīc", "ām"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_westerly_neut_loc_pl",
+      "Lexeme_ID": "westerly",
+      "Cell": "loc_pl_neut",
+      "Form": "pratyakṣu",
+      "Segments": ["pratyak", "ṣu"],
+      "Source": ["stump-2006[Table 9]"]
+    },
+    {
+      "ID": "stump2006_name_nom_sg",
+      "Lexeme_ID": "name",
+      "Cell": "nom_sg_neut",
+      "Form": "nāma",
+      "Segments": ["nāma"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_voc_sg",
+      "Lexeme_ID": "name",
+      "Cell": "voc_sg_neut",
+      "Form": "nāma",
+      "Segments": ["nāma"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_acc_sg",
+      "Lexeme_ID": "name",
+      "Cell": "acc_sg_neut",
+      "Form": "nāma",
+      "Segments": ["nāma"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_ins_sg",
+      "Lexeme_ID": "name",
+      "Cell": "ins_sg_neut",
+      "Form": "nāmnā",
+      "Segments": ["nāmn", "ā"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_dat_sg",
+      "Lexeme_ID": "name",
+      "Cell": "dat_sg_neut",
+      "Form": "nāmne",
+      "Segments": ["nāmn", "e"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_abl_sg",
+      "Lexeme_ID": "name",
+      "Cell": "abl_sg_neut",
+      "Form": "nāmnas",
+      "Segments": ["nāmn", "as"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_gen_sg",
+      "Lexeme_ID": "name",
+      "Cell": "gen_sg_neut",
+      "Form": "nāmnas",
+      "Segments": ["nāmn", "as"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_loc_sg",
+      "Lexeme_ID": "name",
+      "Cell": "loc_sg_neut",
+      "Form": "nāmni",
+      "Segments": ["nāmn", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_nom_du",
+      "Lexeme_ID": "name",
+      "Cell": "nom_du_neut",
+      "Form": "nāmnī",
+      "Segments": ["nāmn", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_voc_du",
+      "Lexeme_ID": "name",
+      "Cell": "voc_du_neut",
+      "Form": "nāmnī",
+      "Segments": ["nāmn", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_acc_du",
+      "Lexeme_ID": "name",
+      "Cell": "acc_du_neut",
+      "Form": "nāmnī",
+      "Segments": ["nāmn", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_ins_du",
+      "Lexeme_ID": "name",
+      "Cell": "ins_du_neut",
+      "Form": "nāmabhyām",
+      "Segments": ["nāma", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_dat_du",
+      "Lexeme_ID": "name",
+      "Cell": "dat_du_neut",
+      "Form": "nāmabhyām",
+      "Segments": ["nāma", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_abl_du",
+      "Lexeme_ID": "name",
+      "Cell": "abl_du_neut",
+      "Form": "nāmabhyām",
+      "Segments": ["nāma", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_gen_du",
+      "Lexeme_ID": "name",
+      "Cell": "gen_du_neut",
+      "Form": "nāmnos",
+      "Segments": ["nāmn", "os"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_loc_du",
+      "Lexeme_ID": "name",
+      "Cell": "loc_du_neut",
+      "Form": "nāmnos",
+      "Segments": ["nāmn", "os"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_nom_pl",
+      "Lexeme_ID": "name",
+      "Cell": "nom_pl_neut",
+      "Form": "nāmāni",
+      "Segments": ["nāmān", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_voc_pl",
+      "Lexeme_ID": "name",
+      "Cell": "voc_pl_neut",
+      "Form": "nāmāni",
+      "Segments": ["nāmān", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_acc_pl",
+      "Lexeme_ID": "name",
+      "Cell": "acc_pl_neut",
+      "Form": "nāmāni",
+      "Segments": ["nāmān", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_ins_pl",
+      "Lexeme_ID": "name",
+      "Cell": "ins_pl_neut",
+      "Form": "nāmabhis",
+      "Segments": ["nāma", "bhis"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_dat_pl",
+      "Lexeme_ID": "name",
+      "Cell": "dat_pl_neut",
+      "Form": "nāmabhyas",
+      "Segments": ["nāma", "bhyas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_abl_pl",
+      "Lexeme_ID": "name",
+      "Cell": "abl_pl_neut",
+      "Form": "nāmabhyas",
+      "Segments": ["nāma", "bhyas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_gen_pl",
+      "Lexeme_ID": "name",
+      "Cell": "gen_pl_neut",
+      "Form": "nāmnām",
+      "Segments": ["nāmn", "ām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_name_loc_pl",
+      "Lexeme_ID": "name",
+      "Cell": "loc_pl_neut",
+      "Form": "nāmasu",
+      "Segments": ["nāma", "su"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_nom_sg",
+      "Lexeme_ID": "day",
+      "Cell": "nom_sg_neut",
+      "Form": "ahas",
+      "Segments": ["ahas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_voc_sg",
+      "Lexeme_ID": "day",
+      "Cell": "voc_sg_neut",
+      "Form": "ahas",
+      "Segments": ["ahas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_acc_sg",
+      "Lexeme_ID": "day",
+      "Cell": "acc_sg_neut",
+      "Form": "ahas",
+      "Segments": ["ahas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_ins_sg",
+      "Lexeme_ID": "day",
+      "Cell": "ins_sg_neut",
+      "Form": "ahnā",
+      "Segments": ["ahn", "ā"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_dat_sg",
+      "Lexeme_ID": "day",
+      "Cell": "dat_sg_neut",
+      "Form": "ahne",
+      "Segments": ["ahn", "e"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_abl_sg",
+      "Lexeme_ID": "day",
+      "Cell": "abl_sg_neut",
+      "Form": "ahnas",
+      "Segments": ["ahn", "as"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_gen_sg",
+      "Lexeme_ID": "day",
+      "Cell": "gen_sg_neut",
+      "Form": "ahnas",
+      "Segments": ["ahn", "as"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_loc_sg",
+      "Lexeme_ID": "day",
+      "Cell": "loc_sg_neut",
+      "Form": "ahni",
+      "Segments": ["ahn", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_nom_du",
+      "Lexeme_ID": "day",
+      "Cell": "nom_du_neut",
+      "Form": "ahnī",
+      "Segments": ["ahn", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_voc_du",
+      "Lexeme_ID": "day",
+      "Cell": "voc_du_neut",
+      "Form": "ahnī",
+      "Segments": ["ahn", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_acc_du",
+      "Lexeme_ID": "day",
+      "Cell": "acc_du_neut",
+      "Form": "ahnī",
+      "Segments": ["ahn", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_ins_du",
+      "Lexeme_ID": "day",
+      "Cell": "ins_du_neut",
+      "Form": "ahobhyām",
+      "Segments": ["aho", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_dat_du",
+      "Lexeme_ID": "day",
+      "Cell": "dat_du_neut",
+      "Form": "ahobhyām",
+      "Segments": ["aho", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_abl_du",
+      "Lexeme_ID": "day",
+      "Cell": "abl_du_neut",
+      "Form": "ahobhyām",
+      "Segments": ["aho", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_gen_du",
+      "Lexeme_ID": "day",
+      "Cell": "gen_du_neut",
+      "Form": "ahnos",
+      "Segments": ["ahn", "os"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_loc_du",
+      "Lexeme_ID": "day",
+      "Cell": "loc_du_neut",
+      "Form": "ahnos",
+      "Segments": ["ahn", "os"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_nom_pl",
+      "Lexeme_ID": "day",
+      "Cell": "nom_pl_neut",
+      "Form": "ahāni",
+      "Segments": ["ahān", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_voc_pl",
+      "Lexeme_ID": "day",
+      "Cell": "voc_pl_neut",
+      "Form": "ahāni",
+      "Segments": ["ahān", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_acc_pl",
+      "Lexeme_ID": "day",
+      "Cell": "acc_pl_neut",
+      "Form": "ahāni",
+      "Segments": ["ahān", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_ins_pl",
+      "Lexeme_ID": "day",
+      "Cell": "ins_pl_neut",
+      "Form": "ahobhis",
+      "Segments": ["aho", "bhis"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_dat_pl",
+      "Lexeme_ID": "day",
+      "Cell": "dat_pl_neut",
+      "Form": "ahobhyas",
+      "Segments": ["aho", "bhyas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_abl_pl",
+      "Lexeme_ID": "day",
+      "Cell": "abl_pl_neut",
+      "Form": "ahobhyas",
+      "Segments": ["aho", "bhyas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_gen_pl",
+      "Lexeme_ID": "day",
+      "Cell": "gen_pl_neut",
+      "Form": "ahnām",
+      "Segments": ["ahn", "ām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_day_loc_pl",
+      "Lexeme_ID": "day",
+      "Cell": "loc_pl_neut",
+      "Form": "ahaḥsu",
+      "Segments": ["ahaḥ", "su"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_nom_sg",
+      "Lexeme_ID": "mind",
+      "Cell": "nom_sg_neut",
+      "Form": "manas",
+      "Segments": ["manas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_voc_sg",
+      "Lexeme_ID": "mind",
+      "Cell": "voc_sg_neut",
+      "Form": "manas",
+      "Segments": ["manas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_acc_sg",
+      "Lexeme_ID": "mind",
+      "Cell": "acc_sg_neut",
+      "Form": "manas",
+      "Segments": ["manas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_ins_sg",
+      "Lexeme_ID": "mind",
+      "Cell": "ins_sg_neut",
+      "Form": "manasā",
+      "Segments": ["manas", "ā"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_dat_sg",
+      "Lexeme_ID": "mind",
+      "Cell": "dat_sg_neut",
+      "Form": "manase",
+      "Segments": ["manas", "e"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_abl_sg",
+      "Lexeme_ID": "mind",
+      "Cell": "abl_sg_neut",
+      "Form": "manasas",
+      "Segments": ["manas", "as"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_gen_sg",
+      "Lexeme_ID": "mind",
+      "Cell": "gen_sg_neut",
+      "Form": "manasas",
+      "Segments": ["manas", "as"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_loc_sg",
+      "Lexeme_ID": "mind",
+      "Cell": "loc_sg_neut",
+      "Form": "manasi",
+      "Segments": ["manas", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_nom_du",
+      "Lexeme_ID": "mind",
+      "Cell": "nom_du_neut",
+      "Form": "manasī",
+      "Segments": ["manas", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_voc_du",
+      "Lexeme_ID": "mind",
+      "Cell": "voc_du_neut",
+      "Form": "manasī",
+      "Segments": ["manas", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_acc_du",
+      "Lexeme_ID": "mind",
+      "Cell": "acc_du_neut",
+      "Form": "manasī",
+      "Segments": ["manas", "ī"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_ins_du",
+      "Lexeme_ID": "mind",
+      "Cell": "ins_du_neut",
+      "Form": "manobhyām",
+      "Segments": ["mano", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_dat_du",
+      "Lexeme_ID": "mind",
+      "Cell": "dat_du_neut",
+      "Form": "manobhyām",
+      "Segments": ["mano", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_abl_du",
+      "Lexeme_ID": "mind",
+      "Cell": "abl_du_neut",
+      "Form": "manobhyām",
+      "Segments": ["mano", "bhyām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_gen_du",
+      "Lexeme_ID": "mind",
+      "Cell": "gen_du_neut",
+      "Form": "manasos",
+      "Segments": ["manas", "os"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_loc_du",
+      "Lexeme_ID": "mind",
+      "Cell": "loc_du_neut",
+      "Form": "manasos",
+      "Segments": ["manas", "os"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_nom_pl",
+      "Lexeme_ID": "mind",
+      "Cell": "nom_pl_neut",
+      "Form": "manāṃsi",
+      "Segments": ["manāṃs", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_voc_pl",
+      "Lexeme_ID": "mind",
+      "Cell": "voc_pl_neut",
+      "Form": "manāṃsi",
+      "Segments": ["manāṃs", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_acc_pl",
+      "Lexeme_ID": "mind",
+      "Cell": "acc_pl_neut",
+      "Form": "manāṃsi",
+      "Segments": ["manāṃs", "i"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_ins_pl",
+      "Lexeme_ID": "mind",
+      "Cell": "ins_pl_neut",
+      "Form": "manobhis",
+      "Segments": ["mano", "bhis"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_dat_pl",
+      "Lexeme_ID": "mind",
+      "Cell": "dat_pl_neut",
+      "Form": "manobhyas",
+      "Segments": ["mano", "bhyas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_abl_pl",
+      "Lexeme_ID": "mind",
+      "Cell": "abl_pl_neut",
+      "Form": "manobhyas",
+      "Segments": ["mano", "bhyas"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_gen_pl",
+      "Lexeme_ID": "mind",
+      "Cell": "gen_pl_neut",
+      "Form": "manasām",
+      "Segments": ["manas", "ām"],
+      "Source": ["stump-2006[Table 10]"]
+    },
+    {
+      "ID": "stump2006_mind_loc_pl",
+      "Lexeme_ID": "mind",
+      "Cell": "loc_pl_neut",
+      "Form": "manaḥsu",
+      "Segments": ["manaḥ", "su"],
+      "Source": ["stump-2006[Table 10]"]
+    }
+  ],
+  "AnalysisColumns": [
+    {
+      "Name": "Grade",
+      "Lean": "grade",
+      "Type": "Grade",
+      "Description": "the stem grade the paper assigns"
+    },
+    {
+      "Name": "Stem",
+      "Lean": "stem",
+      "Type": "String",
+      "Description": "the stem the paper assigns"
+    }
+  ],
+  "AnalysisTable": [
+    {
+      "Form_ID": "stump2006_westerly_masc_nom_sg",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_voc_sg",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_acc_sg",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_ins_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_dat_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_abl_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_gen_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_loc_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_nom_du",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_voc_du",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_acc_du",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_ins_du",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_dat_du",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_abl_du",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_gen_du",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_loc_du",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_nom_pl",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_voc_pl",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_acc_pl",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_ins_pl",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_dat_pl",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_abl_pl",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_gen_pl",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_masc_loc_pl",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_nom_sg",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_voc_sg",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_acc_sg",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_ins_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_dat_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_abl_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_gen_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_loc_sg",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_nom_du",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_voc_du",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_acc_du",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_ins_du",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_dat_du",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_abl_du",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_gen_du",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_loc_du",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_nom_pl",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_voc_pl",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_acc_pl",
+      "Grade": "strong"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_ins_pl",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_dat_pl",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_abl_pl",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_gen_pl",
+      "Grade": "weakest"
+    },
+    {
+      "Form_ID": "stump2006_westerly_neut_loc_pl",
+      "Grade": "middle"
+    },
+    {
+      "Form_ID": "stump2006_day_nom_sg",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_voc_sg",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_acc_sg",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_ins_sg",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_dat_sg",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_abl_sg",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_gen_sg",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_loc_sg",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_nom_du",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_voc_du",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_acc_du",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_ins_du",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_dat_du",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_abl_du",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_gen_du",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_loc_du",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_nom_pl",
+      "Stem": "ahan"
+    },
+    {
+      "Form_ID": "stump2006_day_voc_pl",
+      "Stem": "ahan"
+    },
+    {
+      "Form_ID": "stump2006_day_acc_pl",
+      "Stem": "ahan"
+    },
+    {
+      "Form_ID": "stump2006_day_ins_pl",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_dat_pl",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_abl_pl",
+      "Stem": "ahas"
+    },
+    {
+      "Form_ID": "stump2006_day_gen_pl",
+      "Stem": "ahn"
+    },
+    {
+      "Form_ID": "stump2006_day_loc_pl",
+      "Stem": "ahas"
     }
   ]
 }

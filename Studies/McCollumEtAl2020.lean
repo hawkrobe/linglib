@@ -127,11 +127,12 @@ def vowelFeatures : Char → Option (Bool × Bool)
   | 'a' | 'á' | 'ā' | 'ɔ' | 'ɛ' => some (false, false)
   | _ => none
 
-/-- `ofForm f` is the underlying and the surface string of the word `f`. The vowels of its
-`Underlying` column after the last morpheme boundary are the root's, and its surface vowels
+/-- `ofAnalysis a` is the underlying and the surface string of the word `a` analyses. The vowels
+of its underlying form after the last morpheme boundary are the root's, and its surface vowels
 are aligned with them. -/
-def ofForm (f : Data.Forms.Form) : Option (List Seg × List Seg) := do
-  let u := ((f.column? "Underlying").getD "").toList.reverse
+def ofAnalysis (a : Forms.Analysis) : Option (List Seg × List Seg) := do
+  let f := a.form
+  let u := a.underlying.toList.reverse
   let pre := (u.dropWhile (· != '-')).reverse.filterMap vowelFeatures
   let rt ← ((u.takeWhile (· != '-')).filterMap vowelFeatures).getLast?
   let sv := f.segments.filterMap fun s ↦ s.toList.head?.bind vowelFeatures
@@ -142,7 +143,7 @@ def ofForm (f : Data.Forms.Form) : Option (List Seg × List Seg) := do
 
 /-- The map takes the underlying form of every word of (1) to (8) and (27) to its surface
 form. -/
-theorem tutrugbu_map_forms : ∀ f ∈ Forms.all, ∃ p ∈ ofForm f, tutrugbu.map p.1 = p.2 := by
+theorem tutrugbu_map_forms : ∀ a ∈ Forms.analyses, ∃ p ∈ ofAnalysis a, tutrugbu.map p.1 = p.2 := by
   decide
 
 /-! ### Unbounded circumambience

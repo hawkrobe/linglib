@@ -1,9 +1,102 @@
 {
+  "ParameterTable": [
+    {
+      "ID": "carlessness",
+      "Name": "the state of being without a car",
+      "Description": ""
+    },
+    {
+      "ID": "baldness",
+      "Name": "baldness",
+      "Description": ""
+    },
+    {
+      "ID": "bigness",
+      "Name": "bigness",
+      "Description": ""
+    },
+    {
+      "ID": "blackness",
+      "Name": "blackness",
+      "Description": ""
+    },
+    {
+      "ID": "britishness",
+      "Name": "Britishness",
+      "Description": ""
+    },
+    {
+      "ID": "awareness",
+      "Name": "awareness",
+      "Description": ""
+    },
+    {
+      "ID": "readable",
+      "Name": "readable",
+      "Description": ""
+    },
+    {
+      "ID": "workable",
+      "Name": "workable",
+      "Description": ""
+    },
+    {
+      "ID": "unsuppressable",
+      "Name": "unsuppressable",
+      "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "carlessness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "carlessness"
+    },
+    {
+      "ID": "baldness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "baldness"
+    },
+    {
+      "ID": "bigness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "bigness"
+    },
+    {
+      "ID": "blackness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "blackness"
+    },
+    {
+      "ID": "britishness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "britishness"
+    },
+    {
+      "ID": "awareness",
+      "Language_ID": "stan1293",
+      "Parameter_ID": "awareness"
+    },
+    {
+      "ID": "readable",
+      "Language_ID": "dutc1256",
+      "Parameter_ID": "readable"
+    },
+    {
+      "ID": "workable",
+      "Language_ID": "dutc1256",
+      "Parameter_ID": "workable"
+    },
+    {
+      "ID": "unsuppressable",
+      "Language_ID": "dutc1256",
+      "Parameter_ID": "unsuppressable"
+    }
+  ],
   "FormTable": [
     {
       "ID": "booij2010_carlessness",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "carlessness",
+      "Lexeme_ID": "carlessness",
       "Form": "carlessness",
       "Segments": ["carless", "ness"],
       "Comment": "the paper's novel coin (Time, October 5, 2009)",
@@ -11,8 +104,7 @@
     },
     {
       "ID": "booij2010_baldness",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "baldness",
+      "Lexeme_ID": "baldness",
       "Form": "baldness",
       "Segments": ["bald", "ness"],
       "Comment": "a stored deadjectival noun of the opening word set (1b)",
@@ -20,8 +112,7 @@
     },
     {
       "ID": "booij2010_bigness",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "bigness",
+      "Lexeme_ID": "bigness",
       "Form": "bigness",
       "Segments": ["big", "ness"],
       "Comment": "a stored deadjectival noun of the opening word set (1b)",
@@ -29,8 +120,7 @@
     },
     {
       "ID": "booij2010_blackness",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "blackness",
+      "Lexeme_ID": "blackness",
       "Form": "blackness",
       "Segments": ["black", "ness"],
       "Comment": "a stored deadjectival noun of the opening word set (1b)",
@@ -38,8 +128,7 @@
     },
     {
       "ID": "booij2010_britishness",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "britishness",
+      "Lexeme_ID": "britishness",
       "Form": "Britishness",
       "Segments": ["British", "ness"],
       "Comment": "a stored deadjectival noun of the opening word set (1b)",
@@ -47,8 +136,7 @@
     },
     {
       "ID": "booij2010_awareness",
-      "Language_ID": "stan1293",
-      "Parameter_ID": "awareness",
+      "Lexeme_ID": "awareness",
       "Form": "awareness",
       "Segments": ["aware", "ness"],
       "Comment": "the paper's example of an existing deadjectival noun (2)",
@@ -56,8 +144,7 @@
     },
     {
       "ID": "booij2010_leesbaar",
-      "Language_ID": "dutc1256",
-      "Parameter_ID": "readable",
+      "Lexeme_ID": "readable",
       "Form": "leesbaar",
       "Segments": ["lees", "baar"],
       "Comment": "a regular -baar adjective on the transitive verb lezen",
@@ -65,8 +152,7 @@
     },
     {
       "ID": "booij2010_werkbaar",
-      "Language_ID": "dutc1256",
-      "Parameter_ID": "workable",
+      "Lexeme_ID": "workable",
       "Form": "werkbaar",
       "Segments": ["werk", "baar"],
       "Comment": "a -baar adjective on the intransitive verb werken, overriding the schema's transitive base",
@@ -74,24 +160,11 @@
     },
     {
       "ID": "booij2010_onbedwingbaar",
-      "Language_ID": "dutc1256",
-      "Parameter_ID": "unsuppressable",
+      "Lexeme_ID": "unsuppressable",
       "Form": "onbedwingbaar",
       "Segments": ["on", "bedwing", "baar"],
       "Comment": "coined directly from the verb bedwingen by the unified schema (16), with no listed bedwingbaar",
       "Source": ["booij-2010-compass[(15)]"]
     }
-  ],
-  "ParameterTable": [
-    { "ID": "carlessness", "Name": "the state of being without a car", "Description": "" },
-    { "ID": "baldness", "Name": "baldness", "Description": "" },
-    { "ID": "bigness", "Name": "bigness", "Description": "" },
-    { "ID": "blackness", "Name": "blackness", "Description": "" },
-    { "ID": "britishness", "Name": "Britishness", "Description": "" },
-    { "ID": "awareness", "Name": "awareness", "Description": "" },
-    { "ID": "readable", "Name": "readable", "Description": "" },
-    { "ID": "workable", "Name": "workable", "Description": "" },
-    { "ID": "unsuppressable", "Name": "unsuppressable", "Description": "" }
-  ],
-  "FormRelationTable": []
+  ]
 }

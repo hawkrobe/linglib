@@ -104,13 +104,13 @@ def binyanTemplates : List CVTemplate :=
 /-- CVCVCVC, the one template of the schema with two light syllables. -/
 def cvcvcvc : CVTemplate := ⟨[.C, .V, .C, .V, .C, .V, .C]⟩
 
-/-- The prosodic template schema (14a), `[({C, CV}) CV ([+seg]) CVC]`: the nine templates its
+/-- The prosodic template schema (14a), `[({C, CV}) CV ([+seg]) CVC]`, as the nine templates its
 optional choices generate. -/
 def schema : List CVTemplate :=
   ([[], [.C], [.C, .V]] : List (List CVSlot)).flatMap fun pre ↦
     ([[], [.C], [.V]] : List (List CVSlot)).map fun s ↦ ⟨pre ++ [.C, .V] ++ s ++ [.C, .V, .C]⟩
 
-/-- Rule (14b), `V → ∅ / [CVC _ CVC]`: the middle vowel of the whole template CVCVCVC elides. -/
+/-- Rule (14b), `V → ∅ / [CVC _ CVC]`, elides the middle vowel of the whole template CVCVCVC. -/
 def elide (t : CVTemplate) : CVTemplate := if t = cvcvcvc then cvccvc else t
 
 /-- The schema generates the templates (13) and CVCVCVC. -/
@@ -131,7 +131,7 @@ inductive Binyan where
 def Binyan.ofQuadriliteral : Fin 4 → Binyan
   | 0 => .II | 1 => .V | 2 => .XIV | 3 => .XI
 
-/-- The affixal consonants: ʔ, t, n, st of (26b), w, n, y of (27), and the m of the
+/-- The affixal consonants, the ʔ, t, n and st of (26b), the w, n and y of (27), and the m of the
 participle prefix. -/
 structure Affixes (α : Type*) where
   /-- The glottal stop of IV. -/
@@ -153,15 +153,16 @@ structure Affixes (α : Type*) where
 def Affixes.map (f : α → β) (ax : Affixes α) : Affixes β :=
   ⟨f ax.glottal, f ax.t, f ax.n, f ax.s, f ax.w, f ax.y, f ax.m⟩
 
-/-- Where a binyan's affix goes: on the leftmost free C-slots by the conventions (p. 389), there
+/-- Where a binyan's affix goes, on the leftmost free C-slots by the conventions (p. 389), there
 and then a slot to the right by the Flop (19), or on slots fixed by the rules (27). -/
 inductive Placement where
   | leftmost
   | flop
   | fixed (slots : List ℕ)
 
-/-- What the grammar specifies for a binyan (pp. 392–393): its template, its affix and where the
-affix goes, whether Erasure (24) applies, and the tier that respreads after Erasure (30). -/
+/-- What the grammar specifies for a binyan (pp. 392–393), namely its template, its affix and
+where the affix goes, whether Erasure (24) applies, and the tier that respreads after
+Erasure (30). -/
 structure Spec (α : Type*) where
   /-- The prosodic template. -/
   template : CVTemplate
@@ -208,8 +209,8 @@ def Spec.map (f : α → β) (sp : Spec α) : Spec β :=
 @[simp] theorem Spec.respread_map (f : α → β) (sp : Spec α) : (sp.map f).respread = sp.respread :=
   rfl
 
-/-- The Eighth Binyan Flop (19): an affix line on the first of two adjacent C-slots moves to
-the second. -/
+/-- The Eighth Binyan Flop (19) moves an affix line on the first of two adjacent C-slots to the
+second. -/
 def flop (m : TemplateMatch α) : TemplateMatch α :=
   match m.template.slots with
   | .C :: .C :: _ => { m with associations := m.associations.map fun a ↦
@@ -228,14 +229,15 @@ def placeAffixes (sp : Spec α) (r : ConsonantalRoot α) : TemplateMatch α :=
   | .flop => flop (m.associateOneToOne .affix)
   | .fixed slots => m.link (slots.zipIdx.map fun (i, k) ↦ ⟨.affix, k, i⟩)
 
-/-- Erasure (24), generalized (p. 393): the root line on the C-slot of the final CVC is
-removed. -/
+/-- Erasure (24), generalized (p. 393), removes the root line on the C-slot of the final
+CVC. -/
 def erasure (m : TemplateMatch α) : TemplateMatch α :=
   { m with associations := m.associations.filter fun a ↦
       !(a.source == .root && a.slotIndex == m.template.length - 3) }
 
-/-- The consonantism of a binyan: the affixes placed, the root associated by the conventions,
-and, where Erasure applies, the conventions again with the binyan's respreading tier. -/
+/-- The consonantism of a binyan, with the affixes placed, the root associated by the
+conventions, and, where Erasure applies, the conventions again with the binyan's respreading
+tier. -/
 def consonantism (ax : Affixes α) (plusSeg : CVSlot) (b : Binyan) (r : ConsonantalRoot α) :
     TemplateMatch α :=
   let sp := spec ax plusSeg b
@@ -255,7 +257,7 @@ inductive Vowel where
   | a | i | u
   deriving DecidableEq, Repr
 
-/-- The verbal categories of the table: aspect and voice. -/
+/-- The verbal categories of the table, by aspect and voice. -/
 inductive Category where
   | perfActive | perfPassive | imperfActive | imperfPassive | partActive | partPassive
   deriving DecidableEq, Repr, Fintype
@@ -270,7 +272,7 @@ def Category.participle : Category → Bool
   | .partActive | .partPassive => true
   | _ => false
 
-/-- The ablaut class of a root (45): the vowel of the second syllable of the first binyan active
+/-- The ablaut class of a root (45), the vowel of the second syllable of the first binyan active
 in the perfective and the imperfective. -/
 structure Ablaut where
   /-- The perfective vowel. -/
@@ -278,7 +280,7 @@ structure Ablaut where
   /-- The imperfective vowel. -/
   imperf : Vowel
 
-/-- The vowel melody of a cell: (39) and (43), and for the first binyan active the a of (44)
+/-- The vowel melody of a cell, by (39) and (43), and for the first binyan active the a of (44)
 with the root's ablaut vowel. -/
 def melody (abl : Ablaut) : Category → Binyan → List Vowel
   | .perfActive, .I => [.a, abl.perf]
@@ -292,13 +294,13 @@ def melody (abl : Ablaut) : Category → Binyan → List Vowel
   | .partActive, _ => [.u, .a, .i]
   | .partPassive, _ => [.u, .a]
 
-/-- The prefix [CV]: every line moves two slots right. -/
+/-- The prefix [CV] moves every line two slots right. -/
 def prefixCV (m : TemplateMatch α) : TemplateMatch α :=
   { m with
     template := ⟨[.C, .V] ++ m.template.slots⟩
     associations := m.associations.map fun a ↦ { a with slotIndex := a.slotIndex + 2 } }
 
-/-- Rule (14b) on a match: the middle V-slot of CVCVCVC goes, the lines after it move left. -/
+/-- Rule (14b) on a match deletes the middle V-slot of CVCVCVC and moves the lines after it left. -/
 def elideMatch (m : TemplateMatch α) : TemplateMatch α :=
   if m.template = cvcvcvc then
     { m with
@@ -314,14 +316,14 @@ def prefixM (ax : Affixes α) (m : TemplateMatch α) : TemplateMatch α :=
     associations := ⟨.affix, 0, 0⟩ :: m.associations.map fun a ↦
       if a.source == .affix then { a with melodyIndex := a.melodyIndex + 1 } else a }
 
-/-- Vowel Association (41): an i ending the melody goes to the final V-slot first. -/
+/-- Vowel Association (41) links an i ending the melody to the final V-slot first. -/
 def vowelAssociation (mel : List Vowel) (m : TemplateMatch α) : TemplateMatch α :=
   match mel.getLast?, m.template.vSlots.getLast? with
   | some .i, some s => m.link [⟨.vocalism, mel.length - 1, s⟩]
   | _, _ => m
 
-/-- The stem of a cell: the consonantism, the prefix of imperfectives and participles with rule
-(14b), the participle's m, and the melody associated by (41) and the conventions. -/
+/-- The stem of a cell, built from the consonantism, the prefix of imperfectives and participles
+with rule (14b), the participle's m, and the melody associated by (41) and the conventions. -/
 def stem (ax : Affixes α) (v : Vowel → α) (abl : Ablaut) (c : Category) (b : Binyan)
     (r : ConsonantalRoot α) : TemplateMatch α :=
   let m := consonantism ax (if r.arity = 4 then .C else .V) b r
@@ -492,24 +494,23 @@ def Vowel.transcription : Vowel → String
 def ktbAblaut : Ablaut := ⟨.a, .u⟩
 
 /-- The binyan of a label of the table, a quadriliteral one being its triliteral binyan (31). -/
-def binyan? : String → Option Binyan
-  | "I" => some .I | "II" => some .II | "III" => some .III | "IV" => some .IV | "V" => some .V
-  | "VI" => some .VI | "VII" => some .VII | "VIII" => some .VIII | "IX" => some .IX
-  | "X" => some .X | "XI" => some .XI | "XII" => some .XII | "XIII" => some .XIII
-  | "XIV" => some .XIV | "XV" => some .XV
-  | "QI" => some (.ofQuadriliteral 0) | "QII" => some (.ofQuadriliteral 1)
-  | "QIII" => some (.ofQuadriliteral 2) | "QIV" => some (.ofQuadriliteral 3)
-  | _ => none
+def binyanOf : Forms.Binyan → Binyan
+  | .i => .I | .ii => .II | .iii => .III | .iv => .IV | .v => .V | .vi => .VI | .vii => .VII
+  | .viii => .VIII | .ix => .IX | .x => .X | .xi => .XI | .xii => .XII | .xiii => .XIII
+  | .xiv => .XIV | .xv => .XV | .qi => .ofQuadriliteral 0 | .qii => .ofQuadriliteral 1
+  | .qiii => .ofQuadriliteral 2 | .qiv => .ofQuadriliteral 3
 
-/-- The category of an aspect and a voice of the table. -/
-def category? : String → String → Option Category
-  | "perfective", "active" => some .perfActive
-  | "perfective", "passive" => some .perfPassive
-  | "imperfective", "active" => some .imperfActive
-  | "imperfective", "passive" => some .imperfPassive
-  | "participle", "active" => some .partActive
-  | "participle", "passive" => some .partPassive
-  | _, _ => none
+/-- The category of a cell's aspect, verb form and voice. -/
+def category? (c : Forms.Cell) : Option Category :=
+  match (c.aspect : Option UD.Aspect), (c.verbForm : Option UD.VerbForm),
+    (c.voice : Option UD.Voice) with
+  | some .Perf, _, some .Act => some .perfActive
+  | some .Perf, _, some .Pass => some .perfPassive
+  | some .Imp, _, some .Act => some .imperfActive
+  | some .Imp, _, some .Pass => some .imperfPassive
+  | _, some .Part, some .Act => some .partActive
+  | _, some .Part, some .Pass => some .partPassive
+  | _, _, _ => none
 
 /-- The root of a concept in the paper's transcription, the root of 'poison' being the
 biliteral that the OCP (11) makes of smm (p. 396). -/
@@ -520,7 +521,7 @@ def root? : String → Option (ConsonantalRoot String)
   | "magnetize" => some ⟨["m", "ğ", "n", "ṭ", "š"]⟩
   | _ => none
 
-/-- A cell: a binyan, a category and a root. -/
+/-- A cell is a binyan, a category and a root. -/
 structure Cell where
   /-- The binyan. -/
   binyan : Binyan
@@ -529,14 +530,14 @@ structure Cell where
   /-- The root. -/
   root : ConsonantalRoot String
 
-/-- The cell of a form, read off its columns and its concept. -/
-def cell? (f : Data.Forms.Form) : Option Cell := do
-  let b ← (f.column? "Binyan").bind binyan?
-  let c ← category? (← f.column? "Aspect") (← f.column? "Voice")
+/-- The cell of a form, read off its features and its concept. -/
+def cell? (f : Data.Forms.Form Forms.Cell) : Option Cell := do
+  let b ← (f.cell.binyan : Option Forms.Binyan).map binyanOf
+  let c ← category? f.cell
   pure ⟨b, c, ← root? f.parameterId⟩
 
-/-- A cell the analysis covers: every cell but the participles of the first binyan, which the
-paper leaves to McCarthy (1979) (p. 402). -/
+/-- A cell the analysis covers, any but a participle of the first binyan, which the paper leaves
+to McCarthy's dissertation (p. 402). -/
 def Cell.Covered (x : Cell) : Prop := ¬(x.binyan = .I ∧ x.category.participle = true)
 
 instance (x : Cell) : Decidable x.Covered := inferInstanceAs (Decidable ¬_)
@@ -572,7 +573,7 @@ theorem orderedOn_stem :
         ⟨["d", "ḥ", "r", "j"]⟩).OrderedOn s := by
   decide +kernel
 
-/-- The paper's transcription as segments of the Arabic fragment: j is ج, ğ is غ, y the glide,
+/-- The paper's transcription as segments of the Arabic fragment, where j is ج, ğ is غ, y the glide,
 ḥ the pharyngeal fricative, ṭ the emphatic t and š the postalveolar fricative. -/
 def seg : String → Phonology.Segment
   | "b" => Phonology.b | "d" => Phonology.d | "k" => Phonology.k | "l" => Phonology.l
@@ -613,8 +614,8 @@ theorem isOCPClean_roots :
         ConsonantalRoot Phonology.Segment).IsOCPClean := by
   decide +kernel
 
-/-- The structural description of Metathesis (37): the C-slots `i` and `i + 2` on either side of
-a V-slot are linked to one melodic element, which has no line left of `i`. -/
+/-- The structural description of Metathesis (37) holds when the C-slots `i` and `i + 2` on
+either side of a V-slot are linked to one melodic element, which has no line left of `i`. -/
 def MetathesisSite (m : TemplateMatch α) (i : ℕ) : Prop :=
   m.template.slotAt (i + 1) = some .V ∧ ∃ a ∈ m.associations, a.slotIndex = i ∧
     (∃ b ∈ m.associations, b.slotIndex = i + 2 ∧ b.source = a.source ∧
@@ -672,7 +673,7 @@ def Vowel.high : Vowel → Bool
 def Vowel.back : Vowel → Bool
   | .i => false | .a | .u => true
 
-/-- Ablaut (46): an imperfective [αhigh] vowel goes with a perfective [−αhigh, αback] one. -/
+/-- Ablaut (46) pairs an imperfective [αhigh] vowel with a perfective [−αhigh, αback] one. -/
 def Vowel.ablaut (v : Vowel) : Vowel := if v.high then .a else .i
 
 theorem Vowel.ablaut_eq_iff (v w : Vowel) :

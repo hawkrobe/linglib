@@ -1,1185 +1,4 @@
 {
-  "FormTable": [
-    {
-      "ID": "caviranivandenwyngaerd2026_louka",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "meadow",
-      "Form": "louka",
-      "Segments": ["lou", "k", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_louce",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "meadow_locdat",
-      "Form": "louce",
-      "Segments": ["lou", "c", "e"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "k"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_liga",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "league",
-      "Form": "liga",
-      "Segments": ["li", "g", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_lize",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "league_locdat",
-      "Form": "lize",
-      "Segments": ["li", "z", "e"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "g"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_strecha",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "roof",
-      "Form": "střecha",
-      "Segments": ["stře", "ch", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_strese",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "roof_locdat",
-      "Form": "střeše",
-      "Segments": ["stře", "š", "e"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "x"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_kniha",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "book",
-      "Form": "kniha",
-      "Segments": ["kni", "h", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_knize",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "book_locdat",
-      "Form": "knize",
-      "Segments": ["kni", "z", "e"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "ɦ"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_mata",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "mint",
-      "Form": "máta",
-      "Segments": ["má", "t", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_mate",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "mint_locdat",
-      "Form": "mátě",
-      "Segments": ["má", "t", "ě"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "t"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_vlada",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "government",
-      "Form": "vláda",
-      "Segments": ["vlá", "d", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_vlade",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "government_locdat",
-      "Form": "vládě",
-      "Segments": ["vlá", "d", "ě"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "d"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_bystrica",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bystrica",
-      "Form": "Bystrica",
-      "Segments": ["Bystri", "c", "a"],
-      "Comment": "parenthesised in the table",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_bystrice",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bystrica_locdat",
-      "Form": "Bystrice",
-      "Segments": ["Bystri", "c", "e"],
-      "Comment": "parenthesised in the table",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "ʦ"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_misa",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bowl",
-      "Form": "mísa",
-      "Segments": ["mí", "s", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_mise",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bowl_locdat",
-      "Form": "míse",
-      "Segments": ["mí", "s", "e"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "s"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_koza",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "goat",
-      "Form": "koza",
-      "Segments": ["ko", "z", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_koze",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "goat_locdat",
-      "Form": "koze",
-      "Segments": ["ko", "z", "e"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "z"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_vina",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "guilt",
-      "Form": "vina",
-      "Segments": ["vi", "n", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_vine",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "guilt_locdat",
-      "Form": "vině",
-      "Segments": ["vi", "n", "ě"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "n"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_sestra",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "sister",
-      "Form": "sestra",
-      "Segments": ["sest", "r", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_sestre",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "sister_locdat",
-      "Form": "sestře",
-      "Segments": ["sest", "ř", "e"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "r"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_vila",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "fairy",
-      "Form": "víla",
-      "Segments": ["ví", "l", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_vile",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "fairy_locdat",
-      "Form": "víle",
-      "Segments": ["ví", "l", "e"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "l"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_stoupa",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "rise",
-      "Form": "stoupa",
-      "Segments": ["stou", "p", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_stoupe",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "rise_locdat",
-      "Form": "stoupě",
-      "Segments": ["stou", "p", "ě"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "p"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_ryba",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "fish",
-      "Form": "ryba",
-      "Segments": ["ry", "b", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_rybe",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "fish_locdat",
-      "Form": "rybě",
-      "Segments": ["ry", "b", "ě"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "b"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_karafa",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "decanter",
-      "Form": "karafa",
-      "Segments": ["kara", "f", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_karafe",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "decanter_locdat",
-      "Form": "karafě",
-      "Segments": ["kara", "f", "ě"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "f"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hlava",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "head",
-      "Form": "hlava",
-      "Segments": ["hla", "v", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hlave",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "head_locdat",
-      "Form": "hlavě",
-      "Segments": ["hla", "v", "ě"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "v"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zima",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "winter",
-      "Form": "zima",
-      "Segments": ["zi", "m", "a"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zime",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "winter_locdat",
-      "Form": "zimě",
-      "Segments": ["zi", "m", "ě"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "m"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zatknout",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "arrested_base",
-      "Form": "zatknout",
-      "Segments": ["zat", "k", "nout"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zatcen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "arrested",
-      "Form": "zatčen",
-      "Segments": ["zat", "č", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "k"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_olga",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "olga",
-      "Form": "Olga",
-      "Segments": ["Ol", "g", "a"],
-      "Comment": "parenthesised in the table",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_olzin",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "olga_poss",
-      "Form": "Olžin",
-      "Segments": ["Ol", "ž", "in"],
-      "Comment": "parenthesised in the table",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "g"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_nadchnout",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "excited_base",
-      "Form": "nadchnout",
-      "Segments": ["nad", "ch", "nout"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_nadsen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "excited",
-      "Form": "nadšen",
-      "Segments": ["nad", "š", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "x"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_tahnout",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "pulled_base",
-      "Form": "táhnout",
-      "Segments": ["tá", "h", "nout"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_tazen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "pulled",
-      "Form": "tažen",
-      "Segments": ["ta", "ž", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "ɦ"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_nutit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "forced_base",
-      "Form": "nutit",
-      "Segments": ["nu", "t", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_nucen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "forced",
-      "Form": "nucen",
-      "Segments": ["nu", "c", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "t"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_uklidit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "cleaned_up_base",
-      "Form": "uklidit",
-      "Segments": ["ukli", "d", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_uklizen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "cleaned_up",
-      "Form": "uklizen",
-      "Segments": ["ukli", "z", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "d"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_peci",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "baked_base",
-      "Form": "péci",
-      "Segments": ["pé", "c", "i"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_pecen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "baked",
-      "Form": "pečen",
-      "Segments": ["pe", "č", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "ʦ"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hlasit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "reported_base",
-      "Form": "hlásit",
-      "Segments": ["hlá", "s", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hlasen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "reported",
-      "Form": "hlášen",
-      "Segments": ["hlá", "š", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "s"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_ohrozit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "endangered_base",
-      "Form": "ohrozit",
-      "Segments": ["ohro", "z", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_ohrozen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "endangered",
-      "Form": "ohrožen",
-      "Segments": ["ohro", "ž", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "z"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_ranit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "wounded_base",
-      "Form": "ranit",
-      "Segments": ["ra", "n", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_ranen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "wounded",
-      "Form": "raněn",
-      "Segments": ["ra", "n", "ěn"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "n"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_vera",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "vera",
-      "Form": "Věra",
-      "Segments": ["Vě", "r", "a"],
-      "Comment": "parenthesised in the table",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_verin",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "vera_poss",
-      "Form": "Věřin",
-      "Segments": ["Vě", "ř", "in"],
-      "Comment": "parenthesised in the table",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "r"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zvolit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "elected_base",
-      "Form": "zvolit",
-      "Segments": ["zvo", "l", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zvolen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "elected",
-      "Form": "zvolen",
-      "Segments": ["zvo", "l", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "l"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zatopit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "flooded_base",
-      "Form": "zatopit",
-      "Segments": ["zato", "p", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zatopen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "flooded",
-      "Form": "zatopen",
-      "Segments": ["zato", "p", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "p"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_rozzlobit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "angered_base",
-      "Form": "rozzlobit",
-      "Segments": ["rozzlo", "b", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_rozzloben",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "angered",
-      "Form": "rozzloben",
-      "Segments": ["rozzlo", "b", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "b"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_trefit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "hit_base",
-      "Form": "trefit",
-      "Segments": ["tre", "f", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_trefen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "hit",
-      "Form": "trefen",
-      "Segments": ["tre", "f", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "f"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_obarvit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "dyed_base",
-      "Form": "obarvit",
-      "Segments": ["obar", "v", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_obarven",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "dyed",
-      "Form": "obarven",
-      "Segments": ["obar", "v", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "v"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zlomit",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "broken_base",
-      "Form": "zlomit",
-      "Segments": ["zlo", "m", "it"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zlomen",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "broken",
-      "Form": "zlomen",
-      "Segments": ["zlo", "m", "en"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"],
-      "Base": "m"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_divoky",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "wild",
-      "Form": "divoký",
-      "Segments": ["divo", "k", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_divocejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "wild_cmpr",
-      "Form": "divočejší",
-      "Segments": ["divo", "č", "ejší"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "k"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_plachy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "timid",
-      "Form": "plachý",
-      "Segments": ["pla", "ch", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_plasejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "timid_cmpr",
-      "Form": "plašejší",
-      "Segments": ["pla", "š", "ejší"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "x"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_strohy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "austere",
-      "Form": "strohý",
-      "Segments": ["stro", "h", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_strozejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "austere_cmpr",
-      "Form": "strožejší",
-      "Segments": ["stro", "ž", "ejší"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "ɦ"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_kulaty",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "round",
-      "Form": "kulatý",
-      "Segments": ["kula", "t", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_kulatejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "round_cmpr",
-      "Form": "kulatější",
-      "Segments": ["kula", "t", "ější"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "t"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hrdy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "proud",
-      "Form": "hrdý",
-      "Segments": ["hr", "d", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hrdejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "proud_cmpr",
-      "Form": "hrdější",
-      "Segments": ["hr", "d", "ější"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "d"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_domaci",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "homemade",
-      "Form": "domácí",
-      "Segments": ["domá", "c", "í"],
-      "Comment": "base parenthesised in the table",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_domacejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "homemade_cmpr",
-      "Form": "domácejší",
-      "Segments": ["domá", "c", "ejší"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "ʦ"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_lysy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bald",
-      "Form": "lysý",
-      "Segments": ["ly", "s", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_lysejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bald_cmpr",
-      "Form": "lysejší",
-      "Segments": ["ly", "s", "ejší"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "s"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_drzy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "cheeky",
-      "Form": "drzý",
-      "Segments": ["dr", "z", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_drzejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "cheeky_cmpr",
-      "Form": "drzejší",
-      "Segments": ["dr", "z", "ejší"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "z"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_levny",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "cheap",
-      "Form": "levný",
-      "Segments": ["lev", "n", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]", "cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_levnejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "cheap_cmpr",
-      "Form": "levnější",
-      "Segments": ["lev", "n", "ější"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "n"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_bujary",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "merry",
-      "Form": "bujarý",
-      "Segments": ["buja", "r", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_bujarejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "merry_cmpr",
-      "Form": "bujařejší",
-      "Segments": ["buja", "ř", "ejší"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "r"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_rychly",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "fast",
-      "Form": "rychlý",
-      "Segments": ["rych", "l", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]", "cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_rychlejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "fast_cmpr",
-      "Form": "rychlejší",
-      "Segments": ["rych", "l", "ejší"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "l"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hloupy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "stupid",
-      "Form": "hloupý",
-      "Segments": ["hlou", "p", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hloupejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "stupid_cmpr",
-      "Form": "hloupější",
-      "Segments": ["hlou", "p", "ější"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "p"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_blby",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "stupid",
-      "Form": "blbý",
-      "Segments": ["bl", "b", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_blbejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "stupid_cmpr",
-      "Form": "blbější",
-      "Segments": ["bl", "b", "ější"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "b"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hravy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "playful",
-      "Form": "hravý",
-      "Segments": ["hra", "v", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hravejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "playful_cmpr",
-      "Form": "hravější",
-      "Segments": ["hra", "v", "ější"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "v"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_lakomy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "stingy",
-      "Form": "lakomý",
-      "Segments": ["lako", "m", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_lakomejsi",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "stingy_cmpr",
-      "Form": "lakomější",
-      "Segments": ["lako", "m", "ější"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"],
-      "Base": "m"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_trpky",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bitter",
-      "Form": "trpký",
-      "Segments": ["trp", "k", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_ztrpcil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "bitter_caus",
-      "Form": "ztrpčil",
-      "Segments": ["ztrp", "č", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "k"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_tichy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "silent",
-      "Form": "tichý",
-      "Segments": ["ti", "ch", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_tisil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "silent_caus",
-      "Form": "tišil",
-      "Segments": ["ti", "š", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "x"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_drahy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "expensive",
-      "Form": "drahý",
-      "Segments": ["dra", "h", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zdrazil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "expensive_caus",
-      "Form": "zdražil",
-      "Segments": ["zdra", "ž", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "ɦ"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_nejisty",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "unsure",
-      "Form": "nejistý",
-      "Segments": ["nejis", "t", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_znejistil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "unsure_caus",
-      "Form": "znejistil",
-      "Segments": ["znejis", "t", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "t"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_hnedy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "brown",
-      "Form": "hnědý",
-      "Segments": ["hně", "d", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zahnedil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "brown_caus",
-      "Form": "zahnědil",
-      "Segments": ["zahně", "d", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "d"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_kosy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "slanting",
-      "Form": "kosý",
-      "Segments": ["ko", "s", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zkosil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "slanting_caus",
-      "Form": "zkosil",
-      "Segments": ["zko", "s", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "s"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_mraz",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "frost",
-      "Form": "mráz",
-      "Segments": ["mrá", "z"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zmrazil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "frost_caus",
-      "Form": "zmrazil",
-      "Segments": ["zmra", "z", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "z"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zlevnil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "cheap_caus",
-      "Form": "zlevnil",
-      "Segments": ["zlev", "n", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "n"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_moudry",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "wise",
-      "Form": "moudrý",
-      "Segments": ["moud", "r", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zmoudril",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "wise_caus",
-      "Form": "zmoudřil",
-      "Segments": ["zmoud", "ř", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "r"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zrychlil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "fast_caus",
-      "Form": "zrychlil",
-      "Segments": ["zrych", "l", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "l"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_tupy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "blunt",
-      "Form": "tupý",
-      "Segments": ["tu", "p", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_tupil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "blunt_caus",
-      "Form": "tupil",
-      "Segments": ["tu", "p", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "p"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_chaby",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "weak",
-      "Form": "chabý",
-      "Segments": ["cha", "b", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_ochabil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "weak_caus",
-      "Form": "ochabil",
-      "Segments": ["ocha", "b", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "b"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_osklivy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "ugly",
-      "Form": "ošklivý",
-      "Segments": ["oškli", "v", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_zosklivil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "ugly_caus",
-      "Form": "zošklivil",
-      "Segments": ["zoškli", "v", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "v"
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_chromy",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "lame",
-      "Form": "chromý",
-      "Segments": ["chro", "m", "ý"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
-    },
-    {
-      "ID": "caviranivandenwyngaerd2026_ochromil",
-      "Language_ID": "czec1258",
-      "Parameter_ID": "lame_caus",
-      "Form": "ochromil",
-      "Segments": ["ochro", "m", "il"],
-      "Comment": "",
-      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"],
-      "Base": "m"
-    }
-  ],
   "ParameterTable": [
     {
       "ID": "meadow",
@@ -1790,6 +609,1495 @@
       "ID": "lame_caus",
       "Name": "lame (causative)",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "meadow",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "meadow"
+    },
+    {
+      "ID": "meadow_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "meadow_locdat"
+    },
+    {
+      "ID": "league",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "league"
+    },
+    {
+      "ID": "league_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "league_locdat"
+    },
+    {
+      "ID": "roof",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "roof"
+    },
+    {
+      "ID": "roof_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "roof_locdat"
+    },
+    {
+      "ID": "book",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "book"
+    },
+    {
+      "ID": "book_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "book_locdat"
+    },
+    {
+      "ID": "mint",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "mint"
+    },
+    {
+      "ID": "mint_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "mint_locdat"
+    },
+    {
+      "ID": "government",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "government"
+    },
+    {
+      "ID": "government_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "government_locdat"
+    },
+    {
+      "ID": "bystrica",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bystrica"
+    },
+    {
+      "ID": "bystrica_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bystrica_locdat"
+    },
+    {
+      "ID": "bowl",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bowl"
+    },
+    {
+      "ID": "bowl_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bowl_locdat"
+    },
+    {
+      "ID": "goat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "goat"
+    },
+    {
+      "ID": "goat_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "goat_locdat"
+    },
+    {
+      "ID": "guilt",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "guilt"
+    },
+    {
+      "ID": "guilt_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "guilt_locdat"
+    },
+    {
+      "ID": "sister",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "sister"
+    },
+    {
+      "ID": "sister_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "sister_locdat"
+    },
+    {
+      "ID": "fairy",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "fairy"
+    },
+    {
+      "ID": "fairy_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "fairy_locdat"
+    },
+    {
+      "ID": "rise",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "rise"
+    },
+    {
+      "ID": "rise_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "rise_locdat"
+    },
+    {
+      "ID": "fish",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "fish"
+    },
+    {
+      "ID": "fish_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "fish_locdat"
+    },
+    {
+      "ID": "decanter",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "decanter"
+    },
+    {
+      "ID": "decanter_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "decanter_locdat"
+    },
+    {
+      "ID": "head",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "head"
+    },
+    {
+      "ID": "head_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "head_locdat"
+    },
+    {
+      "ID": "winter",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "winter"
+    },
+    {
+      "ID": "winter_locdat",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "winter_locdat"
+    },
+    {
+      "ID": "arrested_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "arrested_base"
+    },
+    {
+      "ID": "arrested",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "arrested"
+    },
+    {
+      "ID": "olga",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "olga"
+    },
+    {
+      "ID": "olga_poss",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "olga_poss"
+    },
+    {
+      "ID": "excited_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "excited_base"
+    },
+    {
+      "ID": "excited",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "excited"
+    },
+    {
+      "ID": "pulled_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "pulled_base"
+    },
+    {
+      "ID": "pulled",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "pulled"
+    },
+    {
+      "ID": "forced_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "forced_base"
+    },
+    {
+      "ID": "forced",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "forced"
+    },
+    {
+      "ID": "cleaned_up_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "cleaned_up_base"
+    },
+    {
+      "ID": "cleaned_up",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "cleaned_up"
+    },
+    {
+      "ID": "baked_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "baked_base"
+    },
+    {
+      "ID": "baked",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "baked"
+    },
+    {
+      "ID": "reported_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "reported_base"
+    },
+    {
+      "ID": "reported",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "reported"
+    },
+    {
+      "ID": "endangered_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "endangered_base"
+    },
+    {
+      "ID": "endangered",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "endangered"
+    },
+    {
+      "ID": "wounded_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "wounded_base"
+    },
+    {
+      "ID": "wounded",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "wounded"
+    },
+    {
+      "ID": "vera",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "vera"
+    },
+    {
+      "ID": "vera_poss",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "vera_poss"
+    },
+    {
+      "ID": "elected_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "elected_base"
+    },
+    {
+      "ID": "elected",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "elected"
+    },
+    {
+      "ID": "flooded_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "flooded_base"
+    },
+    {
+      "ID": "flooded",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "flooded"
+    },
+    {
+      "ID": "angered_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "angered_base"
+    },
+    {
+      "ID": "angered",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "angered"
+    },
+    {
+      "ID": "hit_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "hit_base"
+    },
+    {
+      "ID": "hit",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "hit"
+    },
+    {
+      "ID": "dyed_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "dyed_base"
+    },
+    {
+      "ID": "dyed",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "dyed"
+    },
+    {
+      "ID": "broken_base",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "broken_base"
+    },
+    {
+      "ID": "broken",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "broken"
+    },
+    {
+      "ID": "wild",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "wild"
+    },
+    {
+      "ID": "wild_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "wild_cmpr"
+    },
+    {
+      "ID": "timid",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "timid"
+    },
+    {
+      "ID": "timid_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "timid_cmpr"
+    },
+    {
+      "ID": "austere",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "austere"
+    },
+    {
+      "ID": "austere_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "austere_cmpr"
+    },
+    {
+      "ID": "round",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "round"
+    },
+    {
+      "ID": "round_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "round_cmpr"
+    },
+    {
+      "ID": "proud",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "proud"
+    },
+    {
+      "ID": "proud_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "proud_cmpr"
+    },
+    {
+      "ID": "homemade",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "homemade"
+    },
+    {
+      "ID": "homemade_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "homemade_cmpr"
+    },
+    {
+      "ID": "bald",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bald"
+    },
+    {
+      "ID": "bald_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bald_cmpr"
+    },
+    {
+      "ID": "cheeky",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "cheeky"
+    },
+    {
+      "ID": "cheeky_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "cheeky_cmpr"
+    },
+    {
+      "ID": "cheap",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "cheap"
+    },
+    {
+      "ID": "cheap_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "cheap_cmpr"
+    },
+    {
+      "ID": "merry",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "merry"
+    },
+    {
+      "ID": "merry_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "merry_cmpr"
+    },
+    {
+      "ID": "fast",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "fast"
+    },
+    {
+      "ID": "fast_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "fast_cmpr"
+    },
+    {
+      "ID": "stupid",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "stupid"
+    },
+    {
+      "ID": "stupid_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "stupid_cmpr"
+    },
+    {
+      "ID": "playful",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "playful"
+    },
+    {
+      "ID": "playful_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "playful_cmpr"
+    },
+    {
+      "ID": "stingy",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "stingy"
+    },
+    {
+      "ID": "stingy_cmpr",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "stingy_cmpr"
+    },
+    {
+      "ID": "bitter",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bitter"
+    },
+    {
+      "ID": "bitter_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "bitter_caus"
+    },
+    {
+      "ID": "silent",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "silent"
+    },
+    {
+      "ID": "silent_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "silent_caus"
+    },
+    {
+      "ID": "expensive",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "expensive"
+    },
+    {
+      "ID": "expensive_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "expensive_caus"
+    },
+    {
+      "ID": "unsure",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "unsure"
+    },
+    {
+      "ID": "unsure_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "unsure_caus"
+    },
+    {
+      "ID": "brown",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "brown"
+    },
+    {
+      "ID": "brown_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "brown_caus"
+    },
+    {
+      "ID": "slanting",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "slanting"
+    },
+    {
+      "ID": "slanting_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "slanting_caus"
+    },
+    {
+      "ID": "frost",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "frost"
+    },
+    {
+      "ID": "frost_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "frost_caus"
+    },
+    {
+      "ID": "cheap_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "cheap_caus"
+    },
+    {
+      "ID": "wise",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "wise"
+    },
+    {
+      "ID": "wise_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "wise_caus"
+    },
+    {
+      "ID": "fast_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "fast_caus"
+    },
+    {
+      "ID": "blunt",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "blunt"
+    },
+    {
+      "ID": "blunt_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "blunt_caus"
+    },
+    {
+      "ID": "weak",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "weak"
+    },
+    {
+      "ID": "weak_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "weak_caus"
+    },
+    {
+      "ID": "ugly",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "ugly"
+    },
+    {
+      "ID": "ugly_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "ugly_caus"
+    },
+    {
+      "ID": "lame",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "lame"
+    },
+    {
+      "ID": "lame_caus",
+      "Language_ID": "czec1258",
+      "Parameter_ID": "lame_caus"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "caviranivandenwyngaerd2026_louka",
+      "Lexeme_ID": "meadow",
+      "Form": "louka",
+      "Segments": ["lou", "k", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_louce",
+      "Lexeme_ID": "meadow_locdat",
+      "Form": "louce",
+      "Segments": ["lou", "c", "e"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_liga",
+      "Lexeme_ID": "league",
+      "Form": "liga",
+      "Segments": ["li", "g", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_lize",
+      "Lexeme_ID": "league_locdat",
+      "Form": "lize",
+      "Segments": ["li", "z", "e"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_strecha",
+      "Lexeme_ID": "roof",
+      "Form": "střecha",
+      "Segments": ["stře", "ch", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_strese",
+      "Lexeme_ID": "roof_locdat",
+      "Form": "střeše",
+      "Segments": ["stře", "š", "e"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_kniha",
+      "Lexeme_ID": "book",
+      "Form": "kniha",
+      "Segments": ["kni", "h", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_knize",
+      "Lexeme_ID": "book_locdat",
+      "Form": "knize",
+      "Segments": ["kni", "z", "e"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_mata",
+      "Lexeme_ID": "mint",
+      "Form": "máta",
+      "Segments": ["má", "t", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_mate",
+      "Lexeme_ID": "mint_locdat",
+      "Form": "mátě",
+      "Segments": ["má", "t", "ě"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_vlada",
+      "Lexeme_ID": "government",
+      "Form": "vláda",
+      "Segments": ["vlá", "d", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_vlade",
+      "Lexeme_ID": "government_locdat",
+      "Form": "vládě",
+      "Segments": ["vlá", "d", "ě"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_bystrica",
+      "Lexeme_ID": "bystrica",
+      "Form": "Bystrica",
+      "Segments": ["Bystri", "c", "a"],
+      "Comment": "parenthesised in the table",
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_bystrice",
+      "Lexeme_ID": "bystrica_locdat",
+      "Form": "Bystrice",
+      "Segments": ["Bystri", "c", "e"],
+      "Comment": "parenthesised in the table",
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_misa",
+      "Lexeme_ID": "bowl",
+      "Form": "mísa",
+      "Segments": ["mí", "s", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_mise",
+      "Lexeme_ID": "bowl_locdat",
+      "Form": "míse",
+      "Segments": ["mí", "s", "e"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_koza",
+      "Lexeme_ID": "goat",
+      "Form": "koza",
+      "Segments": ["ko", "z", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_koze",
+      "Lexeme_ID": "goat_locdat",
+      "Form": "koze",
+      "Segments": ["ko", "z", "e"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_vina",
+      "Lexeme_ID": "guilt",
+      "Form": "vina",
+      "Segments": ["vi", "n", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_vine",
+      "Lexeme_ID": "guilt_locdat",
+      "Form": "vině",
+      "Segments": ["vi", "n", "ě"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_sestra",
+      "Lexeme_ID": "sister",
+      "Form": "sestra",
+      "Segments": ["sest", "r", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_sestre",
+      "Lexeme_ID": "sister_locdat",
+      "Form": "sestře",
+      "Segments": ["sest", "ř", "e"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_vila",
+      "Lexeme_ID": "fairy",
+      "Form": "víla",
+      "Segments": ["ví", "l", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_vile",
+      "Lexeme_ID": "fairy_locdat",
+      "Form": "víle",
+      "Segments": ["ví", "l", "e"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_stoupa",
+      "Lexeme_ID": "rise",
+      "Form": "stoupa",
+      "Segments": ["stou", "p", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_stoupe",
+      "Lexeme_ID": "rise_locdat",
+      "Form": "stoupě",
+      "Segments": ["stou", "p", "ě"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_ryba",
+      "Lexeme_ID": "fish",
+      "Form": "ryba",
+      "Segments": ["ry", "b", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_rybe",
+      "Lexeme_ID": "fish_locdat",
+      "Form": "rybě",
+      "Segments": ["ry", "b", "ě"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_karafa",
+      "Lexeme_ID": "decanter",
+      "Form": "karafa",
+      "Segments": ["kara", "f", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_karafe",
+      "Lexeme_ID": "decanter_locdat",
+      "Form": "karafě",
+      "Segments": ["kara", "f", "ě"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hlava",
+      "Lexeme_ID": "head",
+      "Form": "hlava",
+      "Segments": ["hla", "v", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hlave",
+      "Lexeme_ID": "head_locdat",
+      "Form": "hlavě",
+      "Segments": ["hla", "v", "ě"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zima",
+      "Lexeme_ID": "winter",
+      "Form": "zima",
+      "Segments": ["zi", "m", "a"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zime",
+      "Lexeme_ID": "winter_locdat",
+      "Form": "zimě",
+      "Segments": ["zi", "m", "ě"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zatknout",
+      "Lexeme_ID": "arrested_base",
+      "Form": "zatknout",
+      "Segments": ["zat", "k", "nout"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zatcen",
+      "Lexeme_ID": "arrested",
+      "Form": "zatčen",
+      "Segments": ["zat", "č", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_olga",
+      "Lexeme_ID": "olga",
+      "Form": "Olga",
+      "Segments": ["Ol", "g", "a"],
+      "Comment": "parenthesised in the table",
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_olzin",
+      "Lexeme_ID": "olga_poss",
+      "Form": "Olžin",
+      "Segments": ["Ol", "ž", "in"],
+      "Comment": "parenthesised in the table",
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_nadchnout",
+      "Lexeme_ID": "excited_base",
+      "Form": "nadchnout",
+      "Segments": ["nad", "ch", "nout"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_nadsen",
+      "Lexeme_ID": "excited",
+      "Form": "nadšen",
+      "Segments": ["nad", "š", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_tahnout",
+      "Lexeme_ID": "pulled_base",
+      "Form": "táhnout",
+      "Segments": ["tá", "h", "nout"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_tazen",
+      "Lexeme_ID": "pulled",
+      "Form": "tažen",
+      "Segments": ["ta", "ž", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_nutit",
+      "Lexeme_ID": "forced_base",
+      "Form": "nutit",
+      "Segments": ["nu", "t", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_nucen",
+      "Lexeme_ID": "forced",
+      "Form": "nucen",
+      "Segments": ["nu", "c", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_uklidit",
+      "Lexeme_ID": "cleaned_up_base",
+      "Form": "uklidit",
+      "Segments": ["ukli", "d", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_uklizen",
+      "Lexeme_ID": "cleaned_up",
+      "Form": "uklizen",
+      "Segments": ["ukli", "z", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_peci",
+      "Lexeme_ID": "baked_base",
+      "Form": "péci",
+      "Segments": ["pé", "c", "i"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_pecen",
+      "Lexeme_ID": "baked",
+      "Form": "pečen",
+      "Segments": ["pe", "č", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hlasit",
+      "Lexeme_ID": "reported_base",
+      "Form": "hlásit",
+      "Segments": ["hlá", "s", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hlasen",
+      "Lexeme_ID": "reported",
+      "Form": "hlášen",
+      "Segments": ["hlá", "š", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_ohrozit",
+      "Lexeme_ID": "endangered_base",
+      "Form": "ohrozit",
+      "Segments": ["ohro", "z", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_ohrozen",
+      "Lexeme_ID": "endangered",
+      "Form": "ohrožen",
+      "Segments": ["ohro", "ž", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_ranit",
+      "Lexeme_ID": "wounded_base",
+      "Form": "ranit",
+      "Segments": ["ra", "n", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_ranen",
+      "Lexeme_ID": "wounded",
+      "Form": "raněn",
+      "Segments": ["ra", "n", "ěn"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_vera",
+      "Lexeme_ID": "vera",
+      "Form": "Věra",
+      "Segments": ["Vě", "r", "a"],
+      "Comment": "parenthesised in the table",
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_verin",
+      "Lexeme_ID": "vera_poss",
+      "Form": "Věřin",
+      "Segments": ["Vě", "ř", "in"],
+      "Comment": "parenthesised in the table",
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zvolit",
+      "Lexeme_ID": "elected_base",
+      "Form": "zvolit",
+      "Segments": ["zvo", "l", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zvolen",
+      "Lexeme_ID": "elected",
+      "Form": "zvolen",
+      "Segments": ["zvo", "l", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zatopit",
+      "Lexeme_ID": "flooded_base",
+      "Form": "zatopit",
+      "Segments": ["zato", "p", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zatopen",
+      "Lexeme_ID": "flooded",
+      "Form": "zatopen",
+      "Segments": ["zato", "p", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_rozzlobit",
+      "Lexeme_ID": "angered_base",
+      "Form": "rozzlobit",
+      "Segments": ["rozzlo", "b", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_rozzloben",
+      "Lexeme_ID": "angered",
+      "Form": "rozzloben",
+      "Segments": ["rozzlo", "b", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_trefit",
+      "Lexeme_ID": "hit_base",
+      "Form": "trefit",
+      "Segments": ["tre", "f", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_trefen",
+      "Lexeme_ID": "hit",
+      "Form": "trefen",
+      "Segments": ["tre", "f", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_obarvit",
+      "Lexeme_ID": "dyed_base",
+      "Form": "obarvit",
+      "Segments": ["obar", "v", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_obarven",
+      "Lexeme_ID": "dyed",
+      "Form": "obarven",
+      "Segments": ["obar", "v", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zlomit",
+      "Lexeme_ID": "broken_base",
+      "Form": "zlomit",
+      "Segments": ["zlo", "m", "it"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zlomen",
+      "Lexeme_ID": "broken",
+      "Form": "zlomen",
+      "Segments": ["zlo", "m", "en"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 1]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_divoky",
+      "Lexeme_ID": "wild",
+      "Form": "divoký",
+      "Segments": ["divo", "k", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_divocejsi",
+      "Lexeme_ID": "wild_cmpr",
+      "Form": "divočejší",
+      "Segments": ["divo", "č", "ejší"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_plachy",
+      "Lexeme_ID": "timid",
+      "Form": "plachý",
+      "Segments": ["pla", "ch", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_plasejsi",
+      "Lexeme_ID": "timid_cmpr",
+      "Form": "plašejší",
+      "Segments": ["pla", "š", "ejší"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_strohy",
+      "Lexeme_ID": "austere",
+      "Form": "strohý",
+      "Segments": ["stro", "h", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_strozejsi",
+      "Lexeme_ID": "austere_cmpr",
+      "Form": "strožejší",
+      "Segments": ["stro", "ž", "ejší"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_kulaty",
+      "Lexeme_ID": "round",
+      "Form": "kulatý",
+      "Segments": ["kula", "t", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_kulatejsi",
+      "Lexeme_ID": "round_cmpr",
+      "Form": "kulatější",
+      "Segments": ["kula", "t", "ější"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hrdy",
+      "Lexeme_ID": "proud",
+      "Form": "hrdý",
+      "Segments": ["hr", "d", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hrdejsi",
+      "Lexeme_ID": "proud_cmpr",
+      "Form": "hrdější",
+      "Segments": ["hr", "d", "ější"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_domaci",
+      "Lexeme_ID": "homemade",
+      "Form": "domácí",
+      "Segments": ["domá", "c", "í"],
+      "Comment": "base parenthesised in the table",
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_domacejsi",
+      "Lexeme_ID": "homemade_cmpr",
+      "Form": "domácejší",
+      "Segments": ["domá", "c", "ejší"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_lysy",
+      "Lexeme_ID": "bald",
+      "Form": "lysý",
+      "Segments": ["ly", "s", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_lysejsi",
+      "Lexeme_ID": "bald_cmpr",
+      "Form": "lysejší",
+      "Segments": ["ly", "s", "ejší"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_drzy",
+      "Lexeme_ID": "cheeky",
+      "Form": "drzý",
+      "Segments": ["dr", "z", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_drzejsi",
+      "Lexeme_ID": "cheeky_cmpr",
+      "Form": "drzejší",
+      "Segments": ["dr", "z", "ejší"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_levny",
+      "Lexeme_ID": "cheap",
+      "Form": "levný",
+      "Segments": ["lev", "n", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]", "cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_levnejsi",
+      "Lexeme_ID": "cheap_cmpr",
+      "Form": "levnější",
+      "Segments": ["lev", "n", "ější"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_bujary",
+      "Lexeme_ID": "merry",
+      "Form": "bujarý",
+      "Segments": ["buja", "r", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_bujarejsi",
+      "Lexeme_ID": "merry_cmpr",
+      "Form": "bujařejší",
+      "Segments": ["buja", "ř", "ejší"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_rychly",
+      "Lexeme_ID": "fast",
+      "Form": "rychlý",
+      "Segments": ["rych", "l", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]", "cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_rychlejsi",
+      "Lexeme_ID": "fast_cmpr",
+      "Form": "rychlejší",
+      "Segments": ["rych", "l", "ejší"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hloupy",
+      "Lexeme_ID": "stupid",
+      "Form": "hloupý",
+      "Segments": ["hlou", "p", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hloupejsi",
+      "Lexeme_ID": "stupid_cmpr",
+      "Form": "hloupější",
+      "Segments": ["hlou", "p", "ější"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_blby",
+      "Lexeme_ID": "stupid",
+      "Form": "blbý",
+      "Segments": ["bl", "b", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_blbejsi",
+      "Lexeme_ID": "stupid_cmpr",
+      "Form": "blbější",
+      "Segments": ["bl", "b", "ější"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hravy",
+      "Lexeme_ID": "playful",
+      "Form": "hravý",
+      "Segments": ["hra", "v", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hravejsi",
+      "Lexeme_ID": "playful_cmpr",
+      "Form": "hravější",
+      "Segments": ["hra", "v", "ější"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_lakomy",
+      "Lexeme_ID": "stingy",
+      "Form": "lakomý",
+      "Segments": ["lako", "m", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_lakomejsi",
+      "Lexeme_ID": "stingy_cmpr",
+      "Form": "lakomější",
+      "Segments": ["lako", "m", "ější"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 2]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_trpky",
+      "Lexeme_ID": "bitter",
+      "Form": "trpký",
+      "Segments": ["trp", "k", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_ztrpcil",
+      "Lexeme_ID": "bitter_caus",
+      "Form": "ztrpčil",
+      "Segments": ["ztrp", "č", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_tichy",
+      "Lexeme_ID": "silent",
+      "Form": "tichý",
+      "Segments": ["ti", "ch", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_tisil",
+      "Lexeme_ID": "silent_caus",
+      "Form": "tišil",
+      "Segments": ["ti", "š", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_drahy",
+      "Lexeme_ID": "expensive",
+      "Form": "drahý",
+      "Segments": ["dra", "h", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zdrazil",
+      "Lexeme_ID": "expensive_caus",
+      "Form": "zdražil",
+      "Segments": ["zdra", "ž", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_nejisty",
+      "Lexeme_ID": "unsure",
+      "Form": "nejistý",
+      "Segments": ["nejis", "t", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_znejistil",
+      "Lexeme_ID": "unsure_caus",
+      "Form": "znejistil",
+      "Segments": ["znejis", "t", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_hnedy",
+      "Lexeme_ID": "brown",
+      "Form": "hnědý",
+      "Segments": ["hně", "d", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zahnedil",
+      "Lexeme_ID": "brown_caus",
+      "Form": "zahnědil",
+      "Segments": ["zahně", "d", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_kosy",
+      "Lexeme_ID": "slanting",
+      "Form": "kosý",
+      "Segments": ["ko", "s", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zkosil",
+      "Lexeme_ID": "slanting_caus",
+      "Form": "zkosil",
+      "Segments": ["zko", "s", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_mraz",
+      "Lexeme_ID": "frost",
+      "Form": "mráz",
+      "Segments": ["mrá", "z"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zmrazil",
+      "Lexeme_ID": "frost_caus",
+      "Form": "zmrazil",
+      "Segments": ["zmra", "z", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zlevnil",
+      "Lexeme_ID": "cheap_caus",
+      "Form": "zlevnil",
+      "Segments": ["zlev", "n", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_moudry",
+      "Lexeme_ID": "wise",
+      "Form": "moudrý",
+      "Segments": ["moud", "r", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zmoudril",
+      "Lexeme_ID": "wise_caus",
+      "Form": "zmoudřil",
+      "Segments": ["zmoud", "ř", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zrychlil",
+      "Lexeme_ID": "fast_caus",
+      "Form": "zrychlil",
+      "Segments": ["zrych", "l", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_tupy",
+      "Lexeme_ID": "blunt",
+      "Form": "tupý",
+      "Segments": ["tu", "p", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_tupil",
+      "Lexeme_ID": "blunt_caus",
+      "Form": "tupil",
+      "Segments": ["tu", "p", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_chaby",
+      "Lexeme_ID": "weak",
+      "Form": "chabý",
+      "Segments": ["cha", "b", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_ochabil",
+      "Lexeme_ID": "weak_caus",
+      "Form": "ochabil",
+      "Segments": ["ocha", "b", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_osklivy",
+      "Lexeme_ID": "ugly",
+      "Form": "ošklivý",
+      "Segments": ["oškli", "v", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_zosklivil",
+      "Lexeme_ID": "ugly_caus",
+      "Form": "zošklivil",
+      "Segments": ["zoškli", "v", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_chromy",
+      "Lexeme_ID": "lame",
+      "Form": "chromý",
+      "Segments": ["chro", "m", "ý"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
+    },
+    {
+      "ID": "caviranivandenwyngaerd2026_ochromil",
+      "Lexeme_ID": "lame_caus",
+      "Form": "ochromil",
+      "Segments": ["ochro", "m", "il"],
+      "Source": ["cavirani-vandenwyngaerd-2026[Table 3]"]
     }
   ],
   "FormRelationTable": [

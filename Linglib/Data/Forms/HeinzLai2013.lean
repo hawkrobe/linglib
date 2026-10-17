@@ -3,12 +3,10 @@ module
 public import Linglib.Data.Forms.Schema
 
 /-!
-# `HeinzLai2013` — CLDF form data
+# `HeinzLai2013`: word forms
 
-Auto-generated from `Linglib/Data/Forms/HeinzLai2013.json` by
-`scripts/gen_forms.py`. Do not edit by hand; edit the JSON and re-run the
-generator. Consumers import this module; declarations live in
-`namespace HeinzLai2013.Forms`.
+Auto-generated from `Linglib/Data/Forms/HeinzLai2013.json` by `scripts/gen_forms.py`. Do not edit by
+hand; edit the JSON and re-run the generator. Declarations live in `namespace HeinzLai2013.Forms`.
 -/
 
 @[expose] public section
@@ -17,56 +15,103 @@ namespace HeinzLai2013.Forms
 
 open Data.Forms
 
-def ipin : Form :=
+/-- A cell of the source's tables, by its Universal Dependencies features. -/
+abbrev Cell := UD.MorphFeatures
+
+def Lexemes.rope_gen : Lexeme :=
+  { id := "rope_gen", languageId := "nucl1301", parameterId := "rope_gen" }
+
+def Lexemes.hand_gen : Lexeme :=
+  { id := "hand_gen", languageId := "nucl1301", parameterId := "hand_gen" }
+
+def Lexemes.end_gen : Lexeme :=
+  { id := "end_gen", languageId := "nucl1301", parameterId := "end_gen" }
+
+def Lexemes.stamp_gen : Lexeme :=
+  { id := "stamp_gen", languageId := "nucl1301", parameterId := "stamp_gen" }
+
+def ipin : Form Cell :=
   { id := "heinzlai2013_ipin"
-    languageId := "nucl1301"
-    parameterId := "rope_gen"
+    lexeme := Lexemes.rope_gen
+    cell := {}
     form := "ipin"
     segments := ["i", "p", "i", "n"]
     source := [
       ⟨"heinz-lai-2013", "Table 1a"⟩,
       ⟨"heinz-lai-2013", "Table 2a"⟩
-    ]
-    columns := [("Underlying", "/ip-un/")] }
+    ] }
 
-def elin : Form :=
+def elin : Form Cell :=
   { id := "heinzlai2013_elin"
-    languageId := "nucl1301"
-    parameterId := "hand_gen"
+    lexeme := Lexemes.hand_gen
+    cell := {}
     form := "elin"
     segments := ["e", "l", "i", "n"]
     source := [
       ⟨"heinz-lai-2013", "Table 1b"⟩,
       ⟨"heinz-lai-2013", "Table 2a"⟩
-    ]
-    columns := [("Underlying", "/el-un/")] }
+    ] }
 
-def sonun : Form :=
+def sonun : Form Cell :=
   { id := "heinzlai2013_sonun"
-    languageId := "nucl1301"
-    parameterId := "end_gen"
+    lexeme := Lexemes.end_gen
+    cell := {}
     form := "sonun"
     segments := ["s", "o", "n", "u", "n"]
     source := [
       ⟨"heinz-lai-2013", "Table 1c"⟩,
       ⟨"heinz-lai-2013", "Table 2a"⟩
-    ]
-    columns := [("Underlying", "/son-un/")] }
+    ] }
 
-def pulun : Form :=
+def pulun : Form Cell :=
   { id := "heinzlai2013_pulun"
-    languageId := "nucl1301"
-    parameterId := "stamp_gen"
+    lexeme := Lexemes.stamp_gen
+    cell := {}
     form := "pulun"
     segments := ["p", "u", "l", "u", "n"]
     source := [
       ⟨"heinz-lai-2013", "Table 1d"⟩,
       ⟨"heinz-lai-2013", "Table 2a"⟩
-    ]
-    columns := [("Underlying", "/pul-un/")] }
+    ] }
 
-def all : List Form := [ipin, elin, sonun, pulun]
+/-- The source's analysis of a form, its parse rather than data. -/
+structure Analysis where
+  /-- The form analysed. -/
+  form : Form Cell
+  /-- The `Underlying` column. -/
+  underlying : String
+  deriving DecidableEq, Repr
 
-def relations : List FormRelation := []
+def ipin.analysis : Analysis :=
+  { form := ipin,
+    underlying := "/ip-un/" }
+
+def elin.analysis : Analysis :=
+  { form := elin,
+    underlying := "/el-un/" }
+
+def sonun.analysis : Analysis :=
+  { form := sonun,
+    underlying := "/son-un/" }
+
+def pulun.analysis : Analysis :=
+  { form := pulun,
+    underlying := "/pul-un/" }
+
+/-- Every lexeme of the data. -/
+def lexemes : List Lexeme := [Lexemes.rope_gen, Lexemes.hand_gen, Lexemes.end_gen,
+  Lexemes.stamp_gen]
+
+/-- Every form the sources accept. -/
+def all : List (Form Cell) := [ipin, elin, sonun, pulun]
+
+/-- Every form a source marks, as marginal, questionable, unacceptable or ungrammatical. -/
+def marked : List (Form Cell) := []
+
+/-- Every relation the sources assert between forms. -/
+def relations : List (FormRelation (Form Cell)) := []
+
+/-- Every analysis of the data. -/
+def analyses : List Analysis := [ipin.analysis, elin.analysis, sonun.analysis, pulun.analysis]
 
 end HeinzLai2013.Forms

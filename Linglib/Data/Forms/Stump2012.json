@@ -1,646 +1,200 @@
 {
-  "FormTable": [
+  "Types": {
+    "System": [
+      {"Value": "pres", "Lean": "pres", "Description": "the present system"},
+      {"Value": "perf", "Lean": "perf", "Description": "the perfect system"}
+    ]
+  },
+  "CellTable": [
     {
-      "ID": "stump2012_begin_perf_s1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "begin",
-      "Form": "coepī",
-      "Segments": ["c", "o", "e", "p", "ī"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(17)]"],
-      "Lexeme": "COEPISSE",
-      "System": "perf",
-      "Agr": "s1"
+      "ID": "perf_system_s1",
+      "Name": "perf_system s1",
+      "Features": "Number=Sing|Person=1|System=perf"
     },
     {
-      "ID": "stump2012_begin_perf_s2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "begin",
-      "Form": "coepistī",
-      "Segments": ["c", "o", "e", "p", "i", "s", "t", "ī"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(17)]"],
-      "Lexeme": "COEPISSE",
-      "System": "perf",
-      "Agr": "s2"
+      "ID": "perf_system_s2",
+      "Name": "perf_system s2",
+      "Features": "Number=Sing|Person=2|System=perf"
     },
     {
-      "ID": "stump2012_begin_perf_s3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "begin",
-      "Form": "coepit",
-      "Segments": ["c", "o", "e", "p", "i", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(17)]"],
-      "Lexeme": "COEPISSE",
-      "System": "perf",
-      "Agr": "s3"
+      "ID": "perf_system_s3",
+      "Name": "perf_system s3",
+      "Features": "Number=Sing|Person=3|System=perf"
     },
     {
-      "ID": "stump2012_begin_perf_p1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "begin",
-      "Form": "coepimus",
-      "Segments": ["c", "o", "e", "p", "i", "m", "u", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(17)]"],
-      "Lexeme": "COEPISSE",
-      "System": "perf",
-      "Agr": "p1"
+      "ID": "perf_system_p1",
+      "Name": "perf_system p1",
+      "Features": "Number=Plur|Person=1|System=perf"
     },
     {
-      "ID": "stump2012_begin_perf_p2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "begin",
-      "Form": "coepistis",
-      "Segments": ["c", "o", "e", "p", "i", "s", "t", "i", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(17)]"],
-      "Lexeme": "COEPISSE",
-      "System": "perf",
-      "Agr": "p2"
+      "ID": "perf_system_p2",
+      "Name": "perf_system p2",
+      "Features": "Number=Plur|Person=2|System=perf"
     },
     {
-      "ID": "stump2012_begin_perf_p3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "begin",
-      "Form": "coepērunt",
-      "Segments": ["c", "o", "e", "p", "ē", "r", "u", "n", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(17)]"],
-      "Lexeme": "COEPISSE",
-      "System": "perf",
-      "Agr": "p3"
+      "ID": "perf_system_p3",
+      "Name": "perf_system p3",
+      "Features": "Number=Plur|Person=3|System=perf"
     },
     {
-      "ID": "stump2012_war_acc_sg",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "war",
-      "Form": "bellum",
-      "Segments": ["b", "e", "l", "l", "u", "m"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(22)]"],
-      "Lexeme": "BELLUM",
-      "Case": "acc",
-      "Number": "sg"
+      "ID": "acc_sg",
+      "Name": "acc sg",
+      "Features": "Case=Acc|Number=Sing"
     },
     {
-      "ID": "stump2012_war_gen_sg",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "war",
-      "Form": "bellī",
-      "Segments": ["b", "e", "l", "l", "ī"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(22)]"],
-      "Lexeme": "BELLUM",
-      "Case": "gen",
-      "Number": "sg"
+      "ID": "gen_sg",
+      "Name": "gen sg",
+      "Features": "Case=Gen|Number=Sing"
     },
     {
-      "ID": "stump2012_war_dat_sg",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "war",
-      "Form": "bellō",
-      "Segments": ["b", "e", "l", "l", "ō"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(22)]"],
-      "Lexeme": "BELLUM",
-      "Case": "dat",
-      "Number": "sg"
+      "ID": "dat_sg",
+      "Name": "dat sg",
+      "Features": "Case=Dat|Number=Sing"
     },
     {
-      "ID": "stump2012_war_acc_pl",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "war",
-      "Form": "bella",
-      "Segments": ["b", "e", "l", "l", "a"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(22)]"],
-      "Lexeme": "BELLUM",
-      "Case": "acc",
-      "Number": "pl"
+      "ID": "acc_pl",
+      "Name": "acc pl",
+      "Features": "Case=Acc|Number=Plur"
     },
     {
-      "ID": "stump2012_war_gen_pl",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "war",
-      "Form": "bellōrum",
-      "Segments": ["b", "e", "l", "l", "ō", "r", "u", "m"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(22)]"],
-      "Lexeme": "BELLUM",
-      "Case": "gen",
-      "Number": "pl"
+      "ID": "gen_pl",
+      "Name": "gen pl",
+      "Features": "Case=Gen|Number=Plur"
     },
     {
-      "ID": "stump2012_war_dat_pl",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "war",
-      "Form": "bellīs",
-      "Segments": ["b", "e", "l", "l", "ī", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(22)]"],
-      "Lexeme": "BELLUM",
-      "Case": "dat",
-      "Number": "pl"
+      "ID": "dat_pl",
+      "Name": "dat pl",
+      "Features": "Case=Dat|Number=Plur"
     },
     {
-      "ID": "stump2012_praise_act_s1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudō",
-      "Segments": ["l", "a", "u", "d", "ō"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "act",
-      "Agr": "s1"
+      "ID": "act_s1",
+      "Name": "act s1",
+      "Features": "Number=Sing|Person=1|Voice=Act"
     },
     {
-      "ID": "stump2012_praise_act_s2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudās",
-      "Segments": ["l", "a", "u", "d", "ā", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "act",
-      "Agr": "s2"
+      "ID": "act_s2",
+      "Name": "act s2",
+      "Features": "Number=Sing|Person=2|Voice=Act"
     },
     {
-      "ID": "stump2012_praise_act_s3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudat",
-      "Segments": ["l", "a", "u", "d", "a", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "act",
-      "Agr": "s3"
+      "ID": "act_s3",
+      "Name": "act s3",
+      "Features": "Number=Sing|Person=3|Voice=Act"
     },
     {
-      "ID": "stump2012_praise_act_p1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudāmus",
-      "Segments": ["l", "a", "u", "d", "ā", "m", "u", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "act",
-      "Agr": "p1"
+      "ID": "act_p1",
+      "Name": "act p1",
+      "Features": "Number=Plur|Person=1|Voice=Act"
     },
     {
-      "ID": "stump2012_praise_act_p2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudātis",
-      "Segments": ["l", "a", "u", "d", "ā", "t", "i", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "act",
-      "Agr": "p2"
+      "ID": "act_p2",
+      "Name": "act p2",
+      "Features": "Number=Plur|Person=2|Voice=Act"
     },
     {
-      "ID": "stump2012_praise_act_p3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudant",
-      "Segments": ["l", "a", "u", "d", "a", "n", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "act",
-      "Agr": "p3"
+      "ID": "act_p3",
+      "Name": "act p3",
+      "Features": "Number=Plur|Person=3|Voice=Act"
     },
     {
-      "ID": "stump2012_praise_pass_s1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudor",
-      "Segments": ["l", "a", "u", "d", "o", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "pass",
-      "Agr": "s1"
+      "ID": "pass_s1",
+      "Name": "pass s1",
+      "Features": "Number=Sing|Person=1|Voice=Pass"
     },
     {
-      "ID": "stump2012_praise_pass_s2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudāris",
-      "Segments": ["l", "a", "u", "d", "ā", "r", "i", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "pass",
-      "Agr": "s2"
+      "ID": "pass_s2",
+      "Name": "pass s2",
+      "Features": "Number=Sing|Person=2|Voice=Pass"
     },
     {
-      "ID": "stump2012_praise_pass_s3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudātur",
-      "Segments": ["l", "a", "u", "d", "ā", "t", "u", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "pass",
-      "Agr": "s3"
+      "ID": "pass_s3",
+      "Name": "pass s3",
+      "Features": "Number=Sing|Person=3|Voice=Pass"
     },
     {
-      "ID": "stump2012_praise_pass_p1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudāmur",
-      "Segments": ["l", "a", "u", "d", "ā", "m", "u", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "pass",
-      "Agr": "p1"
+      "ID": "pass_p1",
+      "Name": "pass p1",
+      "Features": "Number=Plur|Person=1|Voice=Pass"
     },
     {
-      "ID": "stump2012_praise_pass_p2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudāminī",
-      "Segments": ["l", "a", "u", "d", "ā", "m", "i", "n", "ī"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "pass",
-      "Agr": "p2"
+      "ID": "pass_p2",
+      "Name": "pass p2",
+      "Features": "Number=Plur|Person=2|Voice=Pass"
     },
     {
-      "ID": "stump2012_praise_pass_p3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "praise",
-      "Form": "laudantur",
-      "Segments": ["l", "a", "u", "d", "a", "n", "t", "u", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "LAUDĀRE",
-      "Voice": "pass",
-      "Agr": "p3"
+      "ID": "pass_p3",
+      "Name": "pass p3",
+      "Features": "Number=Plur|Person=3|Voice=Pass"
     },
     {
-      "ID": "stump2012_urge_pass_s1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "urge",
-      "Form": "hortor",
-      "Segments": ["h", "o", "r", "t", "o", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "HORTĀRĪ",
-      "Voice": "pass",
-      "Agr": "s1"
+      "ID": "pres_system_s1",
+      "Name": "pres_system s1",
+      "Features": "Number=Sing|Person=1|System=pres"
     },
     {
-      "ID": "stump2012_urge_pass_s2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "urge",
-      "Form": "hortāris",
-      "Segments": ["h", "o", "r", "t", "ā", "r", "i", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "HORTĀRĪ",
-      "Voice": "pass",
-      "Agr": "s2"
+      "ID": "pres_system_s2",
+      "Name": "pres_system s2",
+      "Features": "Number=Sing|Person=2|System=pres"
     },
     {
-      "ID": "stump2012_urge_pass_s3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "urge",
-      "Form": "hortātur",
-      "Segments": ["h", "o", "r", "t", "ā", "t", "u", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "HORTĀRĪ",
-      "Voice": "pass",
-      "Agr": "s3"
+      "ID": "pres_system_s3",
+      "Name": "pres_system s3",
+      "Features": "Number=Sing|Person=3|System=pres"
     },
     {
-      "ID": "stump2012_urge_pass_p1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "urge",
-      "Form": "hortāmur",
-      "Segments": ["h", "o", "r", "t", "ā", "m", "u", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "HORTĀRĪ",
-      "Voice": "pass",
-      "Agr": "p1"
+      "ID": "pres_system_p1",
+      "Name": "pres_system p1",
+      "Features": "Number=Plur|Person=1|System=pres"
     },
     {
-      "ID": "stump2012_urge_pass_p2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "urge",
-      "Form": "hortāminī",
-      "Segments": ["h", "o", "r", "t", "ā", "m", "i", "n", "ī"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "HORTĀRĪ",
-      "Voice": "pass",
-      "Agr": "p2"
+      "ID": "pres_system_p2",
+      "Name": "pres_system p2",
+      "Features": "Number=Plur|Person=2|System=pres"
     },
     {
-      "ID": "stump2012_urge_pass_p3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "urge",
-      "Form": "hortantur",
-      "Segments": ["h", "o", "r", "t", "a", "n", "t", "u", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(28)]"],
-      "Lexeme": "HORTĀRĪ",
-      "Voice": "pass",
-      "Agr": "p3"
+      "ID": "pres_system_p3",
+      "Name": "pres_system p3",
+      "Features": "Number=Plur|Person=3|System=pres"
     },
     {
-      "ID": "stump2012_carry_pres_s1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "ferō",
-      "Segments": ["f", "e", "r", "ō"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "pres",
-      "Agr": "s1"
+      "ID": "p1sg",
+      "Name": "p1sg",
+      "Features": "Number=Sing|Person=1"
     },
     {
-      "ID": "stump2012_carry_pres_s2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "fers",
-      "Segments": ["f", "e", "r", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "pres",
-      "Agr": "s2"
+      "ID": "p2sg",
+      "Name": "p2sg",
+      "Features": "Number=Sing|Person=2"
     },
     {
-      "ID": "stump2012_carry_pres_s3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "fert",
-      "Segments": ["f", "e", "r", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "pres",
-      "Agr": "s3"
+      "ID": "pres_s1",
+      "Name": "pres s1",
+      "Features": "Number=Sing|Person=1|Tense=Pres"
     },
     {
-      "ID": "stump2012_carry_pres_p1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "ferimus",
-      "Segments": ["f", "e", "r", "i", "m", "u", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "pres",
-      "Agr": "p1"
+      "ID": "pres_s2",
+      "Name": "pres s2",
+      "Features": "Number=Sing|Person=2|Tense=Pres"
     },
     {
-      "ID": "stump2012_carry_pres_p2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "fertis",
-      "Segments": ["f", "e", "r", "t", "i", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "pres",
-      "Agr": "p2"
+      "ID": "pres_s3",
+      "Name": "pres s3",
+      "Features": "Number=Sing|Person=3|Tense=Pres"
     },
     {
-      "ID": "stump2012_carry_pres_p3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "ferunt",
-      "Segments": ["f", "e", "r", "u", "n", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "pres",
-      "Agr": "p3"
+      "ID": "past_s1",
+      "Name": "past s1",
+      "Features": "Number=Sing|Person=1|Tense=Past"
     },
     {
-      "ID": "stump2012_carry_perf_s1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "tulī",
-      "Segments": ["t", "u", "l", "ī"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "perf",
-      "Agr": "s1"
+      "ID": "past_s2",
+      "Name": "past s2",
+      "Features": "Number=Sing|Person=2|Tense=Past"
     },
     {
-      "ID": "stump2012_carry_perf_s2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "tulistī",
-      "Segments": ["t", "u", "l", "i", "s", "t", "ī"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "perf",
-      "Agr": "s2"
-    },
-    {
-      "ID": "stump2012_carry_perf_s3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "tulit",
-      "Segments": ["t", "u", "l", "i", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "perf",
-      "Agr": "s3"
-    },
-    {
-      "ID": "stump2012_carry_perf_p1",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "tulimus",
-      "Segments": ["t", "u", "l", "i", "m", "u", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "perf",
-      "Agr": "p1"
-    },
-    {
-      "ID": "stump2012_carry_perf_p2",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "tulistis",
-      "Segments": ["t", "u", "l", "i", "s", "t", "i", "s"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "perf",
-      "Agr": "p2"
-    },
-    {
-      "ID": "stump2012_carry_perf_p3",
-      "Language_ID": "lati1261",
-      "Parameter_ID": "carry",
-      "Form": "tulērunt",
-      "Segments": ["t", "u", "l", "ē", "r", "u", "n", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(41)]"],
-      "Lexeme": "FERRE",
-      "System": "perf",
-      "Agr": "p3"
-    },
-    {
-      "ID": "stump2012_nek_p1sg",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "nek",
-      "Form": "nekem",
-      "Segments": ["n", "e", "k", "e", "m"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(36)]"],
-      "Lexeme": "NEK",
-      "PersNum": "p1sg"
-    },
-    {
-      "ID": "stump2012_nek_p2sg",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "nek",
-      "Form": "neked",
-      "Segments": ["n", "e", "k", "e", "d"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(36)]"],
-      "Lexeme": "NEK",
-      "PersNum": "p2sg"
-    },
-    {
-      "ID": "stump2012_benn_p1sg",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "benn",
-      "Form": "bennem",
-      "Segments": ["b", "e", "n", "n", "e", "m"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(36)]"],
-      "Lexeme": "BENN",
-      "PersNum": "p1sg"
-    },
-    {
-      "ID": "stump2012_benn_p2sg",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "benn",
-      "Form": "benned",
-      "Segments": ["b", "e", "n", "n", "e", "d"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(36)]"],
-      "Lexeme": "BENN",
-      "PersNum": "p2sg"
-    },
-    {
-      "ID": "stump2012_rajt_p1sg",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "rajt",
-      "Form": "rajtam",
-      "Segments": ["r", "a", "j", "t", "a", "m"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(36)]"],
-      "Lexeme": "RAJT",
-      "PersNum": "p1sg"
-    },
-    {
-      "ID": "stump2012_rajt_p2sg",
-      "Language_ID": "hung1274",
-      "Parameter_ID": "rajt",
-      "Form": "rajtad",
-      "Segments": ["r", "a", "j", "t", "a", "d"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(36)]"],
-      "Lexeme": "RAJT",
-      "PersNum": "p2sg"
-    },
-    {
-      "ID": "stump2012_need_pres_s1",
-      "Language_ID": "oldn1244",
-      "Parameter_ID": "need",
-      "Form": "þarf",
-      "Segments": ["þ", "a", "r", "f"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(44)]"],
-      "Lexeme": "ÞURFA",
-      "Tense": "pres",
-      "Agr": "s1"
-    },
-    {
-      "ID": "stump2012_need_pres_s2",
-      "Language_ID": "oldn1244",
-      "Parameter_ID": "need",
-      "Form": "þarft",
-      "Segments": ["þ", "a", "r", "f", "t"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(44)]"],
-      "Lexeme": "ÞURFA",
-      "Tense": "pres",
-      "Agr": "s2"
-    },
-    {
-      "ID": "stump2012_need_pres_s3",
-      "Language_ID": "oldn1244",
-      "Parameter_ID": "need",
-      "Form": "þarf",
-      "Segments": ["þ", "a", "r", "f"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(44)]"],
-      "Lexeme": "ÞURFA",
-      "Tense": "pres",
-      "Agr": "s3"
-    },
-    {
-      "ID": "stump2012_need_past_s1",
-      "Language_ID": "oldn1244",
-      "Parameter_ID": "need",
-      "Form": "þurfta",
-      "Segments": ["þ", "u", "r", "f", "t", "a"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(44)]"],
-      "Lexeme": "ÞURFA",
-      "Tense": "past",
-      "Agr": "s1"
-    },
-    {
-      "ID": "stump2012_need_past_s2",
-      "Language_ID": "oldn1244",
-      "Parameter_ID": "need",
-      "Form": "þurftir",
-      "Segments": ["þ", "u", "r", "f", "t", "i", "r"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(44)]"],
-      "Lexeme": "ÞURFA",
-      "Tense": "past",
-      "Agr": "s2"
-    },
-    {
-      "ID": "stump2012_need_past_s3",
-      "Language_ID": "oldn1244",
-      "Parameter_ID": "need",
-      "Form": "þurfti",
-      "Segments": ["þ", "u", "r", "f", "t", "i"],
-      "Comment": "",
-      "Source": ["stump-2012-mmm8[(44)]"],
-      "Lexeme": "ÞURFA",
-      "Tense": "past",
-      "Agr": "s3"
+      "ID": "past_s3",
+      "Name": "past s3",
+      "Features": "Number=Sing|Person=3|Tense=Past"
     }
   ],
   "ParameterTable": [
@@ -688,6 +242,496 @@
       "ID": "need",
       "Name": "need",
       "Description": ""
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "begin_coepisse",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "begin",
+      "Name": "COEPISSE"
+    },
+    {
+      "ID": "war_bellum",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "war",
+      "Name": "BELLUM"
+    },
+    {
+      "ID": "praise_laudare",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "praise",
+      "Name": "LAUDĀRE"
+    },
+    {
+      "ID": "urge_hortari",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "urge",
+      "Name": "HORTĀRĪ"
+    },
+    {
+      "ID": "carry_ferre",
+      "Language_ID": "lati1261",
+      "Parameter_ID": "carry",
+      "Name": "FERRE"
+    },
+    {
+      "ID": "nek_nek",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "nek",
+      "Name": "NEK"
+    },
+    {
+      "ID": "benn_benn",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "benn",
+      "Name": "BENN"
+    },
+    {
+      "ID": "rajt_rajt",
+      "Language_ID": "hung1274",
+      "Parameter_ID": "rajt",
+      "Name": "RAJT"
+    },
+    {
+      "ID": "need_urfa",
+      "Language_ID": "oldn1244",
+      "Parameter_ID": "need",
+      "Name": "ÞURFA"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "stump2012_begin_perf_s1",
+      "Lexeme_ID": "begin_coepisse",
+      "Cell": "perf_system_s1",
+      "Form": "coepī",
+      "Segments": ["c", "o", "e", "p", "ī"],
+      "Source": ["stump-2012-mmm8[(17)]"]
+    },
+    {
+      "ID": "stump2012_begin_perf_s2",
+      "Lexeme_ID": "begin_coepisse",
+      "Cell": "perf_system_s2",
+      "Form": "coepistī",
+      "Segments": ["c", "o", "e", "p", "i", "s", "t", "ī"],
+      "Source": ["stump-2012-mmm8[(17)]"]
+    },
+    {
+      "ID": "stump2012_begin_perf_s3",
+      "Lexeme_ID": "begin_coepisse",
+      "Cell": "perf_system_s3",
+      "Form": "coepit",
+      "Segments": ["c", "o", "e", "p", "i", "t"],
+      "Source": ["stump-2012-mmm8[(17)]"]
+    },
+    {
+      "ID": "stump2012_begin_perf_p1",
+      "Lexeme_ID": "begin_coepisse",
+      "Cell": "perf_system_p1",
+      "Form": "coepimus",
+      "Segments": ["c", "o", "e", "p", "i", "m", "u", "s"],
+      "Source": ["stump-2012-mmm8[(17)]"]
+    },
+    {
+      "ID": "stump2012_begin_perf_p2",
+      "Lexeme_ID": "begin_coepisse",
+      "Cell": "perf_system_p2",
+      "Form": "coepistis",
+      "Segments": ["c", "o", "e", "p", "i", "s", "t", "i", "s"],
+      "Source": ["stump-2012-mmm8[(17)]"]
+    },
+    {
+      "ID": "stump2012_begin_perf_p3",
+      "Lexeme_ID": "begin_coepisse",
+      "Cell": "perf_system_p3",
+      "Form": "coepērunt",
+      "Segments": ["c", "o", "e", "p", "ē", "r", "u", "n", "t"],
+      "Source": ["stump-2012-mmm8[(17)]"]
+    },
+    {
+      "ID": "stump2012_war_acc_sg",
+      "Lexeme_ID": "war_bellum",
+      "Cell": "acc_sg",
+      "Form": "bellum",
+      "Segments": ["b", "e", "l", "l", "u", "m"],
+      "Source": ["stump-2012-mmm8[(22)]"]
+    },
+    {
+      "ID": "stump2012_war_gen_sg",
+      "Lexeme_ID": "war_bellum",
+      "Cell": "gen_sg",
+      "Form": "bellī",
+      "Segments": ["b", "e", "l", "l", "ī"],
+      "Source": ["stump-2012-mmm8[(22)]"]
+    },
+    {
+      "ID": "stump2012_war_dat_sg",
+      "Lexeme_ID": "war_bellum",
+      "Cell": "dat_sg",
+      "Form": "bellō",
+      "Segments": ["b", "e", "l", "l", "ō"],
+      "Source": ["stump-2012-mmm8[(22)]"]
+    },
+    {
+      "ID": "stump2012_war_acc_pl",
+      "Lexeme_ID": "war_bellum",
+      "Cell": "acc_pl",
+      "Form": "bella",
+      "Segments": ["b", "e", "l", "l", "a"],
+      "Source": ["stump-2012-mmm8[(22)]"]
+    },
+    {
+      "ID": "stump2012_war_gen_pl",
+      "Lexeme_ID": "war_bellum",
+      "Cell": "gen_pl",
+      "Form": "bellōrum",
+      "Segments": ["b", "e", "l", "l", "ō", "r", "u", "m"],
+      "Source": ["stump-2012-mmm8[(22)]"]
+    },
+    {
+      "ID": "stump2012_war_dat_pl",
+      "Lexeme_ID": "war_bellum",
+      "Cell": "dat_pl",
+      "Form": "bellīs",
+      "Segments": ["b", "e", "l", "l", "ī", "s"],
+      "Source": ["stump-2012-mmm8[(22)]"]
+    },
+    {
+      "ID": "stump2012_praise_act_s1",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "act_s1",
+      "Form": "laudō",
+      "Segments": ["l", "a", "u", "d", "ō"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_act_s2",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "act_s2",
+      "Form": "laudās",
+      "Segments": ["l", "a", "u", "d", "ā", "s"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_act_s3",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "act_s3",
+      "Form": "laudat",
+      "Segments": ["l", "a", "u", "d", "a", "t"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_act_p1",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "act_p1",
+      "Form": "laudāmus",
+      "Segments": ["l", "a", "u", "d", "ā", "m", "u", "s"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_act_p2",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "act_p2",
+      "Form": "laudātis",
+      "Segments": ["l", "a", "u", "d", "ā", "t", "i", "s"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_act_p3",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "act_p3",
+      "Form": "laudant",
+      "Segments": ["l", "a", "u", "d", "a", "n", "t"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_pass_s1",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "pass_s1",
+      "Form": "laudor",
+      "Segments": ["l", "a", "u", "d", "o", "r"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_pass_s2",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "pass_s2",
+      "Form": "laudāris",
+      "Segments": ["l", "a", "u", "d", "ā", "r", "i", "s"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_pass_s3",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "pass_s3",
+      "Form": "laudātur",
+      "Segments": ["l", "a", "u", "d", "ā", "t", "u", "r"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_pass_p1",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "pass_p1",
+      "Form": "laudāmur",
+      "Segments": ["l", "a", "u", "d", "ā", "m", "u", "r"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_pass_p2",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "pass_p2",
+      "Form": "laudāminī",
+      "Segments": ["l", "a", "u", "d", "ā", "m", "i", "n", "ī"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_praise_pass_p3",
+      "Lexeme_ID": "praise_laudare",
+      "Cell": "pass_p3",
+      "Form": "laudantur",
+      "Segments": ["l", "a", "u", "d", "a", "n", "t", "u", "r"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_urge_pass_s1",
+      "Lexeme_ID": "urge_hortari",
+      "Cell": "pass_s1",
+      "Form": "hortor",
+      "Segments": ["h", "o", "r", "t", "o", "r"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_urge_pass_s2",
+      "Lexeme_ID": "urge_hortari",
+      "Cell": "pass_s2",
+      "Form": "hortāris",
+      "Segments": ["h", "o", "r", "t", "ā", "r", "i", "s"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_urge_pass_s3",
+      "Lexeme_ID": "urge_hortari",
+      "Cell": "pass_s3",
+      "Form": "hortātur",
+      "Segments": ["h", "o", "r", "t", "ā", "t", "u", "r"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_urge_pass_p1",
+      "Lexeme_ID": "urge_hortari",
+      "Cell": "pass_p1",
+      "Form": "hortāmur",
+      "Segments": ["h", "o", "r", "t", "ā", "m", "u", "r"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_urge_pass_p2",
+      "Lexeme_ID": "urge_hortari",
+      "Cell": "pass_p2",
+      "Form": "hortāminī",
+      "Segments": ["h", "o", "r", "t", "ā", "m", "i", "n", "ī"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_urge_pass_p3",
+      "Lexeme_ID": "urge_hortari",
+      "Cell": "pass_p3",
+      "Form": "hortantur",
+      "Segments": ["h", "o", "r", "t", "a", "n", "t", "u", "r"],
+      "Source": ["stump-2012-mmm8[(28)]"]
+    },
+    {
+      "ID": "stump2012_carry_pres_s1",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "pres_system_s1",
+      "Form": "ferō",
+      "Segments": ["f", "e", "r", "ō"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_pres_s2",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "pres_system_s2",
+      "Form": "fers",
+      "Segments": ["f", "e", "r", "s"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_pres_s3",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "pres_system_s3",
+      "Form": "fert",
+      "Segments": ["f", "e", "r", "t"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_pres_p1",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "pres_system_p1",
+      "Form": "ferimus",
+      "Segments": ["f", "e", "r", "i", "m", "u", "s"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_pres_p2",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "pres_system_p2",
+      "Form": "fertis",
+      "Segments": ["f", "e", "r", "t", "i", "s"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_pres_p3",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "pres_system_p3",
+      "Form": "ferunt",
+      "Segments": ["f", "e", "r", "u", "n", "t"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_perf_s1",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "perf_system_s1",
+      "Form": "tulī",
+      "Segments": ["t", "u", "l", "ī"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_perf_s2",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "perf_system_s2",
+      "Form": "tulistī",
+      "Segments": ["t", "u", "l", "i", "s", "t", "ī"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_perf_s3",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "perf_system_s3",
+      "Form": "tulit",
+      "Segments": ["t", "u", "l", "i", "t"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_perf_p1",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "perf_system_p1",
+      "Form": "tulimus",
+      "Segments": ["t", "u", "l", "i", "m", "u", "s"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_perf_p2",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "perf_system_p2",
+      "Form": "tulistis",
+      "Segments": ["t", "u", "l", "i", "s", "t", "i", "s"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_carry_perf_p3",
+      "Lexeme_ID": "carry_ferre",
+      "Cell": "perf_system_p3",
+      "Form": "tulērunt",
+      "Segments": ["t", "u", "l", "ē", "r", "u", "n", "t"],
+      "Source": ["stump-2012-mmm8[(41)]"]
+    },
+    {
+      "ID": "stump2012_nek_p1sg",
+      "Lexeme_ID": "nek_nek",
+      "Cell": "p1sg",
+      "Form": "nekem",
+      "Segments": ["n", "e", "k", "e", "m"],
+      "Source": ["stump-2012-mmm8[(36)]"]
+    },
+    {
+      "ID": "stump2012_nek_p2sg",
+      "Lexeme_ID": "nek_nek",
+      "Cell": "p2sg",
+      "Form": "neked",
+      "Segments": ["n", "e", "k", "e", "d"],
+      "Source": ["stump-2012-mmm8[(36)]"]
+    },
+    {
+      "ID": "stump2012_benn_p1sg",
+      "Lexeme_ID": "benn_benn",
+      "Cell": "p1sg",
+      "Form": "bennem",
+      "Segments": ["b", "e", "n", "n", "e", "m"],
+      "Source": ["stump-2012-mmm8[(36)]"]
+    },
+    {
+      "ID": "stump2012_benn_p2sg",
+      "Lexeme_ID": "benn_benn",
+      "Cell": "p2sg",
+      "Form": "benned",
+      "Segments": ["b", "e", "n", "n", "e", "d"],
+      "Source": ["stump-2012-mmm8[(36)]"]
+    },
+    {
+      "ID": "stump2012_rajt_p1sg",
+      "Lexeme_ID": "rajt_rajt",
+      "Cell": "p1sg",
+      "Form": "rajtam",
+      "Segments": ["r", "a", "j", "t", "a", "m"],
+      "Source": ["stump-2012-mmm8[(36)]"]
+    },
+    {
+      "ID": "stump2012_rajt_p2sg",
+      "Lexeme_ID": "rajt_rajt",
+      "Cell": "p2sg",
+      "Form": "rajtad",
+      "Segments": ["r", "a", "j", "t", "a", "d"],
+      "Source": ["stump-2012-mmm8[(36)]"]
+    },
+    {
+      "ID": "stump2012_need_pres_s1",
+      "Lexeme_ID": "need_urfa",
+      "Cell": "pres_s1",
+      "Form": "þarf",
+      "Segments": ["þ", "a", "r", "f"],
+      "Source": ["stump-2012-mmm8[(44)]"]
+    },
+    {
+      "ID": "stump2012_need_pres_s2",
+      "Lexeme_ID": "need_urfa",
+      "Cell": "pres_s2",
+      "Form": "þarft",
+      "Segments": ["þ", "a", "r", "f", "t"],
+      "Source": ["stump-2012-mmm8[(44)]"]
+    },
+    {
+      "ID": "stump2012_need_pres_s3",
+      "Lexeme_ID": "need_urfa",
+      "Cell": "pres_s3",
+      "Form": "þarf",
+      "Segments": ["þ", "a", "r", "f"],
+      "Source": ["stump-2012-mmm8[(44)]"]
+    },
+    {
+      "ID": "stump2012_need_past_s1",
+      "Lexeme_ID": "need_urfa",
+      "Cell": "past_s1",
+      "Form": "þurfta",
+      "Segments": ["þ", "u", "r", "f", "t", "a"],
+      "Source": ["stump-2012-mmm8[(44)]"]
+    },
+    {
+      "ID": "stump2012_need_past_s2",
+      "Lexeme_ID": "need_urfa",
+      "Cell": "past_s2",
+      "Form": "þurftir",
+      "Segments": ["þ", "u", "r", "f", "t", "i", "r"],
+      "Source": ["stump-2012-mmm8[(44)]"]
+    },
+    {
+      "ID": "stump2012_need_past_s3",
+      "Lexeme_ID": "need_urfa",
+      "Cell": "past_s3",
+      "Form": "þurfti",
+      "Segments": ["þ", "u", "r", "f", "t", "i"],
+      "Source": ["stump-2012-mmm8[(44)]"]
     }
   ]
 }

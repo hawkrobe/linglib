@@ -71,47 +71,55 @@ open Morphology Morphology.Exponence Morphology.Containment
 /-! ### Paradigms from the form table -/
 
 /-- The base class the paper's pattern label assigns a form. -/
-def baseOf (f : Data.Forms.Form) : ℕ :=
-  match f.column? "Base" with
-  | some "B" => 1
-  | some "C" => 2
-  | _ => 0
+def baseOf (a : Forms.Analysis) : ℕ :=
+  match a.base with
+  | .a => 0
+  | .b => 1
 
 /-- Three cells in the order of the hierarchy as a paradigm of base classes. -/
-def paradigm (a b c : Data.Forms.Form) : Paradigm 3 ℕ := ![baseOf a, baseOf b, baseOf c]
+def paradigm (a b c : Forms.Analysis) : Paradigm 3 ℕ := ![baseOf a, baseOf b, baseOf c]
 
 /-- Wardaman third singular, absolutive, ergative and dative (Table 25, [merlan-1994]). -/
 def wardaman3sg : Paradigm 3 ℕ :=
-  paradigm Forms.wardaman_3sg_abs Forms.wardaman_3sg_erg Forms.wardaman_3sg_dat
+  paradigm Forms.wardaman_3sg_abs.analysis Forms.wardaman_3sg_erg.analysis
+    Forms.wardaman_3sg_dat.analysis
 
 /-- Khinalugh second singular (Table 24). -/
 def khinalugh2sg : Paradigm 3 ℕ :=
-  paradigm Forms.khinalugh_2sg_abs Forms.khinalugh_2sg_erg Forms.khinalugh_2sg_dat
+  paradigm Forms.khinalugh_2sg_abs.analysis Forms.khinalugh_2sg_erg.analysis
+    Forms.khinalugh_2sg_dat.analysis
 
 /-- Icelandic first singular, nominative, accusative and dative (Table 6). -/
 def icelandic1sg : Paradigm 3 ℕ :=
-  paradigm Forms.icelandic_1sg_nom Forms.icelandic_1sg_acc Forms.icelandic_1sg_dat
+  paradigm Forms.icelandic_1sg_nom.analysis Forms.icelandic_1sg_acc.analysis
+    Forms.icelandic_1sg_dat.analysis
 
 /-- Russian first singular (Table 10). -/
 def russian1sg : Paradigm 3 ℕ :=
-  paradigm Forms.russian_1sg_nom Forms.russian_1sg_acc Forms.russian_1sg_dat
+  paradigm Forms.russian_1sg_nom.analysis Forms.russian_1sg_acc.analysis
+    Forms.russian_1sg_dat.analysis
 
 /-- Lezgian first singular (Table 11). -/
 def lezgian1sg : Paradigm 3 ℕ :=
-  paradigm Forms.lezgian_1sg_abs Forms.lezgian_1sg_erg Forms.lezgian_1sg_dat
+  paradigm Forms.lezgian_1sg_abs.analysis Forms.lezgian_1sg_erg.analysis
+    Forms.lezgian_1sg_dat.analysis
 
 /-- Awtuw first person, singular, plural and dual (Table 33). -/
-def awtuw1 : Paradigm 3 ℕ := paradigm Forms.awtuw_1_sg Forms.awtuw_1_pl Forms.awtuw_1_dl
+def awtuw1 : Paradigm 3 ℕ :=
+  paradigm Forms.awtuw_1_sg.analysis Forms.awtuw_1_pl.analysis Forms.awtuw_1_dl.analysis
 
 /-- Yagua second person (Table 46). -/
-def yagua2 : Paradigm 3 ℕ := paradigm Forms.yagua_2_sg Forms.yagua_2_pl Forms.yagua_2_dl
+def yagua2 : Paradigm 3 ℕ :=
+  paradigm Forms.yagua_2_sg.analysis Forms.yagua_2_pl.analysis Forms.yagua_2_dl.analysis
 
 /-- Wambaya first inclusive (Table 46). -/
 def wambaya1incl : Paradigm 3 ℕ :=
-  paradigm Forms.wambaya_1incl_sg Forms.wambaya_1incl_pl Forms.wambaya_1incl_dl
+  paradigm Forms.wambaya_1incl_sg.analysis Forms.wambaya_1incl_pl.analysis
+    Forms.wambaya_1incl_dl.analysis
 
 /-- Dehu third masculine (Table 46). -/
-def dehu3m : Paradigm 3 ℕ := paradigm Forms.dehu_3m_sg Forms.dehu_3m_pl Forms.dehu_3m_dl
+def dehu3m : Paradigm 3 ℕ :=
+  paradigm Forms.dehu_3m_sg.analysis Forms.dehu_3m_pl.analysis Forms.dehu_3m_dl.analysis
 
 /-! ### Containment excludes ABA, sections 3.3 and 4.2 -/
 

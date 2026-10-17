@@ -105,19 +105,23 @@ def l : Segment := { manner := .simplex .A, place := .simplex .U }
 /-- Voicing is a headed |L| at the laryngeal node. -/
 def voice : Segment := { laryngeal := .headedSimplex .L }
 
-/-- The consonants of the paper's tables by the symbols it prints, each with its phoneme in the
-fragment and with its melody if the paper analyses it. A voiced obstruent is its voiceless
+/-- The consonants of the paper's tables by the letters that write them, each with its phoneme in
+the fragment and with its melody if the paper analyses it. A voiced obstruent is its voiceless
 counterpart with voicing. The paper sets /g/ and /ʦ/ aside. -/
 def consonants : List (String × Phonology.Segment × Option Segment) :=
   [("k", Czech.Phonology.k, some k), ("g", Czech.Phonology.g, none),
-   ("x", Czech.Phonology.ch, some x), ("ɦ", Czech.Phonology.h, some (x ⊔ voice)),
+   ("ch", Czech.Phonology.ch, some x), ("h", Czech.Phonology.h, some (x ⊔ voice)),
    ("t", Czech.Phonology.t, some t), ("d", Czech.Phonology.d, some (t ⊔ voice)),
-   ("ʦ", Czech.Phonology.c, none), ("s", Czech.Phonology.s, some s),
+   ("c", Czech.Phonology.c, none), ("s", Czech.Phonology.s, some s),
    ("z", Czech.Phonology.z, some (s ⊔ voice)), ("n", Czech.Phonology.n, some n),
    ("r", Czech.Phonology.r, some r), ("l", Czech.Phonology.l, some l),
    ("p", Czech.Phonology.p, some p), ("b", Czech.Phonology.b, some (p ⊔ voice)),
    ("f", Czech.Phonology.f, some f), ("v", Czech.Phonology.v, some (f ⊔ voice)),
    ("m", Czech.Phonology.m, some m)]
+
+/-- Each letter writes its phoneme. -/
+theorem ofString?_consonants : ∀ a ∈ consonants, Czech.Phonology.ofString? a.1 = some [a.2.1] := by
+  decide +kernel
 
 /-- Each node of a melody holds only elements that it hosts. -/
 theorem wellFormed_consonants : ∀ a ∈ consonants, ∀ c ∈ a.2.2, c.WellFormed := by decide
@@ -296,7 +300,7 @@ theorem derive_comparative (h : .H ∈ b.manner.elements) :
 
 /-- The phonemes that the alternating consonant of a form writes, its second segment, read in the
 context of the whole form. -/
-def alternant (form : Form) : Option (List Phonology.Segment) :=
+def alternant (form : Form Forms.Cell) : Option (List Phonology.Segment) :=
   match form.segments.map fun w ↦ w.toList.map Char.toLower with
   | stem :: c :: ending => do
     let whole ← Czech.Phonology.ofChars (stem ++ c ++ ending.flatten)
@@ -314,22 +318,37 @@ structure Row where
   /-- The suffix. -/
   suffix : Suffix
   /-- The suffixed form. -/
-  form : Form
+  form : Form Forms.Cell
 
 /-- The suffixes, by the names of the relations in the data. -/
 def suffixes : List (String × Suffix) :=
   [("locDatFSg", locDat), ("comparative", comparative), ("causative", causative),
    ("passPtcp", passPtcp)]
 
-/-- The row of a relation between a base form and a suffixed form. -/
-def Row.ofRelation (rel : FormRelation) : Option Row := do
+/-- The base-final consonant of a base form, the consonant of the tables that its second segment
+writes. -/
+def baseConsonant (form : Form Forms.Cell) : Option (String × Phonology.Segment × Option Segment) :=
+  match form.segments with
+  | _ :: c :: _ => consonants.find? (·.1 = c)
+  | _ => none
+
+/-- The row of a relation between a base form and a suffixed form, with the base-final consonant
+of the base form. -/
+def Row.ofRelation (rel : FormRelation (Form Forms.Cell)) : Option Row := do
   let suffix ← suffixes.lookup rel.relation
-  let base ← rel.target.columnAs? "Base" consonants
-  pure ⟨base.1, base.2, suffix, rel.target⟩
+  let (_, base, melody) ← baseConsonant rel.form
+  pure ⟨base, melody, suffix, rel.target⟩
 
 /-- Every pair of the tables is a row, save the two possessives that stand in for a participle. -/
 theorem isSome_ofRelation : ∀ rel ∈ Forms.relations,
     rel.relation ≠ "possessive" → (Row.ofRelation rel).isSome := by
+  decide +kernel
+
+/-- A noun or an adjective writes the base-final consonant itself, read in the context of the
+whole form. The base form of a participle is an infinitive, whose theme vowel palatalises. -/
+theorem alternant_base : ∀ rel ∈ Forms.relations,
+    rel.relation ∈ ["locDatFSg", "comparative", "causative"] →
+      alternant rel.form = (baseConsonant rel.form).map ([·.2.1]) := by
   decide +kernel
 
 /-- The rows of the tables of small and big palatalisation, of the comparative and of the
@@ -338,13 +357,6 @@ def rows : List Row := Forms.relations.filterMap Row.ofRelation
 
 /-- The root nodes that the analysis builds for a row, if it gives the base a melody. -/
 def Row.roots (a : Row) : Option (List (CVSlot × Segment)) := a.melody.map (derive · a.suffix)
-
-/-- A noun or an adjective writes the base-final consonant itself. The base form of a participle
-is an infinitive, whose theme vowel palatalises. -/
-theorem alternant_base : ∀ rel ∈ Forms.relations,
-    rel.relation ∈ ["locDatFSg", "comparative", "causative"] →
-      alternant rel.form = (rel.target.columnAs? "Base" consonants).map ([·.1]) := by
-  decide +kernel
 
 /-- Small palatalisation of a velar is the second palatalisation of velars. -/
 theorem alternant_eq_secondPalatalization : ∀ a ∈ rows, a.suffix = locDat →

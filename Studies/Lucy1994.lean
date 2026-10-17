@@ -50,8 +50,8 @@ namespace Lucy1994
 
 open Semantics ArgumentStructure Morphology Data.Forms
 
-/-- A root of the sample: a form's spelling with its entailment signature. -/
-def ofForm (f : Form) (entailments : Finset Root.Entailment) : Root :=
+/-- The root of the sample that a form spells, with its entailment signature. -/
+def ofForm (f : Form Forms.Cell) (entailments : Finset Root.Entailment) : Root :=
   { name := f.form, entailments := entailments }
 
 /-! ### Agent-salient roots ((1a), p. 629) -/
@@ -178,7 +178,7 @@ def cil : Root := ofForm Forms.cil {.state "lying"}
 
 /-! ### Valency and class lists -/
 
-/-- The roots attested forming a transitive stem by zero derivation: the sampled `=∅` predicate
+/-- The roots attested forming a transitive stem by zero derivation, the sampled `=∅` predicate
 roots (p. 629) and the positional *čin* (6). -/
 def rootTransitives : List Root := [kuc, kos, pis, hats, los, cin]
 
@@ -215,9 +215,9 @@ def sampledRoots : List Root :=
 
 /-! ### Diagnostic operators -/
 
-/-- A diagnostic derivational operator: its exponent, the core-argument positions it adds, and
-its structural applicability condition with bundled decidability, since the inventory holds
-heterogeneous conditions. Selection comes from the `Morphology.Exponence.Rule` instance. -/
+/-- A diagnostic derivational operator is given by its exponent, the core-argument positions it
+adds, and its structural applicability condition with bundled decidability, since the inventory
+holds heterogeneous conditions. Selection comes from the `Morphology.Exponence.Rule` instance. -/
 structure DiagOp where
   /-- The suffix, in the paper's orthography. -/
   exponent : String
@@ -238,15 +238,15 @@ instance : DecidableRel (Exponence.Applies : DiagOp → Root → Prop) :=
 @[simp] theorem applies_iff (op : DiagOp) (r : Root) :
     Exponence.Applies op r ↔ op.Applies r := Iff.rfl
 
-/-- Affective *=t*: transitivises an agent-salient root by adding a patient argument. -/
+/-- Affective *=t* transitivises an agent-salient root by adding a patient argument. -/
 def affectiveT : DiagOp :=
   ⟨"=t", {.internal}, fun r ↦ IsAgentSalient r.kinds (valency r), inferInstance⟩
 
-/-- Zero derivation *=∅*: the root alone supports a transitive stem. -/
+/-- Under zero derivation *=∅* the root alone supports a transitive stem. -/
 def zeroDeriv : DiagOp :=
   ⟨"=∅", ∅, fun r ↦ .internal ∈ valency r, inferInstance⟩
 
-/-- Causative *=s*: transitivises a patient-salient root by adding an agent argument. -/
+/-- Causative *=s* transitivises a patient-salient root by adding an agent argument. -/
 def causativeS : DiagOp :=
   ⟨"=s", {.external}, fun r ↦ IsPatientSalient r.kinds (valency r), inferInstance⟩
 
@@ -255,20 +255,20 @@ apparently compounding with *tàal* 'come' (p. 643). -/
 def positionalLah : DiagOp :=
   ⟨"=lah", ∅, fun r ↦ IsPositional r.kinds, inferInstance⟩
 
-/-- The diagnostic inventory, in the paper's order: the three transitivisers of (1), then the
+/-- The diagnostic inventory in the paper's order, the three transitivisers of (1) and then the
 positional derivation. -/
 def inventory : Exponence.RuleSet DiagOp :=
   [affectiveT, zeroDeriv, causativeS, positionalLah]
 
-/-- The exponents of the inventory's applicable operators at `r`, in inventory order: the root's
-predicted derivational behaviour. -/
+/-- The exponents of the inventory's applicable operators at `r`, in inventory order, which are
+the root's predicted derivational behaviour. -/
 def predictedExponents (r : Root) : List String :=
   (inventory.applicable r).map DiagOp.exponent
 
 /-! ### Predicted against attested derivations -/
 
-/-- The derivations the paper attests for a root: the final segment of each form the root's row
-is related to, a derived stem or the bare derivational morpheme. -/
+/-- The derivations the paper attests for a root. Each is the final segment of a form that the
+root's row is related to, a derived stem or the bare derivational morpheme. -/
 def attested (r : Root) : List String :=
   (Forms.relations.filter (·.form.form == r.name)).filterMap (·.target.segments.getLast?)
 
@@ -322,8 +322,8 @@ theorem rootTransitives_not_signature_uniform :
 
 /-! ### The motion-verb non-class -/
 
-/-- The paper's central typological point: notional motion roots form no salience class of their
-own, each being classified exactly as the plain state-change root *kíim* 'die'. -/
+/-- Notional motion roots form no salience class of their own, the paper's central typological
+point: each is classified exactly as the plain state-change root *kíim* 'die'. -/
 theorem motion_roots_not_separate_class :
     ∀ r ∈ motionRoots, predictedClass r = predictedClass kiim := by decide
 
