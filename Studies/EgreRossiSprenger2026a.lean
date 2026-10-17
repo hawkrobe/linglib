@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Trivalent.Probability
+public import Studies.Adams1975
 
 /-!
 # Égré, Rossi and Sprenger (2026): Probability for Trivalent Conditionals
@@ -23,8 +24,11 @@ conjunction and the Product Rule.
 * `Formula.eval_flat`: the Reduction Theorem, by the appendix's recursion `Formula.flat`.
 * `prob_value_neg`, `prob_value_disj`: the second and third principles of trivalent probability;
   `additivity_all_void` shows the third fails without properness, which the paper does not flag.
-* `adams_thesis`: for conditional-free `A` and `B`, the probability of `A → B` is the conditional
-  probability of `B` given `A`.
+* `ofAdams`, `exists_ofAdams_eq`, `ofAdams_eq_ofAdams_iff`, `prob_ofAdams`: an
+  [adams-1975] formula denotes the conditional event of its consequent on its antecedent, these
+  exhaust the trivalent propositions (the semantic content of the Reduction Theorem), and its
+  trivalent probability is Adams's conditional probability; hence `adams_thesis`, and
+  `pEntails_iff_prob` restates p-entailment in trivalent probabilities.
 * `cEntails_iff_forall_prob`: preserving probability 1 is preserving designated values, the
   trivalent characterization of the logic C.
 * `prob_cond_eq_one_of_cEntails`, `prob_cond_congr_left`, `prob_cond_disj`: the axioms 3′, 4′ and
@@ -57,8 +61,9 @@ conjunction and the Product Rule.
 ## TODO
 
 * Theorem 2, the representation of the uncertain logic U in Adams's p-validity through the
-  Reduction Theorem, and Propositions 3 and 4, its trivalent characterization and conservativity
-  over `Adams1975.PEntails`.
+  Reduction Theorem, and Propositions 3 and 4, its trivalent characterization and conservativity.
+  With `pEntails_iff_prob` both sides are conditions on trivalent probability; what remains is
+  Adams's equivalence of p-entailment with the uncertainty-sum criterion, open in `Adams1975`.
 * Theorem 4, trivalent conditionalization as f-divergence minimization.
 * McGee's adequacy conditions C2–C8 for the conditional probability `p(A → B)`.
 
@@ -546,26 +551,6 @@ theorem prob_value_disj {φ ψ : Formula ι}
       Trivalent.prob μ (value t φ) + Trivalent.prob μ (value t ψ) :=
   Trivalent.prob_joinBelnap hsupp hdisj h
 
-/-- For conditional-free `A` and `B` with a live antecedent, the probability of `A → B` is the
-conditional probability of `B` given `A` (**Adams's Thesis**). -/
-theorem adams_thesis {A B : Formula ι} (hA : A.NoCond) (hB : B.NoCond)
-    (h : μ {w | eval (t w) A = 1} ≠ 0) :
-    Trivalent.prob μ (value t (.cond A B)) =
-      μ[{w | eval (t w) B = 1} | {w | eval (t w) A = 1}] := by
-  have hval : value t (.cond A B) =
-      ({w | eval (t w) A = 1}).indicator fun w ↦ ofProp (eval (t w) B = 1) := by
-    funext w
-    cases ha : eval (t w) A with
-    | zero => exact absurd ha (hA.eval_ne_zero _)
-    | neg => rw [Set.indicator_of_notMem (by simp [ha])]; simp [ha]
-    | pos =>
-        rw [Set.indicator_of_mem (by simp [ha])]
-        cases hb : eval (t w) B with
-        | zero => exact absurd hb (hB.eval_ne_zero _)
-        | neg => simp [ha, hb]
-        | pos => simp [ha, hb]
-  rw [hval, Trivalent.prob_indicator_ofProp _ _ h]
-
 /-- A conditional certain in C has conditional probability 1 (axiom 3′), with no properness
 needed, since the All Void convention points the right way here. -/
 theorem prob_cond_eq_one_of_cEntails [IsFiniteMeasure μ] {A B : Formula ι}
@@ -629,6 +614,98 @@ theorem prob_cond_disj {A B C : Formula ι} (hii : CEntails [C] (.neg (.conj A B
   rw [hval, Trivalent.prob_joinBelnap hsupp hdisj hproper]
 
 end Probability
+
+/-! ### Adams's conditionals are conditional events
+
+[adams-1975] gives *if `A` then `B`* the conditional probability of `B` given `A` and no truth
+conditions. On the trivalent semantics his formula denotes Cooper's simple conditional, the
+conditional event of its consequent on its antecedent, whose trivalent probability is his
+conditional probability; his proper assignments are those under which no formula is void almost
+surely; and his simple conditionals exhaust the trivalent propositions, the semantic content of
+the Reduction Theorem. -/
+
+section Adams
+
+open Classical
+
+variable {W : Type*}
+
+/-- The trivalent proposition an [adams-1975] formula denotes, Cooper's conditional of its
+consequent on its antecedent. -/
+noncomputable def ofAdams (φ : Adams1975.Formula W) : W → SignType :=
+  fun w ↦ condAssert .lp (ofProp (w ∈ φ.ante)) (ofProp (w ∈ φ.cons))
+
+theorem ofAdams_eq_indicator (φ : Adams1975.Formula W) :
+    ofAdams φ = φ.ante.indicator fun w ↦ ofProp (w ∈ φ.cons) := by
+  funext w
+  by_cases h : w ∈ φ.ante <;> simp [ofAdams, h]
+
+@[simp] theorem support_ofAdams (φ : Adams1975.Formula W) :
+    Function.support (ofAdams φ) = φ.ante := by
+  rw [ofAdams_eq_indicator]
+  simp [Set.support_indicator]
+
+/-- Adams's simple conditionals exhaust the trivalent propositions, each being the conditional
+event of its truth on its definedness. -/
+theorem exists_ofAdams_eq (p : W → SignType) : ∃ φ : Adams1975.Formula W, ofAdams φ = p := by
+  refine ⟨⟨Function.support p, posExt p⟩, ?_⟩
+  rw [ofAdams_eq_indicator]
+  conv_rhs => rw [← indicator_support_ofProp_eq_one p]
+  congr 1
+  funext w
+  congr 1
+
+/-- Two Adams formulas denote the same proposition exactly when they have the same antecedent and
+agree on it, de Finetti's identity of conditional events. -/
+theorem ofAdams_eq_ofAdams_iff {φ ψ : Adams1975.Formula W} :
+    ofAdams φ = ofAdams ψ ↔ φ.ante = ψ.ante ∧ φ.ante ∩ φ.cons = ψ.ante ∩ ψ.cons := by
+  rw [ofAdams_eq_indicator, ofAdams_eq_indicator, indicator_ofProp_eq_indicator_ofProp_iff]
+  rfl
+
+/-- A simple conditional of conditional-free formulas denotes the Adams formula of their truth
+sets. -/
+theorem value_cond_eq_ofAdams {A B : Formula ι} (hA : A.NoCond) (hB : B.NoCond)
+    (t : W → ι → Bool) :
+    value t (.cond A B) = ofAdams ⟨{w | eval (t w) A = 1}, {w | eval (t w) B = 1}⟩ := by
+  funext w
+  simp only [value, eval_cond, ofAdams, Set.mem_ofPred_eq]
+  congr 1
+  · convert (ofProp_eq_one_of_ne_zero (hA.eval_ne_zero (t w))).symm
+  · convert (ofProp_eq_one_of_ne_zero (hB.eval_ne_zero (t w))).symm
+
+variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {μ : Measure W}
+
+/-- The trivalent probability of an Adams formula with a live antecedent is his conditional
+probability. -/
+theorem prob_ofAdams {φ : Adams1975.Formula W} (h : μ φ.ante ≠ 0) :
+    Trivalent.prob μ (ofAdams φ) = μ[φ.cons | φ.ante] := by
+  rw [ofAdams_eq_indicator, Trivalent.prob_indicator_ofProp _ _ h]
+  rfl
+
+/-- For conditional-free `A` and `B` with a live antecedent, the probability of `A → B` is the
+conditional probability of `B` given `A` (**Adams's Thesis**). -/
+theorem adams_thesis {A B : Formula ι} (hA : A.NoCond) (hB : B.NoCond) {t : W → ι → Bool}
+    (h : μ {w | eval (t w) A = 1} ≠ 0) :
+    Trivalent.prob μ (value t (.cond A B)) =
+      μ[{w | eval (t w) B = 1} | {w | eval (t w) A = 1}] := by
+  rw [value_cond_eq_ofAdams hA hB t, prob_ofAdams h]
+
+/-- [adams-1975]'s p-entailment is a condition on trivalent probabilities, with his proper
+assignments the credences under which no premise or conclusion is void almost surely. -/
+theorem pEntails_iff_prob {κ : Type*} {s : Finset κ} {X : κ → Adams1975.Formula W}
+    {d : Adams1975.Formula W} :
+    Adams1975.PEntails s X d ↔ ∀ ε > 0, ∃ δ > 0, ∀ μ : Measure W, IsProbabilityMeasure μ →
+      μ (Function.support (ofAdams d)) ≠ 0 →
+      (∀ i ∈ s, μ (Function.support (ofAdams (X i))) ≠ 0) →
+      (∀ i ∈ s, 1 - δ ≤ Trivalent.prob μ (ofAdams (X i))) →
+      1 - ε ≤ Trivalent.prob μ (ofAdams d) := by
+  simp only [support_ofAdams, Adams1975.PEntails]
+  refine forall₂_congr fun ε _ ↦ exists_congr fun δ ↦ and_congr_right fun _ ↦
+    forall₂_congr fun μ _ ↦ imp_congr_right fun hd ↦ imp_congr_right fun hX ↦ ?_
+  rw [prob_ofAdams hd]
+  exact imp_congr_left (forall₂_congr fun i hi ↦ by rw [prob_ofAdams (hX i hi)])
+
+end Adams
 
 /-! ### The die and coin models
 
