@@ -38,7 +38,7 @@ suffix, is used only non-specifically. The functions each series covers are the 
 
 namespace Turkish.Indefinites
 
-open Indefinite (OntologicalCategory)
+open Pronoun (OntologicalCategory)
 
 /-! ### The bir-series -/
 
@@ -65,8 +65,8 @@ def birŞekilde : IndefinitePronoun := bir "bir şekilde" .manner
 def birDeterminer : IndefinitePronoun := bir "bir" .determiner
 
 /-- The *bir*-series, listed from person to determiner. -/
-def birSeries : List IndefinitePronoun :=
-  [biri, birŞey, birYerde, birZaman, birŞekilde, birDeterminer]
+def birSeries : IndefinitePronoun.Series :=
+  ⟨"bir-", [biri, birŞey, birYerde, birZaman, birŞekilde, birDeterminer]⟩
 
 /-! ### The isolated indefinite -/
 
@@ -85,7 +85,8 @@ def hiçbiri : IndefinitePronoun := { biri with form := "hiçbiri" }
 def hiçKimse : IndefinitePronoun := hiç kimse
 
 /-- The *hiç*-series, with both person members first. -/
-def hiçSeries : List IndefinitePronoun := hiçbiri :: hiçKimse :: (birSeries.drop 1).map hiç
+def hiçSeries : IndefinitePronoun.Series :=
+  ⟨"hiç", hiçbiri :: hiçKimse :: (birSeries.members.drop 1).map hiç⟩
 
 /-! ### The herhangi-series -/
 
@@ -97,6 +98,6 @@ def herhangi (p : IndefinitePronoun) : IndefinitePronoun :=
 def herhangiBiri : IndefinitePronoun := herhangi biri
 
 /-- The *herhangi*-series, listed from person to determiner. -/
-def herhangiSeries : List IndefinitePronoun := birSeries.map herhangi
+def herhangiSeries : IndefinitePronoun.Series := ⟨"herhangi", birSeries.members.map herhangi⟩
 
 end Turkish.Indefinites

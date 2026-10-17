@@ -16,8 +16,11 @@ choice has no series and is expressed by the adjective *nebismieri* 'arbitrary, 
 
 ## Main definitions
 
-* `Georgian.Indefinites.γac`, `Georgian.Indefinites.me`: the two non-negative series.
-* `Georgian.Indefinites.negative`: the negative series with a given prefix.
+* `Georgian.Indefinites.γac`, `Georgian.Indefinites.me`: the markers of the two non-negative
+  series.
+* `Georgian.Indefinites.negative`: the marker of a negative series with a given prefix.
+* `Georgian.Indefinites.γacSeries`, `meSeries`, `araSeries`, `veraSeries`, `nuraSeries`: the
+  series.
 
 ## Implementation notes
 
@@ -38,7 +41,7 @@ namespace Georgian.Indefinites
 
 open Pronouns
 
-/-! ### The series -/
+/-! ### The markers -/
 
 /-- The *-γac*-series attaches the specific suffix *-γac* to the interrogative. -/
 def γac : InterrogativePronoun → IndefinitePronoun :=
@@ -73,28 +76,30 @@ def vinMe : IndefinitePronoun := me vin
 /-- *ara-vin* 'nobody' is the neutral negative member of *vin* 'who'. -/
 def araVin : IndefinitePronoun := negative "ara" vin
 
-/-! ### The paradigm -/
+/-! ### The series -/
 
 /-- The *-γac*-series has a member for each interrogative, listed from person to determiner. -/
-def γacSeries : List IndefinitePronoun :=
-  [viγac, γac ra, γac sad, γac rodis, γac rogor, γac romeli]
+def γacSeries : IndefinitePronoun.Series :=
+  ⟨"-γac", [viγac, γac ra, γac sad, γac rodis, γac rogor, γac romeli]⟩
 
 /-- The *-me*-series has a member for each interrogative, listed from person to determiner. -/
-def meSeries : List IndefinitePronoun :=
-  [vinMe, me ra, me sad, me rodis, me rogor, me romeli]
+def meSeries : IndefinitePronoun.Series :=
+  ⟨"-me", [vinMe, me ra, me sad, me rodis, me rogor, me romeli]⟩
 
 /-- The *ara*-series has two thing members, *ara-peri* and the older *ara-ra*, and no manner
 member; *ar-sad* 'nowhere' takes the short prefix and *ara-sodes* 'never' is built on *sodes*. -/
-def araSeries : List IndefinitePronoun :=
-  [araVin, peri "ara", negative "ara" ra, negative "ar" sad,
-    { negative "ara" rodis with form := "ara-sodes" }, vitari "ara"]
+def araSeries : IndefinitePronoun.Series :=
+  ⟨"ara-", [araVin, peri "ara", negative "ara" ra, negative "ar" sad,
+    { negative "ara" rodis with form := "ara-sodes" }, vitari "ara"]⟩
 
 /-- The potential series has the members *vera-vin* 'nobody', *vera-peri* 'nothing' and
 *vera-vitari* 'no'. -/
-def veraSeries : List IndefinitePronoun := [negative "vera" vin, peri "vera", vitari "vera"]
+def veraSeries : IndefinitePronoun.Series :=
+  ⟨"vera-", [negative "vera" vin, peri "vera", vitari "vera"]⟩
 
 /-- The prohibitive series has the members *nura-vin* 'nobody', *nura-peri* 'nothing' and
 *nura-vitari* 'no'. -/
-def nuraSeries : List IndefinitePronoun := [negative "nura" vin, peri "nura", vitari "nura"]
+def nuraSeries : IndefinitePronoun.Series :=
+  ⟨"nura-", [negative "nura" vin, peri "nura", vitari "nura"]⟩
 
 end Georgian.Indefinites

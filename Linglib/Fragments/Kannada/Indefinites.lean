@@ -10,7 +10,7 @@ three series on *yaaru* 'who': *yaar-oo* 'someone', with *-oo* 'or', for a refer
 presupposes but cannot identify; *yaar-aadaruu* 'anyone', with *-aadaruu* 'even if it be', for
 irrealis non-specific reference and in questions and conditionals; and *yaar-uu*, with *-uu*
 'also, even', under negation, in comparatives and for free choice. No series is used for a
-referent the speaker has in mind.
+referent the speaker has in mind. Each series is entered with its person member.
 
 ## References
 
@@ -22,27 +22,33 @@ referent the speaker has in mind.
 
 namespace Kannada.Indefinites
 
-/-- The *-oo* series, *yaar-oo* 'someone': for a referent the speaker cannot identify. -/
-def ooEntry : IndefinitePronoun where
+/-- *yaar-oo* 'someone'. -/
+def yaarOo : IndefinitePronoun where
   form := "yaar-oo"
   ontology := .person
   basis := .interrogative
 
-/-- The *-aadaruu* series, *yaar-aadaruu* 'anyone': for irrealis non-specific reference and in
-questions and conditionals. -/
-def aadaruuEntry : IndefinitePronoun where
+/-- *yaar-aadaruu* 'anyone'. -/
+def yaarAadaruu : IndefinitePronoun where
   form := "yaar-aadaruu"
   ontology := .person
   basis := .interrogative
 
-/-- The *-uu* series, *yaar-uu* 'anyone, no one': under both negations, in comparatives and
-for free choice. -/
-def uuEntry : IndefinitePronoun where
+/-- *yaar-uu* 'anyone, no one'. -/
+def yaarUu : IndefinitePronoun where
   form := "yaar-uu"
   ontology := .person
   basis := .interrogative
 
-/-- The Kannada paradigm: no series for a referent the speaker has in mind. -/
-def paradigm : List IndefinitePronoun := [ooEntry, aadaruuEntry, uuEntry]
+/-! ### The series -/
+
+/-- The *-oo* series. -/
+def ooSeries : IndefinitePronoun.Series := ⟨"-oo", [yaarOo]⟩
+
+/-- The *-aadaruu* series. -/
+def aadaruuSeries : IndefinitePronoun.Series := ⟨"-aadaruu", [yaarAadaruu]⟩
+
+/-- The *-uu* series. -/
+def uuSeries : IndefinitePronoun.Series := ⟨"-uu", [yaarUu]⟩
 
 end Kannada.Indefinites

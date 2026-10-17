@@ -13,6 +13,8 @@ functions to indirect negation. *Irgend-* is excluded where the speaker has the 
 mind and under direct negation and covers the rest of the map, a distribution it reached from
 an earlier non-specific use, as Aloni and Port describe; the two series overlap from specific
 unknown to indirect negation. The determiner *irgendein* is `German.PolarityItems.irgendein`.
+Each series is entered with its person member, *je* with its temporal one, and named as
+Haspelmath names it.
 
 ## References
 
@@ -25,41 +27,51 @@ unknown to indirect negation. The determiner *irgendein* is `German.PolarityItem
 
 namespace German.Indefinites
 
-/-- *Jemand* 'someone', like *etwas* 'something', is built on a generic noun and runs from the
-specific functions through questions and conditionals to indirect negation. -/
-def jemandEntry : IndefinitePronoun where
+/-- *jemand* 'someone', built on a generic noun. -/
+def jemand : IndefinitePronoun where
   form := "jemand"
   ontology := .person
   basis := .genericNoun
 
-/-- *Irgendwer*, of the *irgend-* series, is built with a dedicated prefix and is used
-everywhere on the map but for a referent the speaker has in mind and under direct negation. -/
-def irgendEntry : IndefinitePronoun where
+/-- *irgendwer*, built with the dedicated prefix *irgend-*. -/
+def irgendwer : IndefinitePronoun where
   form := "irgendwer"
   ontology := .person
   basis := .special
 
-/-- Temporal *je* 'ever' is used in questions, conditionals, indirect negation and the
-comparative. -/
-def jeEntry : IndefinitePronoun where
+/-- Temporal *je* 'ever'. -/
+def je : IndefinitePronoun where
   form := "je"
   ontology := .time
   basis := .special
 
-/-- *Jeder* 'any, every' is used in indirect negation, the comparative and free choice. -/
-def jederEntry : IndefinitePronoun where
+/-- *jeder* 'any, every'. -/
+def jeder : IndefinitePronoun where
   form := "jeder"
   ontology := .person
   basis := .special
 
-/-- *Niemand* 'nobody', like *nichts* 'nothing', is used under direct negation. -/
-def niemandEntry : IndefinitePronoun where
+/-- *niemand* 'nobody', built on a generic noun. -/
+def niemand : IndefinitePronoun where
   form := "niemand"
   ontology := .person
   basis := .genericNoun
 
-/-- The German paradigm lists the five series. -/
-def paradigm : List IndefinitePronoun :=
-  [jemandEntry, irgendEntry, jeEntry, jederEntry, niemandEntry]
+/-! ### The series -/
+
+/-- The series of *jemand* and *etwas*, which Haspelmath names the *etwas-* series. -/
+def etwasSeries : IndefinitePronoun.Series := ⟨"etwas-", [jemand]⟩
+
+/-- The *irgend-* series. -/
+def irgendSeries : IndefinitePronoun.Series := ⟨"irgend-", [irgendwer]⟩
+
+/-- The series of temporal *je*. -/
+def jeSeries : IndefinitePronoun.Series := ⟨"je", [je]⟩
+
+/-- The series of *jeder*. -/
+def jederSeries : IndefinitePronoun.Series := ⟨"jeder", [jeder]⟩
+
+/-- The negative *n-* series of *niemand* and *nichts*. -/
+def nSeries : IndefinitePronoun.Series := ⟨"n-", [niemand]⟩
 
 end German.Indefinites

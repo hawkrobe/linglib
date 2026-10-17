@@ -388,16 +388,17 @@ theorem sample_instantiates_ordConnected {V E : Type*} (v x : V) :
 unmarked one, Georgian *-γac* the specific, Russian *-nibud'* the non-specific, German *irgend-*
 the epistemic, Russian *koe-* the specific known and Kannada *-oo* the specific unknown. -/
 theorem examples :
-    (∃ s ∈ Haspelmath1997.italian, s.label = "qualche-" ∧ Instantiates s .unmarked) ∧
-      (∃ s ∈ Haspelmath1997.georgian, s.label = "-γac" ∧ Instantiates s .specific) ∧
+    (∃ s ∈ Haspelmath1997.italian, s.name = "qualche-" ∧ Instantiates s .unmarked) ∧
+      (∃ s ∈ Haspelmath1997.georgian,
+        s.toSeries = Georgian.Indefinites.γacSeries ∧ Instantiates s .specific) ∧
       (∃ s ∈ Haspelmath1997.russian,
-        s.pronoun = Russian.Indefinites.ktoNibud ∧ Instantiates s .nonSpecific) ∧
+        s.toSeries = Russian.Indefinites.nibudSeries ∧ Instantiates s .nonSpecific) ∧
       (∃ s ∈ Haspelmath1997.german,
-        s.pronoun = German.Indefinites.irgendEntry ∧ Instantiates s .epistemic) ∧
+        s.toSeries = German.Indefinites.irgendSeries ∧ Instantiates s .epistemic) ∧
       (∃ s ∈ Haspelmath1997.russian,
-        s.pronoun = Russian.Indefinites.koeKto ∧ Instantiates s .specificKnown) ∧
+        s.toSeries = Russian.Indefinites.koeSeries ∧ Instantiates s .specificKnown) ∧
       ∃ s ∈ Haspelmath1997.kannada,
-        s.pronoun = Kannada.Indefinites.ooEntry ∧ Instantiates s .specificUnknown := by
+        s.toSeries = Kannada.Indefinites.ooSeries ∧ Instantiates s .specificUnknown := by
   decide
 
 end DeganoAloni2025
