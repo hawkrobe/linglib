@@ -43,8 +43,7 @@ rule, whose binary case is computed here from the convolution of two Gaussians.
 * `ProbabilityTheory.choiceProb_pi_eq_lintegral`: for independent utilities, the choice
   probability as an integral against
   `ν i`.
-* `ProbabilityTheory.sum_choiceProb_pi`: for independent atomless noise the choice probabilities
-  sum to one.
+* `ProbabilityTheory.sum_choiceProb`: when ties are null the choice probabilities sum to one.
 * `ProbabilityTheory.choiceProb_pi_gumbelMeasure`: under independent Gumbel utilities the choice
   probabilities are softmax.
 * `ProbabilityTheory.choiceProb_pi_gaussianReal`: two alternatives with independent Gaussian
@@ -91,6 +90,23 @@ theorem choiceProb_map {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) {U : �
   rw [choiceProb, Measure.map_apply hU (measurableSet_setOf_forall_ne_lt i)]
   rfl
 
+/-- When ties have probability zero the choice probabilities of the alternatives sum to one, as for
+independent atomless noise (`Measure.pi_setOf_apply_eq_apply`). -/
+theorem sum_choiceProb [Nonempty ι] (μ : Measure (ι → ℝ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ j k, j ≠ k → μ {x | x j = x k} = 0) : ∑ i, choiceProb μ i = 1 := by
+  have hdisj : Pairwise (Function.onFun Disjoint fun i ↦ {x : ι → ℝ | ∀ j, j ≠ i → x j < x i}) :=
+    fun i k hik ↦ Set.disjoint_left.2 fun x hi hk ↦ lt_asymm (hi k hik.symm) (hk i hik)
+  simp only [choiceProb]
+  rw [← measure_biUnion_finset (fun i _ k _ hik ↦ hdisj hik) fun i _ ↦
+      measurableSet_setOf_forall_ne_lt i, ← measure_univ (μ := μ)]
+  refine measure_congr (ae_eq_univ.2 (measure_mono_null (t := ⋃ j, ⋃ k, ⋃ (_ : j ≠ k),
+    {x : ι → ℝ | x j = x k}) (fun x hx ↦ ?_) ?_))
+  · by_contra hinj
+    simp only [mem_iUnion, not_exists] at hinj
+    obtain ⟨i, hi⟩ := Finite.exists_max x
+    exact hx (mem_iUnion₂.2 ⟨i, mem_univ i, fun j hj ↦ (hi j).lt_of_ne fun h ↦ hinj j i hj h⟩)
+  · exact measure_iUnion_null fun j ↦ measure_iUnion_null fun k ↦ measure_iUnion_null (hμ j k)
+
 variable [DecidableEq ι]
 
 /-- The choice probability of `i` is the integral, against the law of the `i`-th utility, of the
@@ -118,25 +134,6 @@ theorem choiceProb_pi_eq_lintegral_cdf (ν : ι → Measure ℝ) [∀ j, IsProba
   refine lintegral_congr fun x ↦ ?_
   rw [ENNReal.ofReal_prod_of_nonneg fun j _ ↦ cdf_nonneg _ _]
   exact prod_congr rfl fun j _ ↦ by rw [ofReal_cdf, measure_congr Iio_ae_eq_Iic]
-
-variable (ν : ι → Measure ℝ) [∀ j, IsProbabilityMeasure (ν j)] [∀ j, NullSingletonClass (ν j)]
-
-/-- For atomless noise the choice probabilities of the alternatives sum to one. -/
-theorem sum_choiceProb_pi [Nonempty ι] : ∑ i, choiceProb (Measure.pi ν) i = 1 := by
-  have hdisj : Pairwise (Function.onFun Disjoint fun i ↦ {x : ι → ℝ | ∀ j, j ≠ i → x j < x i}) :=
-    fun i k hik ↦ Set.disjoint_left.2 fun x hi hk ↦ lt_asymm (hi k hik.symm) (hk i hik)
-  simp only [choiceProb]
-  rw [← measure_biUnion_finset (fun i _ k _ hik ↦ hdisj hik) fun i _ ↦
-      measurableSet_setOf_forall_ne_lt i,
-    ← measure_univ (μ := Measure.pi ν)]
-  refine measure_congr (ae_eq_univ.2 (measure_mono_null (t := ⋃ j, ⋃ k, ⋃ (_ : j ≠ k),
-    {x : ι → ℝ | x j = x k}) (fun x hx ↦ ?_) ?_))
-  · by_contra hinj
-    simp only [mem_iUnion, not_exists] at hinj
-    obtain ⟨i, hi⟩ := Finite.exists_max x
-    exact hx (mem_iUnion₂.2 ⟨i, mem_univ i, fun j hj ↦ (hi j).lt_of_ne fun h ↦ hinj j i hj h⟩)
-  · exact measure_iUnion_null fun j ↦ measure_iUnion_null fun k ↦ measure_iUnion_null fun hjk ↦
-      Measure.pi_setOf_apply_eq_apply ν hjk
 
 end ChoiceProb
 
