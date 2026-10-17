@@ -161,7 +161,7 @@ abbrev Formula (Pred C : Type*) := Trivalent.Formula (Atom Pred C)
 
 /-- The instance `Pa ∧ a I_P b → Pb` of the tolerance principle (1). -/
 def tolerance (P : Pred) (a b : C) : Formula Pred C :=
-  Trivalent.Formula.imp (.conj (.atom (.pred P a)) (.atom (.sim P a b))) (.atom (.pred P b))
+  Trivalent.Formula.cond (.conj (.atom (.pred P a)) (.atom (.sim P a b))) (.atom (.pred P b))
 
 namespace TModel
 
@@ -176,6 +176,8 @@ def Realize (M : TModel Pred C D) : Mode → Formula Pred C → Prop
   | .tolerant, .atom (.pred P a) => ◇[M.sim P] (M.interp P) (M.const a)
   | m, .neg φ => ¬ M.Realize m.dual φ
   | m, .conj φ ψ => M.Realize m φ ∧ M.Realize m ψ
+  | m, .disj φ ψ => M.Realize m φ ∨ M.Realize m ψ
+  | m, .cond φ ψ => M.Realize m.dual φ → M.Realize m ψ
 
 variable (M : TModel Pred C D)
 
@@ -198,13 +200,11 @@ variable (M : TModel Pred C D)
     M.Realize m (.conj φ ψ) ↔ M.Realize m φ ∧ M.Realize m ψ := Iff.rfl
 
 @[simp] theorem realize_disj (m : Mode) (φ ψ : Formula Pred C) :
-    M.Realize m (φ.disj ψ) ↔ M.Realize m φ ∨ M.Realize m ψ := by
-  simp [Trivalent.Formula.disj, or_iff_not_imp_left]
+    M.Realize m (φ.disj ψ) ↔ M.Realize m φ ∨ M.Realize m ψ := Iff.rfl
 
 /-- `M ⊨ᵐ φ → ψ` iff `M ⊨ⁿ ψ` whenever `M ⊨^{d(m)} φ` (the proof of Fact 3). -/
-@[simp] theorem realize_imp (m : Mode) (φ ψ : Formula Pred C) :
-    M.Realize m (φ.imp ψ) ↔ (M.Realize m.dual φ → M.Realize m ψ) := by
-  simp [Trivalent.Formula.imp]
+@[simp] theorem realize_cond (m : Mode) (φ ψ : Formula Pred C) :
+    M.Realize m (φ.cond ψ) ↔ (M.Realize m.dual φ → M.Realize m ψ) := Iff.rfl
 
 /-- The conjunction `⋀(φ, Γ)` of a nonempty list. -/
 @[simp] theorem realize_foldr_conj (m : Mode) (φ : Formula Pred C) (Γ : List (Formula Pred C)) :
@@ -230,6 +230,11 @@ instance decidableRealize [Fintype D] [∀ P x y, Decidable (x ~[M.sim P] y)]
     inferInstanceAs (Decidable (◇[M.sim P] (M.interp P) (M.const a)))
   | m, .neg φ => @instDecidableNot _ (decidableRealize m.dual φ)
   | m, .conj φ ψ => @instDecidableAnd _ _ (decidableRealize m φ) (decidableRealize m ψ)
+  | m, .disj φ ψ => @instDecidableOr _ _ (decidableRealize m φ) (decidableRealize m ψ)
+  | m, .cond φ ψ =>
+    haveI := decidableRealize m.dual φ
+    haveI := decidableRealize m ψ
+    inferInstanceAs (Decidable (M.Realize m.dual φ → M.Realize m ψ))
 
 /-- Strict truth implies classical truth, which implies tolerant truth (Lemma 1). -/
 theorem realize_mono (φ : Formula Pred C) : Monotone (M.Realize · φ) := by
@@ -245,6 +250,9 @@ theorem realize_mono (φ : Formula Pred C) : Monotone (M.Realize · φ) := by
     | neg ψ ih => exact ⟨fun h hc ↦ h (ih.2 hc), fun h hs ↦ h (ih.1 hs)⟩
     | conj ψ χ ihψ ihχ =>
       exact ⟨fun h ↦ ⟨ihψ.1 h.1, ihχ.1 h.2⟩, fun h ↦ ⟨ihψ.2 h.1, ihχ.2 h.2⟩⟩
+    | disj ψ χ ihψ ihχ => exact ⟨Or.imp ihψ.1 ihχ.1, Or.imp ihψ.2 ihχ.2⟩
+    | cond ψ χ ihψ ihχ =>
+      exact ⟨fun h hc ↦ ihχ.1 (h (ihψ.2 hc)), fun h hs ↦ ihχ.2 (h (ihψ.1 hs))⟩
   intro m m' hm x
   cases m <;> cases m' <;> first
     | exact x
@@ -379,9 +387,9 @@ theorem consequence_iff_dual_self (h : m = n.dual) :
 /-- In sequent form, the deduction theorem for self-dual relations moves a premise into the
 antecedent of a conclusion when `m = d(n)`. -/
 theorem Consequence.cons_cons_iff (h : m = n.dual) :
-    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Consequence m n Γ (φ.imp ψ :: Δ) := by
+    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Consequence m n Γ (φ.cond ψ :: Δ) := by
   subst h
-  exact mixedConsequence_cons_cons_iff fun M ↦ M.2.realize_imp n φ ψ
+  exact mixedConsequence_cons_cons_iff fun M ↦ M.2.realize_cond n φ ψ
 
 /-- Premises are read conjunctively and conclusions disjunctively, so `φ, Γ ⊨ᵐⁿ ψ, Δ` iff
 `⋀(φ, Γ) ⊨ᵐⁿ ⋁(ψ, Δ)`. -/
@@ -392,7 +400,7 @@ theorem consequence_cons_cons_iff_foldr :
 /-- When `m = d(n)`, `Γ ⊨ᵐⁿ Δ` iff `⊨ᵐⁿ ⋀Γ → ⋁Δ`, for the nonempty finite sides the language
 can conjoin and disjoin (Lemma 10, right to left; footnote 13). -/
 theorem Consequence.iff_valid_imp (h : m = n.dual) :
-    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Valid n ((Γ.foldr .conj φ).imp (Δ.foldr .disj ψ)) :=
+    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Valid n ((Γ.foldr .conj φ).cond (Δ.foldr .disj ψ)) :=
   consequence_cons_cons_iff_foldr.trans <|
     (Consequence.cons_cons_iff h).trans consequence_nil_singleton
 
@@ -412,7 +420,7 @@ theorem isTrans_consequence (h : n ≤ m) :
 /-- The tolerance principle is tolerantly valid (Fact 2). -/
 theorem tolerance_valid (P : Pred) (a b : C) : Valid .tolerant (tolerance P a b) := by
   rintro ⟨D, M⟩
-  simp only [TModels.Realize, tolerance, TModel.realize_imp, TModel.realize_conj,
+  simp only [TModels.Realize, tolerance, TModel.realize_cond, TModel.realize_conj,
     TModel.realize_sim, Mode.dual_tolerant, TModel.realize_strict_pred,
     TModel.realize_tolerant_pred]
   exact fun ⟨hs, hab⟩ ↦ ⟨M.const b, (M.sim P).refl _, hs _ hab⟩
@@ -457,7 +465,7 @@ def IsRestricted : Formula Pred C → Prop
   | .atom (.pred _ _) => True
   | .atom (.sim _ _ _) => False
   | .neg φ => IsRestricted φ
-  | .conj φ ψ => IsRestricted φ ∧ IsRestricted ψ
+  | .conj φ ψ | .disj φ ψ | .cond φ ψ => IsRestricted φ ∧ IsRestricted ψ
 
 namespace TModel
 
@@ -478,7 +486,7 @@ theorem identity_realize (m : Mode) (φ : Formula Pred C) :
     | pred P a => cases m <;> simp [identity, Box, Diamond, SetRel.mem_id]
     | sim P a b => simp
   | neg ψ ih => simp [ih]
-  | conj ψ χ ihψ ihχ => simp [ihψ, ihχ]
+  | conj ψ χ ihψ ihχ | disj ψ χ ihψ ihχ | cond ψ χ ihψ ihχ => simp [ihψ, ihχ]
 
 /-- The identity model agrees classically with `M` on the restricted vocabulary. -/
 theorem identity_realize_classical {φ : Formula Pred C} (hφ : IsRestricted φ) :
@@ -489,7 +497,7 @@ theorem identity_realize_classical {φ : Formula Pred C} (hφ : IsRestricted φ)
     | pred P a => exact Iff.rfl
     | sim P a b => exact hφ.elim
   | neg ψ ih => simp [ih hφ]
-  | conj ψ χ ihψ ihχ => simp [ihψ hφ.1, ihχ hφ.2]
+  | conj ψ χ ihψ ihχ | disj ψ χ ihψ ihχ | cond ψ χ ihψ ihχ => simp [ihψ hφ.1, ihχ hφ.2]
 
 end TModel
 
@@ -525,6 +533,9 @@ theorem allBorderline_realize (hφ : IsRestricted φ) :
     | sim P a b => exact hφ.elim
   | neg ψ ih => exact ⟨fun h ↦ h (ih hφ).2, (ih hφ).1⟩
   | conj ψ χ ihψ ihχ => exact ⟨fun h ↦ (ihψ hφ.1).1 h.1, (ihψ hφ.1).2, (ihχ hφ.2).2⟩
+  | disj ψ χ ihψ ihχ =>
+    exact ⟨fun h ↦ h.elim (ihψ hφ.1).1 (ihχ hφ.2).1, .inl (ihψ hφ.1).2⟩
+  | cond ψ χ ihψ ihχ => exact ⟨fun h ↦ (ihχ hφ.2).1 (h (ihψ hφ.1).2), fun _ ↦ (ihχ hφ.2).2⟩
 
 /-- No restricted formula is strictly valid (Theorem 2). -/
 theorem not_valid_strict (hφ : IsRestricted φ) : ¬ Valid .strict φ :=
@@ -569,7 +580,8 @@ noncomputable def toMV (M : TModel Pred C D) : Trivalent.Model (Atom Pred C)
 
 /-- Tolerant truth is LP-truth and strict truth K3-truth in `toMV M` (Lemma 4). -/
 theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
-    (M.Realize .tolerant φ ↔ toMV M ⊨[.lp] φ) ∧ (M.Realize .strict φ ↔ toMV M ⊨[.k3] φ) := by
+    (M.Realize .tolerant φ ↔ toMV M ⊨[.strongKleene, .lp] φ) ∧
+      (M.Realize .strict φ ↔ toMV M ⊨[.strongKleene, .k3] φ) := by
   induction φ with
   | atom α =>
     cases α with
@@ -594,6 +606,13 @@ theorem TModel.realize_toMV (M : TModel Pred C D) (φ : Formula Pred C) :
   | conj ψ χ ihψ ihχ =>
     simp only [TModel.realize_conj, Trivalent.Formula.realize_conj]
     exact ⟨and_congr ihψ.1 ihχ.1, and_congr ihψ.2 ihχ.2⟩
+  | disj ψ χ ihψ ihχ =>
+    simp only [TModel.realize_disj, Trivalent.Formula.realize_disj]
+    exact ⟨or_congr ihψ.1 ihχ.1, or_congr ihψ.2 ihχ.2⟩
+  | cond ψ χ ihψ ihχ =>
+    simp only [TModel.realize_cond, Trivalent.Formula.realize_cond, Mode.dual_tolerant,
+      Mode.dual_strict, Trivalent.Designation.dual_lp, Trivalent.Designation.dual_k3]
+    exact ⟨imp_congr ihψ.2 ihχ.1, imp_congr ihψ.1 ihχ.2⟩
 
 /-- The T-model of Lemma 5 lives on the doubled domain, where `(a, false)` is `a` and
 `(a, true)` its double `a'`, indifferent from each other and from nothing else; `a` is `P` when
@@ -609,7 +628,8 @@ def ofMV (v : Trivalent.Model (Atom Pred C)) : TModel Pred C (C × Bool) where
 /-- On the restricted vocabulary, LP-truth in `v` is tolerant truth and K3-truth strict truth in
 `ofMV v` (Lemma 5). -/
 theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ) :
-    ((ofMV v).Realize .tolerant φ ↔ v ⊨[.lp] φ) ∧ ((ofMV v).Realize .strict φ ↔ v ⊨[.k3] φ) := by
+    ((ofMV v).Realize .tolerant φ ↔ v ⊨[.strongKleene, .lp] φ) ∧
+      ((ofMV v).Realize .strict φ ↔ v ⊨[.strongKleene, .k3] φ) := by
   induction φ with
   | atom α =>
     cases α with
@@ -633,12 +653,19 @@ theorem ofMV_realize (v : Trivalent.Model (Atom Pred C)) (hφ : IsRestricted φ)
   | conj ψ χ ihψ ihχ =>
     simp only [TModel.realize_conj, Trivalent.Formula.realize_conj]
     exact ⟨and_congr (ihψ hφ.1).1 (ihχ hφ.2).1, and_congr (ihψ hφ.1).2 (ihχ hφ.2).2⟩
+  | disj ψ χ ihψ ihχ =>
+    simp only [TModel.realize_disj, Trivalent.Formula.realize_disj]
+    exact ⟨or_congr (ihψ hφ.1).1 (ihχ hφ.2).1, or_congr (ihψ hφ.1).2 (ihχ hφ.2).2⟩
+  | cond ψ χ ihψ ihχ =>
+    simp only [TModel.realize_cond, Trivalent.Formula.realize_cond, Mode.dual_tolerant,
+      Mode.dual_strict, Trivalent.Designation.dual_lp, Trivalent.Designation.dual_k3]
+    exact ⟨imp_congr (ihψ hφ.1).2 (ihχ hφ.2).1, imp_congr (ihψ hφ.1).1 (ihχ hφ.2).2⟩
 
 /-- On the restricted vocabulary, tolerant consequence is LP-consequence, by the model
 correspondences of Lemmas 4 and 5 (Theorem 3). -/
 theorem consequence_tolerant_iff_lp (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
     (hΔ : ∀ δ ∈ Δ, IsRestricted δ) :
-    Consequence .tolerant .tolerant Γ Δ ↔ Trivalent.Consequence .lp .lp Γ Δ :=
+    Consequence .tolerant .tolerant Γ Δ ↔ Trivalent.Consequence .strongKleene .lp .lp Γ Δ :=
   ⟨fun h ↦ h.comap (fun v ↦ ⟨_, ofMV v⟩) (fun v γ hγ ↦ (ofMV_realize v (hΓ γ hγ)).1.2)
       fun v δ hδ ↦ (ofMV_realize v (hΔ δ hδ)).1.1,
     fun h ↦ h.comap (fun M ↦ toMV M.2) (fun M γ _ ↦ (M.2.realize_toMV γ).1.1)
@@ -647,7 +674,7 @@ theorem consequence_tolerant_iff_lp (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
 /-- On the restricted vocabulary, strict consequence is K3-consequence (Theorem 3). -/
 theorem consequence_strict_iff_k3 (hΓ : ∀ γ ∈ Γ, IsRestricted γ)
     (hΔ : ∀ δ ∈ Δ, IsRestricted δ) :
-    Consequence .strict .strict Γ Δ ↔ Trivalent.Consequence .k3 .k3 Γ Δ :=
+    Consequence .strict .strict Γ Δ ↔ Trivalent.Consequence .strongKleene .k3 .k3 Γ Δ :=
   ⟨fun h ↦ h.comap (fun v ↦ ⟨_, ofMV v⟩) (fun v γ hγ ↦ (ofMV_realize v (hΓ γ hγ)).2.2)
       fun v δ hδ ↦ (ofMV_realize v (hΔ δ hδ)).2.1,
     fun h ↦ h.comap (fun M ↦ toMV M.2) (fun M γ _ ↦ (M.2.realize_toMV γ).2.1)
@@ -669,7 +696,7 @@ against the conclusion `¬ a I_P a`, which nothing satisfies, they are `m`- and
 `d(n)`-unsatisfiability, which a contradiction and the negated tolerance principle separate. -/
 theorem deductionTheorem_iff {m n : Mode} [Nonempty Pred] [Nontrivial C] :
     (∀ (φ ψ : Formula Pred C) Γ Δ, Consequence m n (φ :: Γ) (ψ :: Δ) ↔
-      Valid n ((Γ.foldr .conj φ).imp (Δ.foldr .disj ψ))) ↔ m = n.dual := by
+      Valid n ((Γ.foldr .conj φ).cond (Δ.foldr .disj ψ))) ↔ m = n.dual := by
   refine ⟨fun h ↦ ?_, fun h _ _ _ _ ↦ Consequence.iff_valid_imp h⟩
   obtain ⟨P⟩ := ‹Nonempty Pred›
   obtain ⟨a, b, hab⟩ := exists_pair_ne C
@@ -701,7 +728,7 @@ theorem deductionTheorem_iff {m n : Mode} [Nonempty Pred] [Nontrivial C] :
 coincide with `cc` and `st` (§3.4). -/
 theorem Consequence.iff_valid_imp_of_restricted (hΓ : ∀ γ ∈ φ :: Γ, IsRestricted γ)
     (hΔ : ∀ δ ∈ ψ :: Δ, IsRestricted δ) (hm : m ≤ .classical) (hn : .classical ≤ n) :
-    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Valid n ((Γ.foldr .conj φ).imp (Δ.foldr .disj ψ)) := by
+    Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Valid n ((Γ.foldr .conj φ).cond (Δ.foldr .disj ψ)) := by
   have hdn : n.dual ≤ .classical := by cases n <;> first | decide | exact absurd hn (by decide)
   rw [Consequence.restricted_iff hΓ hΔ hm hn, ← Consequence.restricted_iff hΓ hΔ hdn hn]
   exact Consequence.iff_valid_imp rfl
@@ -919,7 +946,7 @@ theorem st_version2 (n : ℕ) :
     have hs : M.Realize .classical (.atom (.sim () k.castSucc k.succ)) :=
       h _ (List.mem_cons_of_mem _
         (List.mem_append_left _ (List.mem_map_of_mem (List.mem_finRange k))))
-    rw [tolerance, M.realize_imp, Mode.dual_classical] at ht
+    rw [tolerance, M.realize_cond, Mode.dual_classical] at ht
     exact ht ⟨hk, hs⟩
   suffices ∀ k (hk : k ≤ n), M.Realize .classical (.atom (.pred () ⟨k, by omega⟩)) from
     this n le_rfl
@@ -932,7 +959,7 @@ theorem st_version2 (n : ℕ) :
 strictly true (§3.6). -/
 theorem not_series_realize_strict_tolerance (hi : 0 < i) (hin : i < n) :
     ¬ (series n i).Realize .strict (tolerance () ⟨i - 1, by omega⟩ ⟨i, hin⟩) := by
-  simp only [tolerance, TModel.realize_imp, TModel.realize_conj, TModel.realize_sim,
+  simp only [tolerance, TModel.realize_cond, TModel.realize_conj, TModel.realize_sim,
     Mode.dual_strict, series_realize_tolerant hi, series_realize_strict hin]
   simp [series]
   omega

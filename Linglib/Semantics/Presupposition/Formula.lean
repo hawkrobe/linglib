@@ -7,33 +7,37 @@ public import Linglib.Semantics.Dynamic.Partial
 
 This file defines the formulas on which theories of presupposition projection are compared, the
 propositional fragment of the language L of Schlenker's Appendix C, which is also the language of
-Kalomoiros's System 1 (Definition 3.4.1). A formula is built from atoms and
-triggers by negation and the binary connectives of `Connective`; a trigger `trigger p p'`
-presupposes `p` and asserts `p'`, and its classical meaning is the conjunction of the two
-(`Formula.truth`, C.2).
+Kalomoiros's System 1 (Definition 3.4.1). A formula is built from atoms and triggers by negation and
+the binary connectives of `Connective`; a trigger `trigger p p'` presupposes `p` and asserts `p'`,
+and its classical meaning is the conjunction of the two (`Formula.truth`, C.2).
 
-Each binary connective is interpreted classically (`Connective.eval`), by Peters' filtering
-connectives (`Connective.filter`), and by Heim's context change potentials, with Beaver's
-disjunction (`Connective.ccp`). The fold `Formula.filter` evaluates a formula into
-a trivalent proposition `W → SignType`, and `Formula.ccp` into `CCP.Partial`, sending an atom or a
-trigger to the update of its trivalent meaning. Where the filtering evaluation is defined it is the
-classical meaning (`Formula.filter_eq_ofProp`). The context change potential admits a context iff
-the filtering evaluation is defined throughout it, and it updates the context to its worlds at
-which the formula is classically true (`Formula.admits_ccp_iff`, `Formula.ccp_get`).
+Each binary connective is interpreted classically (`Connective.eval`), by the truth table of any
+trivalent connectives (`Connective.table`), and by Heim's context change potentials, with Beaver's
+disjunction (`Connective.ccp`). The fold `Formula.eval` evaluates a formula into a trivalent
+proposition `W → SignType` under given connectives, the Strong Kleene ones for `Formula.strong` and
+Peters' filtering ones for `Formula.filter`, and `Formula.ccp` evaluates it into `CCP.Partial`,
+sending an atom or a trigger to the update of its trivalent meaning. Where the filtering evaluation
+is defined it is the classical meaning (`Formula.filter_eq_ofProp`). The context change potential
+admits a context iff the filtering evaluation is defined throughout it, and it updates the context
+to its worlds at which the formula is classically true (`Formula.admits_ccp_iff`,
+`Formula.ccp_get`).
 
 ## Main definitions
 
 * `Presupposition.Formula`: atoms, triggers, negation and the binary connectives.
 * `Presupposition.Formula.truth`: the classical meaning at an interpretation of the atoms.
-* `Presupposition.Formula.strong`, `Presupposition.Formula.filter`, `Presupposition.Formula.ccp`:
-  the Strong Kleene, filtering and dynamic evaluations.
+* `Presupposition.Formula.eval`: the evaluation under trivalent connectives, with
+  `Presupposition.Formula.strong` and `Presupposition.Formula.filter` its Strong Kleene and
+  filtering instances.
+* `Presupposition.Formula.ccp`: the dynamic evaluation.
 
 ## Implementation notes
 
-The interpretation of the atoms is a function to `Set W`. Schlenker's Expressivity (C.3),
-that every proposition is denoted by an atom, is not built in: the theories that need it quantify
-over propositions where the paper quantifies over expressions. The conditional is material, as in
-the paper, and its Strong Kleene clause is by interdefinability from negation and disjunction.
+The interpretation of the atoms is a function to `Set W`, and a trigger's trivalent meaning is the
+conditional event of its assertion on its presupposition. Schlenker's Expressivity (C.3), that every
+proposition is denoted by an atom, is not built in: the theories that need it quantify over
+propositions where the paper quantifies over expressions. The conditional is material, as in the
+paper, and its Strong Kleene clause is by interdefinability from negation and disjunction.
 
 ## References
 
@@ -63,17 +67,11 @@ def eval : Connective → Prop → Prop → Prop
   | cond, a, b => a → b
   | disj, a, b => a ∨ b
 
-/-- The Strong Kleene connectives; the conditional is `¬a ∨ b`. -/
-def strong : Connective → SignType → SignType → SignType
-  | conj, a, b => a ⊓ b
-  | cond, a, b => -a ⊔ b
-  | disj, a, b => a ⊔ b
-
-/-- [peters-1979]'s filtering connectives, the Middle Kleene tables. -/
-def filter : Connective → SignType → SignType → SignType
-  | conj, a, b => a.meetMiddle b
-  | cond, a, b => (-a).joinMiddle b
-  | disj, a, b => a.joinMiddle b
+/-- The truth table that the trivalent connectives `C` give a binary connective. -/
+@[simp] def table (C : Trivalent.Connectives) : Connective → SignType → SignType → SignType
+  | conj => C.conj
+  | cond => C.cond
+  | disj => C.disj
 
 /-- The dynamic connectives are [heim-1983]'s conjunction and conditional and [beaver-2001]'s
 disjunction. -/
@@ -108,19 +106,19 @@ def truth : Formula Atom → Set W
   | not F => (truth F)ᶜ
   | bin c F G => {w | c.eval (w ∈ truth F) (w ∈ truth G)}
 
-/-- The Strong Kleene evaluation, in which a trigger is defined where its presupposition holds. -/
-noncomputable def strong : Formula Atom → W → SignType
+/-- The evaluation by the trivalent connectives `C`, in which an atom is classical and a trigger is
+defined where its presupposition holds. -/
+noncomputable def eval (C : Trivalent.Connectives) : Formula Atom → W → SignType
   | atom p => fun w ↦ SignType.ofProp (w ∈ I p)
   | trigger p p' => (I p).indicator fun w ↦ SignType.ofProp (w ∈ I p')
-  | not F => -strong F
-  | bin c F G => fun w ↦ c.strong (strong F w) (strong G w)
+  | not F => -eval C F
+  | bin c F G => fun w ↦ c.table C (eval C F w) (eval C G w)
 
-/-- The evaluation by the filtering connectives. -/
-noncomputable def filter : Formula Atom → W → SignType
-  | atom p => fun w ↦ SignType.ofProp (w ∈ I p)
-  | trigger p p' => (I p).indicator fun w ↦ SignType.ofProp (w ∈ I p')
-  | not F => -filter F
-  | bin c F G => fun w ↦ c.filter (filter F w) (filter G w)
+/-- The Strong Kleene evaluation. -/
+noncomputable abbrev strong : Formula Atom → W → SignType := eval I .strongKleene
+
+/-- The evaluation by [peters-1979]'s filtering connectives, the Middle Kleene tables. -/
+noncomputable abbrev filter : Formula Atom → W → SignType := eval I .middleKleene
 
 /-- The context change potential of a formula updates an atom or a trigger by its trivalent
 meaning, so a trigger is defined in a context that entails its presupposition. -/
@@ -139,14 +137,14 @@ theorem filter_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
     (hF : F.filter I w ≠ 0 → F.filter I w = SignType.ofProp (w ∈ F.truth I)) :
     (bin c F G).filter I w ≠ 0 ↔
       F.filter I w ≠ 0 ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.filter I w ≠ 0) := by
-  simp only [filter]
+  simp only [filter, eval] at hF ⊢
   refine ⟨fun h ↦ ?_, fun ⟨h, hG⟩ ↦ ?_⟩
-  · have h' : F.filter I w ≠ 0 := by cases c <;> simp_all [Connective.filter]
+  · have h' : F.filter I w ≠ 0 := by cases c <;> simp_all
     rw [hF h'] at h
-    exact ⟨h', fun hl ↦ by cases c <;> simp_all [Connective.filter, Connective.localContext]⟩
+    exact ⟨h', fun hl ↦ by cases c <;> simp_all [Connective.localContext]⟩
   · rw [hF h]
     cases c <;> by_cases ht : w ∈ F.truth I <;>
-      simp_all [Connective.filter, Connective.localContext]
+      simp_all [Connective.localContext]
 
 /-- Where the filtering evaluation is defined, it is the classical meaning. -/
 theorem filter_eq_ofProp {F : Formula Atom} (h : F.filter I w ≠ 0) :
@@ -154,15 +152,15 @@ theorem filter_eq_ofProp {F : Formula Atom} (h : F.filter I w ≠ 0) :
   induction F with
   | atom p => rfl
   | trigger p p' =>
-    by_cases hp : w ∈ I p <;> simp_all [filter, truth]
+    by_cases hp : w ∈ I p <;> simp_all [filter, eval, truth]
   | not F ih =>
-    simp only [filter, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff] at h ⊢
+    simp only [filter, eval, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff] at h ⊢
     simp [ih h, truth]
   | bin c F G ihF ihG =>
     obtain ⟨hF, hG⟩ := (filter_bin_ne_zero_iff I ihF).1 h
-    simp only [filter, ihF hF]
+    simp only [filter, eval, ihF hF]
     cases c <;> by_cases ht : w ∈ F.truth I <;>
-      simp_all [Connective.filter, Connective.localContext, truth, Connective.eval]
+      simp_all [Connective.localContext, truth, Connective.eval]
 
 /-- The filtering evaluation of a binary formula is defined where the first argument's is, and
 the second's wherever the world is in the second argument's local context. -/
@@ -205,8 +203,8 @@ private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
   | trigger p p' => exact fun C ↦ ⟨id, mem_ofTrivalent_filter I⟩
   | not F ih =>
     refine fun C ↦ ⟨fun h ↦ ?_, fun h ↦ (Part.mem_map_iff _).2 ⟨_, (ih C).2 ?_, ?_⟩⟩
-    · simpa [filter, Set.subset_def] using (ih C).1 h
-    · simpa [filter, Set.subset_def] using h
+    · simpa [filter, eval, Set.subset_def] using (ih C).1 h
+    · simpa [filter, eval, Set.subset_def] using h
     · rw [Set.sdiff_self_inter, Set.sdiff_eq]; rfl
   | bin c F G ihF ihG =>
     intro C

@@ -29,6 +29,8 @@ disjunctions differ from Kleene's only in when a compound is undefined.
 * `SignType.condAssert`: conditional assertion at a designation standard, de Finetti's conditional
   at K3 and Cooper's at LP.
 * `SignType.supervaluation`: the value of a predicate over a finite family of valuations.
+* `Trivalent.Connectives`: an interpretation of the binary connectives by truth tables, with the
+  Strong, Weak and Middle Kleene, Cooper and de Finetti instances.
 
 ## Main results
 
@@ -736,3 +738,51 @@ theorem supervaluation_not (hs : s.Nonempty) :
 end Supervaluation
 
 end SignType
+
+namespace Trivalent
+
+open SignType
+
+/-! ### Truth-table interpretations
+
+The trivalent logics of the literature share Kleene's negation and differ in the truth tables of
+their binary connectives, which `Connectives` collects. With a designation standard they make a
+logical matrix. -/
+
+/-- An interpretation of the binary connectives by trivalent truth tables; negation is always
+Kleene's. -/
+structure Connectives where
+  /-- The conjunction. -/
+  conj : SignType → SignType → SignType
+  /-- The disjunction. -/
+  disj : SignType → SignType → SignType
+  /-- The conditional. -/
+  cond : SignType → SignType → SignType
+
+namespace Connectives
+
+/-- The strong tables of [kleene-1952], with the material conditional `¬a ∨ b`. -/
+@[simps]
+def strongKleene : Connectives := ⟨(· ⊓ ·), (· ⊔ ·), fun a b ↦ -a ⊔ b⟩
+
+/-- The weak tables of [kleene-1952], the internal logic of [bochvar-1938]. -/
+@[simps]
+def weakKleene : Connectives := ⟨meetWeak, joinWeak, fun a b ↦ joinWeak (-a) b⟩
+
+/-- The Middle Kleene tables of [peters-1979], which read their operands from left to right. -/
+@[simps]
+def middleKleene : Connectives := ⟨meetMiddle, joinMiddle, fun a b ↦ joinMiddle (-a) b⟩
+
+/-- The tables of [cooper-1968] take Belnap's conjunction and disjunction, which skip a void
+operand, and the conditional that asserts its consequent on a non-false antecedent. -/
+@[simps]
+def cooper : Connectives := ⟨meetBelnap, joinBelnap, condAssert .lp⟩
+
+/-- The conditional of [de-finetti-1936], which asserts its consequent on a true antecedent, with
+the strong Kleene conjunction and disjunction. -/
+@[simps]
+def deFinetti : Connectives := ⟨(· ⊓ ·), (· ⊔ ·), condAssert .k3⟩
+
+end Connectives
+
+end Trivalent

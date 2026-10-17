@@ -205,38 +205,38 @@ variable {p p' q q' : Atom} {C : Set W}
 theorem satI_initial_iff {c : Connective} (hc : c ≠ .cond) :
     SatI I C (.bin c (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  cases c <;> simp_all [Set.subset_def, Formula.filter, Connective.filter]
+  cases c <;> simp_all [Set.subset_def, Formula.filter, Formula.eval]
 
 /-- `(not pp')` presupposes `p`, (23). -/
 theorem satI_not_iff : SatI I C (.not (.trigger p p')) ↔ C ⊆ I p := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter]
+  simp [Set.subset_def, Formula.filter, Formula.eval]
 
 /-- `(p and qq')` presupposes `(if p . q)`, (26). -/
 theorem satI_and_iff :
     SatI I C (.bin .conj (.atom p) (.trigger q q')) ↔
       C ⊆ (Formula.bin .cond (.atom p) (.atom q)).truth I := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval]
+  simp [Set.subset_def, Formula.filter, Formula.truth, Formula.eval, Connective.eval]
 
 /-- `(if pp' . q)` presupposes `p`, (29). -/
 theorem satI_if_iff : SatI I C (.bin .cond (.trigger p p') (.atom q)) ↔ C ⊆ I p := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Connective.filter]
+  simp [Set.subset_def, Formula.filter, Formula.eval]
 
 /-- `(if p . qq')` presupposes `(if p . q)`, (32). -/
 theorem satI_then_iff :
     SatI I C (.bin .cond (.atom p) (.trigger q q')) ↔
       C ⊆ (Formula.bin .cond (.atom p) (.atom q)).truth I := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter, Formula.truth, Connective.filter, Connective.eval]
+  simp [Set.subset_def, Formula.filter, Formula.truth, Formula.eval, Connective.eval]
 
 /-! ### A trigger alone, and symmetric conjunction -/
 
 /-- A trigger standing alone presupposes `p` on the incremental theory. -/
 theorem satI_trigger_iff : SatI I C (.trigger p p') ↔ C ⊆ I p := by
   rw [satI_iff_admits, Formula.admits_ccp_iff]
-  simp [Set.subset_def, Formula.filter]
+  simp [Set.subset_def, Formula.filter, Formula.eval]
 
 /-- A trigger standing alone presupposes `p` on the symmetric theory. -/
 theorem satS_trigger_iff : SatS I C (.trigger p p') ↔ C ⊆ I p := by
@@ -315,7 +315,7 @@ theorem satI_king_iff_admits {k s ks b : Atom} (hk : I k = {w | king w}) (hs : I
     SatI I C (.bin .cond (.trigger k s) (.trigger ks b)) ↔
       (ifKingHasSon king son bald).Admits C := by
   rw [satI_iff_admits, king_admits_iff, Formula.admits_ccp_iff]
-  simp [Formula.filter, Connective.filter, hk, hs, hks, Set.subset_def]
+  simp [Formula.filter, Formula.eval, hk, hs, hks, Set.subset_def]
 
 /-! ### Strong Kleene and supervaluations (items 24–41 of [schlenker-2008b]) -/
 
@@ -417,7 +417,7 @@ theorem resolve_of_filter_ne_zero {F : Formula Atom} (h : F.filter I w ≠ 0)
     have hp : w ∈ I p := Set.mem_of_indicator_ne_zero h
     simp only [resolve, Formula.truth, Set.mem_inter_iff, hp, not_true_eq_false, false_and,
       or_false, true_and]
-  | not F ih => exact not_congr (ih (by simpa [Formula.filter] using h) _)
+  | not F ih => exact not_congr (ih (by simpa [Formula.filter, Formula.eval] using h) _)
   | bin c F G ihF ihG =>
     rw [Formula.filter_bin_ne_zero] at h
     simp only [resolve, Formula.truth, Set.mem_ofPred_eq, ihF h.1]
@@ -455,7 +455,7 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
       ((∃ ρ, ¬ resolve I w ρ K F) ↔ F.strong I w ≠ 1) := by
   induction F generalizing K with
   | atom p =>
-    simp [resolve, Formula.strong]
+    simp [resolve, Formula.strong, Formula.eval]
   | trigger p p' =>
     have e₁ : (∃ ρ, resolve I w ρ K (.trigger p p')) ↔ (w ∈ I p ∧ w ∈ I p' ∨ w ∉ I p) :=
       ⟨fun ⟨_, h⟩ ↦ h.imp_right And.left,
@@ -464,20 +464,22 @@ private theorem exists_resolve_iff (F : Formula Atom) (K : SyntacticEnvironment 
       ⟨fun ⟨_, h⟩ hp ↦ h (.inl hp),
         fun h ↦ ⟨fun _ _ _ ↦ False, fun h' ↦ h'.elim h fun h'' ↦ h''.2⟩⟩
     refine ⟨e₁.trans ?_, e₀.trans ?_⟩ <;>
-      simp only [Formula.strong, ne_eq, Trivalent.indicator_apply_eq_neg_one_iff,
+      simp only [Formula.strong, Formula.eval, ne_eq, Trivalent.indicator_apply_eq_neg_one_iff,
         Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_neg_one_iff,
         SignType.ofProp_eq_one_iff]
     tauto
   | not F ih =>
-    simp only [resolve, Formula.strong, Pi.neg_apply, neg_ne_neg_one, neg_ne_one, not_not]
+    simp only [resolve, Formula.strong, Formula.eval, Pi.neg_apply, neg_ne_neg_one, neg_ne_one,
+      not_not]
     exact ⟨(ih _).2, (ih _).1⟩
   | bin c F G ihF ihG =>
     obtain ⟨hF₁, hF₀⟩ := ihF (.left c G :: K)
     obtain ⟨hG₁, hG₀⟩ := ihG (.right c F :: K)
     have merge := exists_resolve_merge I (w := w) c F G K
-    cases c <;> simp only [resolve, Formula.strong, Connective.strong, Connective.eval,
-      inf_ne_neg_one, inf_ne_one, sup_ne_neg_one, sup_ne_one, neg_ne_neg_one, neg_ne_one, ← hF₁,
-      ← hF₀, ← hG₁, ← hG₀]
+    cases c <;> simp only [resolve, Formula.strong, Formula.eval, Connective.table,
+      Trivalent.Connectives.strongKleene_conj, Trivalent.Connectives.strongKleene_cond,
+      Trivalent.Connectives.strongKleene_disj, Connective.eval, inf_ne_neg_one, inf_ne_one,
+      sup_ne_neg_one, sup_ne_one, neg_ne_neg_one, neg_ne_one, ← hF₁, ← hF₀, ← hG₁, ← hG₀]
     · refine ⟨⟨fun ⟨ρ, a, b⟩ ↦ ⟨⟨ρ, a⟩, ⟨ρ, b⟩⟩, fun ⟨⟨ρ₁, a⟩, ⟨ρ₂, b⟩⟩ ↦ ?_⟩,
         ⟨fun ⟨ρ, h⟩ ↦ ?_, fun h ↦ h.elim (fun ⟨ρ, a⟩ ↦ ⟨ρ, fun h ↦ a h.1⟩)
           (fun ⟨ρ, b⟩ ↦ ⟨ρ, fun h ↦ b h.2⟩)⟩⟩
@@ -585,7 +587,7 @@ theorem superS_not_kleeneS {p p' : Atom} {w₀ : W} (hw₀ : w₀ ∉ I p) :
     tauto
   · have h₀ : Formula.strong I (.bin .disj (.trigger p p') (.not (.trigger p p'))) w₀ ≠ 0 :=
       h (Set.mem_univ w₀)
-    simp [Formula.strong, Connective.strong, hw₀] at h₀
+    simp [Formula.strong, Formula.eval, hw₀] at h₀
 
 /-! #### Incremental acceptability -/
 
@@ -663,9 +665,10 @@ private theorem incrementally_iff_filter (P : Formula Atom → Prop)
       (P (.bin c F Y) ↔ (w ∈ c.localContext Set.univ (F.truth I) → P Y)))
     (F : Formula Atom) : Incrementally P F ↔ F.filter I w ≠ 0 := by
   induction F with
-  | atom p => exact iff_of_true (incrementally_atom P p) (by simp [Formula.filter])
-  | trigger p p' => rw [incrementally_trigger, htrig]; simp [Formula.filter]
-  | not F ih => rw [incrementally_not, Incrementally.congr hnot, ih]; simp [Formula.filter]
+  | atom p => exact iff_of_true (incrementally_atom P p) (by simp [Formula.filter, Formula.eval])
+  | trigger p p' => rw [incrementally_trigger, htrig]; simp [Formula.filter, Formula.eval]
+  | not F ih =>
+    rw [incrementally_not, Incrementally.congr hnot, ih]; simp [Formula.filter, Formula.eval]
   | bin c F G ihF ihG =>
     rw [incrementally_bin, Incrementally.congr (hleft c), ihF, Formula.filter_bin_ne_zero]
     refine and_congr_right fun hF ↦ ?_
@@ -693,28 +696,28 @@ theorem strong_eq_ofProp_of_filter_ne_zero {F : Formula Atom} (h : F.filter I w 
   exact resolve_of_filter_ne_zero I h _ _
 
 private theorem strong_ne_zero (c : Connective) {a b : SignType} (ha : a ≠ 0) (hb : b ≠ 0) :
-    c.strong a b ≠ 0 := by
+    c.table .strongKleene a b ≠ 0 := by
   revert ha hb; cases c <;> cases a <;> cases b <;> decide
 
 /-- Incremental Strong Kleene definedness is the filtering presupposition. -/
 theorem incrementally_strong_iff (w : W) (F : Formula Atom) :
     Incrementally (fun X ↦ X.strong I w ≠ 0) F ↔ F.filter I w ≠ 0 := by
-  refine incrementally_iff_filter I _ (fun _ _ ↦ by simp [Formula.strong])
-    (fun _ ↦ by simp [Formula.strong]) (fun c X ↦ ?_) (fun c F Y hF ↦ ?_) F
+  refine incrementally_iff_filter I _ (fun _ _ ↦ by simp [Formula.strong, Formula.eval])
+    (fun _ ↦ by simp [Formula.strong, Formula.eval]) (fun c X ↦ ?_) (fun c F Y hF ↦ ?_) F
   · have : Nonempty Atom := X.nonempty_atom
     let a := Classical.arbitrary Atom
     have htaut : (taut a).strong I w = 1 := by
-      by_cases ha : w ∈ I a <;> simp [taut, Formula.strong, Connective.strong, ha]
+      by_cases ha : w ∈ I a <;> simp [taut, Formula.strong, Formula.eval, ha]
     refine ⟨fun h ↦ ?_, fun hX c' G' _ hG ↦ ?_⟩
     · cases c
-      · simpa [Formula.strong, Connective.strong, htaut] using h .conj (taut a) Iff.rfl rfl
-      · simpa [Formula.strong, Connective.strong, htaut] using h .cond (.not (taut a)) Iff.rfl rfl
-      · simpa [Formula.strong, Connective.strong, htaut] using h .disj (.not (taut a)) Iff.rfl rfl
+      · simpa [Formula.strong, Formula.eval, htaut] using h .conj (taut a) Iff.rfl rfl
+      · simpa [Formula.strong, Formula.eval, htaut] using h .cond (.not (taut a)) Iff.rfl rfl
+      · simpa [Formula.strong, Formula.eval, htaut] using h .disj (.not (taut a)) Iff.rfl rfl
     · have hG' := strong_eq_ofProp_of_filter_ne_zero I (w := w) (filter_ne_zero_of_occurrences I hG)
       exact strong_ne_zero c' hX (by simp [hG'])
   · have hF' := strong_eq_ofProp_of_filter_ne_zero I hF
     cases c <;> by_cases ht : w ∈ F.truth I <;>
-      simp [Formula.strong, Connective.strong, Connective.localContext, hF', ht]
+      simp [Formula.strong, Formula.eval, Connective.localContext, hF', ht]
 
 /-- Incremental supervaluation definedness is the filtering presupposition. -/
 theorem incrementally_superDefined_iff (w : W) (F : Formula Atom) :
@@ -807,7 +810,7 @@ theorem transpS_not_kleeneS_not_superS {p p' q q' : Atom} {w₁ w₂ : W} (hp₁
         Formula.truth, hp₁, hq₁, hp₂, hq₂]
   · have h₁ : Formula.strong I (.bin .conj (.trigger p p') (.trigger q q')) w₁ ≠ 0 :=
       h (Set.mem_insert w₁ _)
-    simp [Formula.strong, Connective.strong, hp₁, hq₁] at h₁
+    simp [Formula.strong, Formula.eval, hp₁, hq₁] at h₁
   · have := h w₁ (Set.mem_insert _ _) (fun _ _ ↦ True) (fun _ _ ↦ False)
     simp [resolve, Connective.eval, hp₁, hq₁] at this
 

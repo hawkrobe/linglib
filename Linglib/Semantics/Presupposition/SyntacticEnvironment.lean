@@ -489,10 +489,10 @@ theorem Formula.filter_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : 
       ∀ o ∈ F.occurrences, w ∈ o.1.localContext I Set.univ → w ∈ I o.2.1 := by
   open SyntacticEnvironment in
   induction F with
-  | atom p => simp [filter, occurrences]
-  | trigger p p' => simp [filter, occurrences]
+  | atom p => simp [filter, eval, occurrences]
+  | trigger p p' => simp [filter, eval, occurrences]
   | not F ih =>
-    simp only [filter, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff, occurrences,
+    simp only [filter, eval, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff, occurrences,
       List.forall_mem_map, localContext_append, localContext_cons, localContext_nil,
       Step.localContext]
     exact ih

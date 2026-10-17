@@ -68,7 +68,7 @@ to Kamp and to Lewis.
   order truth-values and the hierarchy of truth-predicates are not formalized.
 * Sentences in §3 are `Trivalent.Formula` without quantifiers, so the A-clause for `∀` is
   absent; they are classically evaluated at a point by `Formula.evalBool` on the point's atomic
-  values, which is their K3 realization on that Boolean model (`Formula.realize_ofProp`).
+  values, which is their K3 realization on that Boolean model (`Formula.realize_ofBool`).
 
 ## References
 
@@ -432,11 +432,22 @@ theorem classical_conj (val : Point → Atom → Bool) (t : Point) (φ ψ : Form
     classical val t (.conj φ ψ) ↔ classical val t φ ∧ classical val t ψ := by
   simp [classical]
 
-variable [PartialOrder Point] [SpecificationSpace Point]
+/-- Disjunction is classically the abbreviation `¬(¬φ ∧ ¬ψ)`. -/
+theorem classical_disj (val : Point → Atom → Bool) (t : Point) (φ ψ : Formula Atom) :
+    classical val t (.disj φ ψ) ↔ classical val t (.neg (.conj (.neg φ) (.neg ψ))) := by
+  simp [classical]
+
+/-- The conditional is classically the abbreviation `¬(φ ∧ ¬ψ)`. -/
+theorem classical_cond (val : Point → Atom → Bool) (t : Point) (φ ψ : Formula Atom) :
+    classical val t (.cond φ ψ) ↔ classical val t (.neg (.conj φ (.neg ψ))) := by
+  simp [classical]
+
+variable [PartialOrder Point]
 
 /-- The A-clauses of §3 are Resolution for atomic sentences, the classical clauses for negation,
 and for conjunction truth of both conjuncts and falsity that an extension falsifying a conjunct
-can always redeem. -/
+can always redeem; disjunction and the conditional are the abbreviations `¬(¬φ ∧ ¬ψ)` and
+`¬(φ ∧ ¬ψ)`. -/
 structure Account.AClauses (V : Account Point (Formula Atom)) : Prop where
   resolves : ∀ a, V.Resolves (.atom a)
   verifies_neg : ∀ t φ, V.verifies t (.neg φ) ↔ V.falsifies t φ
@@ -444,8 +455,27 @@ structure Account.AClauses (V : Account Point (Formula Atom)) : Prop where
   verifies_conj : ∀ t φ ψ, V.verifies t (.conj φ ψ) ↔ V.verifies t φ ∧ V.verifies t ψ
   falsifies_conj : ∀ t φ ψ, V.falsifies t (.conj φ ψ) ↔
     ∀ u, t ≤ u → ∃ v, u ≤ v ∧ (V.falsifies v φ ∨ V.falsifies v ψ)
+  verifies_disj : ∀ t φ ψ, V.verifies t (.disj φ ψ) ↔ V.verifies t (.neg (.conj (.neg φ) (.neg ψ)))
+  falsifies_disj : ∀ t φ ψ,
+    V.falsifies t (.disj φ ψ) ↔ V.falsifies t (.neg (.conj (.neg φ) (.neg ψ)))
+  verifies_cond : ∀ t φ ψ, V.verifies t (.cond φ ψ) ↔ V.verifies t (.neg (.conj φ (.neg ψ)))
+  falsifies_cond : ∀ t φ ψ, V.falsifies t (.cond φ ψ) ↔ V.falsifies t (.neg (.conj φ (.neg ψ)))
 
 variable {V : Account Point (Formula Atom)} {val : Point → Atom → Bool}
+
+/-- An account agrees with super-truth on a sentence when it verifies and falsifies it exactly
+where super-truth does. -/
+private def AgreesSuper (V : Account Point (Formula Atom)) (val : Point → Atom → Bool)
+    (φ : Formula Atom) : Prop :=
+  ∀ t, (V.verifies t φ ↔ SuperTrue (classical val · φ) t) ∧
+    (V.falsifies t φ ↔ SuperFalse (classical val · φ) t)
+
+private theorem AgreesSuper.neg (hA : V.AClauses) {φ : Formula Atom}
+    (ih : AgreesSuper V val φ) : AgreesSuper V val (.neg φ) := fun t ↦ by
+  rw [hA.verifies_neg, hA.falsifies_neg, (ih t).1, (ih t).2]
+  simp only [SuperTrue, SuperFalse, classical_neg, not_not, and_self]
+
+variable [SpecificationSpace Point]
 
 /-- The super-truth account satisfies the A-clauses. -/
 theorem superTruth_aClauses (val : Point → Atom → Bool) :
@@ -455,13 +485,39 @@ theorem superTruth_aClauses (val : Point → Atom → Bool) :
   falsifies_neg _ φ := by simp only [superTruth, classical_neg, superFalse_not_iff]
   verifies_conj _ φ ψ := by simp only [superTruth, classical_conj, superTrue_and_iff]
   falsifies_conj _ φ ψ := by simp only [superTruth, classical_conj, superFalse_and_iff]
+  verifies_disj _ φ ψ := by simp only [superTruth, classical_disj]
+  falsifies_disj _ φ ψ := by simp only [superTruth, classical_disj]
+  verifies_cond _ φ ψ := by simp only [superTruth, classical_cond]
+  falsifies_cond _ φ ψ := by simp only [superTruth, classical_cond]
+
+private theorem AgreesSuper.conj (hA : V.AClauses) {φ ψ : Formula Atom}
+    (ihφ : AgreesSuper V val φ) (ihψ : AgreesSuper V val ψ) : AgreesSuper V val (.conj φ ψ) :=
+  fun t ↦ by
+    rw [hA.verifies_conj, hA.falsifies_conj, (ihφ t).1, (ihψ t).1]
+    simp only [(ihφ _).2, (ihψ _).2]
+    constructor
+    · simp only [superTrue_and_iff, classical_conj]
+    · simp only [superFalse_and_iff, classical_conj]
+
+private theorem AgreesSuper.disj (hA : V.AClauses) {φ ψ : Formula Atom}
+    (ihφ : AgreesSuper V val φ) (ihψ : AgreesSuper V val ψ) : AgreesSuper V val (.disj φ ψ) :=
+  fun t ↦ by
+    have h := ((ihφ.neg hA).conj hA (ihψ.neg hA)).neg hA t
+    rw [hA.verifies_disj, hA.falsifies_disj, h.1, h.2]
+    simp only [classical_disj, and_self]
+
+private theorem AgreesSuper.cond (hA : V.AClauses) {φ ψ : Formula Atom}
+    (ihφ : AgreesSuper V val φ) (ihψ : AgreesSuper V val ψ) : AgreesSuper V val (.cond φ ψ) :=
+  fun t ↦ by
+    have h := (ihφ.conj hA (ihψ.neg hA)).neg hA t
+    rw [hA.verifies_cond, hA.falsifies_cond, h.1, h.2]
+    simp only [classical_cond, and_self]
 
 /-- Given Fidelity, Stability and Completability, the A-clauses force the super-truth account
 (§3), so the claims of penumbral connection force the favoured view. -/
 theorem Account.eq_superTruth_of_aClauses (hF : V.Faithful (classical val)) (hS : V.Stable)
     (hA : V.AClauses) : V = superTruth (classical val) := by
-  suffices h : ∀ φ t, (V.verifies t φ ↔ SuperTrue (classical val · φ) t) ∧
-      (V.falsifies t φ ↔ SuperFalse (classical val · φ) t) by
+  suffices h : ∀ φ, AgreesSuper V val φ by
     obtain ⟨ve, fa⟩ := V
     simp only [superTruth, Account.mk.injEq]
     exact ⟨funext₂ fun t φ ↦ propext (h φ t).1, funext₂ fun t φ ↦ propext (h φ t).2⟩
@@ -470,17 +526,10 @@ theorem Account.eq_superTruth_of_aClauses (hF : V.Faithful (classical val)) (hS 
   | atom a =>
     exact fun t ↦ ⟨Account.verifies_iff hF hS (hA.resolves a),
       Account.falsifies_iff hF hS (hA.resolves a)⟩
-  | neg φ ih =>
-    intro t
-    rw [hA.verifies_neg, hA.falsifies_neg, (ih t).1, (ih t).2]
-    simp only [SuperTrue, SuperFalse, classical_neg, not_not, and_self]
-  | conj φ ψ ihφ ihψ =>
-    intro t
-    rw [hA.verifies_conj, hA.falsifies_conj, (ihφ t).1, (ihψ t).1]
-    simp only [(ihφ _).2, (ihψ _).2]
-    constructor
-    · simp only [superTrue_and_iff, classical_conj]
-    · simp only [superFalse_and_iff, classical_conj]
+  | neg φ ih => exact ih.neg hA
+  | conj φ ψ ihφ ihψ => exact ihφ.conj hA ihψ
+  | disj φ ψ ihφ ihψ => exact ihφ.disj hA ihψ
+  | cond φ ψ ihφ ihψ => exact ihφ.cond hA ihψ
 
 end AClauses
 
