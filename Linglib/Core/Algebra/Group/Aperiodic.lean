@@ -8,6 +8,7 @@ aperiodicity notion.
 -/
 module
 
+public import Mathlib.Algebra.Group.Idempotent
 public import Mathlib.Algebra.Group.Prod
 public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Data.Nat.Init
@@ -28,6 +29,7 @@ algebraic counterpart of the star-free languages.
 
 * `Monoid.isAperiodic_iff_forall_exists`: a finite monoid is aperiodic when the powers of each
   element stabilize.
+* `Monoid.IsAperiodic.pow_mul_eq_of_isIdempotentElem`: an idempotent power of `x` absorbs `x`.
 * `Monoid.IsAperiodic.of_injective`, `Monoid.IsAperiodic.of_surjective`, `Monoid.IsAperiodic.prod`:
   closure under submonoids, quotients and products.
 
@@ -70,6 +72,14 @@ theorem isAperiodic_iff_forall_exists [Finite M] :
   choose n hn using h
   obtain ⟨x₀, hx₀⟩ := Finite.exists_max n
   exact ⟨n x₀, fun x ↦ pow_succ_stabilizes (hn x) _ (hx₀ x)⟩
+
+/-- In an aperiodic monoid, an idempotent positive power of `x` absorbs `x`. -/
+theorem IsAperiodic.pow_mul_eq_of_isIdempotentElem (h : IsAperiodic M) {x : M} {n : ℕ}
+    (hn : n ≠ 0) (he : IsIdempotentElem (x ^ n)) : x ^ n * x = x ^ n := by
+  obtain ⟨N, hN⟩ := h
+  rw [← he.pow_eq N.add_one_ne_zero, ← pow_mul, ← pow_succ]
+  exact pow_succ_stabilizes (hN x) _
+    (N.le_succ.trans (Nat.le_mul_of_pos_left _ (Nat.pos_of_ne_zero hn)))
 
 /-- Aperiodicity passes along a surjective monoid hom, with the same exponent. -/
 @[to_additive]

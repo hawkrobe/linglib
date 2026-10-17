@@ -8,7 +8,7 @@ module
 public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Linglib.Core.Computability.PiecewiseTestable
-public import Linglib.Core.Computability.Variety.Definite
+public import Linglib.Core.Computability.Definite
 public import Linglib.Core.Computability.Variety.Eilenberg
 public import Linglib.Core.Computability.LocallyTestable
 public import Mathlib.Computability.Language
@@ -32,8 +32,6 @@ of `𝒞`-languages under tier projections.
   finite-or-cofinite languages. Lambert calls the first the multitier locally testable languages.
 * `IsBTC.Indist`: tier-indistinguishability, the congruence behind membership refutation.
 * `tierWord`, `tierPrefix`, `tierSuffix`: the literals of a propositional logic over tier affixes.
-* `Monoid.IsMultitierReverseDefinite`, `Monoid.multitierReverseDefiniteVariety`: the aperiodic
-  monoids whose idempotents satisfy `e x e = e x`.
 
 ## Main results
 
@@ -43,10 +41,6 @@ of `𝒞`-languages under tier projections.
   languages containing it, since a tier projection is a homomorphism of free monoids.
 * `IsBTC.isStarFree`: its instance at the aperiodic monoids, so all six specializations are
   star-free over a finite alphabet.
-* `Monoid.isMultitierReverseDefinite_iff`: in a finite monoid this is Lambert's equation
-  `x^ω y x = x^ω y`.
-* `IsBTK.mem_multitierReverseDefiniteVariety`: the syntactic monoid of a multitier reverse definite
-  language satisfies it.
 * `IsBTC.mem_iff_of_indist` and `not_isBTC_of_indist`: membership respects
   tier-indistinguishability, yielding the standard non-membership argument.
 
@@ -55,21 +49,12 @@ of `𝒞`-languages under tier projections.
 `IsTierBased`/`IsBTC.Indist` quantify over `Bool` tiers `T : α → Bool`, avoiding an
 `∃ T, ∃ _ : DecidablePred T, …` witness. A `Prop` tier with `[DecidablePred]`, as in
 `TierStrictlyLocalGrammar`, projects by the filter of its `decide`, which is already a `Bool`
-tier, so `isTierStrictlyLocal_iff_isTierBased` needs no conversion lemma. Lambert's equations
-use the omega power `x^ω`; `isMultitierReverseDefinite_iff` states the one for (62) through
-idempotent powers instead.
-
-## TODO
-
-Lambert, following Almeida, characterizes each multitier class by equations on the syntactic
-monoid; only the inclusion of the multitier reverse definite languages in the languages of their
-equation is proved here. The converse and the equations for the other classes are open.
+tier, so `isTierStrictlyLocal_iff_isTierBased` needs no conversion lemma.
 
 ## References
 
 * [lambert-2026]
 * [heinz-rawal-tanner-2011]
-* [almeida-1994]
 -/
 
 @[expose] public section
@@ -341,104 +326,5 @@ theorem IsBTN.isStarFree (h : IsBTN L) : L.IsStarFree :=
   IsBTC.isStarFree (fun _ ↦ IsFiniteOrCofinite.isStarFree) h
 
 end Finite
-
-end Language
-
-/-! ### The equation of the multitier reverse definite languages
-
-Lambert's (62) characterizes the multitier reverse definite languages by the equation
-`x^ω y x = x^ω y` on the syntactic monoid. Almeida, crediting Pin, shows that the monoids
-satisfying it are the aperiodic monoids whose idempotents satisfy `e x e = e x`, and that second
-form is the definition here; `isMultitierReverseDefinite_iff` recovers the first. The syntactic
-monoid of a reverse definite language satisfies it, since an idempotent class of a nonempty word is
-a left zero, and the monoids satisfying it form a pseudovariety, so `IsBTC.mem_languageVariety`
-lifts it to the multitier closure. -/
-
-namespace Monoid
-
-universe u
-
-/-- A monoid is *multitier reverse definite* when it is aperiodic and every idempotent `e`
-satisfies `e * x * e = e * x` for every `x`. -/
-def IsMultitierReverseDefinite (M : Type*) [Monoid M] : Prop :=
-  IsAperiodic M ∧ ∀ e : M, IsIdempotentElem e → ∀ x, e * x * e = e * x
-
-namespace IsMultitierReverseDefinite
-
-variable {M N : Type*} [Monoid M] [Monoid N]
-
-theorem of_injective {f : M →* N} (hf : Function.Injective f) (h : IsMultitierReverseDefinite N) :
-    IsMultitierReverseDefinite M :=
-  ⟨h.1.of_injective hf, fun e he x ↦ hf <| by simpa only [map_mul] using h.2 _ (he.map f) (f x)⟩
-
-theorem of_surjective [Finite M] {f : M →* N} (hf : Function.Surjective f)
-    (h : IsMultitierReverseDefinite M) : IsMultitierReverseDefinite N := by
-  refine ⟨h.1.of_surjective hf, fun e' he' x' ↦ ?_⟩
-  obtain ⟨e, he, hfe⟩ := Semigroup.exists_isIdempotentElem_map_eq (f := f.toMulHom) hf he'
-  obtain ⟨x, rfl⟩ := hf x'
-  rw [← show f e = e' from hfe]
-  simpa only [map_mul] using congrArg f (h.2 e he x)
-
-theorem prod (hM : IsMultitierReverseDefinite M) (hN : IsMultitierReverseDefinite N) :
-    IsMultitierReverseDefinite (M × N) :=
-  ⟨hM.1.prod hN.1, fun e he x ↦
-    Prod.ext (hM.2 e.1 (congrArg Prod.fst he) x.1) (hN.2 e.2 (congrArg Prod.snd he) x.2)⟩
-
-theorem of_subsingleton [Subsingleton M] : IsMultitierReverseDefinite M :=
-  ⟨.of_subsingleton, fun _ _ _ ↦ Subsingleton.elim _ _⟩
-
-end IsMultitierReverseDefinite
-
-/-- A finite monoid is multitier reverse definite exactly when it satisfies Lambert's equation
-`x^ω y x = x^ω y`, stated through the idempotent powers of `x`. -/
-theorem isMultitierReverseDefinite_iff {M : Type*} [Monoid M] [Finite M] :
-    IsMultitierReverseDefinite M ↔
-      ∀ (x y : M) (n : ℕ), n ≠ 0 → IsIdempotentElem (x ^ n) → x ^ n * y * x = x ^ n * y := by
-  refine ⟨fun ⟨⟨N, hN⟩, h⟩ x y n hn he ↦ ?_,
-    fun h ↦ ⟨isAperiodic_iff_forall_exists.2 fun x ↦ ?_, fun e he x ↦ ?_⟩⟩
-  · have hx : x ^ n * x = x ^ n := by
-      rw [← he.pow_eq N.add_one_ne_zero, ← pow_mul, ← pow_succ]
-      exact pow_succ_stabilizes (hN x) _
-        (N.le_succ.trans (Nat.le_mul_of_pos_left _ (Nat.pos_of_ne_zero hn)))
-    rw [← h _ he y, mul_assoc (x ^ n * y), hx]
-  · obtain ⟨m, hm, he⟩ := exists_pos_pow_isIdempotent x
-    exact ⟨m, by simpa [pow_succ] using h x 1 m hm.ne' he⟩
-  · simpa using h e x 1 one_ne_zero (by simpa using he)
-
-/-- The pseudovariety of finite multitier reverse definite monoids. -/
-def multitierReverseDefiniteVariety : Pseudovariety.{u} where
-  mem M _ := Finite M ∧ IsMultitierReverseDefinite M
-  finite_of_mem h := h.1
-  sub hf h := have := h.1; ⟨.of_injective _ hf, h.2.of_injective hf⟩
-  quot hf h := have := h.1; ⟨.of_surjective _ hf, h.2.of_surjective hf⟩
-  prod hM hN := have := hM.1; have := hN.1; ⟨inferInstance, hM.2.prod hN.2⟩
-  memUnit := ⟨inferInstance, .of_subsingleton⟩
-
-@[simp] theorem mem_multitierReverseDefiniteVariety {M : Type u} [Monoid M] :
-    multitierReverseDefiniteVariety.mem M ↔ Finite M ∧ IsMultitierReverseDefinite M := Iff.rfl
-
-end Monoid
-
-namespace Language
-
-variable {α : Type*} {L : Language α} {k : ℕ}
-
-/-- Over a finite alphabet, the syntactic monoid of a reverse definite language is multitier
-reverse definite. -/
-theorem IsReverseDefinite.isMultitierReverseDefinite_syntacticMonoid [Finite α]
-    (h : L.IsReverseDefinite k) : Monoid.IsMultitierReverseDefinite L.SyntacticMonoid := by
-  refine ⟨h.toIsGeneralizedDefinite.isStarFree.isAperiodic, fun e he x ↦ ?_⟩
-  obtain ⟨u, rfl⟩ := L.syntacticClass_surjective e
-  rcases eq_or_ne u [] with rfl | hu
-  · simp
-  have hz := h.isLeftZero_syntacticClass_of_isIdempotentElem hu he
-  rw [mul_assoc, hz, hz]
-
-/-- Over a finite alphabet, a multitier reverse definite language lies in the variety of the
-multitier reverse definite monoids. -/
-theorem IsBTK.mem_multitierReverseDefiniteVariety [Finite α] (h : IsBTK k L) :
-    Monoid.multitierReverseDefiniteVariety.langs L :=
-  h.mem_languageVariety (𝒱 := Monoid.multitierReverseDefiniteVariety.toLanguageVariety)
-    fun _ hL ↦ ⟨hL.isRegular.finite_syntacticMonoid, hL.isMultitierReverseDefinite_syntacticMonoid⟩
 
 end Language
