@@ -8,7 +8,7 @@ module
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.MeasureTheory.Constructions.Pi
 public import Linglib.Core.Probability.Distributions.Gaussian
-public import Linglib.Core.Probability.Gumbel
+public import Linglib.Core.Probability.Distributions.Gumbel
 public import Mathlib.MeasureTheory.Group.Convolution
 
 /-!
@@ -71,27 +71,27 @@ namespace ProbabilityTheory
 
 section ChoiceProb
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι : Type*} [Fintype ι]
 
 /-- The choice probability of alternative `i` in the random utility model whose utilities have
 the joint law `μ` is the probability that coordinate `i` is the strict maximum. -/
 noncomputable def choiceProb (μ : Measure (ι → ℝ)) (i : ι) : ℝ≥0∞ :=
   μ {x | ∀ j, j ≠ i → x j < x i}
 
-omit [DecidableEq ι] in
 theorem measurableSet_setOf_forall_ne_lt (i : ι) :
     MeasurableSet {x : ι → ℝ | ∀ j, j ≠ i → x j < x i} := by
   simp only [ofPred_forall]
   exact .iInter fun j ↦ .iInter fun _ ↦
     measurableSet_lt (measurable_pi_apply j) (measurable_pi_apply i)
 
-omit [DecidableEq ι] in
 /-- The choice probabilities of a pushforward law are the masses of the preimage events. -/
 theorem choiceProb_map {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) {U : Ω → ι → ℝ}
     (hU : Measurable U) (i : ι) :
     choiceProb (P.map U) i = P {ω | ∀ j, j ≠ i → U ω j < U ω i} := by
   rw [choiceProb, Measure.map_apply hU (measurableSet_setOf_forall_ne_lt i)]
   rfl
+
+variable [DecidableEq ι]
 
 /-- The choice probability of `i` is the integral, against the law of the `i`-th utility, of the
 probability that every other utility falls below it. -/
@@ -190,47 +190,49 @@ theorem choiceProb_pi_gaussianReal_sq (u : Fin 2 → ℝ) (hσ : 0 < σ) :
 
 section GumbelRUM
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι] {β : ℝ}
+variable {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι] {β : ℝ≥0}
 
 /-- When the utilities are independent with `Gumbel(uⱼ, β)` laws, alternative `i` has the highest
-utility with probability `softmax ((1/β) • u) i`. McFadden states the unit-scale case; the scale
-of the noise is not separately identified from that of `u`. -/
-theorem choiceProb_pi_gumbelMeasure (u : ι → ℝ) (hβ : 0 < β) (i : ι) :
+utility with probability `softmax (β⁻¹ • u) i`. The density of the `i`-th utility times the other
+utilities' cdfs is `softmax (β⁻¹ • u) i` times the density of the maximum utility, which is Gumbel
+with location `β * log (∑ j, exp (u j / β))` by max-stability. McFadden states the unit-scale case;
+the scale of the noise is not separately identified from that of `u`. -/
+theorem choiceProb_pi_gumbelMeasure (u : ι → ℝ) (hβ : β ≠ 0) (i : ι) :
     choiceProb (Measure.pi fun j ↦ gumbelMeasure (u j) β) i =
-      ENNReal.ofReal (softmax ((1 / β) • u) i) := by
-  have : ∀ j, IsProbabilityMeasure (gumbelMeasure (u j) β) :=
-    fun j ↦ isProbabilityMeasure_gumbelMeasure hβ (u j)
-  have hcdf : Measurable fun x ↦ ∏ j ∈ Finset.univ.erase i, cdf (gumbelMeasure (u j) β) x :=
-    Finset.measurable_fun_prod _ fun j _ ↦ (monotone_cdf _).measurable
-  have hnonneg : ∀ x, 0 ≤ ∏ j ∈ Finset.univ.erase i, cdf (gumbelMeasure (u j) β) x :=
-    fun x ↦ Finset.prod_nonneg fun j _ ↦ cdf_nonneg _ x
-  have hint : Integrable fun x ↦ gumbelPDFReal (u i) β x *
-      ∏ j ∈ Finset.univ.erase i, cdf (gumbelMeasure (u j) β) x :=
-    (integrable_gumbelPDFReal hβ (u i)).mul_bdd (c := 1) hcdf.aestronglyMeasurable
-      (.of_forall fun x ↦ by
-        rw [Real.norm_of_nonneg (hnonneg x)]
-        exact Finset.prod_le_one₀ (fun j _ ↦ cdf_nonneg _ x) fun j _ ↦ cdf_le_one _ x)
-  have hpdf : Measurable (gumbelPDF (u i) β) := (measurable_gumbelPDFReal _ _).ennreal_ofReal
-  rw [choiceProb_pi_eq_lintegral_cdf, gumbelMeasure,
-    lintegral_withDensity_eq_lintegral_mul _ hpdf hcdf.ennreal_ofReal]
-  simp_rw [Pi.mul_apply, gumbelPDF, ← ENNReal.ofReal_mul (gumbelPDFReal_nonneg hβ.le _ _)]
-  rw [← ofReal_integral_eq_lintegral_ofReal hint
-    (.of_forall fun x ↦ mul_nonneg (gumbelPDFReal_nonneg hβ.le _ _) (hnonneg x)),
-    integral_gumbelPDFReal_mul_prod_cdf u hβ i]
-  simp only [softmax, Pi.smul_apply, smul_eq_mul, one_div_mul_eq_div]
-
-end GumbelRUM
+      ENNReal.ofReal (softmax ((β : ℝ)⁻¹ • u) i) := by
+  have := fun j ↦ nullSingletonClass_gumbelMeasure (u j) hβ
+  set m := β * log (∑ j, exp (u j / β)) with hm
+  have key (x : ℝ) : gumbelPDF (u i) β x *
+      ENNReal.ofReal (∏ j ∈ univ.erase i, cdf (gumbelMeasure (u j) β) x) =
+        ENNReal.ofReal (softmax ((β : ℝ)⁻¹ • u) i) * gumbelPDF m β x := by
+    have h : exp (u i / β - log (∑ j, exp (u j / β))) * exp (-((x - m) / β)) =
+        exp (-((x - u i) / β)) := by
+      rw [← exp_add]; congr 1; field_simp; ring
+    rw [gumbelPDF, gumbelPDF, ← ENNReal.ofReal_mul (gumbelPDFReal_nonneg _ _ _),
+      ← ENNReal.ofReal_mul (softmax_nonneg _ _), gumbelPDFReal_eq_mul_cdf _ hβ,
+      gumbelPDFReal_eq_mul_cdf _ hβ, mul_assoc,
+      mul_prod_erase _ (fun j ↦ cdf (gumbelMeasure (u j) β) x) (mem_univ i),
+      prod_cdf_gumbelMeasure univ_nonempty u hβ, ← hm, softmax_eq_exp_sub, ← h]
+    simp only [Pi.smul_apply, smul_eq_mul, inv_mul_eq_div]
+    congr 1; ring
+  rw [choiceProb_pi_eq_lintegral_cdf, gumbelMeasure_of_scale_ne_zero (u i) hβ,
+    lintegral_withDensity_eq_lintegral_mul_non_measurable _ (measurable_gumbelPDF _ _)
+      (.of_forall fun _ ↦ ENNReal.ofReal_lt_top)]
+  simp_rw [Pi.mul_apply, key]
+  rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top, lintegral_gumbelPDF_eq_one m hβ, mul_one]
 
 /-! ### Binary case: the logistic function -/
 
 /-- For two alternatives with Gumbel noise the choice probability is the logistic function
 `sigmoid ((u 0 - u 1) / β)`. The binary probit `choiceProb_pi_gaussianReal` is its Gaussian
 counterpart, and the two are indistinguishable on binary data alone. -/
-theorem choiceProb_pi_gumbelMeasure_fin_two (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
+theorem choiceProb_pi_gumbelMeasure_fin_two (u : Fin 2 → ℝ) (hβ : β ≠ 0) :
     choiceProb (Measure.pi fun j ↦ gumbelMeasure (u j) β) 0 =
-      ENNReal.ofReal (Real.sigmoid ((u 0 - u 1) / β)) := by
+      ENNReal.ofReal (sigmoid ((u 0 - u 1) / β)) := by
   rw [choiceProb_pi_gumbelMeasure u hβ 0, softmax_fin_two]
   simp only [Pi.smul_apply, smul_eq_mul]
   congr 2; ring
+
+end GumbelRUM
 
 end ProbabilityTheory

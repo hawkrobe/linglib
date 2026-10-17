@@ -29,8 +29,8 @@ NoSchwa, \*CCC, \*Clash, Max, Dep and \*Cluster (20)–(28).
 
 ## Main results
 
-* `choiceProb_pi_gumbelMeasure_eq_softmax`, `logit_softmax_harmonyScore`: MaxEnt is the Gumbel
-  random utility model, with logit (10).
+* `choiceProb_pi_gumbelMeasure_eq_softmax`, `logit_choiceProb_pi_gumbelMeasure`: MaxEnt is the
+  Gumbel random utility model, with logit (10).
 * `probit_weightNoiseChoiceProb`, `probit_choiceProb_pi_gaussianReal`: the probits (16) and (18).
 * `probitChange_strictAnti`: the NHG probit gain falls with the initial harmony difference (§7.2).
 * `diff_eq`: the difference tableaux (35), derived from the constraint definitions.
@@ -79,20 +79,22 @@ open scoped NNReal
 
 variable {C : Type*} [Fintype C] [Nonempty C] {n : ℕ}
 
-/-- MaxEnt is the Gumbel random utility model (§4): when the candidates' harmonies are perturbed by
+/-- MaxEnt is the Gumbel random utility model (§4). When the candidates' harmonies are perturbed by
 independent standard Gumbel noise, the probability that `c` has the highest perturbed harmony is the
 softmax of (4), by McFadden's Lemma 1. -/
 theorem choiceProb_pi_gumbelMeasure_eq_softmax [DecidableEq C] (con : ConstraintSet C (Fin n))
     (w : Fin n → ℝ) (c : C) :
     choiceProb (Measure.pi fun c' ↦ gumbelMeasure (harmonyScore con w c') 1) c =
       ENNReal.ofReal (softmax (harmonyScore con w) c) := by
-  rw [choiceProb_pi_gumbelMeasure _ one_pos c]
-  norm_num [one_smul]
+  simp [choiceProb_pi_gumbelMeasure _ one_ne_zero c]
 
-/-- Between two candidates the MaxEnt logit of the first is the harmony difference (10). -/
-theorem logit_softmax_harmonyScore (con : ConstraintSet (Fin 2) (Fin n)) (w : Fin n → ℝ) :
-    logit (softmax (harmonyScore con w) 0) = harmonyScore con w 0 - harmonyScore con w 1 :=
-  logit_softmax_fin_two _
+/-- Between two candidates the MaxEnt logit of the first is the harmony difference (10), since under
+standard Gumbel noise the choice probability is the logistic function of the difference. -/
+theorem logit_choiceProb_pi_gumbelMeasure (con : ConstraintSet (Fin 2) (Fin n)) (w : Fin n → ℝ) :
+    logit (choiceProb (Measure.pi fun c ↦ gumbelMeasure (harmonyScore con w c) 1) 0).toReal =
+      harmonyScore con w 0 - harmonyScore con w 1 := by
+  rw [choiceProb_pi_gumbelMeasure_fin_two _ one_ne_zero, ENNReal.toReal_ofReal (sigmoid_pos _).le]
+  simp
 
 /-- Under noise of variance `v` on the weights, the probit of the first candidate is the harmony
 difference over the standard deviation `σ_d` of its noise (16). -/
@@ -160,21 +162,22 @@ def noSchwa (_ : Context) : Constraint Cand := .binary (· = 0)
 
 /-- \*CCC (21) penalizes the three-consonant cluster the schwaless candidate forms after two
 consonants. -/
-def starCCC (x : Context) : Constraint Cand := .binary λ c => c = 1 ∧ x.onset = .cc
+def starCCC (x : Context) : Constraint Cand := .binary fun c ↦ c = 1 ∧ x.onset = .cc
 
 /-- \*Clash (23) penalizes the schwaless candidate when a stressed monosyllable then follows a
 stressed syllable. -/
-def starClash (x : Context) : Constraint Cand := .binary λ c => c = 1 ∧ x.following = .monosyllable
+def starClash (x : Context) : Constraint Cand :=
+  .binary fun c ↦ c = 1 ∧ x.following = .monosyllable
 
 /-- Max penalizes the schwaless candidate for deleting an underlying schwa. -/
-def maxSchwa (x : Context) : Constraint Cand := .binary λ c => c = 1 ∧ x.underlying = .schwa
+def maxSchwa (x : Context) : Constraint Cand := .binary fun c ↦ c = 1 ∧ x.underlying = .schwa
 
 /-- Dep penalizes the schwa candidate for inserting a schwa where there is none underlyingly. -/
-def depSchwa (x : Context) : Constraint Cand := .binary λ c => c = 0 ∧ x.underlying = .zero
+def depSchwa (x : Context) : Constraint Cand := .binary fun c ↦ c = 0 ∧ x.underlying = .zero
 
 /-- \*Cluster (22) penalizes a two-consonant cluster, which the schwaless candidate always forms and
 the schwa candidate forms after two consonants. -/
-def starCluster (x : Context) : Constraint Cand := .binary λ c => c = 1 ∨ x.onset = .cc
+def starCluster (x : Context) : Constraint Cand := .binary fun c ↦ c = 1 ∨ x.onset = .cc
 
 /-- [smith-pater-2020]'s constraint set in the order of (35). -/
 def constraints (x : Context) : ConstraintSet Cand (Fin 6)
@@ -359,7 +362,7 @@ theorem maxEntProb_following_lt (u : Underlying) (o : Onset) (w : Fin 6 → ℝ)
 /-- The observed odds of the schwa. -/
 def odds (x : Context) : ℚ := observedRate x / (100 - observedRate x)
 
-/-- The effect of the preceding consonants is larger in words than in clitics (§8.2): the odds ratio
+/-- The effect of the preceding consonants is larger in words than in clitics (§8.2). The odds ratio
 across \*CCC is larger with underlying `/∅/` than with `/ə/`, in both stress contexts. MaxEnt with
 Smith & Pater's constraints predicts equal odds ratios (`logit_onset`); this is the Max × \*CCC
 interaction that motivates \*CCC/iP. -/
@@ -379,11 +382,11 @@ theorem deviance_order :
 /-- \*CCC/iP (§8.3) penalizes a three-consonant cluster within one intermediate phrase, which the
 schwaless candidate forms after two consonants only in the word-final items. -/
 def starCCCiP (x : Context) : Constraint Cand :=
-  .binary λ c => c = 1 ∧ x.onset = .cc ∧ x.underlying = .zero
+  .binary fun c ↦ c = 1 ∧ x.onset = .cc ∧ x.underlying = .zero
 
 /-- Max and Dep collapsed into one correspondence constraint (§8.3). -/
 def corr (x : Context) : Constraint Cand :=
-  .binary λ c => (c = 1 ∧ x.underlying = .schwa) ∨ (c = 0 ∧ x.underlying = .zero)
+  .binary fun c ↦ (c = 1 ∧ x.underlying = .schwa) ∨ (c = 0 ∧ x.underlying = .zero)
 
 /-- The revised constraint set of Table 4 is NoSchwa, \*CCC, \*CCC/iP, \*Clash, Max/Dep and
 \*Cluster. -/
@@ -413,9 +416,9 @@ theorem harmonyDiffRevised_onset (u : Underlying) (f : Following) (w : Fin 6 →
 
 /-- The tableau of (1), (3), (5) and (45) has the candidates `a`, `b`, `c` as `0`, `1`, `2`. -/
 def tableCon : ConstraintSet (Fin 3) (Fin 3)
-  | 0 => λ c => if c = 0 then 1 else 0
-  | 1 => λ c => if c = 1 then 2 else if c = 2 then 1 else 0
-  | 2 => λ c => if c = 2 then 1 else 0
+  | 0 => fun c ↦ if c = 0 then 1 else 0
+  | 1 => fun c ↦ if c = 1 then 2 else if c = 2 then 1 else 0
+  | 2 => fun c ↦ if c = 2 then 1 else 0
 
 /-- The weights 15, 8, 8. -/
 noncomputable def tableW : Fin 3 → ℝ
