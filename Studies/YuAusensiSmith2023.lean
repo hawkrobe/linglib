@@ -103,9 +103,9 @@ variable {Entity : Type*} {State Event : Type u} {M : Interpretation Entity Stat
 
 /-- *Again* attached to a change-of-state root presupposes an earlier change, so no attachment
 gives a restitutive reading. -/
-theorem change_of_again_changeOfState (h : (again R (M.vBecome B x)).presup e) :
+theorem change_of_again_changeOfState (h : again R (M.vBecome B x) e ≠ 0) :
     ∃ e', e ~[R] e' ∧ ∃ s, M.become s e' :=
-  BeaversEtAl2021.exists_become_of_againAt_achievement_presup (y := x) M h
+  BeaversEtAl2021.exists_become_of_againAt_achievement_ne_zero (y := x) M h
 
 end Again
 

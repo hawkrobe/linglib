@@ -237,11 +237,12 @@ for Karttunen, Heim and Schlenker, the presupposition has the two properties of 
 instance of a test that class A excludes is acceptable. The local context of a family member is
 the image of the utterance context under the member's relation, and that of the complement of a
 belief report its image under the holder's doxastic accessibility. -/
-theorem Excludes.not_accepted_admits {W : Type} {t : Test} (h : Excludes .A t) (p : PartialProp W)
-    (M R : SetRel W W) [M.IsRefl] :
-    ¬ t.Accepted p.presup R (fun e c ↦ p.Admits ((e.rel M).image c))
-      (fun c ↦ p.Admits (R.image c)) :=
-  h W _ M R p.Admits _ _ (fun _ _ h ↦ h) (fun _ _ h ↦ h) (fun _ _ h ↦ p.admits_image_iff.1 h)
+theorem Excludes.not_accepted_admits {W : Type} {t : Test} (h : Excludes .A t)
+    (p : W → SignType) (M R : SetRel W W) [M.IsRefl] :
+    ¬ t.Accepted (Function.support p) R (fun e c ↦ (e.rel M).image c ⊆ Function.support p)
+      (fun c ↦ R.image c ⊆ Function.support p) :=
+  h W _ M R (· ⊆ Function.support p) _ _ (fun _ _ h ↦ h) (fun _ _ h ↦ h)
+    (fun _ _ h ↦ SetRel.image_subset_iff.1 h)
 
 /-! ### The rows -/
 

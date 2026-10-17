@@ -4,7 +4,7 @@ public import Mathlib.Data.Finset.Insert
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Logic.Natural.Soundness
 public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Readings of a conditional
@@ -24,7 +24,8 @@ antecedent-worlds the antecedent is neither. Languages may lexicalize the split,
 ## Main definitions
 
 * `Conditional.Reading`: the hypothetical and premise readings.
-* `Conditional.Reading.denote`: the denotation of *if p, q* under a reading.
+* `Conditional.Reading.denote`: the denotation of *if p, q* under a reading, a trivalent
+  proposition.
 * `Conditional.Reading.clauseSignature`: the projectivity signature of each clause under a
   reading, whose sign is `Conditional.Reading.clausePolarity`.
 * `Conditional.Marker`: a conditional marker with the readings it can mark.
@@ -47,7 +48,7 @@ antecedent-worlds the antecedent is neither. Languages may lexicalize the split,
 
 namespace Conditional
 
-open NaturalLogic Presupposition
+open NaturalLogic
 
 /-- The readings of a conditional, on which the antecedent is supposed and left open or echoes
 prior discourse and is treated as established. -/
@@ -74,28 +75,28 @@ section Denotation
 
 variable {W : Type*} (cond : Set W → Set W → Set W) (p q : Set W)
 
+open Classical in
 /-- The denotation of *if p, q* under a reading, for a conditional operator `cond` on total
 propositions. The hypothetical reading is `cond p q`, and the premise reading asserts `q` with
 `p` presupposed. -/
-def denote : Reading → PartialProp W
-  | .hypothetical => .ofProp (· ∈ cond p q)
-  | .premise => ⟨(· ∈ p), (· ∈ q)⟩
+noncomputable def denote : Reading → W → SignType
+  | .hypothetical => fun w ↦ SignType.ofProp (w ∈ cond p q)
+  | .premise => p.indicator fun w ↦ SignType.ofProp (w ∈ q)
 
 variable {cond p q} {w : W}
 
-@[simp] theorem holds_denote_hypothetical :
-    (hypothetical.denote cond p q).holds w ↔ w ∈ cond p q := by
-  simp [denote, PartialProp.ofProp, PartialProp.holds]
+@[simp] theorem denote_hypothetical_eq_one_iff :
+    hypothetical.denote cond p q w = 1 ↔ w ∈ cond p q := by
+  simp [denote]
 
-@[simp] theorem holds_denote_premise :
-    (premise.denote cond p q).holds w ↔ w ∈ p ∧ w ∈ q := Iff.rfl
+@[simp] theorem denote_premise_eq_one_iff : premise.denote cond p q w = 1 ↔ w ∈ p ∧ w ∈ q := by
+  simp [denote]
 
 /-- Where the antecedent holds, the hypothetical reading of the material conditional and the
 premise reading agree. -/
-theorem holds_denote_materialImp_iff (hw : w ∈ p) :
-    (hypothetical.denote materialImp p q).holds w ↔
-      (premise.denote materialImp p q).holds w := by
-  simp [hw, mem_materialImp]
+theorem denote_hypothetical_materialImp_eq_premise (hw : w ∈ p) :
+    hypothetical.denote materialImp p q w = premise.denote materialImp p q w := by
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;> simp [denote, hw, mem_materialImp]
 
 end Denotation
 
@@ -122,53 +123,54 @@ def clausePolarity (ct : Reading) (c : Clause) : SignType := (clauseSignature ct
 
 /-- The function of a clause under a reading, the other clause held fixed, on truth sets. -/
 def clauseMap (ct : Reading) : Clause → Set W → Set W
-  | .antecedent => fun p' ↦ (ct.denote cond p' q).truthSet
-  | .consequent => fun q' ↦ (ct.denote cond p q').truthSet
+  | .antecedent => fun p' ↦ Trivalent.posExt (ct.denote cond p' q)
+  | .consequent => fun q' ↦ Trivalent.posExt (ct.denote cond p q')
 
 variable {cond p q}
 
 /-- The hypothetical antecedent is antitone over a domain that grows with the antecedent. -/
-theorem antitone_truthSet_hypothetical (hD : ∀ w, Monotone (D w)) (q : Set W) :
-    Antitone fun p ↦ (hypothetical.denote (ofDomain D) p q).truthSet :=
-  fun _ _ h _ hw ↦ holds_denote_hypothetical.2
-    (ofDomain_anti_left (fun i ↦ hD i h) (holds_denote_hypothetical.1 hw))
+theorem antitone_posExt_hypothetical (hD : ∀ w, Monotone (D w)) (q : Set W) :
+    Antitone fun p ↦ Trivalent.posExt (hypothetical.denote (ofDomain D) p q) :=
+  fun _ _ h _ hw ↦ denote_hypothetical_eq_one_iff.2
+    (ofDomain_anti_left (fun i ↦ hD i h) (denote_hypothetical_eq_one_iff.1 hw))
 
 /-- The premise antecedent is monotone for every operator. -/
-theorem monotone_truthSet_premise (cond : Set W → Set W → Set W) (q : Set W) :
-    Monotone fun p ↦ (premise.denote cond p q).truthSet :=
-  fun _ _ h _ hw ↦ ⟨h hw.1, hw.2⟩
+theorem monotone_posExt_premise (cond : Set W → Set W → Set W) (q : Set W) :
+    Monotone fun p ↦ Trivalent.posExt (premise.denote cond p q) :=
+  fun _ _ h _ hw ↦ denote_premise_eq_one_iff.2 ((denote_premise_eq_one_iff.1 hw).imp_left (h ·))
 
 /-- The consequent is monotone on either reading of a conditional over a domain. -/
-theorem monotone_truthSet_consequent (ct : Reading) (p : Set W) :
-    Monotone fun q ↦ (ct.denote (ofDomain D) p q).truthSet := by
+theorem monotone_posExt_consequent (ct : Reading) (p : Set W) :
+    Monotone fun q ↦ Trivalent.posExt (ct.denote (ofDomain D) p q) := by
   cases ct
   · exact fun _ _ h _ hw ↦
-      holds_denote_hypothetical.2 (ofDomain_mono_right h (holds_denote_hypothetical.1 hw))
-  · exact fun _ _ h _ hw ↦ ⟨hw.1, h hw.2⟩
+      denote_hypothetical_eq_one_iff.2 (ofDomain_mono_right h (denote_hypothetical_eq_one_iff.1 hw))
+  · exact fun _ _ h _ hw ↦
+      denote_premise_eq_one_iff.2 ((denote_premise_eq_one_iff.1 hw).imp_right (h ·))
 
 /-- Over a domain that grows with the antecedent, each clause's signature is sound for the
 clause's function. -/
 theorem soundFor_clauseSignature (hD : ∀ w, Monotone (D w)) (p q : Set W) (ct : Reading)
     (c : Clause) : (clauseSignature ct c).SoundFor (clauseMap (ofDomain D) p q ct c) := by
   cases ct <;> cases c
-  · exact soundFor_anti_iff.2 (antitone_truthSet_hypothetical hD q)
-  · exact soundFor_mono_iff.2 (monotone_truthSet_consequent .hypothetical p)
-  · exact soundFor_mono_iff.2 (monotone_truthSet_premise _ q)
-  · exact soundFor_mono_iff.2 (monotone_truthSet_consequent .premise p)
+  · exact soundFor_anti_iff.2 (antitone_posExt_hypothetical hD q)
+  · exact soundFor_mono_iff.2 (monotone_posExt_consequent .hypothetical p)
+  · exact soundFor_mono_iff.2 (monotone_posExt_premise _ q)
+  · exact soundFor_mono_iff.2 (monotone_posExt_consequent .premise p)
 
 /-- Over the closest antecedent-worlds the hypothetical antecedent is not antitone — with three
 worlds ranked `0 < 1 < 2` from `0`, *if 1 or 2, then 1* holds at `0` while *if 2, then 1* does
 not. -/
 theorem exists_not_antitone_hypothetical_closestImp :
     ∃ (ord : Fin 3 → Preorder (Fin 3)) (q : Set (Fin 3)),
-      ¬ Antitone fun p ↦ (hypothetical.denote (closestImp ord) p q).truthSet := by
+      ¬ Antitone fun p ↦ Trivalent.posExt (hypothetical.denote (closestImp ord) p q) := by
   let ord : Fin 3 → Preorder (Fin 3) := fun _ ↦ Preorder.lift fun v : Fin 3 ↦ (v : ℕ)
   refine ⟨ord, {1}, fun h ↦ ?_⟩
-  have h1 : (0 : Fin 3) ∈ (hypothetical.denote (closestImp ord) {1, 2} {1}).truthSet := by
-    simp only [PartialProp.mem_truthSet, holds_denote_hypothetical]
+  have h1 : (0 : Fin 3) ∈ Trivalent.posExt (hypothetical.denote (closestImp ord) {1, 2} {1}) := by
+    simp only [Trivalent.mem_posExt, denote_hypothetical_eq_one_iff]
     decide
   have h2 := h (show ({2} : Set (Fin 3)) ⊆ {1, 2} by simp) h1
-  simp only [PartialProp.mem_truthSet, holds_denote_hypothetical] at h2
+  simp only [Trivalent.mem_posExt, denote_hypothetical_eq_one_iff] at h2
   revert h2; decide
 
 end Signature

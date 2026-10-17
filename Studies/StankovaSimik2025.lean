@@ -11,7 +11,7 @@ public import Studies.Simik2024
 Staňková and Šimík analyse negation in Czech polar questions. The negative prefix moves with the
 finite verb, so verb position fixes the position of negation: a clause-initial verb sits above
 the canonical negation operator and is licensed only by Repp's commitment operator FALSUM
-(`Simik2024.assertion_of_falsum`), while a verb in situ is licensed by either
+(`Simik2024.falsumCz_eq_one_of_falsum`), while a verb in situ is licensed by either
 (`mem_availableReadings_iff`). Following Zeijlstra, the concord item *žádný* and the prefix carry
 an uninterpretable negative feature and contribute no negation of their own, so of the readings
 the determiner fragment lists for *žádný* only the indefinite one yields 'no' under the canonical
@@ -76,8 +76,8 @@ def VerbPosition.availableReadings : VerbPosition → List Polarity
   | .v1 => [.positive]
   | .nonV1 => [.negative, .positive]
 
-/-- A reading is available exactly when its operator c-commands the negated verb: FALSUM
-always, the canonical operator only over the verb in situ. -/
+/-- A reading is available exactly when its operator c-commands the negated verb, which FALSUM
+always does and the canonical operator does only over the verb in situ. -/
 theorem mem_availableReadings_iff (wp : VerbPosition) (n : Polarity) :
     n ∈ wp.availableReadings ↔ n = .positive ∨ wp = .nonV1 := by
   cases wp <;> cases n <;> decide
@@ -125,7 +125,7 @@ def LicensedAt (e : PolarityItem) (n : Polarity) : Prop :=
 instance (e : PolarityItem) (n : Polarity) : Decidable (LicensedAt e n) := by
   unfold LicensedAt; infer_instance
 
-/-- The two indefinites split the readings: the polarity item is licensed exactly where the
+/-- The two indefinites split the readings, the polarity item being licensed exactly where the
 concord item is not. -/
 theorem licensedAt_ppi_iff_not_nci (n : Polarity) :
     LicensedAt Indefinite.ppi.entry n ↔ ¬ LicensedAt Indefinite.nci.entry n := by
@@ -164,12 +164,12 @@ instance (wp : VerbPosition) (ind : Indefinite) (ctx : SignType) :
     Decidable (Felicitous wp ind ctx) := by
   unfold Felicitous; infer_instance
 
-/-- In interrogative questions the positive polarity item is felicitous in every context:
-FALSUM licenses it and is indifferent to evidence. -/
+/-- In interrogative questions the positive polarity item is felicitous in every context,
+since FALSUM licenses it and is indifferent to evidence. -/
 theorem v1_ppi_any_context (ctx : SignType) : Felicitous .v1 .ppi ctx := by
   decide +revert
 
-/-- In interrogative questions the negative concord item is never felicitous: the
+/-- In interrogative questions the negative concord item is never felicitous, since the
 clause-initial verb is out of reach of the canonical operator. -/
 theorem v1_nci_never (ctx : SignType) : ¬ Felicitous .v1 .nci ctx := by
   decide +revert
@@ -180,13 +180,13 @@ theorem v1_context_invariant (ind : Indefinite) (ctx ctx' : SignType) :
   decide +revert
 
 /-- A declarative question with the concord item is felicitous exactly under negative
-evidence: inner negation requires it. -/
+evidence, which inner negation requires. -/
 theorem nonV1_nci_iff (ctx : SignType) :
     Felicitous .nonV1 .nci ctx ↔ ctx = -1 := by
   decide +revert
 
-/-- A declarative question with the polarity item is felicitous exactly under some evidence:
-FALSUM licenses the verb in situ, and the word order needs evidence. -/
+/-- A declarative question with the polarity item is felicitous exactly under some evidence,
+since FALSUM licenses the verb in situ and the word order needs evidence. -/
 theorem nonV1_ppi_iff (ctx : SignType) :
     Felicitous .nonV1 .ppi ctx ↔ ctx ≠ 0 := by
   decide +revert
@@ -195,7 +195,7 @@ theorem nonV1_ppi_iff (ctx : SignType) :
 theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind 0 := by
   cases ind <;> decide
 
-/-- Czech FALSUM is broader than English high negation: an interrogative question with the
+/-- Czech FALSUM is broader than English high negation, since an interrogative question with the
 polarity item is felicitous under positive evidence (the paper's (14)), which the evidence
 condition of [buring-gunlogson-2000] on English outer negation excludes. -/
 theorem falsum_broader_than_english_outer :
@@ -205,7 +205,7 @@ theorem falsum_broader_than_english_outer :
 
 /-! ### The particles -/
 
-/-- *Náhodou* excludes the concord item at either verb position: the item needs inner
+/-- *Náhodou* excludes the concord item at either verb position, since the item needs inner
 negation and the particle needs FALSUM (the paper's (17) and (18)). -/
 theorem nahodou_excludes_nci (wp : VerbPosition) :
     ¬ ∃ n ∈ wp.availableReadings,
@@ -230,14 +230,14 @@ instance (pol : Polarity) (ctx : SignType) : Decidable (CopakLicensed pol ctx) :
 theorem copak_requires_bias (pol : Polarity) : ¬ CopakLicensed pol 0 := by
   cases pol <;> decide
 
-/-- *Copak* marks a conflict: the prior belief it conveys opposes the evidence it requires. -/
+/-- *Copak* marks a conflict, the prior belief it conveys opposing the evidence it requires. -/
 theorem copak_prior_ne_evidence (pol : Polarity) :
     (prior pol = 1 ↔ evidence pol = -1) ∧
       (prior pol = -1 ↔ evidence pol = 1) := by
   cases pol <;> decide
 
-/-- The two particles part on context: *náhodou* is licensed by FALSUM whatever the
-evidence, *copak* only under evidence. -/
+/-- The two particles part on context, *náhodou* being licensed by FALSUM whatever the
+evidence and *copak* only under evidence. -/
 theorem nahodou_copak_opposite (ctx : SignType) :
     NahodouLicensed .negative .positive ∧ (CopakLicensed .negative ctx → ctx ≠ 0) := by
   decide +revert

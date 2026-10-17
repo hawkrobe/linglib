@@ -49,7 +49,7 @@ tanulhatott* 'Anybody could learn', and, in its series, in the free relative *Ak
 elindulok holnap* 'No matter what you say, I'm leaving tomorrow', in comparatives and in
 conditionals, and starred under direct negation and in questions ([haspelmath-1997] A199a,
 A200–A204). -/
-def akárki : PolarityItem :=
+noncomputable def akárki : PolarityItem :=
   { form := Indefinites.akárki.form
   , licensor := some .weak
   , freeChoice := true
@@ -60,7 +60,7 @@ def akárki : PolarityItem :=
 /-- *bárki* 'anyone', a free choice item attested under a possibility modal and, in its series, in
 comparatives and in conditionals, and starred under direct negation and in questions
 ([haspelmath-1997] A199a, A201, A203, A204). -/
-def bárki : PolarityItem :=
+noncomputable def bárki : PolarityItem :=
   { form := Indefinites.bárki.form
   , licensor := some .weak
   , freeChoice := true
@@ -81,7 +81,7 @@ theorem freeChoice_licensing_sound :
   and_intros <;> decide
 
 /-- The licensing theory admits both free-choice series under clausal negation and in questions,
-where [haspelmath-1997] stars them: a weak negative polarity item is licensed in both. -/
+where [haspelmath-1997] stars them, since a weak negative polarity item is licensed in both. -/
 theorem freeChoice_excluded_admitted :
     ∀ e ∈ [akárki, bárki], ∀ c ∈ e.excludedContexts, c.Admits e := by
   simp only [akárki, bárki, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,

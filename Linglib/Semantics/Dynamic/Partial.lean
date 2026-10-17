@@ -11,9 +11,9 @@ A partial update `PartialUpdate α := α →. α` is a partial function on state
 the update when the update is defined there. Heim's context change potentials are the partial
 updates of sets of worlds (`CCP.Partial`), whose domain condition is the presupposition, so that
 Karttunen's satisfaction law for conjunction is the domain condition of composition and holds by
-construction. A static partial proposition gives the update defined on the contexts that satisfy
-its presupposition throughout, and under this update the filtering connectives of
-`Presupposition/Basic.lean` are the admittance conditions of the dynamic connectives.
+construction. A trivalent proposition gives the update defined on the contexts where it is
+defined throughout, and under this update the filtering connectives, Peters' Middle Kleene
+connectives, are the admittance conditions of the dynamic connectives.
 
 ## Main definitions
 
@@ -21,8 +21,7 @@ its presupposition throughout, and under this update the filtering connectives o
 * `PartialUpdate.IsEliminative`: Heim's Principle (A), that an update never adds information.
 * `PartialUpdate.supports`: a state supports an update of which it is a fixed point.
 * `PartialUpdate.Presupposes`: every state admitting the first update supports the second.
-* `CCP.Partial.ofPartialProp`, `CCP.Partial.ofTrivalent`: the updates of a partial and of a
-  trivalent proposition.
+* `CCP.Partial.ofTrivalent`: the update of a trivalent proposition.
 * `CCP.Partial.neg`, `CCP.Partial.cond`, `CCP.Partial.disj`: Heim's negation and conditional,
   and the disjunction that updates its second disjunct with the negation of the first.
 
@@ -33,8 +32,8 @@ its presupposition throughout, and under this update the filtering connectives o
 * `PartialUpdate.entails_bind_iff_seq_eq`: entailment is absorption under sequencing.
 * `PartialUpdate.Presupposes.seq_right`: a presupposition of the second conjunct projects
   conditionalised on the first.
-* `CCP.Partial.admits_seq_ofPartialProp`, `CCP.Partial.admits_cond_ofPartialProp`,
-  `CCP.Partial.admits_disj_ofPartialProp`: the filtering connectives, derived.
+* `CCP.Partial.admits_seq_ofTrivalent`, `CCP.Partial.admits_cond_ofTrivalent`,
+  `CCP.Partial.admits_disj_ofTrivalent`: the filtering connectives, derived.
 
 ## Implementation notes
 
@@ -218,56 +217,24 @@ open PartialUpdate
 
 variable {P W : Type*} {φ ψ χ : CCP.Partial P} {s : Set P}
 
-/-- The Heimian update of a static partial proposition is defined iff the
-    context globally satisfies the presupposition
-    (`PartialProp.Admits`), updating by intersecting with the
-    assertion.
+/-- The Heimian update of a trivalent proposition is defined iff the proposition is defined
+throughout the context, and keeps the worlds where it is true. This is the `update` relation of
+[beaver-krahmer-2001] §5.3 read as a partial function (`mem_ofTrivalent`), and the context update
+of [coppock-beaver-2015].
 
-    The whole-state domain condition is what separates admittance from
-    per-world filtering (the static update `CCP.up`). A context containing a single
-    presupposition-failing world admits nothing, rather than silently
-    discarding the world. -/
-def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
-  fun s ↦ ⟨p.Admits s, fun _ ↦ { w ∈ s | p.assertion w }⟩
-
-@[simp] theorem ofPartialProp_get (p : PartialProp W) (s : Set W)
-    (h : ((ofPartialProp p) s).Dom) :
-    ((ofPartialProp p) s).get h = { w ∈ s | p.assertion w } := rfl
-
-/-- `t` is the update of `s` exactly when `s` admits the proposition and `t` is the part of `s`
-where the assertion holds. -/
-theorem mem_ofPartialProp (p : PartialProp W) (s t : Set W) :
-    t ∈ ofPartialProp p s ↔ p.Admits s ∧ {w ∈ s | p.assertion w} = t :=
-  ⟨fun ⟨h, e⟩ ↦ ⟨h, e⟩, fun ⟨h, e⟩ ↦ ⟨h, e⟩⟩
-
-/-- A context is a fixed point of an atomic update iff the presupposition and the assertion
-hold throughout it ([heim-1992]'s `c + φ = same`). -/
-theorem mem_ofPartialProp_self (p : PartialProp W) (s : Set W) :
-    s ∈ ofPartialProp p s ↔ s ⊆ p.presup ∧ s ⊆ p.assertion :=
-  ⟨fun ⟨h, e⟩ ↦ ⟨h, Set.sep_eq_self_iff_mem_true.1 e⟩,
-   fun ⟨h, e⟩ ↦ ⟨h, Set.sep_eq_self_iff_mem_true.2 e⟩⟩
-
-/-! ### Trivalent propositions -/
-
-/-- The Heimian update of a trivalent proposition is `ofPartialProp` of its
-total-representative reading, defined iff the proposition is classical throughout the
-context and keeping the worlds where it is true. This is the `update` relation of
-[beaver-krahmer-2001] §5.3 read as a partial function (`mem_ofTrivalent`), and the context
-update of [coppock-beaver-2015]. -/
-def ofTrivalent (p : W → SignType) : CCP.Partial W := ofPartialProp (PartialProp.ofTrivalent p)
+The whole-state domain condition is what separates admittance from per-world filtering (the
+static update `CCP.up`). A context containing a single presupposition-failing world admits
+nothing, rather than silently discarding the world. -/
+def ofTrivalent (p : W → SignType) : CCP.Partial W :=
+  fun s ↦ ⟨s ⊆ Function.support p, fun _ ↦ {w ∈ s | p w = 1}⟩
 
 theorem admits_ofTrivalent (p : W → SignType) (s : Set W) :
-    (ofTrivalent p).Admits s ↔ ∀ w ∈ s, p w ≠ 0 := Iff.rfl
+    (ofTrivalent p).Admits s ↔ s ⊆ Function.support p := Iff.rfl
 
 /-- Admittance of a trivalent proposition is disjointness from its extension gap. -/
 theorem admits_ofTrivalent_iff_disjoint_gapExt (p : W → SignType) (s : Set W) :
     (ofTrivalent p).Admits s ↔ Disjoint s (Trivalent.gapExt p) := by
-  rw [admits_ofTrivalent, Set.disjoint_left]
-  constructor
-  · intro h a ha
-    exact h a ha
-  · intro h w hw
-    exact h hw
+  rw [admits_ofTrivalent, Trivalent.support_eq_compl_gapExt, Set.subset_compl_iff_disjoint_right]
 
 @[simp] theorem ofTrivalent_get (p : W → SignType) (s : Set W) (h : (ofTrivalent p s).Dom) :
     (ofTrivalent p s).get h = {w ∈ s | p w = 1} := rfl
@@ -275,20 +242,21 @@ theorem admits_ofTrivalent_iff_disjoint_gapExt (p : W → SignType) (s : Set W) 
 /-- `t` is the update of `s` exactly when `s` lies in the proposition's domain and `t` is
 its positive extension within `s`. -/
 theorem mem_ofTrivalent (p : W → SignType) (s t : Set W) :
-    t ∈ ofTrivalent p s ↔ (∀ w ∈ s, p w ≠ 0) ∧ t = {w ∈ s | p w = 1} :=
+    t ∈ ofTrivalent p s ↔ s ⊆ Function.support p ∧ t = {w ∈ s | p w = 1} :=
   ⟨fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩, fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩⟩
 
 /-- A context is a fixed point of the update of a trivalent proposition iff the proposition is
-true throughout it. -/
+true throughout it ([heim-1992]'s `c + φ = same`). -/
 theorem mem_ofTrivalent_self (p : W → SignType) (s : Set W) :
-    s ∈ ofTrivalent p s ↔ ∀ w ∈ s, p w = 1 :=
-  (mem_ofPartialProp_self _ s).trans
-    ⟨fun h w hw ↦ h.2 hw, fun h ↦ ⟨fun w hw ↦ show p w ≠ 0 by rw [h w hw]; decide, h⟩⟩
+    s ∈ ofTrivalent p s ↔ ∀ w ∈ s, p w = 1 := by
+  refine ⟨fun ⟨_, e⟩ ↦ Set.sep_eq_self_iff_mem_true.1 e, fun h ↦ ⟨fun w hw ↦ ?_, ?_⟩⟩
+  · simp [Function.mem_support, h w hw]
+  · exact Set.sep_eq_self_iff_mem_true.2 h
 
 /-- Propositions that agree on the context update it alike. -/
 theorem ofTrivalent_congr {p q : W → SignType} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
     ofTrivalent p s = ofTrivalent q s :=
-  Part.ext' (forall₂_congr fun w hw ↦ show p w ≠ 0 ↔ q w ≠ 0 by rw [h w hw])
+  Part.ext' (forall₂_congr fun w hw ↦ by simp [h w hw])
     fun _ _ ↦ Set.ext fun w ↦ and_congr_right fun hw ↦
       show p w = 1 ↔ q w = 1 by rw [h w hw]
 
@@ -317,8 +285,8 @@ theorem cond_eq_neg_seq_neg (φ ψ : CCP.Partial P) :
 
 /-! ### Eliminativity -/
 
-theorem isEliminative_ofPartialProp (p : PartialProp W) :
-    (ofPartialProp p).IsEliminative := fun _ _ h ↦ (Part.mem_mk_iff.mp h).2 ▸ Set.sep_subset _ _
+theorem isEliminative_ofTrivalent (p : W → SignType) :
+    (ofTrivalent p).IsEliminative := fun _ _ h ↦ (Part.mem_mk_iff.mp h).2 ▸ Set.sep_subset _ _
 
 theorem isEliminative_neg (φ : CCP.Partial P) : (neg φ).IsEliminative := fun _ _ h ↦ by
   obtain ⟨t, -, rfl⟩ := (Part.mem_map_iff _).mp h
@@ -347,16 +315,6 @@ theorem admits_disj (φ ψ : CCP.Partial P) (s : Set P) :
       ∃ h : φ.Admits s, ψ.Admits (s \ (φ s).get h) :=
   Iff.rfl
 
-/-! ### The Stalnaker bridge -/
-
-/-- Admittance of an atomic update is the static layer's
-    `PartialProp.Admits` by construction, so the dynamic definedness
-    condition and the satisfaction-theoretic context condition are one
-    notion. -/
-theorem admits_ofPartialProp (p : PartialProp W) (s : Set W) :
-    (ofPartialProp p).Admits s ↔ p.Admits s :=
-  Iff.rfl
-
 /-! ### Local contexts
 
 The connectives evaluate their second argument in [karttunen-1974-presupposition]'s local
@@ -367,77 +325,70 @@ open Presupposition (Connective)
 
 /-- Dynamic conjunction admits `s` iff `s` admits the first conjunct and the second conjunct's
 local context admits the second. -/
-theorem admits_seq_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
-    (PartialUpdate.seq (ofPartialProp p) ψ).Admits s ↔
-      p.Admits s ∧ ψ.Admits (Connective.conj.localContext s p.assertion) :=
+theorem admits_seq_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
+    (PartialUpdate.seq (ofTrivalent p) ψ).Admits s ↔
+      s ⊆ Function.support p ∧ ψ.Admits (Connective.conj.localContext s (Trivalent.posExt p)) :=
   ⟨fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩, fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩⟩
 
 /-- The conditional admits `s` iff `s` admits the antecedent and the consequent's local context
 admits the consequent. -/
-theorem admits_cond_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
-    (cond (ofPartialProp p) ψ).Admits s ↔
-      p.Admits s ∧ ψ.Admits (Connective.cond.localContext s p.assertion) :=
-  admits_seq_ofPartialProp_iff p ψ s
+theorem admits_cond_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
+    (cond (ofTrivalent p) ψ).Admits s ↔
+      s ⊆ Function.support p ∧ ψ.Admits (Connective.cond.localContext s (Trivalent.posExt p)) :=
+  admits_seq_ofTrivalent_iff p ψ s
 
 /-- Disjunction admits `s` iff `s` admits the first disjunct and the second disjunct's local
 context admits the second. -/
-theorem admits_disj_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
-    (disj (ofPartialProp p) ψ).Admits s ↔
-      p.Admits s ∧ ψ.Admits (Connective.disj.localContext s p.assertion) := by
-  have e : s \ {w ∈ s | p.assertion w} = Connective.disj.localContext s p.assertion :=
+theorem admits_disj_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
+    (disj (ofTrivalent p) ψ).Admits s ↔
+      s ⊆ Function.support p ∧ ψ.Admits (Connective.disj.localContext s (Trivalent.posExt p)) := by
+  have e : s \ {w ∈ s | p w = 1} = Connective.disj.localContext s (Trivalent.posExt p) :=
     Set.ext fun _ ↦ ⟨fun ⟨hs, hn⟩ ↦ ⟨hs, fun ha ↦ hn ⟨hs, ha⟩⟩, fun ⟨hs, hn⟩ ↦ ⟨hs, fun h ↦ hn h.2⟩⟩
   refine ⟨fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩, fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩⟩
   · rw [← e]; exact hψ
-  · change ψ.Admits (s \ {w ∈ s | p.assertion w}); rw [e]; exact hψ
+  · change ψ.Admits (s \ {w ∈ s | p w = 1}); rw [e]; exact hψ
 
 /-! ### Filtering connectives, derived
 
-Under `ofPartialProp`, the admittance conditions of the dynamic
-connectives are pointwise exactly the presuppositions of the *filtering*
-connectives of `Presupposition/Basic.lean`: both are satisfaction in the local contexts
-(`PartialProp.admits_andFilter` and its siblings), so Karttunen filtering is the
-composition law of partial updates, not a stipulation. -/
+Under `ofTrivalent`, the admittance conditions of the dynamic connectives are exactly the
+definedness conditions of the filtering connectives, Peters' Middle Kleene connectives: both are
+satisfaction in the local contexts (`Presupposition.subset_support_meetMiddle_iff` and its
+siblings), so Karttunen filtering is the composition law of partial updates, not a
+stipulation. -/
 
-/-- Dynamic conjunction admits `s` iff `s` satisfies `andFilter`'s
-    presupposition pointwise. -/
-theorem admits_seq_ofPartialProp (p q : PartialProp W) (s : Set W) :
-    (PartialUpdate.seq (ofPartialProp p) (ofPartialProp q)).Admits s ↔
-      ∀ w ∈ s, (PartialProp.andFilter p q).presup w :=
-  (admits_seq_ofPartialProp_iff p _ s).trans PartialProp.admits_andFilter.symm
+/-- Dynamic conjunction admits `s` iff the Middle Kleene conjunction is defined throughout it. -/
+theorem admits_seq_ofTrivalent (p q : W → SignType) (s : Set W) :
+    (PartialUpdate.seq (ofTrivalent p) (ofTrivalent q)).Admits s ↔
+      s ⊆ Function.support fun w ↦ (p w).meetMiddle (q w) :=
+  (admits_seq_ofTrivalent_iff p _ s).trans Presupposition.subset_support_meetMiddle_iff.symm
 
-/-- Dynamic conditional admits `s` iff `s` satisfies `impFilter`'s
-    presupposition pointwise. -/
-theorem admits_cond_ofPartialProp (p q : PartialProp W) (s : Set W) :
-    (cond (ofPartialProp p) (ofPartialProp q)).Admits s ↔
-      ∀ w ∈ s, (PartialProp.impFilter p q).presup w :=
-  admits_seq_ofPartialProp p q s
+/-- The dynamic conditional admits `s` iff the Middle Kleene conditional is defined throughout
+it. -/
+theorem admits_cond_ofTrivalent (p q : W → SignType) (s : Set W) :
+    (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
+      s ⊆ Function.support fun w ↦ (-p w).joinMiddle (q w) :=
+  (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_support_impMiddle_iff.symm
 
-/-- Dynamic disjunction admits `s` iff `s` satisfies `orFilter`'s
-    presupposition pointwise, the ¬φ local context being Karttunen's
-    negative-antecedent filtering. -/
-theorem admits_disj_ofPartialProp (p q : PartialProp W) (s : Set W) :
-    (disj (ofPartialProp p) (ofPartialProp q)).Admits s ↔
-      ∀ w ∈ s, (PartialProp.orFilter p q).presup w :=
-  (admits_disj_ofPartialProp_iff p _ s).trans PartialProp.admits_orFilter.symm
-
-/-- Negation projects the atomic presupposition unchanged. -/
-theorem admits_neg_ofPartialProp (p : PartialProp W) (s : Set W) :
-    (neg (ofPartialProp p)).Admits s ↔ ∀ w ∈ s, p.presup w :=
-  Iff.rfl
+/-- Dynamic disjunction admits `s` iff the Middle Kleene disjunction is defined throughout it,
+the ¬φ local context being Karttunen's negative-antecedent filtering. -/
+theorem admits_disj_ofTrivalent (p q : W → SignType) (s : Set W) :
+    (disj (ofTrivalent p) (ofTrivalent q)).Admits s ↔
+      s ⊆ Function.support fun w ↦ (p w).joinMiddle (q w) :=
+  (admits_disj_ofTrivalent_iff p _ s).trans Presupposition.subset_support_joinMiddle_iff.symm
 
 /-! ### Presupposition -/
 
 /-- An update presupposes a plain proposition iff every context admitting it entails the
 proposition, [heim-1983]'s definition of presupposition. -/
-theorem presupposes_ofProp_iff (φ : CCP.Partial W) (p : W → Prop) :
-    PartialUpdate.Presupposes φ (ofPartialProp (.ofProp p)) ↔ ∀ c, φ.Admits c → ∀ w ∈ c, p w :=
-  forall₂_congr fun c _ ↦ (mem_ofPartialProp_self _ c).trans
-    ⟨fun h ↦ h.2, fun h ↦ ⟨fun _ _ ↦ trivial, h⟩⟩
+theorem presupposes_ofProp_iff (φ : CCP.Partial W) (p : W → Prop) [DecidablePred p] :
+    PartialUpdate.Presupposes φ (ofTrivalent fun w ↦ SignType.ofProp (p w)) ↔
+      ∀ c, φ.Admits c → ∀ w ∈ c, p w := by
+  simp only [PartialUpdate.Presupposes, supports, mem_ofTrivalent_self, SignType.ofProp_eq_one_iff]
 
-/-- An atomic update presupposes its presupposition. -/
-theorem presupposes_ofPartialProp (p : PartialProp W) :
-    PartialUpdate.Presupposes (ofPartialProp p) (ofPartialProp (.ofProp p.presup)) :=
-  (presupposes_ofProp_iff _ _).2 fun _ h ↦ h
+/-- An update of a trivalent proposition presupposes that the proposition is defined. -/
+theorem presupposes_ofTrivalent (p : W → SignType) :
+    PartialUpdate.Presupposes (ofTrivalent p) (ofTrivalent fun w ↦ SignType.ofProp (p w ≠ 0)) :=
+  (presupposes_ofProp_iff _ _).2 fun _ h _ hw ↦ (admits_ofTrivalent _ _).1 h hw
 
 end CCP.Partial
 

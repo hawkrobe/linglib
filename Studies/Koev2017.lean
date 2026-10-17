@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Events.Basic
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Koev (2017): Evidentiality, Learning Events and Spatiotemporal Distance
@@ -13,13 +13,13 @@ described event: either not overlapping it in time, as with standard indirect ev
 located elsewhere, as when smoke from a chimney shows a fire in progress. Direct witness, at the
 same time and place, is the one configuration the evidential excludes, and the constraint is
 independent of the ordering that past tense contributes. The evidential implication projects as
-the presupposition of a partial proposition whose assertion is the core proposition, with no
+the presupposition of a trivalent proposition whose assertion is the core proposition, with no
 modal weakening, against Izvorski.
 
 ## Main definitions
 
 * `spatiotemporallyDistant`: the distance condition.
-* `LearningScenario.toEvidentialProp`: the evidential sentence as a partial proposition.
+* `LearningScenario.toEvidentialProp`: the evidential sentence as a trivalent proposition.
 
 ## Main results
 
@@ -45,8 +45,6 @@ modal weakening, against Izvorski.
 namespace Koev2017
 
 open Event (τ)
-
-open Presupposition
 
 variable {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] {L : Type*}
 
@@ -80,20 +78,21 @@ structure LearningScenario (E : Type*) where
   /-- The learning event. -/
   learning : E
 
-/-- The evidential sentence is a partial proposition whose presupposition is the distance
+open Classical in
+/-- The evidential sentence is a trivalent proposition whose presupposition is the distance
 condition of the learning event, which restricts the context set, (74b), and whose assertion
 is the core proposition, to which the declarative operator (72) commits the speaker. -/
-def LearningScenario.toEvidentialProp (loc : E → L) (s : LearningScenario E) {W : Type*}
-    (p : W → Prop) : PartialProp W where
-  presup := λ _ => spatiotemporallyDistant loc s.described s.learning
-  assertion := p
+noncomputable def LearningScenario.toEvidentialProp (loc : E → L) (s : LearningScenario E)
+    {W : Type*} (p : W → Prop) : W → SignType :=
+  {_w | spatiotemporallyDistant loc s.described s.learning}.indicator fun w ↦
+    SignType.ofProp (p w)
 
 /-- Negation preserves the evidential presupposition while negating the core proposition,
 (78). -/
 theorem projection_past_negation (loc : E → L) (s : LearningScenario E) {W : Type*}
     (p : W → Prop) :
-    (s.toEvidentialProp loc p).neg.presup = (s.toEvidentialProp loc p).presup :=
-  PartialProp.neg_presup _
+    Function.support (-s.toEvidentialProp loc p) = Function.support (s.toEvidentialProp loc p) := by
+  ext; simp
 
 /-! ### The scenarios of §4 -/
 
@@ -155,7 +154,7 @@ theorem direct_not_distant (loc : Ev → L) (h : loc direct.described = loc dire
   · exact hd (by decide)
   · exact hl h
 
-/-- The two constraints of (74b) are independent: past tense orders the described event before
+/-- The two constraints of (74b) are independent. Past tense orders the described event before
 the learning event in the indirect scenario, while the smoke scenario satisfies the distance
 condition with the two events simultaneous. -/
 theorem smoke_no_tense_ordering :

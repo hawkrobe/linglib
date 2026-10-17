@@ -7,7 +7,7 @@ public import Linglib.Data.Examples.VonFintelGillies2010
 /-!
 # von Fintel & Gillies (2010): Must … Stay … Strong!
 
-This file formalizes [von-fintel-gillies-2010]'s defense of a strong epistemic *must* against
+This file formalizes von Fintel and Gillies's defense of a strong epistemic *must* against
 the Mantra that *must φ* is weaker than its prejacent, Karttunen's problem (2). On the paper's
 analysis *must* stays at the top of the scale of epistemic strength (1) and entails its
 prejacent, and the felt weakness is an evidential presupposition: the kernel of direct
@@ -49,7 +49,6 @@ Mastermind scenario (Pascal asking Mordecai *Must there be two reds?*):
 `B_K = {w1}` entails *blue* without either kernel proposition settling it. -/
 
 open Modality
-open Modality
 
 /-- Four worlds, with `w0` red, `w1` blue, `w2` green, and `w3` unknown. -/
 inductive World where
@@ -57,7 +56,7 @@ inductive World where
   deriving DecidableEq, Repr, Inhabited
 
 /-- `⟦red or blue⟧ = {w0, w1}`, the paper's `P ∪ Q`. -/
-abbrev redOrBlue : World → Prop := λ w => w = .w0 ∨ w = .w1
+abbrev redOrBlue : World → Prop := fun w ↦ w = .w0 ∨ w = .w1
 
 /-- `⟦not red⟧ = {w1, w2, w3}`, the paper's `W \ P`. -/
 abbrev notRed : World → Prop := (· ≠ .w0)
@@ -67,9 +66,6 @@ abbrev blue : World → Prop := (· = .w1)
 
 /-- `⟦red⟧ = {w0}`, the paper's `P`. -/
 abbrev red : World → Prop := (· = .w0)
-
-/-- `⟦not blue⟧`, used by the [von-fintel-gillies-2021] can't dilemma. -/
-abbrev notBlue : World → Prop := (· ≠ .w1)
 
 /-- The §7.1 kernel `{P ∪ Q, W \ P}` in Mastermind colors. -/
 def mastermindK : Kernel World := ⟨{redOrBlue, notRed}⟩
@@ -102,21 +98,15 @@ theorem mastermind_blue_follows : mastermindK.FollowsFrom blue := by
   rintro w rfl
   rfl
 
-theorem mastermind_must_blue_defined :
-    (kernelMust mastermindK blue).presup .w0 :=
-  mastermind_blue_unsettled
-
-theorem mastermind_must_blue_true :
-    (kernelMust mastermindK blue).assertion .w0 :=
-  mastermind_blue_follows
+theorem mastermind_must_blue_eq_one : kernelMust mastermindK blue .w0 = 1 :=
+  kernelMust_eq_one_iff.2 ⟨mastermind_blue_unsettled, mastermind_blue_follows⟩
 
 theorem mastermind_red_settled :
     mastermindK.directlySettles red :=
-  ⟨notRed, by simp [mastermindK], Or.inr (Set.disjoint_left.mpr λ _ hnr hr => hnr hr)⟩
+  ⟨notRed, by simp [mastermindK], Or.inr (Set.disjoint_left.mpr fun _ hnr hr ↦ hnr hr)⟩
 
-theorem mastermind_might_red_undefined :
-    ¬(kernelMight mastermindK red).presup .w0 := λ h =>
-  h mastermind_red_settled
+theorem mastermind_might_red_eq_zero : kernelMight mastermindK red .w0 = 0 :=
+  kernelMight_eq_zero_iff.2 mastermind_red_settled
 
 theorem mastermind_redOrBlue_settled :
     mastermindK.directlySettles redOrBlue :=
@@ -131,16 +121,13 @@ theorem entailment_settling_gap :
       k.FollowsFrom φ ∧ ¬ k.directlySettles φ :=
   ⟨mastermindK, blue, mastermind_blue_follows, mastermind_blue_unsettled⟩
 
-/-- Indirectness and assertion strength are orthogonal dimensions: must can
-be defined and true, undefined, or defined and false (§4.1). -/
+/-- Indirectness and assertion strength are orthogonal dimensions, since must can be defined and
+true, undefined, or defined and false (§4.1). -/
 theorem indirectness_neq_weakness :
-    ((kernelMust mastermindK blue).presup .w0 ∧
-     (kernelMust mastermindK blue).assertion .w0) ∧
-    ¬(kernelMust mastermindK red).presup .w0 ∧
-    ((kernelMust indirectK blue).presup .w0 ∧
-     ¬(kernelMust indirectK blue).assertion .w0) := by
-  refine ⟨⟨mastermind_must_blue_defined, mastermind_must_blue_true⟩,
-    λ h => h mastermind_red_settled, ?_, ?_⟩
+    kernelMust mastermindK blue .w0 = 1 ∧ kernelMust mastermindK red .w0 = 0 ∧
+      kernelMust indirectK blue .w0 = -1 := by
+  refine ⟨mastermind_must_blue_eq_one, kernelMust_eq_zero_iff.2 mastermind_red_settled,
+    kernelMust_eq_neg_one_iff.2 ⟨?_, ?_⟩⟩
   · rintro ⟨x, hx, hxor⟩
     obtain rfl : x = redOrBlue := hx
     rcases hxor with h_sub | h_disj
@@ -150,7 +137,7 @@ theorem indirectness_neq_weakness :
         (show blue .w1 from by decide)
   · intro h
     have hw0 : World.w0 ∈ indirectK.base :=
-      Kernel.mem_base.mpr λ p hp => by
+      Kernel.mem_base.mpr fun p hp ↦ by
         obtain rfl : p = redOrBlue := hp; decide
     exact (by decide : ¬ blue World.w0) (h _ hw0)
 
@@ -160,19 +147,20 @@ variable {W : Type*} (k : Kernel W)
 `B_K` (Argument 4.3.1). -/
 theorem modus_ponens_with_must (φ ψ : W → Prop) (w : W)
     (hReal : w ∈ k.base)
-    (hCond : φ w → (kernelMust k ψ).assertion w)
+    (hCond : φ w → kernelMust k ψ w = 1)
     (hPhi : φ w) :
     ψ w :=
-  Modality.must_entails_prejacent k ψ w hReal (hCond hPhi)
+  Modality.must_entails_prejacent k ψ w hReal (kernelMust_eq_one_iff.1 (hCond hPhi)).2
 
-/-- Must `φ` and might `¬φ` are jointly contradictory
-(Argument 4.3.2). -/
+/-- Must `φ` and might `¬φ` are jointly contradictory (Argument 4.3.2), since where must `φ` is
+true might `¬φ` is false. -/
 theorem must_perhaps_contradiction (φ : W → Prop) (w : W)
-    (hMust : (kernelMust k φ).assertion w) :
-    ¬(kernelMight k (λ w' => ¬ φ w')).assertion w := by
-  intro hc
-  obtain ⟨w', hw', hφneg⟩ := (Kernel.compatibleWith_iff _ _).mp hc
-  exact hφneg (hMust w' hw')
+    (hMust : kernelMust k φ w = 1) :
+    kernelMight k (fun w' ↦ ¬ φ w') w = -1 := by
+  obtain ⟨hs, hf⟩ := kernelMust_eq_one_iff.1 hMust
+  refine kernelMight_eq_neg_one_iff.2 ⟨(Kernel.directlySettles_not k φ).not.2 hs, ?_⟩
+  rintro ⟨w', hw', hφneg⟩
+  exact hφneg (hf w' hw')
 
 /-! ### Implementation 2: settling by partitions (Definition 7, §7.2)
 
@@ -187,10 +175,10 @@ K directly settles P iff P is an issue in S_K. -/
     proposition in `K`. -/
 def subjectMatter : Setoid W where
   r w v := ∀ p ∈ k.props, (p w ↔ p v)
-  iseqv := ⟨λ _ _ _ => Iff.rfl, λ h p hp => (h p hp).symm,
-    λ h h' p hp => (h p hp).trans (h' p hp)⟩
+  iseqv := ⟨fun _ _ _ ↦ Iff.rfl, fun h p hp ↦ (h p hp).symm,
+    fun h h' p hp ↦ (h p hp).trans (h' p hp)⟩
 
-/-- `P` is an *issue* in a subject matter `S`: `S`-equivalent worlds never
+/-- `P` is an *issue* in a subject matter `S` when `S`-equivalent worlds never
     disagree on `P`. -/
 def IsIssue (s : Setoid W) (φ : W → Prop) : Prop := s.Decides {w | φ w}
 
@@ -200,19 +188,19 @@ def settlesByPartition (φ : W → Prop) : Prop :=
 
 /-- `B_K` lies in a single cell of the subject matter. -/
 theorem subjectMatter_rel_base {v w : W} (hv : v ∈ k.base) (hw : w ∈ k.base) :
-    (subjectMatter k).r v w := λ p hp =>
+    (subjectMatter k).r v w := fun p hp ↦
   iff_of_true (Kernel.mem_base.mp hv p hp) (Kernel.mem_base.mp hw p hp)
 
 /-- If `K` settles `φ` by partition then `B_K ⊆ ⟦φ⟧` or `B_K ⊆ ⟦¬φ⟧`; as
     with `explicit_implies_entailment`, the converse fails. -/
 theorem partition_implies_entailment (φ : W → Prop)
     (h : settlesByPartition k φ) :
-    k.FollowsFrom φ ∨ k.FollowsFrom (λ w => ¬ φ w) := by
+    k.FollowsFrom φ ∨ k.FollowsFrom (fun w ↦ ¬ φ w) := by
   rcases Set.eq_empty_or_nonempty k.base with hEmpty | ⟨w₀, hw₀⟩
-  · exact Or.inl λ w hw => absurd (hEmpty ▸ hw) (Set.notMem_empty w)
+  · exact Or.inl fun w hw ↦ absurd (hEmpty ▸ hw) (Set.notMem_empty w)
   · exact (Classical.em (φ w₀)).imp
-      (λ hφ v hv => (Setoid.decides_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mp hφ)
-      (λ hφ v hv hφv =>
+      (fun hφ v hv ↦ (Setoid.decides_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mp hφ)
+      (fun hφ v hv hφv ↦
         hφ ((Setoid.decides_iff.1 h w₀ v (subjectMatter_rel_base k hw₀ hv)).mpr hφv))
 
 /-! ### Non-equivalence of the two implementations (§7.2)
@@ -223,44 +211,43 @@ on `P` that disagree on `P ∪ Q`); Implementation 2 settles propositions
 determined jointly by K-propositions that no single proposition settles
 (`blue` is determined by `redOrBlue` together with `notRed`). -/
 
-/-- `S_K` for `K = {red}` does not make `redOrBlue` an issue: `w1` and `w2`
+/-- `S_K` for `K = {red}` does not make `redOrBlue` an issue, since `w1` and `w2`
     agree on `red` but disagree on `redOrBlue`. -/
 private theorem not_settles_redOrBlue :
     ¬ settlesByPartition ⟨{red}⟩ redOrBlue := by
   intro h
-  have h12 := Setoid.decides_iff.1 h .w1 .w2 (λ p hp => by
+  have h12 := Setoid.decides_iff.1 h .w1 .w2 (fun p hp ↦ by
     obtain rfl : p = red := hp; decide)
   exact absurd (h12.mp (by decide)) (by decide)
 
-/-- Explicit settling does not imply partition settling: `K = {red}` settles
+/-- Explicit settling does not imply partition settling, since `K = {red}` settles
     `redOrBlue` explicitly (`red ⊆ redOrBlue`) but not by partition. -/
 theorem explicit_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
       k.directlySettles φ ∧ ¬ settlesByPartition k φ :=
   ⟨⟨{red}⟩, redOrBlue,
-    ⟨red, by simp, Or.inl λ _ hw => Or.inl hw⟩, not_settles_redOrBlue⟩
+    ⟨red, by simp, Or.inl fun _ hw ↦ Or.inl hw⟩, not_settles_redOrBlue⟩
 
-/-- Partition settling does not imply explicit settling: `mastermindK`
-    settles `blue` by partition — its cells decide `redOrBlue` and `notRed`,
-    which jointly determine `blue` — but no single kernel proposition entails
-    or excludes it. -/
+/-- Partition settling does not imply explicit settling. `mastermindK` settles `blue` by
+    partition, since its cells decide `redOrBlue` and `notRed`, which jointly determine `blue`,
+    but no single kernel proposition entails or excludes it. -/
 theorem partition_not_implies_explicit :
     ∃ (k : Kernel World) (φ : World → Prop),
       settlesByPartition k φ ∧ ¬ k.directlySettles φ := by
-  refine ⟨mastermindK, blue, Setoid.decides_iff.2 λ w v h => ?_, mastermind_blue_unsettled⟩
+  refine ⟨mastermindK, blue, Setoid.decides_iff.2 fun w v h ↦ ?_, mastermind_blue_unsettled⟩
   have h1 := h redOrBlue (by simp [mastermindK])
   have h2 := h notRed (by simp [mastermindK])
   revert h1 h2
   cases w <;> cases v <;> decide
 
-/-- Entailment does not imply partition settling: `K = {red}` entails
+/-- Entailment does not imply partition settling, since `K = {red}` entails
     `redOrBlue` (`B_K = {w0} ⊆ ⟦redOrBlue⟧`) but does not settle it by
     partition. -/
 theorem entailment_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
       k.FollowsFrom φ ∧ ¬ settlesByPartition k φ :=
   ⟨⟨{red}⟩, redOrBlue,
-    λ w hw => Or.inl (by simpa using hw),
+    fun w hw ↦ Or.inl (by simpa using hw),
     not_settles_redOrBlue⟩
 
 end VonFintelGillies2010

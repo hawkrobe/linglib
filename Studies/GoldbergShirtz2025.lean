@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.ConstructionGrammar.Constructicon
 public import Linglib.Syntax.ConstructionGrammar.Licensing
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.GoldbergShirtz2025
 
 /-!
@@ -32,9 +32,9 @@ compound (`hostFrames_complete`).
 
 Only the two thick arrows of Figure 5 are inheritance links; its thin two-headed arrows are
 motivation links, which pass no information down. The experimental statistics stay in the
-paper. The lemma-like familiarity is recorded as a presupposition, although
-the paper treats it as an invited construal that speakers exploit precisely for situation types
-that are not antecedently familiar.
+paper. The lemma-like familiarity is recorded as not-at-issue content, although the paper treats
+it as an invited construal that speakers exploit precisely for situation types that are not
+antecedently familiar.
 
 ## References
 
@@ -50,7 +50,6 @@ that are not antecedently familiar.
 namespace GoldbergShirtz2025
 
 open ConstructionGrammar
-open Presupposition
 
 /-! ### The Figure 5 constructicon -/
 
@@ -91,8 +90,8 @@ def aSimplePALConstruction : Construction Unit :=
 
 /-- In the *Don't ⟨PAL⟩ me* subtype the PAL fills a V slot, must quote the
 immediately preceding discourse, and occurs in an interdiction context
-("A: you're welcome. B: No, don't 'you're welcome' me."). Study 5's foils
-broke exactly the quote-from-context or interdiction condition. -/
+(A says "you're welcome", B replies "No, don't 'you're welcome' me."). Study 5's
+foils broke exactly the quote-from-context or interdiction condition. -/
 def dontPALmeConstruction : Construction Unit :=
   { form :=
       [ { filler := .fixed "Don't" }
@@ -136,13 +135,13 @@ def adjNModification : Construction Unit :=
 
 /-! ### Degrees of abstraction (Table 8) -/
 
-/-- *Veggie-wrap*: a fully lexically specified noun compound (the top row
+/-- *Veggie-wrap*, a fully lexically specified noun compound (the top row
 of Table 8). -/
 def veggieWrapForm : TypedForm String :=
   [ { filler := .fixed "veggie" }
   , { filler := .fixed "wrap", isHead := true } ]
 
-/-- Table 8's degree-of-abstraction grid, witnessed by the constructicon:
+/-- The constructicon witnesses Table 8's degree-of-abstraction grid, in which
 *veggie-wrap* is lexically specified, *a simple ⟨PAL⟩* partially open, and
 the NN-compound and prenominal-PAL schemas fully open and abstract. -/
 theorem table8_specificity :
@@ -272,8 +271,9 @@ def stress : Figure5 → Option StressLocus
   | .adjN => some .head
   | _ => none
 
-/-- Whether the output self-embeds: "like Adj + N combinations, the PAL N construction cannot be
-recursively embedded within another PAL N construction". -/
+/-- A construction may state whether its output self-embeds. Adjectival modification bans it,
+and "like Adj + N combinations, the PAL N construction cannot be recursively embedded within
+another PAL N construction". -/
 def selfEmbedding : Figure5 → Option SelfEmbedding
   | .adjN => some .banned
   | _ => none
@@ -286,7 +286,7 @@ theorem mothers_conflict :
   refine ⟨Set.ext fun v ↦ ?_, Set.ext fun v ↦ ?_⟩ <;>
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] <;> cases v <;> decide
 
-/-- PAL N's full specification, computed by normal-mode inheritance: its own phrasal N′, stress
+/-- Normal-mode inheritance computes PAL N's full specification, its own phrasal N′ and stress
 within the modifier, the prenominal slot from both mothers, which agree, and non-self-embedding
 from adjectival modification. -/
 theorem inherited_palN :
@@ -304,7 +304,7 @@ A minimal demonstration with the licensing relation (`Licenses`): the attested "
 head noun. The constructions of Figure 5 license it through the PAL construction, and without PAL
 it is rejected: the phrase-in-word-slot configuration has no other license. -/
 
-/-- The internal syntax of the *must-do* PAL: must-V (cf. `mustVerbConstruction`, which is the
+/-- The internal syntax of the *must-do* PAL, must-V (cf. `mustVerbConstruction`, which is the
 full prenominal construction). -/
 def mustVCore : Construction Unit :=
   { form :=
@@ -317,8 +317,8 @@ def demoInventory : List (Construction Unit) :=
   mustVCore ::
     [.nnCompound, .adjN, .palN, .pal, .mustV, .aSimple, .dontMe, .theOld].map construction
 
-/-- "must-do task" (ex. (1b), determiner elided): the PAL phrase as a constituent daughter in the
-word-level modifier slot. -/
+/-- In "must-do task" (ex. (1b), determiner elided) the PAL phrase is a constituent daughter in
+the word-level modifier slot. -/
 def mustDoTask : PhraseStructure.Tree Unit Morphology.Word :=
   .node () [.node () [.leaf (.mk' "must" .AUX), .leaf (.mk' "do" .VERB)], .leaf (.mk' "task" .NOUN)]
 
@@ -330,16 +330,17 @@ word-level modifier slot. PAL is load-bearing. -/
 theorem pal_load_bearing :
     ¬ Licenses (demoInventory.erase palConstruction) mustDoTask := by decide
 
-/-- A PAL utterance's two-part meaning: the head noun's denotation is at-issue (an instance of the
-situation type), and the lemma-like construal contributes that the situation type itself is
-presumed familiar ("presumes familiarity with 'PAL'", Figure 5).
+/-- A PAL utterance has a two-part meaning. The head noun's denotation is at-issue (an instance of
+the situation type), and the lemma-like construal contributes, as not-at-issue content, that the
+situation type itself is presumed familiar ("presumes familiarity with 'PAL'", Figure 5).
 
 The paper treats the familiarity as an invited *as-if* construal rather than a hard definedness
-condition: speakers exploit the construction precisely for situation types that are not
+condition. Speakers exploit the construction precisely for situation types that are not
 antecedently familiar (observational humor, sniglets), so common-ground satisfaction is typically
 reached by accommodation or pretense, not antecedent entailment. -/
-def palMeaning (W : Type*) (situationType headNoun : W → Prop) : PartialProp W :=
-  { presup := situationType, assertion := headNoun }
+def palMeaning (W : Type*) (situationType headNoun : W → Prop) :
+    ConventionalImplicature.TwoDim W (W → Prop) :=
+  ⟨headNoun, situationType⟩
 
 /-! ### Irreducibility -/
 
@@ -352,7 +353,7 @@ theorem pal_irreducible :
 
 /-- The PAL modifier slot is a phrase in a word-level position — the typed
 content of "phrase-as-lemma". The NN compound's modifier slot is the
-minimal contrast: same zero-level position, word filler. -/
+minimal contrast, with the same zero-level position and a word filler. -/
 theorem pal_form_phrase_in_word_slot :
     ∃ s ∈ palConstruction.form, s.IsPhraseInWordSlot := by decide
 

@@ -34,13 +34,13 @@ open PolarityItem
 
 /-! ### Bare interrogatives -/
 
-/-- *shéi* (谁 'who', non-interrogative) — NPI/FCI. The bare
+/-- *shéi* (谁 'who', non-interrogative) is an NPI and free-choice item. The bare
     interrogatives cover the seven non-specific map functions
-    ([haspelmath-1997] A.36.3, Fig. A.36); *shéi* is attested in questions
-    (A266) and the free-choice span, but direct negation is omitted:
-    *?Tā bù xǐhuan shéi* is degraded where *shénme* is perfect (A267,
-    [li-1992] p. 150) — that slot belongs to the emphatic series. -/
-def shei : PolarityItem :=
+    ([haspelmath-1997] A.36.3, Fig. A.36). *shéi* is attested in questions
+    (A266) and the free-choice span but not under direct negation, where
+    *?Tā bù xǐhuan shéi* is degraded while *shénme* is perfect (A267,
+    [li-1992] p. 150); that slot belongs to the emphatic series. -/
+noncomputable def shei : PolarityItem :=
   { form := "shéi"
   , licensor := some .weak
   , freeChoice := true
@@ -48,12 +48,12 @@ def shei : PolarityItem :=
       [ .question, .conditionalAntecedent, .clausalComparative
       , .modalPossibility, .modalNecessity, .imperative, .generic ] }
 
-/-- *shénme* (什么 'what', non-interrogative) — NPI/FCI, the same
-    seven-function span plus perfect direct negation: *Tā bù xǐhuan
-    shénme* 'He does not like anything' (A267); irrealis imperative *Chī
+/-- *shénme* (什么 'what', non-interrogative) is an NPI and free-choice item with the same
+    seven-function span plus perfect direct negation, as in *Tā bù xǐhuan
+    shénme* 'He does not like anything' (A267). It also occurs in the irrealis imperative *Chī
     diǎn shénme zài zǒu ba!* 'Please eat a little something before you
-    leave' (A264, [li-1992] p. 152); conditional (A266). -/
-def shenme : PolarityItem :=
+    leave' (A264, [li-1992] p. 152) and in conditionals (A266). -/
+noncomputable def shenme : PolarityItem :=
   { form := "shénme"
   , licensor := some .weak
   , freeChoice := true
@@ -63,8 +63,8 @@ def shenme : PolarityItem :=
 
 /-! ### The emphatic dōu~yě series -/
 
-/-- *shéi dōu* ~ *shéi yě* (谁都/谁也, with clausemate negation) — the
-    emphatic wh + *dōu*~*yě* series: *Tā shéi-dōu bù xìnren* 'She
+/-- *shéi dōu* ~ *shéi yě* (谁都/谁也, with clausemate negation) is the
+    emphatic wh + *dōu*~*yě* series, as in *Tā shéi-dōu bù xìnren* 'She
     doesn't trust anyone' ([li-thompson-1981] p. 528). The two particles
     are interchangeable in the direct-negation function, the series' only
     region on the map, and occur preverbally only ([haspelmath-1997]
@@ -78,11 +78,11 @@ def sheiDou : PolarityItem :=
 
 /-! ### The free-choice determiner -/
 
-/-- *rènhé* (任何 'any') — free-choice determiner, mainly with the adverb
-    *dōu*: free choice under modals (*Rènhé shíhou nǐ dōu kěyǐ lái* 'You
-    can come anytime', A270), comparatives (A271, a *bǐ* NP-comparative,
+/-- *rènhé* (任何 'any') is a free-choice determiner, used mainly with the adverb
+    *dōu*. It gives free choice under modals (*Rènhé shíhou nǐ dōu kěyǐ lái* 'You
+    can come anytime', A270) and occurs in comparatives (A271, a *bǐ* NP-comparative,
     listed under `clausalComparative` per the covert-clausal routing convention
-    of `PolarityItem.LicensingContext`), and direct negation (A272); the
+    of `PolarityItem.LicensingContext`) and under direct negation (A272); the
     superordinate-negation use (A273) has no matching context row.
     Etymologically *rèn* 'allow; appoint' + old interrogative *hé* 'what'
     ([haspelmath-1997] A.36.2). -/

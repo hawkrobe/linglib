@@ -1,8 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.SelectionFunction
-public import Linglib.Logic.Trivalent.Basic
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Counterfactual conditionals: three theories
@@ -22,13 +21,13 @@ agree on the consequent, and part under embedding.
 * `selectionalCounterfactual`: the selectional counterfactual, super-truth over
   the closest antecedent-worlds.
 * `superCounterfactual`: Stalnaker's supervaluation over completions.
-* `homogeneityCounterfactual`: the homogeneity counterfactual.
+* `homogeneityCounterfactual`: the homogeneity counterfactual, a trivalent proposition.
 * `selectionalMight`: the selectional *might*.
 
 ## Main results
 
-* `eval_homogeneityCounterfactual`: unembedded, the homogeneity counterfactual
-  evaluates to the selectional one.
+* `homogeneityCounterfactual_eq_selectionalCounterfactual`: unembedded, the homogeneity
+  counterfactual is the selectional one.
 * `superCounterfactual_eq_selectionalCounterfactual`: on a finite, strongly
   centered ordering the supervaluation over completions is the selectional counterfactual.
 
@@ -49,46 +48,60 @@ agree on the consequent, and part under embedding.
 
 namespace Conditional
 
-open Presupposition
-
 section Theories
 
 variable {W : Type*} (ord : W → Preorder W) (p q r : Set W) (w : W)
 
 /-! ### The homogeneity theory
 
-The homogeneity counterfactual is a partial proposition. Unembedded, its three-valued evaluation
-is the selectional counterfactual, and the two theories part only under embedding, where
+The homogeneity counterfactual is a trivalent proposition. Unembedded it is the selectional
+counterfactual, and the two theories part only under embedding, where
 [ramotowska-marty-romoli-santorio-2025] test them. -/
 
+open Classical in
 /-- The homogeneity counterfactual, which asserts that every closest `p`-world is a `q`-world and
 presupposes that the closest `p`-worlds agree on `q`. -/
-def homogeneityCounterfactual : PartialProp W where
-  presup w := w ∈ closestImp ord p q ∨ w ∈ closestImp ord p qᶜ
-  assertion w := w ∈ closestImp ord p q
+noncomputable def homogeneityCounterfactual : W → SignType :=
+  (closestImp ord p q ∪ closestImp ord p qᶜ).indicator
+    fun v ↦ SignType.ofProp (v ∈ closestImp ord p q)
+
+variable {ord p q w}
+
+@[simp] theorem homogeneityCounterfactual_eq_one_iff :
+    homogeneityCounterfactual ord p q w = 1 ↔ w ∈ closestImp ord p q := by
+  simp +contextual [homogeneityCounterfactual]
+
+@[simp] theorem homogeneityCounterfactual_eq_neg_one_iff :
+    homogeneityCounterfactual ord p q w = -1 ↔
+      w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
+  simp +contextual [homogeneityCounterfactual, and_comm]
+
+@[simp] theorem homogeneityCounterfactual_eq_zero_iff :
+    homogeneityCounterfactual ord p q w = 0 ↔
+      w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
+  simp [homogeneityCounterfactual]
 
 /-- The presupposition is symmetric in the consequent and its negation. -/
-theorem presup_homogeneityCounterfactual_compl :
-    (homogeneityCounterfactual ord p qᶜ).presup w ↔
-      (homogeneityCounterfactual ord p q).presup w := by
-  simp only [homogeneityCounterfactual, compl_compl, or_comm]
+theorem support_homogeneityCounterfactual_compl :
+    Function.support (homogeneityCounterfactual ord p qᶜ) =
+      Function.support (homogeneityCounterfactual ord p q) := by
+  ext; simp [and_comm]
 
-/-- Negating the consequent negates the assertion when the presupposition holds and some closest
-`p`-world exists. -/
-theorem assertion_homogeneityCounterfactual_compl
-    (h_presup : (homogeneityCounterfactual ord p q).presup w)
-    (h_nonvac : ((ord w).minimals p).Nonempty) :
-    (homogeneityCounterfactual ord p qᶜ).assertion w ↔
-      ¬ (homogeneityCounterfactual ord p q).assertion w := by
-  obtain ⟨v, hv⟩ := h_nonvac
-  refine ⟨fun hn hq ↦ hn hv (hq hv), fun hn ↦ h_presup.resolve_left hn⟩
+/-- With closest antecedent-worlds, negating the consequent negates the verdict. -/
+theorem homogeneityCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
+    homogeneityCounterfactual ord p qᶜ w = -homogeneityCounterfactual ord p q w := by
+  obtain ⟨v, hv⟩ := h
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp [and_comm]) ?_
+  rw [SignType.neg_eq_one_iff, homogeneityCounterfactual_eq_one_iff,
+    homogeneityCounterfactual_eq_neg_one_iff]
+  exact ⟨fun hn ↦ ⟨fun hq ↦ hn hv (hq hv), hn⟩, And.right⟩
 
 /-! ### The selectional theory
 
 The selectional counterfactual is super-truth over the closest antecedent-worlds, each of them
 one resolution of the selection function's tie. -/
 
-variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ p)]
+variable (ord p q w) [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ p)]
   [DecidablePred (· ∈ q)] [DecidablePred (· ∈ r)]
 
 /-- The selectional counterfactual, true when every closest `p`-world is a `q`-world, false when
@@ -131,18 +144,12 @@ theorem cem_selectional :
   · rw [selectionalCounterfactual_compl h]
     cases selectionalCounterfactual ord p q w <;> decide
 
-/-- Unembedded, the homogeneity counterfactual evaluates to the selectional counterfactual. -/
-theorem eval_homogeneityCounterfactual :
-    (homogeneityCounterfactual ord p q).eval w = selectionalCounterfactual ord p q w := by
-  by_cases h₁ : w ∈ closestImp ord p q <;> by_cases h₂ : w ∈ closestImp ord p qᶜ
-  · simp [PartialProp.eval, homogeneityCounterfactual, h₁,
-      selectionalCounterfactual_eq_one_iff.2 h₁]
-  · simp [PartialProp.eval, homogeneityCounterfactual, h₁,
-      selectionalCounterfactual_eq_one_iff.2 h₁]
-  · simp [PartialProp.eval, homogeneityCounterfactual, h₁, h₂,
-      selectionalCounterfactual_eq_neg_one_iff.2 ⟨h₁, h₂⟩]
-  · simp [PartialProp.eval, homogeneityCounterfactual, h₁, h₂,
-      selectionalCounterfactual_eq_zero_iff.2 ⟨h₁, h₂⟩]
+/-- Unembedded, the homogeneity counterfactual is the selectional counterfactual. -/
+theorem homogeneityCounterfactual_eq_selectionalCounterfactual :
+    homogeneityCounterfactual ord p q w = selectionalCounterfactual ord p q w :=
+  SignType.eq_of_eq_zero_iff_of_eq_one_iff
+    (by rw [homogeneityCounterfactual_eq_zero_iff, selectionalCounterfactual_eq_zero_iff])
+    (by rw [homogeneityCounterfactual_eq_one_iff, selectionalCounterfactual_eq_one_iff])
 
 /-! ### *Might* counterfactuals
 

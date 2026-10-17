@@ -3,7 +3,7 @@ module
 public import Linglib.Fragments.Greek.StandardModern.Complementizers
 public import Linglib.Fragments.Greek.StandardModern.Verbs
 public import Linglib.Semantics.Questions.Hamblin
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Data.Examples.Roussou2010
 
@@ -15,7 +15,7 @@ elements, each with a lexical specification that fixes what it can embed and wha
 (`profile`). *oti*, *an*, and *pu* merge outside the clause, as the internal argument of the
 matrix verb, and take a proposition: *oti* is an indefinite over propositions, *an* an
 indefinite that is a polarity item, and *pu* a definite, which is why a *pu*-clause is factive,
-its content presupposed and projecting through negation (`puClause_factive`,
+its content presupposed and projecting through negation (`puClause_ne_zero_iff`,
 `pu_projects_through_negation`), while the *oti*-clause of the same verb carries only the weak,
 deniable presupposition the verb supplies. *na* merges inside the clause and reopens the
 subject position, so a *na*-clause is a property rather than a proposition and cannot be
@@ -50,7 +50,7 @@ argument against uninterpretable features are not formalized.
 
 namespace Roussou2010
 
-open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs Presupposition
+open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs
 open HeimKratzer.Tree
 
 /-! ### The lexical specification -/
@@ -92,31 +92,34 @@ theorem factive_iff_definite :
 
 variable {W : Type*}
 
+open Classical in
 /-- The *oti*-clause is an indefinite over propositions, asserting its content without
 presupposition. -/
-def otiClause (p : Set W) : PartialProp W := { presup := λ _ => True, assertion := (· ∈ p) }
+noncomputable def otiClause (p : Set W) : W → SignType := fun w ↦ SignType.ofProp (w ∈ p)
 
-/-- The *pu*-clause is a definite over propositions, presupposing the proposition it locates. -/
-def puClause (p : Set W) : PartialProp W := { presup := (· ∈ p), assertion := (· ∈ p) }
+/-- The *pu*-clause is a definite over propositions, presupposing the proposition it locates and
+so true wherever it is defined. -/
+noncomputable def puClause (p : Set W) : W → SignType := p.indicator 1
 
 /-- The *an*-clause is the polar set of the proposition and its negation. -/
 def anClause (p : Set W) : Question W := Question.polar p
 
 /-- Factivity is the definite's presupposition — the *pu*-clause is defined at a world exactly
 when its content holds there. -/
-theorem puClause_factive (p : Set W) (w : W) : (puClause p).presup w ↔ w ∈ p := Iff.rfl
+theorem puClause_ne_zero_iff (p : Set W) (w : W) : puClause p w ≠ 0 ↔ w ∈ p := by
+  simp [puClause]
 
 /-- The presupposition of the *pu*-clause projects through negation, so denying it still
 commits to its content, while the *oti*-clause is defined everywhere and its denial carries no
 factive residue. -/
 theorem pu_projects_through_negation (p : Set W) (w : W) :
-    ((PartialProp.neg (puClause p)).presup w ↔ w ∈ p) ∧
-      (PartialProp.neg (otiClause p)).presup w :=
-  ⟨Iff.rfl, trivial⟩
+    ((-puClause p) w ≠ 0 ↔ w ∈ p) ∧ (-otiClause p) w ≠ 0 := by
+  simp [puClause, otiClause]
 
 /-- The *pu*-clause strongly entails the *oti*-clause, strong presupposition against weak. -/
-theorem puClause_strongEntails_oti (p : Set W) : (puClause p).strongEntails (otiClause p) :=
-  λ _ _ ha => ⟨trivial, ha⟩
+theorem posExt_puClause_subset (p : Set W) :
+    Trivalent.posExt (puClause p) ⊆ Trivalent.posExt (otiClause p) := fun w hw ↦ by
+  simp_all [puClause, otiClause]
 
 /-- The *an*-clause asserts nothing, raising only the issue its binder must settle. -/
 theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=

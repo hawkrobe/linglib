@@ -7,14 +7,14 @@ public import Linglib.Data.Examples.Heim1983
 /-!
 # Heim (1983): On the Projection Problem for Presuppositions
 
-This file formalizes [heim-1983]: a context admits a sentence when the sentence's context
+This file formalizes Heim's paper. A context admits a sentence when the sentence's context
 change potential is defined on it, a sentence presupposes what every admitting context
-entails (12), and the heritage properties that [karttunen-peters-1979] stipulate for *if*
+entails (12), and the heritage properties that Karttunen and Peters stipulate for *if*
 and *not* are read off the potentials (14) and (15): a context admits "If A, B" iff it admits
 A and its update by A admits B, and negation is a hole. The King example (1)–(3) is worked as
 the paper does (`king_admits_iff`), and the two ways of accommodating a presupposition under
 negation are (16)'s global and local readings (`globalNeg_entails`, `localNeg_entails`); a
-preference for the global one recaptures [gazdar-1979]'s cancellation under the threat of
+preference for the global one recaptures Gazdar's cancellation under the threat of
 inconsistency (`cancellation_only_under_inconsistency`). Contexts as sets of sequence–world
 pairs (§3) carry the potentials for open sentences and for *every* (21): under the novelty
 stipulation (22), "Every nation cherishes its king" presupposes that every nation has a king
@@ -25,19 +25,18 @@ course of the update (§3.3).
 ## Implementation notes
 
 The propositional part (§2) uses the substrate's partial context change potentials over a
-type of worlds: `ofPartialProp` for a sentence with a presupposition and an assertion,
-`cond` for (14), `neg` for (15), and `Admits` for definedness, so that the heritage
-properties are the substrate's `admits_cond` and `admits_neg`. Presupposing a proposition
-`p` (12) is the substrate's `Presupposes` of the update `ofPartialProp (.ofProp p)`
-(`presupposes_ofProp_iff`). The file part (§3) uses the
-same potentials over pairs of a sequence `ℕ → M` and a world, with `atom`, `atomP`, and
-`every` stated here as (19)–(21) and entailment by a context read as inclusion. The paper
-gives no potential for *no* (24), so that sentence is a row only.
+type of worlds: `ofTrivalent` for a sentence with a trivalent meaning, `cond` for (14), `neg`
+for (15), and `Admits` for definedness, so that the heritage properties are the substrate's
+`admits_cond` and `admits_neg`. Presupposing a proposition `p` (12) is the substrate's
+`Presupposes` of the update `ofTrivalent fun w ↦ ofProp (p w)` (`presupposes_ofProp_iff`). The
+file part (§3) uses the same potentials over pairs of a sequence `ℕ → M` and a world, with
+`atom`, `atomP`, and `every` stated here as (19)–(21) and entailment by a context read as
+inclusion. The paper gives no potential for *no* (24), so that sentence is a row only.
 
 A file whose membership depends only on the cards in `X` is, restricted to those cards, a
 state of the substrate uniform at `X` (`File.toState`), and on such files the paper's
-clauses are the file change potentials of [heim-1982] read on that stratum: the atom is the
-merge with the atom's proposition state (`toState_atom`), negation by set difference is
+clauses are the file change potentials of Heim's dissertation read on that stratum: the atom is
+the merge with the atom's proposition state (`toState_atom`), negation by set difference is
 non-subsistence (`neg_toState`), and (21) is rule (III) of the dissertation
 (`toState_everyClause`). The novelty stipulation (22) is the file's independence of the
 card (`novelIn_iff_determinedBy`).
@@ -70,22 +69,26 @@ variable {W : Type*}
 def TrueWrt (φ : CCP.Partial W) (c : Set W) (w : W) : Prop := ∃ h : φ.Admits c, w ∈ (φ c).get h
 
 /-- The content property is derivable from the potential. With respect to a context that is
-    true in `w` and admits it, an atomic sentence is true in `w` iff its assertion holds. -/
-theorem trueWrt_ofPartialProp {p : PartialProp W} {c : Set W} {w : W} (hw : w ∈ c)
-    (h : (ofPartialProp p).Admits c) : TrueWrt (ofPartialProp p) c w ↔ p.assertion w :=
+    true in `w` and admits it, an atomic sentence is true in `w` iff it is true there. -/
+theorem trueWrt_ofTrivalent {p : W → SignType} {c : Set W} {w : W} (hw : w ∈ c)
+    (h : (ofTrivalent p).Admits c) : TrueWrt (ofTrivalent p) c w ↔ p w = 1 :=
   ⟨fun ⟨_, hm⟩ => hm.2, fun hq => ⟨h, hw, hq⟩⟩
 
 variable (king son bald : W → Prop)
 
+open Classical in
 /-- *The king has a son* (1) presupposes a king and asserts that he has a son. -/
-def kingHasSon : PartialProp W := ⟨king, son⟩
+noncomputable def kingHasSon : W → SignType :=
+  {w | king w}.indicator fun w ↦ SignType.ofProp (son w)
 
+open Classical in
 /-- *The king's son is bald* (2) presupposes a king with a son. -/
-def kingsSonBald : PartialProp W := ⟨fun w => king w ∧ son w, bald⟩
+noncomputable def kingsSonBald : W → SignType :=
+  {w | king w ∧ son w}.indicator fun w ↦ SignType.ofProp (bald w)
 
 /-- (3) "If the king has a son, the king's son is bald", by (14). -/
-def ifKingHasSon : CCP.Partial W :=
-  cond (ofPartialProp (kingHasSon king son)) (ofPartialProp (kingsSonBald king son bald))
+noncomputable def ifKingHasSon : CCP.Partial W :=
+  cond (ofTrivalent (kingHasSon king son)) (ofTrivalent (kingsSonBald king son bald))
 
 variable {king son bald}
 
@@ -93,21 +96,20 @@ variable {king son bald}
     and its update by (1) then admits (2) automatically. -/
 theorem king_admits_iff (c : Set W) :
     (ifKingHasSon king son bald).Admits c ↔ ∀ w ∈ c, king w := by
-  constructor
-  · rintro ⟨h, -⟩
-    exact h
-  · intro h
-    exact ⟨h, fun w hw => ⟨h w hw.1, hw.2⟩⟩
+  simp [ifKingHasSon, admits_cond_ofTrivalent_iff, admits_ofTrivalent, Set.subset_def,
+    kingHasSon, kingsSonBald, Connective.localContext]
 
+open Classical in
 /-- (3) presupposes that there is a king, which (1) presupposes in its antecedent. -/
 theorem king_presupposes :
-    Presupposes (ifKingHasSon king son bald) (ofPartialProp (.ofProp king)) :=
-  (presupposes_ofPartialProp _).cond_left
+    Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ SignType.ofProp (king w)) :=
+  (presupposes_ofProp_iff _ _).2 fun c h ↦ (king_admits_iff c).1 h
 
+open Classical in
 /-- (3) does not presuppose that the king has a son, as soon as some world has a sonless
     king. -/
 theorem not_presupposes_son (h : ∃ w, king w ∧ ¬ son w) :
-    ¬ Presupposes (ifKingHasSon king son bald) (ofPartialProp (.ofProp son)) := by
+    ¬ Presupposes (ifKingHasSon king son bald) (ofTrivalent fun w ↦ SignType.ofProp (son w)) := by
   rw [presupposes_ofProp_iff]
   obtain ⟨w, hk, hs⟩ := h
   intro hp
@@ -140,14 +142,14 @@ theorem globalNeg_entails {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ⊆ 
 /-- The local option's result is the context minus the amended update, so (16) continued
     with *because France doesn't have a king* entails only that either France has no king or
     he did not come. -/
-theorem localNeg_entails {came : W → Prop} {c c' : Set W}
-    (h : c' ∈ localNeg (ofPartialProp ⟨(· ∈ p), came⟩) p c) :
+theorem localNeg_entails {came : W → Prop} [DecidablePred came] {c c' : Set W}
+    (h : c' ∈ localNeg (ofTrivalent (p.indicator fun w ↦ SignType.ofProp (came w))) p c) :
     c' = {w ∈ c | w ∉ p ∨ ¬ came w} := by
   obtain ⟨t, ht, rfl⟩ := (Part.mem_map_iff _).1 h
-  rw [ofPartialProp, Part.mem_mk_iff] at ht
-  obtain ⟨-, rfl⟩ := ht
+  obtain ⟨-, rfl⟩ := (mem_ofTrivalent _ _ _).1 ht
   ext w
-  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_inter_iff]
+  simp only [Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_inter_iff,
+    Trivalent.indicator_apply_eq_one_iff, SignType.ofProp_eq_one_iff]
   tauto
 
 /-- The local option is what a continuation denying the presupposition needs, since the
@@ -247,7 +249,7 @@ theorem every_atom_admits_iff (i : ℕ) (A pre B : M → W → Prop) (c : File M
 
 /-- (7) presupposes that every nation has a king. Under (22) the condition of
     `every_atom_admits_iff` holds iff, in every world of the file's proposition, every
-    individual satisfying the restrictor satisfies the presupposition: the novelty
+    individual satisfying the restrictor satisfies the presupposition. The novelty
     stipulation is what makes the universal presupposition necessary, not only sufficient. -/
 theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
@@ -529,22 +531,22 @@ end Files
     (8)–(14). The relativized filter leaves out Murphy's restriction that the facts be consistent
     with the first conjunct, under which a context contradicting the first conjunct would still
     have to satisfy the presuppositions of the second, though it admits the update. -/
-theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : PartialProp W) :
-    (seq (ofPartialProp p) (ofPartialProp q)).Admits c ↔
-      ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofPartialProp p)
-        (.ofPartialProp q)).log, c ⊆ C := by
-  rw [admits_seq_ofPartialProp]
-  simp only [Karttunen1973.mem_log_conj, Karttunen1973.Presupposing.ofPartialProp, Writer.log_mk,
+theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → SignType) :
+    (seq (ofTrivalent p) (ofTrivalent q)).Admits c ↔
+      ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofTrivalent p)
+        (.ofTrivalent q)).log, c ⊆ C := by
+  rw [admits_seq_ofTrivalent_iff, admits_ofTrivalent]
+  simp only [Karttunen1973.mem_log_conj, Karttunen1973.Presupposing.ofTrivalent, Writer.log_mk,
     List.mem_singleton]
   constructor
-  · rintro h C (rfl | ⟨rfl, hf⟩)
-    · exact fun w hw ↦ (h w hw).1
-    · exact absurd (fun w ⟨hw, ha, _⟩ ↦ (h w hw).2 ha) hf
-  · intro h w hw
-    have hp : w ∈ {w | p.presup w} := h _ (.inl rfl) hw
-    refine ⟨hp, fun ha ↦ ?_⟩
-    by_cases hf : c ∩ (Karttunen1973.Presupposing.ofPartialProp p).truth ⊆ {w | q.presup w}
-    · exact hf ⟨hw, ha, fun t ht ↦ List.mem_singleton.1 ht ▸ hp⟩
+  · rintro ⟨hp, hq⟩ C (rfl | ⟨rfl, hf⟩)
+    · exact hp
+    · exact absurd (fun w ⟨hw, ha, _⟩ ↦ hq ⟨hw, ha⟩) hf
+  · intro h
+    have hp : c ⊆ Function.support p := h _ (.inl rfl)
+    refine ⟨hp, fun w ⟨hw, ha⟩ ↦ ?_⟩
+    by_cases hf : c ∩ (Karttunen1973.Presupposing.ofTrivalent p).truth ⊆ Function.support q
+    · exact hf ⟨hw, ha, fun t ht ↦ List.mem_singleton.1 ht ▸ hp hw⟩
     · exact h _ (.inr ⟨rfl, hf⟩) hw
 
 end Heim1983

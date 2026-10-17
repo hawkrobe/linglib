@@ -43,7 +43,7 @@ context sorts (48).
   all earlier times, and a clause respects it when historically equivalent worlds agree on it
   before `t`. The normality condition on alternatives (p. 50) is a choice of the model.
 * In `connective` an undefined earliest time makes the sentence false. A context update discards
-  both, so the readings of (48) are unaffected; the partial propositions `beforeP` and `afterP`
+  both, so the readings of (48) are unaffected; the trivalent propositions `beforeP` and `afterP`
   keep the definedness condition for von Fintel's Strawson entailment.
 
 ## TODO
@@ -123,7 +123,7 @@ end Uniform
 
 /-! ### Polarity
 
-At a world the uniform connective (45) is a partial proposition, defined where the temporal clause
+At a world the uniform connective (45) is a trivalent proposition, defined where the temporal clause
 has an earliest time in the world. Its *before* is then downward entailing in the temporal clause
 wherever it is defined, since a smaller clause starts no earlier, and its *after* upward
 entailing, so *earliest* gives *before* the universal effect that licenses negative polarity
@@ -133,25 +133,37 @@ section Polarity
 
 variable {W T : Type*} [LinearOrder T]
 
+open Classical in
 /-- *A before B* at a world, (45), defined where `B` has an earliest time in the world. -/
-def beforeP (A B : Set (W × T)) : PartialProp W where
-  presup w := ∃ e, IsLeast {t | (w, t) ∈ B} e
-  assertion w := uniform (· < ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B}
+noncomputable def beforeP (A B : Set (W × T)) : W → SignType :=
+  {w | ∃ e, IsLeast {t | (w, t) ∈ B} e}.indicator
+    fun w ↦ SignType.ofProp (uniform (· < ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B})
 
+open Classical in
 /-- *A after B* at a world, (45), defined where `B` has an earliest time in the world. -/
-def afterP (A B : Set (W × T)) : PartialProp W where
-  presup w := ∃ e, IsLeast {t | (w, t) ∈ B} e
-  assertion w := uniform (· > ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B}
+noncomputable def afterP (A B : Set (W × T)) : W → SignType :=
+  {w | ∃ e, IsLeast {t | (w, t) ∈ B} e}.indicator
+    fun w ↦ SignType.ofProp (uniform (· > ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B})
 
 /-- The uniform *before* is Strawson downward entailing in its temporal clause. -/
-theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) :=
-  fun _ _ hB _ _ ⟨e, he⟩ ⟨t, ht, _, he', hlt⟩ ↦
-    ⟨t, ht, e, he, hlt.trans_le (he'.2 (hB he.1))⟩
+theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
+  intro _ _ hB w hq hp
+  simp only [beforeP, Trivalent.indicator_apply_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero,
+    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq,
+    SignType.ofProp_eq_one_iff] at hq hp ⊢
+  obtain ⟨e, he⟩ := hp
+  obtain ⟨-, t, ht, _, he', hlt⟩ := hq
+  exact ⟨⟨e, he⟩, t, ht, e, he, hlt.trans_le (he'.2 (hB he.1))⟩
 
 /-- The uniform *after* is Strawson upward entailing in its temporal clause. -/
-theorem isStrawsonUE_after (A : Set (W × T)) : IsStrawsonUE (afterP A) :=
-  fun _ _ hB _ _ ⟨e', he'⟩ ⟨t, ht, _, he, hlt⟩ ↦
-    ⟨t, ht, e', he', (he'.2 (hB he.1)).trans_lt hlt⟩
+theorem isStrawsonUE_after (A : Set (W × T)) : IsStrawsonUE (afterP A) := by
+  intro _ _ hB w hp hq
+  simp only [afterP, Trivalent.indicator_apply_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero,
+    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq,
+    SignType.ofProp_eq_one_iff] at hq hp ⊢
+  obtain ⟨e', he'⟩ := hq
+  obtain ⟨-, t, ht, _, he, hlt⟩ := hp
+  exact ⟨⟨e', he'⟩, t, ht, e', he', (he'.2 (hB he.1)).trans_lt hlt⟩
 
 end Polarity
 

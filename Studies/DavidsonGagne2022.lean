@@ -70,10 +70,12 @@ def Arc (x : E) : Prop := ¬ Mereology.Atom x
 /-- `⟦neutral⟧` of (47c) says that every part of the referent lies in the contextual domain. -/
 def Neutral (C : Set E) (x : E) : Prop := Set.Iic x ⊆ C
 
-/-- (44), (46b) `⟦domain-k⟧`: the referent properly contains the contextual domain. -/
+/-- `⟦domain-k⟧` of (44) and (46b) says that the referent properly contains the contextual
+domain. -/
 def Domain (C : Set E) (x : E) : Prop := C ⊂ Set.Iic x
 
-/-- (47b) `⟦-a⟧`: a marked horizontal locus presupposes a distinct focus alternative. -/
+/-- `⟦-a⟧` of (47b) says that a marked horizontal locus presupposes a distinct focus
+alternative. -/
 def Contrast (alt : E → Set E) (x : E) : Prop := ∃ y ∈ alt x, x ≠ y
 
 /-- The vertical feature of section 5, the neutral plane or a marked locus above it. -/
@@ -88,15 +90,15 @@ def Height.presup (C : Set E) : Height → E → Prop
   | .marked => Domain C
 
 open Classical in
-/-- (46e), (47e) `⟦[ixᵢ]-arc-h⟧^{g,C}`: the pronoun denotes `g i` when that is a non-atomic
-plural meeting the height presupposition, and is otherwise undefined. -/
+/-- `⟦[ixᵢ]-arc-h⟧^{g,C}` of (46e) and (47e) says that the pronoun denotes `g i` when that is a
+non-atomic plural meeting the height presupposition, and is otherwise undefined. -/
 noncomputable def ixArc {ι : Type*} (g : ι → E) (C : Set E) (h : Height) (i : ι) : Option E :=
   if Arc (g i) ∧ h.presup C (g i) then some (g i) else none
 
 /-- A referent within the context does not properly extend it, so the two heights exclude each
 other. -/
 theorem not_domain_of_neutral {C : Set E} {x : E} (h : Neutral C x) : ¬ Domain C x :=
-  λ h' => h'.2 h
+  fun h' ↦ h'.2 h
 
 /-- When the context is the parts of its sum `c`, the neutral presupposition is parthood of
 `c` and the marked one is proper extension of `c`. -/
@@ -118,27 +120,29 @@ theorem remainder {E : Type*} [GeneralizedCoheytingAlgebra E] {a d d' : E} (h : 
 
 /-! ### Partitive composition -/
 
-/-- (50b) `⟦of⟧ = λx λy. y ≤ x` ([ladusaw-1982]): the parts of the pronoun's referent. -/
+/-- The partitive `⟦of⟧` of (50b), after [ladusaw-1982], takes the pronoun's referent `x` to
+its parts, the `y` with `y ≤ x`. -/
 def partitive (x : E) : E → Prop := (· ≤ x)
 
 /-- `FS(ALL)` composed with a partitive pronoun over worlds `W`, as in (50e) and (51e), is
 defined where the pronoun is and asserts that every part of its referent satisfies the scope. -/
-def fsAllOf {W : Type*} (pron : W → Option E) (Q : E → W → Prop) : PartialProp W :=
-  PartialProp.presupOfReferent pron λ x w => every (partitive x) (Q · w)
+noncomputable def fsAllOf {W : Type*} (pron : W → Option E) (Q : E → W → Prop) : W → SignType :=
+  presupOfReferent pron fun x w ↦ every (partitive x) (Q · w)
 
 /-- The quantifier presupposes what its pronoun presupposes, so `FS(ALL)-of-[ixᵢ-arc-h]` is
-defined iff `g i` is a non-atomic plural meeting the height presupposition. -/
-theorem fsAllOf_ixArc_presup {W ι : Type*} {g : ι → E} {C : Set E} {h : Height} {i : ι}
+undefined iff `g i` is not a non-atomic plural meeting the height presupposition. -/
+theorem fsAllOf_ixArc_eq_zero_iff {W ι : Type*} {g : ι → E} {C : Set E} {h : Height} {i : ι}
     {Q : E → W → Prop} {w : W} :
-    (fsAllOf (λ _ => ixArc g C h i) Q).presup w ↔ Arc (g i) ∧ h.presup C (g i) := by
-  simp only [fsAllOf, PartialProp.presupOfReferent_presup, ixArc]
+    fsAllOf (fun _ ↦ ixArc g C h i) Q w = 0 ↔ ¬ (Arc (g i) ∧ h.presup C (g i)) := by
+  simp only [fsAllOf, presupOfReferent_eq_zero_iff, ixArc]
   split_ifs with hp <;> simp [hp]
 
 /-- Where the neutral pronoun denotes the sum of the context, `FS(ALL)-neutral` quantifies over
 the context, as in (50e). -/
-theorem fsAllOf_assertion {W : Type*} {pron : W → Option E} {Q : E → W → Prop} {w : W} {c : E}
-    (h : pron w = some c) : (fsAllOf pron Q).assertion w = ∀ y ∈ Set.Iic c, Q y w :=
-  PartialProp.presupOfReferent_assertion_some pron _ w c h
+theorem fsAllOf_eq_one_iff {W : Type*} {pron : W → Option E} {Q : E → W → Prop} {w : W} {c : E}
+    (h : pron w = some c) : fsAllOf pron Q w = 1 ↔ ∀ y ∈ Set.Iic c, Q y w := by
+  simp only [fsAllOf, presupOfReferent_of_some h, SignType.ofProp_eq_one_iff]
+  rfl
 
 /-- With the marked pronoun denoting a plural containing the neutral one, `FS(ALL)` and `NONE`
 at the higher locus entail their neutral forms, while `SOMEONE` at the neutral locus entails
@@ -161,7 +165,7 @@ reading of height as strengthening, on which the high form would entail the neut
 [bergen-2016] has for stressed quantifiers, does the existential come out right. -/
 theorem not_strengthening {x x' w : E} (hw : w ≤ x') (hwx : ¬ w ≤ x) :
     ¬ ∀ Q : E → Prop, GQ.some (partitive x') Q → GQ.some (partitive x) Q :=
-  λ h => let ⟨_, hy, e⟩ := h (· = w) ⟨w, hw, rfl⟩; hwx (e ▸ hy)
+  fun h ↦ let ⟨_, hy, e⟩ := h (· = w) ⟨w, hw, rfl⟩; hwx (e ▸ hy)
 
 /-! ### Realising the pronoun in the quantifier -/
 

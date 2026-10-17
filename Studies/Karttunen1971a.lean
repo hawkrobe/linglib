@@ -22,11 +22,12 @@ Each schema fixes an implication signature: (37) is `+/−`, (41) `−/+`, (54) 
 and the negative verbs of (56), *prevent* and *dissuade*, are `−/◦`. The analysis is
 `Implicative.sentence` under the material reading of the conditions
 (`Implicative.Reading.material`), which gives the paper's entailment facts: double negation cancels
-as in (13) (`manage_neg_neg_holds_imp`), and the one-way schemas and the non-implicatives leave the
-other direction open (`force_neg_not_entails`, `beAble_not_entails`, `ofProp_not_entails`). The
-English fragment's entries for the verbs of (2), (38), (44) and (56) carry the signatures of their
-schemas (`implicative_eq`) and so are presupposition triggers (`isTrigger_of_mem_english`), while
-its entries for the non-implicatives of (2) carry `◦/◦` (`implicative_eq_bot`).
+as in (13) (`manage_neg_neg_imp`), and the one-way schemas and the non-implicatives leave the
+other direction open (`force_neg_not_entails`, `beAble_not_entails`,
+`nonImplicative_not_entails`). The English fragment's entries for the verbs of (2), (38), (44) and
+(56) carry the signatures of their schemas (`implicative_eq`) and so are presupposition triggers
+(`isTrigger_of_mem_english`), while its entries for the non-implicatives of (2) carry `◦/◦`
+(`implicative_eq_bot`).
 
 ## Implementation notes
 
@@ -44,33 +45,30 @@ namespace Karttunen1971a
 
 open Presupposition Implicative NaturalLogic
 
-/-- Double negation cancels, (13): *John didn't remember not to lock his door* commits the
-speaker to *John locked his door*. -/
-theorem manage_neg_neg_holds_imp {W : Type*} {v S : W → Prop} {w : W}
-    (hs : (PartialProp.neg (sentence (Reading.material W) ⟨.some .positive, .some .negative⟩ v
-      fun w ↦ ¬ S w)).holds w) : S w :=
-  not_not.mp (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl hs)
+/-- Double negation cancels, so that *John didn't remember not to lock his door* commits the
+speaker to *John locked his door* (13). -/
+theorem manage_neg_neg_imp {W : Type*} {v S : W → Prop} {w : W}
+    (hs : (-sentence (Reading.material W) ⟨.some .positive, .some .negative⟩ v
+      fun w ↦ ¬ S w) w = 1) : S w :=
+  not_not.mp (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl (by simpa using hs))
 
 /-- (58) *John didn't force Mary to stay home* leaves open whether she stayed. -/
 theorem force_neg_not_entails : ∃ (v S : Unit → Prop),
-    (PartialProp.neg (sentence (Reading.material Unit) ⟨.some .positive, ⊥⟩ v S)).holds () ∧
-      S () :=
-  ⟨fun _ ↦ False, fun _ ↦ True,
-    ⟨⟨fun _ _ h ↦ h.elim, fun _ h ↦ (Flat.bot_ne_coe h).elim⟩, id⟩, trivial⟩
+    (-sentence (Reading.material Unit) ⟨.some .positive, ⊥⟩ v S) () = 1 ∧ S () :=
+  ⟨fun _ ↦ False, fun _ ↦ True, by simp [sentence, Reading.material, Flat.bot_ne_coe], trivial⟩
 
 /-- (55) *John was able to come* leaves open whether he came. -/
 theorem beAble_not_entails : ∃ (v S : Unit → Prop),
-    (sentence (Reading.material Unit) ⟨⊥, .some .negative⟩ v S).holds () ∧ ¬ S () :=
-  ⟨fun _ ↦ True, fun _ ↦ False,
-    ⟨⟨fun _ h ↦ (Flat.bot_ne_coe h).elim, fun _ _ _ ↦ trivial⟩, trivial⟩, id⟩
+    sentence (Reading.material Unit) ⟨⊥, .some .negative⟩ v S () = 1 ∧ ¬ S () :=
+  ⟨fun _ ↦ True, fun _ ↦ False, by simp [sentence, Reading.material, Flat.bot_ne_coe], id⟩
 
-/-- A non-implicative, which has no presupposition, commits the speaker to nothing about its
-complement in either polarity (5). -/
-theorem ofProp_not_entails :
-    (∃ (v S : Unit → Prop), (PartialProp.ofProp v).holds () ∧ ¬ S ()) ∧
-      ∃ (v S : Unit → Prop), (PartialProp.neg (PartialProp.ofProp v)).holds () ∧ S () :=
-  ⟨⟨fun _ ↦ True, fun _ ↦ False, ⟨trivial, trivial⟩, id⟩,
-   ⟨fun _ ↦ False, fun _ ↦ True, ⟨trivial, id⟩, trivial⟩⟩
+/-- A non-implicative, whose signature `◦/◦` gives it no presupposition, commits the speaker to
+nothing about its complement in either polarity (5). -/
+theorem nonImplicative_not_entails :
+    (∃ (v S : Unit → Prop), sentence (Reading.material Unit) ⊥ v S () = 1 ∧ ¬ S ()) ∧
+      ∃ (v S : Unit → Prop), (-sentence (Reading.material Unit) ⊥ v S) () = 1 ∧ S () :=
+  ⟨⟨fun _ ↦ True, fun _ ↦ False, by simp [sentence, Reading.material, Flat.bot_ne_coe], id⟩,
+   ⟨fun _ ↦ False, fun _ ↦ True, by simp [sentence, Reading.material, Flat.bot_ne_coe], trivial⟩⟩
 
 /-! ### The English lexicon -/
 
@@ -81,7 +79,7 @@ open English.Verbs hiding Verb
 /-- The English fragment's entries for the implicatives of (2), with the signature of schema
 (37), for the negative implicatives of (38), with that of (41), for *be able* of (44), with that
 of (54), and for the verbs of (56), with that of (59) or its negative counterpart, as far as the
-fragment covers the lists: its *get* is the causative sense, its *avoid* takes a noun phrase, and
+fragment covers the lists. Its *get* is the causative sense, its *avoid* takes a noun phrase, and
 it has no *dissuade*. -/
 def english : List (Verb × ImplicationSignature) :=
   [(manage.toVerb, ⟨.some .positive, .some .negative⟩),

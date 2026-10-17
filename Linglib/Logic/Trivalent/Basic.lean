@@ -107,6 +107,14 @@ attribute [simp] SignType.neg_eq_zero_iff SignType.nonpos_iff_ne_one SignType.no
 @[simp] theorem inf_eq_neg_one_iff {a b : SignType} : a ⊓ b = -1 ↔ a = -1 ∨ b = -1 := by
   cases a <;> cases b <;> decide
 
+@[simp] theorem inf_eq_zero_iff {a b : SignType} :
+    a ⊓ b = 0 ↔ a = 0 ∧ b ≠ -1 ∨ b = 0 ∧ a ≠ -1 := by
+  cases a <;> cases b <;> decide
+
+@[simp] theorem sup_eq_zero_iff {a b : SignType} :
+    a ⊔ b = 0 ↔ a = 0 ∧ b ≠ 1 ∨ b = 0 ∧ a ≠ 1 := by
+  cases a <;> cases b <;> decide
+
 /-- Negation is antitone. -/
 theorem neg_antitone : Antitone (Neg.neg : SignType → SignType) := fun _ _ ↦
   SignType.neg_le_neg_iff.2
@@ -150,6 +158,10 @@ variable {P Q : Prop} [Decidable P] [Decidable Q]
 
 @[simp] theorem ofProp_ne_zero : ofProp P ≠ 0 := by
   by_cases h : P <;> simp [ofProp, h]
+
+/-- Equivalent propositions have the same value, which lets `simp` rewrite inside `ofProp`. -/
+@[congr] theorem ofProp_congr (h : P ↔ Q) : ofProp P = ofProp Q :=
+  eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [h])
 
 @[simp] theorem ofProp_true : ofProp True = 1 := rfl
 
@@ -339,6 +351,11 @@ theorem joinWeak_eq_neg_one_iff (a b : SignType) :
     joinWeak a b = -1 ↔ a = -1 ∧ b = -1 := by
   cases a <;> cases b <;> decide
 
+/-- The Weak Kleene disjunction is true iff both disjuncts are defined and one is true. -/
+theorem joinWeak_eq_one_iff (a b : SignType) :
+    joinWeak a b = 1 ↔ a ≠ 0 ∧ b ≠ 0 ∧ (a = 1 ∨ b = 1) := by
+  cases a <;> cases b <;> decide
+
 /-- Negation passes through a Weak Kleene conjunction whose first conjunct is never false. -/
 theorem neg_meetWeak_of_ne_neg_one {a : SignType} (h : a ≠ -1) (b : SignType) :
     -meetWeak a b = meetWeak a (-b) := by
@@ -437,7 +454,31 @@ theorem joinMiddle_congr_right {a b b' : SignType} (h : a = -1 → b = b') :
   | neg => rw [h rfl]
   | pos => simp only [pos_eq_one, joinMiddle_one_left]
 
-theorem meetMiddle_eq_one_iff {a b : SignType} : meetMiddle a b = 1 ↔ a = 1 ∧ b = 1 := by
+@[simp] theorem meetMiddle_eq_one_iff {a b : SignType} : meetMiddle a b = 1 ↔ a = 1 ∧ b = 1 := by
+  cases a <;> cases b <;> decide
+
+/-- Middle Kleene conjunction is undefined iff its left operand is, or the left operand is true
+and the right one undefined, the first conjunct filtering the second's presupposition. -/
+@[simp] theorem meetMiddle_eq_zero_iff {a b : SignType} :
+    meetMiddle a b = 0 ↔ a = 0 ∨ a = 1 ∧ b = 0 := by
+  cases a <;> cases b <;> decide
+
+@[simp] theorem meetMiddle_eq_neg_one_iff {a b : SignType} :
+    meetMiddle a b = -1 ↔ a = -1 ∨ a = 1 ∧ b = -1 := by
+  cases a <;> cases b <;> decide
+
+@[simp] theorem joinMiddle_eq_one_iff {a b : SignType} :
+    joinMiddle a b = 1 ↔ a = 1 ∨ a = -1 ∧ b = 1 := by
+  cases a <;> cases b <;> decide
+
+/-- Middle Kleene disjunction is undefined iff its left operand is, or the left operand is false
+and the right one undefined. -/
+@[simp] theorem joinMiddle_eq_zero_iff {a b : SignType} :
+    joinMiddle a b = 0 ↔ a = 0 ∨ a = -1 ∧ b = 0 := by
+  cases a <;> cases b <;> decide
+
+@[simp] theorem joinMiddle_eq_neg_one_iff {a b : SignType} :
+    joinMiddle a b = -1 ↔ a = -1 ∧ b = -1 := by
   cases a <;> cases b <;> decide
 
 /-! ### Belnap's connectives
@@ -487,6 +528,29 @@ theorem joinBelnap_comm (a b : SignType) : joinBelnap a b = joinBelnap b a := by
 theorem meetBelnap_eq_inf_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠ 0) :
     meetBelnap a b = a ⊓ b := by
   revert ha hb; cases a <;> cases b <;> decide
+
+/-- Belnap conjunction is undefined iff both conjuncts are. -/
+@[simp] theorem meetBelnap_eq_zero_iff {a b : SignType} : meetBelnap a b = 0 ↔ a = 0 ∧ b = 0 := by
+  cases a <;> cases b <;> decide
+
+@[simp] theorem meetBelnap_eq_one_iff {a b : SignType} :
+    meetBelnap a b = 1 ↔ a ≠ -1 ∧ b ≠ -1 ∧ (a = 1 ∨ b = 1) := by
+  cases a <;> cases b <;> decide
+
+@[simp] theorem meetBelnap_eq_neg_one_iff {a b : SignType} :
+    meetBelnap a b = -1 ↔ a = -1 ∨ b = -1 := by
+  cases a <;> cases b <;> decide
+
+/-- Belnap disjunction is undefined iff both disjuncts are. -/
+@[simp] theorem joinBelnap_eq_zero_iff {a b : SignType} : joinBelnap a b = 0 ↔ a = 0 ∧ b = 0 := by
+  cases a <;> cases b <;> decide
+
+@[simp] theorem joinBelnap_eq_one_iff {a b : SignType} : joinBelnap a b = 1 ↔ a = 1 ∨ b = 1 := by
+  cases a <;> cases b <;> decide
+
+@[simp] theorem joinBelnap_eq_neg_one_iff {a b : SignType} :
+    joinBelnap a b = -1 ↔ a ≠ 1 ∧ b ≠ 1 ∧ (a = -1 ∨ b = -1) := by
+  cases a <;> cases b <;> decide
 
 /-- On defined operands Belnap disjunction is Strong Kleene's. -/
 theorem joinBelnap_eq_sup_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠ 0) :

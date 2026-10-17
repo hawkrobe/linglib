@@ -174,7 +174,7 @@ theorem not_valid_supersetToSubset {e : Environment} (he : (environments e).mono
     simp [denotation, outer, host, thirteen, the_iff, GQ.every, GQ.no, atLeast_apply]
 
 /-- The paper's classification of the ten environments, §3.1.2 and §5, is the one their
-denotations give: only the subset-to-superset inference is valid in the upward-entailing and
+denotations give. Only the subset-to-superset inference is valid in the upward-entailing and
 doubly negative ones, only the converse in the downward-entailing ones, neither in the
 non-monotone ones, and a doubly negative environment hosts the item in an antitone constituent. -/
 theorem classifies_iff (e : Environment) (k : Monotonicity) :
@@ -195,7 +195,7 @@ theorem classifies_iff (e : Environment) (k : Monotonicity) :
 /-- The licensing context of the narrowest operator over the item that the substrate counts as
 downward entailing is negation, *no*, *few*, *without*, or focus *only*, downward entailing modulo
 its presupposition; the upward-entailing environments and *exactly 12* have none. -/
-def licensingContext : Environment → Option LicensingContext
+noncomputable def licensingContext : Environment → Option LicensingContext
   | .negative | .everyNot => some .negation
   | .no => some .nobody
   | .few => some .few
@@ -269,7 +269,7 @@ open MeasureTheory ProbabilityTheory KadmonLandman1993
 
 variable {Ω ε : Type*} [MeasurableSpace Ω]
 
-/-- The probabilistic downward inference (33): if `e` has probability zero given `s` and
+/-- In the probabilistic downward inference (33), if `e` has probability zero given `s` and
 probability one given `u`, then `u` has probability zero given `s`. -/
 theorem cond_eq_zero_of_cond_eq_one {μ : Measure Ω} [IsFiniteMeasure μ] {s e u : Set Ω}
     (hs : MeasurableSet s) (he : MeasurableSet e) (hu : MeasurableSet u) (h₁ : μ[e | s] = 0)

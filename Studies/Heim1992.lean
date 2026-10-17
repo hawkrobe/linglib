@@ -19,8 +19,8 @@ the Hintikka-style rule (27) with the comparative semantics (31) on similarity, 
 
 ## Main statements
 
-* `admits_believes_iff`, `believes_ofPartialProp`: on atomic complements the belief rule is
-  Karttunen's admittance in the holder's beliefs, and the update with a partial proposition.
+* `admits_believes_iff`, `believes_ofTrivalent`: on atomic complements the belief rule is
+  Karttunen's admittance in the holder's beliefs, and the update with a trivalent proposition.
 * `believes_too_admits`, `doubt_too_admits_iff`: the *too*-discourse presupposes nothing, and its
   *doubt* variant is admitted only by contexts its first conjunct reduces to the absurd one.
 * `admits_of_admits_knows`, `believes_admits_not_knows`: *know* passes on its complement's
@@ -54,7 +54,7 @@ open DynamicSemantics PartialUpdate CCP.Partial Presupposition Desire.Conditiona
 
 section Belief
 
-variable {W E : Type*} (Dox : E → W → Set W) (a : E) (φ : CCP.Partial W) (p : PartialProp W)
+variable {W E : Type*} (Dox : E → W → Set W) (a : E) (φ : CCP.Partial W) (p : W → SignType)
   (c : Set W)
 
 /-- By rule (18), `c + a believes φ` is defined iff `Dox_a(w) + φ` is defined for every `w ∈ c`,
@@ -64,50 +64,55 @@ def believes : CCP.Partial W :=
 
 /-- By Karttunen's generalization, if `φ` presupposes `p`, then `a believes φ` presupposes that
 `a` believes `p`. -/
-theorem admits_believes_ofPartialProp :
-    (believes Dox a (ofPartialProp p)).Admits c ↔
-      ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) p.presup w :=
+theorem admits_believes_ofTrivalent :
+    (believes Dox a (ofTrivalent p)).Admits c ↔
+      ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ Function.support p) w :=
   Iff.rfl
 
 /-- On atomic complements, Karttunen's rule (3) makes definedness on each `Dox_a(w)` admittance
 in their union, the image of `c` under the doxastic accessibility, which is what `a` is taken to
 believe in `c`. -/
 theorem admits_believes_iff :
-    (believes Dox a (ofPartialProp p)).Admits c ↔
-      p.Admits ((SetRel.ofSuccessors (Dox a)).image c) :=
-  (PartialProp.admits_image_iff (p := p) (R := .ofSuccessors (Dox a))).symm
+    (believes Dox a (ofTrivalent p)).Admits c ↔
+      (SetRel.ofSuccessors (Dox a)).image c ⊆ Function.support p :=
+  (SetRel.image_subset_iff (R := .ofSuccessors (Dox a))).symm
 
+open Classical in
 /-- On atomic complements (18) is static, as in the calculation (24), since `a believes φ` is the
-update with the partial proposition that presupposes that `a` believes `φ`'s presupposition and
-asserts that `a` believes its assertion. -/
-theorem believes_ofPartialProp :
-    believes Dox a (ofPartialProp p) = ofPartialProp
-      ⟨ModalLogic.Box (.ofSuccessors (Dox a)) p.presup,
-        ModalLogic.Box (.ofSuccessors (Dox a)) p.assertion⟩ := by
+update with the trivalent proposition that presupposes that `a` believes `φ`'s presupposition and
+asserts that `a` believes `φ`. -/
+theorem believes_ofTrivalent :
+    believes Dox a (ofTrivalent p) = ofTrivalent
+      ({w | ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ Function.support p) w}.indicator
+        fun w ↦ SignType.ofProp (ModalLogic.Box (.ofSuccessors (Dox a)) (p · = 1) w)) := by
   funext c
-  refine Part.ext' Iff.rfl fun h _ ↦ Set.ext fun w ↦ ?_
-  simp only [believes, mem_ofPartialProp_self, Set.mem_ofPred_eq, ofPartialProp_get]
-  exact ⟨fun ⟨hw, _, ha⟩ ↦ ⟨hw, ha⟩, fun ⟨hw, ha⟩ ↦ ⟨hw, h w hw, ha⟩⟩
+  refine Part.ext' ?_ fun h _ ↦ Set.ext fun w ↦ ?_
+  · simp [believes, ofTrivalent, Set.subset_def, ModalLogic.Box, admits_ofTrivalent]
+  · simp [believes, mem_ofTrivalent_self, ModalLogic.Box]
+    exact fun hw h1 ↦ ⟨hw, fun v hv ↦ by simp [h1 v hv]⟩
 
 /-- (20) presupposes nothing, since every context admits `John believes that Mary_i is here, and
 he believes that Susan_F is here too_i`, where by (22) the *too*-clause presupposes that Mary is
 here. -/
-theorem believes_too_admits (m s : Set W) :
-    (seq (believes Dox a (ofPartialProp (.ofProp m)))
-      (believes Dox a (ofPartialProp ⟨m, s⟩))).Admits c :=
-  ⟨fun _ _ _ _ ↦ trivial, fun _ hw ↦ ((mem_ofPartialProp_self _ _).1 hw.2).2⟩
+theorem believes_too_admits (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
+    (seq (believes Dox a (ofTrivalent fun w ↦ SignType.ofProp (w ∈ m)))
+      (believes Dox a (ofTrivalent (m.indicator fun w ↦ SignType.ofProp (w ∈ s))))).Admits c :=
+  ⟨fun _ _ _ _ ↦ SignType.ofProp_ne_zero, fun _ hw v hv ↦ by
+    simpa [Set.indicator_apply_ne_zero] using (mem_ofTrivalent_self _ _).1 hw.2 v hv⟩
 
 /-- (25) `John doubts that Mary_i is here and believes that Susan_F is here too_i` is admitted
 only by contexts in which John already believes Mary is here — which its first conjunct then
 reduces to the absurd context. -/
-theorem doubt_too_admits_iff (m s : Set W) :
-    (seq (neg (believes Dox a (ofPartialProp (.ofProp m))))
-      (believes Dox a (ofPartialProp ⟨m, s⟩))).Admits c ↔ ∀ w ∈ c, Dox a w ⊆ m := by
+theorem doubt_too_admits_iff (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
+    (seq (neg (believes Dox a (ofTrivalent fun w ↦ SignType.ofProp (w ∈ m))))
+      (believes Dox a (ofTrivalent (m.indicator fun w ↦ SignType.ofProp (w ∈ s))))).Admits c ↔
+      ∀ w ∈ c, Dox a w ⊆ m := by
   refine ⟨fun ⟨_, h⟩ w hw ↦ ?_,
-    fun h ↦ ⟨fun _ _ _ _ ↦ trivial, fun w hw ↦ (hw.2 ⟨hw.1, ?_⟩).elim⟩⟩
+    fun h ↦ ⟨fun _ _ _ _ ↦ SignType.ofProp_ne_zero, fun w hw ↦ (hw.2 ⟨hw.1, ?_⟩).elim⟩⟩
   · by_contra hm
-    exact hm (h w ⟨hw, fun hS ↦ hm ((mem_ofPartialProp_self _ _).1 hS.2).2⟩)
-  · exact (mem_ofPartialProp_self _ _).2 ⟨fun _ _ ↦ trivial, h w hw.1⟩
+    refine hm ((h w ⟨hw, fun hS ↦ hm fun v hv ↦ ?_⟩).trans Set.support_indicator_subset)
+    simpa using (mem_ofTrivalent_self _ _).1 hS.2 v hv
+  · exact (mem_ofTrivalent_self _ _).2 fun v hv ↦ by simpa using h w hw.1 hv
 
 /-- By the factive rule of footnote 47, `c + a knows φ` is undefined unless `c + φ = c`, and is
 otherwise `c + a believes φ`. -/
@@ -118,8 +123,9 @@ theorem admits_knows :
   exists_prop
 
 /-- A context admitting a *know* report admits its complement's presupposition. -/
-theorem admits_of_admits_knows (h : (knows Dox a (ofPartialProp p)).Admits c) : p.Admits c :=
-  ((mem_ofPartialProp_self _ _).1 h.fst).1
+theorem admits_of_admits_knows (h : (knows Dox a (ofTrivalent p)).Admits c) :
+    c ⊆ Function.support p :=
+  supports.admits h.fst
 
 end Belief
 
@@ -135,16 +141,16 @@ inductive CelloWorld where
 def celloDox (_ : Unit) (_ : CelloWorld) : Set CelloWorld := {.owns}
 
 /-- `Patrick sells his cello` (1) presupposes that he owns one. -/
-def sellsCello : PartialProp CelloWorld := ⟨(· = .owns), fun _ ↦ True⟩
+noncomputable def sellsCello : CelloWorld → SignType := ({.owns} : Set CelloWorld).indicator 1
 
 /-- Where Patrick lacks a cello but believes he owns one, `Patrick believes he is selling his
 cello` is admitted and `Patrick knows he is selling his cello` is not, since `celloDox` is not
 veridical at `lacks`. -/
 theorem believes_admits_not_knows :
-    (believes celloDox () (ofPartialProp sellsCello)).Admits {.lacks} ∧
-      ¬ (knows celloDox () (ofPartialProp sellsCello)).Admits {.lacks} :=
-  ⟨fun _ _ _ h ↦ h,
-   fun h ↦ nomatch admits_of_admits_knows _ _ _ _ h rfl⟩
+    (believes celloDox () (ofTrivalent sellsCello)).Admits {.lacks} ∧
+      ¬ (knows celloDox () (ofTrivalent sellsCello)).Admits {.lacks} :=
+  ⟨fun _ _ _ h ↦ by simp_all [celloDox, sellsCello],
+   fun h ↦ by simpa [sellsCello] using admits_of_admits_knows _ _ _ _ h rfl⟩
 
 /-! ### Desire reports: the four-world model -/
 

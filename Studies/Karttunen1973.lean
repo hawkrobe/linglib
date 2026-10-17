@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.Trivalent
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Composition.Writer
 public import Linglib.Logic.Modal.Defs
 public import Mathlib.Data.Set.Lattice.Bounded
@@ -79,7 +79,7 @@ plugs.
 
 namespace Karttunen1973
 
-open Presupposition
+open SignType Trivalent
 
 universe u
 
@@ -108,9 +108,10 @@ theorem compl_map_compl : (·ᶜ) <$> (·ᶜ) <$> A = A :=
 theorem truth_subset_of_mem (h : C ∈ A.log) : A.truth ⊆ C :=
   fun _ hw ↦ hw.2 C h
 
-/-- The sentence of a partial proposition, which presupposes its presupposition. -/
-def ofPartialProp (p : PartialProp W) : Presupposing W (Set W) :=
-  Writer.mk {w | p.assertion w} [{w | p.presup w}]
+/-- The sentence of a trivalent proposition asserts its positive extension and presupposes its
+support. -/
+def ofTrivalent (p : W → SignType) : Presupposing W (Set W) :=
+  Writer.mk (posExt p) [Function.support p]
 
 end Presupposing
 
@@ -443,21 +444,22 @@ theorem univ_mem_log_disj_filters (F : Set (Set Bool)) :
 
 section TruthFunctional
 
-variable (p q : PartialProp W) (w : W)
+variable (p q : W → SignType) (w : W)
 
-/-- Bochvar's internal conjunction (34a) ([bochvar-1938]), the substrate's `PartialProp.and`, is
+/-- Bochvar's internal conjunction (34a) ([bochvar-1938]), the substrate's `SignType.meetWeak`, is
 a hole, defined only where both conjuncts are. -/
-theorem presup_and : (p.and q).presup w ↔ p.presup w ∧ q.presup w := Iff.rfl
+theorem meetWeak_ne_zero_iff : (p w).meetWeak (q w) ≠ 0 ↔ p w ≠ 0 ∧ q w ≠ 0 := by
+  simp
 
 /-- Bochvar's external conjunction (34d), the conjunction of the conjuncts' truth, `t(A) & t(B)`
 (fn. 18), is a plug, defined everywhere. -/
-theorem presup_and_truthOp : (p.truthOp.and q.truthOp).presup w := ⟨trivial, trivial⟩
+theorem meetWeak_ofProp_ne_zero : (ofProp (p w = 1)).meetWeak (ofProp (q w = 1)) ≠ 0 := by
+  simp
 
-/-- Łukasiewicz's conjunction (34b), the substrate's `PartialProp.andStrong`, is defined wherever a
-conjunct is false, whatever the other conjunct presupposes. -/
-theorem presup_andStrong_of_false (hp : p.presup w) (hf : ¬ p.assertion w) :
-    (p.andStrong q).presup w :=
-  .inr (.inl ⟨hp, hf⟩)
+/-- Łukasiewicz's conjunction (34b), Strong Kleene `⊓`, is defined wherever a conjunct is false,
+whatever the other conjunct presupposes. -/
+theorem inf_ne_zero_of_eq_neg_one (hf : p w = -1) : (p ⊓ q) w ≠ 0 := by
+  simp [hf]
 
 end TruthFunctional
 
@@ -467,6 +469,7 @@ inductive France where
   | parisNoKing
   | marseilleKing
   | marseilleNoKing
+  deriving DecidableEq
 
 /-- `Paris is the capital of France`. -/
 abbrev capitalParis : Set France := {.parisKing, .parisNoKing}
@@ -475,38 +478,40 @@ abbrev capitalParis : Set France := {.parisKing, .parisNoKing}
 abbrev hasKing : Set France := {.parisKing, .marseilleKing}
 
 /-- `The king of France is bald`, which presupposes a king; the assertion is idealized. -/
-def kingBald : PartialProp France := ⟨(· ∈ hasKing), fun _ ↦ True⟩
+noncomputable def kingBald : France → SignType := hasKing.indicator 1
+
+private theorem support_kingBald : Function.support kingBald = hasKing := by
+  ext w; by_cases h : w ∈ hasKing <;> simp [kingBald, h]
 
 /-- At the actual world of (35), with no king, Łukasiewicz's conjunction leaves (35a) `Paris is
 the capital of France, and the king of France is bald` undefined but makes (35b), with
 `Marseilles`, false. -/
-theorem presup_andStrong_35 :
-    ¬ ((PartialProp.ofProp (· ∈ capitalParis)).andStrong kingBald).presup .parisNoKing ∧
-      ((PartialProp.ofProp (· ∉ capitalParis)).andStrong kingBald).presup .parisNoKing := by
-  refine ⟨?_, presup_andStrong_of_false _ _ _ trivial (by simp [PartialProp.ofProp])⟩
-  simp [PartialProp.andStrong, PartialProp.ofProp, kingBald]
+theorem inf_kingBald_35 :
+    ofProp (France.parisNoKing ∈ capitalParis) ⊓ kingBald .parisNoKing = 0 ∧
+      ofProp (France.parisNoKing ∉ capitalParis) ⊓ kingBald .parisNoKing = -1 := by
+  simp [kingBald]
 
 /-- By (17) both sentences of (35) presuppose a king, since neither capital entails one. -/
 theorem hasKing_mem_log_conj_35 :
-    {w | w ∈ hasKing} ∈ (conj (· ⊆ ·) (.ofPartialProp (.ofProp (· ∈ capitalParis)))
-        (.ofPartialProp kingBald)).log ∧
-      {w | w ∈ hasKing} ∈ (conj (· ⊆ ·) (.ofPartialProp (.ofProp (· ∉ capitalParis)))
-        (.ofPartialProp kingBald)).log := by
-  have hk : {w | w ∈ hasKing} ∈ (Presupposing.ofPartialProp kingBald).log := by
-    simp [Presupposing.ofPartialProp, kingBald]
+    hasKing ∈ (conj (· ⊆ ·) (.ofTrivalent fun w ↦ ofProp (w ∈ capitalParis))
+        (.ofTrivalent kingBald)).log ∧
+      hasKing ∈ (conj (· ⊆ ·) (.ofTrivalent fun w ↦ ofProp (w ∉ capitalParis))
+        (.ofTrivalent kingBald)).log := by
+  have hk : hasKing ∈ (Presupposing.ofTrivalent kingBald).log := by
+    simp [Presupposing.ofTrivalent, support_kingBald]
   refine ⟨(mem_log_conj _ _ _).2 (.inr ⟨hk, fun h ↦ ?_⟩),
     (mem_log_conj _ _ _).2 (.inr ⟨hk, fun h ↦ ?_⟩)⟩
   · exact absurd (h (show France.parisNoKing ∈ _ by
-      simp [Presupposing.truth, Presupposing.ofPartialProp, PartialProp.ofProp])) (by simp)
+      simp [Presupposing.truth, Presupposing.ofTrivalent])) (by simp)
   · exact absurd (h (show France.marseilleNoKing ∈ _ by
-      simp [Presupposing.truth, Presupposing.ofPartialProp, PartialProp.ofProp])) (by simp)
+      simp [Presupposing.truth, Presupposing.ofTrivalent])) (by simp)
 
-/-- The substrate's middle-Kleene `PartialProp.andFilter` is a truth table too, and shares
+/-- The substrate's Middle Kleene `SignType.meetMiddle` is a truth table too, and shares
 Łukasiewicz's verdict on (35b), filtering the presupposition of the second conjunct where the
 first is false. -/
-theorem andFilter_35b :
-    ((PartialProp.ofProp (· ∉ capitalParis)).andFilter kingBald).presup .parisNoKing := by
-  simp [PartialProp.andFilter, PartialProp.ofProp, kingBald]
+theorem meetMiddle_35b :
+    (ofProp (France.parisNoKing ∉ capitalParis)).meetMiddle (kingBald .parisNoKing) = -1 := by
+  simp [kingBald]
 
 /-! ### Propositional attitudes (§11)
 

@@ -30,9 +30,9 @@ every situation. The desires behind *hope* are consistent with the beliefs and t
   its fragment entry records (`spanish_fragment`, `french_fragment`).
 * `french_hope_eq_spanish_hope`: French *hope* with the indicative means what Spanish *hope*
   with the subjunctive means.
-* `want_alice_and_want_sue`, `not_bestWorlds_want_alice`: local necessity lets an agent want each
-  of two outcomes their beliefs rule out together, which von Fintel's best-worlds *want*
-  forbids.
+* `want_alice_and_want_sue`, `bestWorlds_want_alice_eq_neg_one`: local necessity lets an agent
+  want each of two outcomes their beliefs rule out together, which von Fintel's best-worlds
+  *want* forbids.
 * `not_hope_both`: no one hopes for each of two outcomes their beliefs rule out together.
 
 ## Implementation notes
@@ -234,11 +234,12 @@ theorem want_alice_and_want_sue (w : Marriage) :
   ⟨⟨.alice, by simp [doxPlus], fun _ _ hv ↦ hv marriesAlice (by simp [bul]) rfl⟩,
     ⟨.sue, by simp [doxPlus], fun _ _ hv ↦ hv marriesSue (by simp [bul]) rfl⟩⟩
 
-/-- On von Fintel's best-worlds *want* the speaker does not want to marry Alice, since marrying
-Sue is a best outcome. -/
-theorem not_bestWorlds_want_alice (w : Marriage) :
-    ¬ (Desire.BestWorlds.want doxPlus.accessibleWorlds bul marriesAlice).assertion w := by
-  intro h
+/-- On von Fintel's best-worlds *want* it is false that the speaker wants to marry Alice, since
+the outcome is contingent on the beliefs⁺ and marrying Sue is a best outcome. -/
+theorem bestWorlds_want_alice_eq_neg_one (w : Marriage) :
+    Desire.BestWorlds.want doxPlus.accessibleWorlds bul marriesAlice w = -1 := by
+  refine Desire.BestWorlds.want_eq_neg_one_iff.2
+    ⟨⟨⟨.alice, by simp [doxPlus], rfl⟩, .sue, by simp [doxPlus], nofun⟩, fun h ↦ ?_⟩
   have hbest : Marriage.sue ∈ (premisePreorder (bul w)).minimals (doxPlus.accessibleWorlds w) := by
     refine ⟨by simp [doxPlus], fun v _ hvs ↦ ?_⟩
     have hv : v = .sue := (Preorder.ofCriteria_le_iff _ _ _ _).1 hvs marriesSue (by simp [bul]) rfl

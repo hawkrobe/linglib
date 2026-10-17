@@ -3,23 +3,23 @@ module
 public import Linglib.Semantics.Reference.Rigidity
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Semantics.Modality.Basic
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.Kubota2026
 
 /-!
 # Kubota (2026): Outlook Management
 
-This file formalizes [kubota-2026]'s account of the Japanese *outlook markers*, adverbs and
+This file formalizes Kubota's account of the Japanese *outlook markers*, adverbs and
 focus particles such as *dōse* 'anyway', *nanka* 'anything like', *semete* 'at least',
 *mushiro* 'rather', and *koso* 'precisely', whose secondary meaning is two-layered: a
 presupposition that the prior discourse has made a counterstance salient, and an
 expressive-like stance that situates the prejacent relative to that counterstance. `Outlook`
 carries the three components, with the stance layer indexed by an outlook in the sense of
-[coppock-2018]. Its presuppositional and expressive projections are its `PartialProp` and
+Coppock. Its presuppositional and expressive projections are its trivalent and
 `TwoDim` images, so that denial reaches the prejacent alone ((40)–(41)), and the shifted
 readings under attitude verbs ((42)) are exactly the non-rigidity of the stance layer
-(`isRigid_iff`), which a pure expressive in the sense of [potts-2007b] lacks
+(`isRigid_iff`), which a pure expressive in the sense of Potts lacks
 (`ofTwoDim_isRigid`).
 
 The chapter's judgment data are the rows of `Data/Examples/Kubota2026.json`, and its
@@ -30,22 +30,22 @@ marker *mushiro* and the confirmatory *yahari* are licensed by opposite expectat
 stance can be cancelled (`mushiro_yahari_expectation`, (11)–(12)). *Nanka* combines with every
 modal flavor but is pejorative only under priority modality (`nanka_pejorative_iff_priority`,
 (45)), while *semete* combines only with priority modals (`semete_selects_priority`, (46)),
-priority modality being the deontic and bouletic flavors of [portner-2009].
+priority modality being the deontic and bouletic flavors of Portner.
 
 ## Implementation notes
 
-The chapter is descriptive and defers its formal analysis to [kubota-ido-2025], where both
-layers derive from a counterstance-marker discourse function over a [farkas-bruce-2010]
+The chapter is descriptive and defers its formal analysis to Kubota and Ido, where both
+layers derive from a counterstance-marker discourse function over a Farkas and Bruce
 Table; `Outlook` records the chapter-level picture with the two layers as fields. Perspective
 shift is modelled as outlook-relativity of the stance layer, following the chapter's remark
-that outlook markers fail [potts-2007b]'s independence and nondisplaceability and instead
-behave like locally accommodated presuppositions ([heim-1992]). Judgments the chapter marks
+that outlook markers fail Potts's independence and nondisplaceability and instead
+behave like locally accommodated presuppositions (Heim). Judgments the chapter marks
 ?? are recorded as `questionable`. The substrate's `circumstantial` flavor stands in for the
 chapter's ability modals.
 
 ## TODO
 
-* Deriving the two layers from a Table update, as [kubota-ido-2025] does, is not attempted.
+* Deriving the two layers from a Table update, as Kubota and Ido do, is not attempted.
 
 ## References
 
@@ -64,12 +64,11 @@ namespace Kubota2026
 
 open Modality (ModalFlavor)
 open ConventionalImplicature (TwoDim)
-open Presupposition (PartialProp)
 
 /-! ### The two-layered meaning (§3) -/
 
-/-- The meaning of an outlook-marked clause: the at-issue prejacent, the presupposed salient
-counterstance, and the stance layer, evaluated relative to an outlook. -/
+/-- The meaning of an outlook-marked clause, made up of the at-issue prejacent, the presupposed
+salient counterstance, and a stance layer evaluated relative to an outlook. -/
 structure Outlook (W O : Type*) where
   /-- The at-issue content. -/
   prejacent : W → Prop
@@ -82,17 +81,21 @@ namespace Outlook
 
 variable {W O : Type*}
 
-/-- The presuppositional projection: the counterstance is presupposed, the prejacent asserted. -/
-@[simps] def toPartialProp (m : Outlook W O) : PartialProp W := ⟨m.counterstance, m.prejacent⟩
+open Classical in
+/-- The presuppositional projection presupposes the counterstance and asserts the prejacent. -/
+noncomputable def toTrivalent (m : Outlook W O) : W → SignType :=
+  {w | m.counterstance w}.indicator fun w ↦ SignType.ofProp (m.prejacent w)
 
-/-- The expressive projection at an outlook: the prejacent with the stance as its use-conditional
-dimension. -/
+/-- The expressive projection at an outlook pairs the prejacent with the stance as its
+use-conditional dimension. -/
 @[simps] def toTwoDim (m : Outlook W O) (o : O) : TwoDim W (W → Prop) :=
   ⟨m.prejacent, m.evaluation o⟩
 
 /-- Negation, and so denial, leaves the counterstance presupposition in place ((40)–(41)). -/
-theorem presup_neg_toPartialProp (m : Outlook W O) :
-    m.toPartialProp.neg.presup = m.counterstance := rfl
+theorem support_neg_toTrivalent (m : Outlook W O) :
+    Function.support (-m.toTrivalent) = {w | m.counterstance w} := by
+  ext w
+  simp [toTrivalent]
 
 /-- Negation leaves the stance layer in place at every outlook ((40)–(41)). -/
 theorem toTwoDim_neg_notAtIssue (m : Outlook W O) (o : O) :
@@ -101,14 +104,14 @@ theorem toTwoDim_neg_notAtIssue (m : Outlook W O) (o : O) :
 /-- A meaning is rigid when its stance layer does not depend on the outlook. -/
 def IsRigid (m : Outlook W O) : Prop := Reference.IsRigid m.evaluation
 
-/-- Perspective shift is non-rigidity: the expressive projection varies with the outlook iff
-the stance layer does ((42)). -/
+/-- The expressive projection varies with the outlook iff the stance layer does, so perspective
+shift is non-rigidity ((42)). -/
 theorem isRigid_iff (m : Outlook W O) :
     m.IsRigid ↔ ∀ o o', m.toTwoDim o = m.toTwoDim o' := by
   simp only [IsRigid, Reference.IsRigid, toTwoDim, TwoDim.mk.injEq, true_and]
 
-/-- A pure expressive as an outlook-marked meaning: its conventional implicature is the same at
-every outlook, and it presupposes nothing. -/
+/-- The outlook-marked meaning of a pure expressive, whose conventional implicature is the same
+at every outlook and which presupposes nothing. -/
 def ofTwoDim (t : TwoDim W (W → Prop)) : Outlook W O :=
   ⟨t.atIssue, fun _ ↦ True, fun _ ↦ t.notAtIssue⟩
 
@@ -136,7 +139,7 @@ def priorMove? (row : Datum) : Option Clause.SentenceType :=
   | some "whQuestion" => some .constituent
   | _ => none
 
-/-- The prediction for a row: felicitous iff its prior move raises a counterstance. -/
+/-- A row is predicted felicitous iff its prior move raises a counterstance. -/
 def PredictsFelicitous (row : Datum) : Prop :=
   match priorMove? row with
   | some t => RaisesCounterstance t
@@ -155,7 +158,7 @@ theorem counterstance_requirement :
 /-! ### Non-cancelability ((10)–(12)) -/
 
 /-- Under a context marked as unexpected the contrary marker *mushiro* is licensed and the
-confirmatory *yahari* is not, and conversely under a context marked as expected: the stance is
+confirmatory *yahari* is not, and conversely under a context marked as expected, so the stance is
 conventional and cannot be cancelled. -/
 theorem mushiro_yahari_expectation :
     ∀ row ∈ Examples.all, row.feature? "phenomenon" = some "noncancelability" →
@@ -166,13 +169,13 @@ theorem mushiro_yahari_expectation :
 
 /-! ### Modal interactions ((45)–(46)) -/
 
-/-- Priority modality after [portner-2009]: the deontic and bouletic flavors, as against
+/-- Priority modality after [portner-2009] comprises the deontic and bouletic flavors, as against
 epistemic and ability modality. -/
 def IsPriority : ModalFlavor → Prop
   | .deontic | .bouletic => True
   | .epistemic | .circumstantial => False
 
-instance : DecidablePred IsPriority := λ f => by
+instance : DecidablePred IsPriority := fun f ↦ by
   cases f <;> unfold IsPriority <;> infer_instance
 
 /-- The row's modal flavor. -/

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Partition.Inquisitive
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.DeoThomas2025
 public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
@@ -69,7 +69,7 @@ alternatives are fixed by a causal structure, nor the Focus Principle, (21).
 
 namespace DeoThomas2025
 
-open Question Presupposition
+open Question
 
 variable {W : Type*}
 
@@ -184,24 +184,23 @@ end Context
 
 /-! ### The lexical entry, (36) -/
 
+open Classical in
 /-- *Just* with the current question `cq` and prejacent `p` presupposes that `cq` is the optimal
 construal of the underspecified question and asserts `p`, (36). -/
-def just (c : Context W) (cq : Question W) (p : Set W) : PartialProp W where
-  presup _ := c.IsOptimal cq
-  assertion := (· ∈ p)
+noncomputable def just (c : Context W) (cq : Question W) (p : Set W) : W → SignType :=
+  {_w | c.IsOptimal cq}.indicator fun w ↦ SignType.ofProp (w ∈ p)
 
 variable {c : Context W} {cq cq' : Question W} {p p' : Set W} {w w' : W}
 
-theorem just_defined_iff : (just c cq p).presup w ↔ c.IsOptimal cq := Iff.rfl
+@[simp] theorem just_eq_zero_iff : just c cq p w = 0 ↔ ¬ c.IsOptimal cq := by simp [just]
 
-theorem just_holds_iff : (just c cq p).holds w ↔ c.IsOptimal cq ∧ w ∈ p :=
-  Iff.rfl
+@[simp] theorem just_eq_one_iff : just c cq p w = 1 ↔ c.IsOptimal cq ∧ w ∈ p := by simp [just]
 
 /-- Two defined uses of *just* in one context address the same current question, since the
 presupposition fixes the construal. -/
-theorem eq_of_just_defined (h : (just c cq p).presup w)
-    (h' : (just c cq' p').presup w') : cq = cq' :=
-  h.unique h'
+theorem eq_of_just_ne_zero (h : just c cq p w ≠ 0) (h' : just c cq' p' w' ≠ 0) : cq = cq' := by
+  simp only [ne_eq, just_eq_zero_iff, not_not] at h h'
+  exact h.unique h'
 
 /-! ### Partitions: refinement is width, §4.2 and §4.7 -/
 

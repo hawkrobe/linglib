@@ -43,7 +43,8 @@ paper reads off them and `deMorgan_antecedents_diverge` the divergence of the eq
 namespace CiardelliZhangChampollion2018
 
 open Conditional (closestImp mem_closestImp_union selectionalCounterfactual
-  selectionalCounterfactual_eq_one_iff homogeneityCounterfactual eval_homogeneityCounterfactual)
+  selectionalCounterfactual_eq_one_iff homogeneityCounterfactual
+  homogeneityCounterfactual_eq_one_iff)
 
 /-! ### The switches scenario (Fig. 1) -/
 
@@ -117,9 +118,8 @@ theorem selectional_notBothUp_off_at_uu :
 /-- The homogeneity counterfactual makes the same prediction, with its presupposition satisfied.
 -/
 theorem homogeneity_notBothUp_off_at_uu :
-    (homogeneityCounterfactual hammingSim notBothUp lightOff).eval .uu = 1 := by
-  rw [eval_homogeneityCounterfactual]
-  decide
+    homogeneityCounterfactual hammingSim notBothUp lightOff .uu = 1 :=
+  homogeneityCounterfactual_eq_one_iff.2 notBothUp_off_at_uu
 
 /-! ### Minimal change forces the equivalence (§1.2) -/
 
@@ -143,12 +143,12 @@ theorem selectional_minimal_change_forces_notBothUp_off
 /-- The homogeneity counterfactual's true verdict, with its presupposition satisfied, is the
 same quantifier. -/
 theorem homogeneity_minimal_change_forces_notBothUp_off
-    (ord : World → Preorder World) [∀ w, DecidableRel (ord w).le] (w₀ : World)
-    (h_a : (homogeneityCounterfactual ord aDn lightOff).eval w₀ = 1)
-    (h_b : (homogeneityCounterfactual ord bDn lightOff).eval w₀ = 1) :
-    (homogeneityCounterfactual ord notBothUp lightOff).eval w₀ = 1 := by
-  simp only [eval_homogeneityCounterfactual] at *
-  exact selectional_minimal_change_forces_notBothUp_off ord w₀ h_a h_b
+    (ord : World → Preorder World) (w₀ : World)
+    (h_a : homogeneityCounterfactual ord aDn lightOff w₀ = 1)
+    (h_b : homogeneityCounterfactual ord bDn lightOff w₀ = 1) :
+    homogeneityCounterfactual ord notBothUp lightOff w₀ = 1 := by
+  rw [homogeneityCounterfactual_eq_one_iff] at *
+  exact minimal_change_forces_notBothUp ord w₀ h_a h_b
 
 /-! ### The main experiment (Table 3) -/
 

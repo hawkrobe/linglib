@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.Background
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Attitudes.Preference.Conditional
 
 /-!
@@ -19,7 +19,7 @@ assertion of wanting `p` false.
 
 * `Desire.BestWorlds.Want`: the best worlds of a domain under an ordering source are `p`-worlds.
 * `Desire.BestWorlds.want`, `Desire.BestWorlds.glad`, `Desire.BestWorlds.regret`: von Fintel's
-  entries as partial propositions, with world-indexed belief worlds, domain and ordering source.
+  entries as trivalent propositions, with world-indexed belief worlds, domain and ordering source.
 
 ## Main results
 
@@ -28,7 +28,8 @@ assertion of wanting `p` false.
   problem Villalta raises.
 * `Desire.BestWorlds.want_inter_iff`: wanting a conjunction is wanting each conjunct, which makes
   *sorry* anti-additive in its complement.
-* `Desire.BestWorlds.ssubset_of_presup_glad`: the presupposition of *glad* makes the domain
+* `Desire.BestWorlds.support_regret`: *sorry* has the presupposition of *glad*.
+* `Desire.BestWorlds.ssubset_of_glad_ne_zero`: the presupposition of *glad* makes the domain
   properly contain the belief worlds.
 
 ## Implementation notes
@@ -55,7 +56,7 @@ Civic case; the replacement is `VonFintel1999.gladBetter`.
 
 namespace Desire.BestWorlds
 
-open Modality Presupposition
+open Modality
 
 variable {W : Type*}
 
@@ -100,32 +101,53 @@ section Entries
 
 variable (dox base : W → Set W) (g : W → Set (W → Prop)) (p : Set W)
 
+open Classical in
 /-- *a wants p* presupposes that the domain `base` contains both `p`-worlds and non-`p`-worlds
 and asserts that its best worlds under the ordering source `g` are `p`-worlds
 ([von-fintel-1999]'s (45)). -/
-def want : PartialProp W where
-  presup w := IsContingent (base w) p
-  assertion w := Want (g w) (base w) p
+noncomputable def want : W → SignType :=
+  {w | IsContingent (base w) p}.indicator fun w ↦ SignType.ofProp (Want (g w) (base w) p)
 
 /-- *a is glad that p* presupposes, besides the presupposition of *want*, that `a` believes `p`
 and that the domain contains her belief worlds, and asserts that `a` wants `p`
 ([von-fintel-1999]'s (50)). -/
-def glad : PartialProp W where
-  presup w := dox w ⊆ p ∧ dox w ⊆ base w ∧ (want base g p).presup w
-  assertion := (want base g p).assertion
+noncomputable def glad : W → SignType :=
+  {w | dox w ⊆ p ∧ dox w ⊆ base w}.indicator (want base g p)
 
 /-- *a regrets that p* has the presupposition of *glad* and asserts that `a` wants `p` false
-([von-fintel-1999]'s (53)). -/
-def regret : PartialProp W where
-  presup := (glad dox base g p).presup
-  assertion := (want base g pᶜ).assertion
+([von-fintel-1999]'s (53)), restricting *want* `¬p` as *glad* restricts *want* `p`. -/
+noncomputable def regret : W → SignType :=
+  {w | dox w ⊆ p ∧ dox w ⊆ base w}.indicator (want base g pᶜ)
 
-variable {dox base g p}
+variable {dox base g p} {w : W}
+
+@[simp] theorem want_eq_zero_iff : want base g p w = 0 ↔ ¬ IsContingent (base w) p := by
+  simp [want]
+
+@[simp] theorem want_eq_one_iff :
+    want base g p w = 1 ↔ IsContingent (base w) p ∧ Want (g w) (base w) p := by
+  simp [want]
+
+@[simp] theorem want_eq_neg_one_iff :
+    want base g p w = -1 ↔ IsContingent (base w) p ∧ ¬ Want (g w) (base w) p := by
+  simp [want]
+
+private theorem isContingent_compl {D : Set W} : IsContingent D pᶜ ↔ IsContingent D p := by
+  rw [IsContingent, IsContingent, Set.sdiff_compl, ← Set.sdiff_eq, and_comm]
+
+variable (dox base g p) in
+/-- *Sorry* has the presupposition of *glad*, since *want* presupposes as much of `¬p` as of
+`p`. -/
+theorem support_regret :
+    Function.support (regret dox base g p) = Function.support (glad dox base g p) := by
+  ext; simp [regret, glad, isContingent_compl]
 
 /-- The presupposition of *glad* makes the domain properly contain the belief worlds, since the
 belief worlds are `p`-worlds and the domain has a non-`p`-world ([von-fintel-1999], p. 123). -/
-theorem ssubset_of_presup_glad {w : W} (h : (glad dox base g p).presup w) : dox w ⊂ base w :=
-  h.2.1.ssubset_of_not_superset fun hb ↦ let ⟨_, hv⟩ := h.2.2.2; hv.2 (h.1 (hb hv.1))
+theorem ssubset_of_glad_ne_zero (h : glad dox base g p w ≠ 0) : dox w ⊂ base w := by
+  obtain ⟨hp, hb, -, v, hv⟩ : dox w ⊆ p ∧ dox w ⊆ base w ∧ IsContingent (base w) p := by
+    simpa [glad] using h
+  exact hb.ssubset_of_not_superset fun h ↦ hv.2 (hp (h hv.1))
 
 end Entries
 

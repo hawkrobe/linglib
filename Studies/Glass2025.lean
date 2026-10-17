@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Attitudes.Doxastic
-public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Data.Examples.Glass2025
@@ -17,7 +16,8 @@ stronger requirement is unattested; the weaker is the postsupposition Glass give
 in earlier work (`yiweiDefined`). Table 1, the states of the Common Ground each profile admits,
 is derived from the requirements (`Profile.condition_iff`). The profiles of *know* and *think*
 come from the factivity of their fragment entries, whose factive presupposition in the doxastic
-substrate is the requirement of the factive profile (`admits_toPartialProp_iff`, `rows_admits`).
+substrate is the requirement of the factive profile (`subset_support_sentence_iff`,
+`rows_admits`).
 
 ## Implementation notes
 
@@ -60,11 +60,11 @@ def EntailsNot (c : Set W) (p : W → Prop) : Prop := ∀ w ∈ c, ¬ p w
 /-- Condition (12) is that the Common Ground is compatible with not-`p`. -/
 def CompatibleNot (c : Set W) (p : W → Prop) : Prop := ∃ w ∈ c, ¬ p w
 
-/-- (11) is the narrow-scope negation: it is not possible that `p`. -/
+/-- (11) is the narrow-scope negation, saying that it is not possible that `p`. -/
 theorem entailsNot_iff : EntailsNot c p ↔ ¬ ∃ w ∈ c, p w := by
   simp [EntailsNot]
 
-/-- (12) is the wide-scope negation: `p` is not Common Ground. -/
+/-- (12) is the wide-scope negation, saying that `p` is not Common Ground. -/
 theorem compatibleNot_iff : CompatibleNot c p ↔ ¬ EntailsP c p := by
   simp [CompatibleNot, EntailsP]
 
@@ -105,8 +105,8 @@ if the result is compatible with not-`p`, a postsupposition in the sense of [bra
 def yiweiDefined (c belief : Set W) (p : W → Prop) : Prop := CompatibleNot (c ∩ belief) p
 
 /-- A speaker with an opinion about `p`, whose Common Ground entails it or its negation, and who
-signals that the Common Ground is compatible with not-`p`, holds that not-`p`: why *x yǐwéi p*
-usually conveys that `p` is false. -/
+signals that the Common Ground is compatible with not-`p`, holds that not-`p`, which is why
+*x yǐwéi p* usually conveys that `p` is false. -/
 theorem entailsNot_of_opinionated (h : EntailsP c p ∨ EntailsNot c p) (hy : CompatibleNot c p) :
     EntailsNot c p :=
   h.resolve_left (compatibleNot_iff.1 hy)
@@ -181,9 +181,9 @@ variable {E : Type*} in
 /-- A doxastic predicate's presupposition is admitted exactly when the requirement of the profile
 its factivity determines holds, for a factive the requirement (10) that the complement be Common
 Ground. -/
-theorem admits_toPartialProp_iff (V : DoxasticPredicate W E) (a : E) :
-    (V.toPartialProp a p).Admits c ↔ (Profile.ofFactivity V.factivity).condition c p := by
-  simp only [PartialProp.Admits, DoxasticPredicate.toPartialProp]
+theorem subset_support_sentence_iff (V : DoxasticPredicate W E) (a : E) :
+    c ⊆ Function.support (V.sentence a p) ↔ (Profile.ofFactivity V.factivity).condition c p := by
+  rw [DoxasticPredicate.support_sentence]
   cases V.factivity
   · exact iff_of_true (fun _ _ _ h ↦ nomatch h) trivial
   · exact ⟨fun h w hw ↦ h hw _ rfl, fun h _ hw _ _ ↦ h _ hw⟩

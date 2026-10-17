@@ -11,7 +11,7 @@ public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 /-!
 # Strawson entailment
 
-An operator into partial propositions is Strawson downward entailing when shrinking its argument
+An operator into trivalent propositions is Strawson downward entailing when shrinking its argument
 gives a conclusion that the original Strawson-entails, the inference being checked only where the
 presuppositions involved hold. Von Fintel introduces the notion to keep the Fauconnier–Ladusaw
 theory of negative polarity licensing for focus *only*, the adversative attitudes, superlatives,
@@ -19,8 +19,8 @@ temporal *since* and conditional antecedents, none of which is downward entailin
 sense. Gajewski defines Strawson anti-additivity, which the same operators also satisfy.
 
 Strawson entailment adds presuppositions only as premises, so each Strawson property holds as soon
-as the assertion has its classical counterpart, whatever the presupposition; it is the
-presupposition that defeats the classical property.
+as the operator's values, where defined, follow an assertion with the classical counterpart,
+whatever the presupposition; it is the presupposition that defeats the classical property.
 
 ## Main definitions
 
@@ -31,12 +31,13 @@ presupposition that defeats the classical property.
 ## Main results
 
 * `IsStrawsonDE.of_antitone`, `IsStrawsonUE.of_monotone`,
-  `IsStrawsonAntiAdditive.of_isAntiAdditive`: the classical property of the assertion suffices.
+  `IsStrawsonAntiAdditive.of_isAntiAdditive`: the classical property of an assertion that the
+  defined values follow suffices.
 * `isStrawsonAntiAdditive_iff`: Strawson anti-additivity is Strawson downward entailingness
   together with the Strawson form of Atlas's pseudo-anti-additivity.
 * `isStrawsonDE_ofProp_iff`, `isStrawsonAntiAdditive_ofProp_iff`: without presuppositions the
   Strawson notions are the classical ones.
-* `isStrawsonAntiAdditive_only`, `not_antitone_truthSet_only`: *only* over a name is Strawson
+* `isStrawsonAntiAdditive_only`, `not_antitone_posExt_only`: *only* over a name is Strawson
   anti-additive and not classically downward entailing.
 * `not_isStrawsonUE_only`, `not_isStrawsonUE_since`, `Desire.BestWorlds.not_isStrawsonUE_regret`,
   `Degree.not_isStrawsonUE_superlative`, `Conditional.not_isStrawsonUE_horizonCounterfactual`:
@@ -90,25 +91,9 @@ presupposition that defeats the classical property.
 
 @[expose] public section
 
-namespace Presupposition.PartialProp
-
-variable {W : Type*} {p q : PartialProp W}
-
-theorem strawsonEntails_of_assertion_le (h : p.assertion ≤ q.assertion) : p.strawsonEntails q :=
-  fun w _ _ hp ↦ h w hp
-
-theorem strawsonEquiv_of_assertion_eq (h : p.assertion = q.assertion) : p.strawsonEquiv q :=
-  ⟨strawsonEntails_of_assertion_le h.le, strawsonEntails_of_assertion_le h.ge⟩
-
-theorem strawsonEntails_ofProp_iff {a b : W → Prop} :
-    (ofProp a).strawsonEntails (ofProp b) ↔ a ≤ b :=
-  ⟨fun h w ha ↦ h w trivial trivial ha, fun h w _ _ ha ↦ h w ha⟩
-
-end Presupposition.PartialProp
-
 namespace NaturalLogic
 
-open Presupposition PartialProp
+open Presupposition Trivalent
 
 variable {α ι W D : Type*}
 
@@ -116,58 +101,63 @@ variable {α ι W D : Type*}
 
 section Preorder
 
-variable [Preorder α] {f : α → PartialProp W}
+variable [Preorder α] {f : α → W → SignType}
 
-/-- An operator into partial propositions is Strawson downward entailing if `p ≤ q` makes `f q`
+/-- An operator into trivalent propositions is Strawson downward entailing if `p ≤ q` makes `f q`
 Strawson-entail `f p` ([von-fintel-1999]'s (14)). -/
-def IsStrawsonDE (f : α → PartialProp W) : Prop :=
-  ∀ ⦃p q⦄, p ≤ q → (f q).strawsonEntails (f p)
+def IsStrawsonDE (f : α → W → SignType) : Prop :=
+  ∀ ⦃p q⦄, p ≤ q → strawsonEntails (f q) (f p)
 
-/-- An operator into partial propositions is Strawson upward entailing if `p ≤ q` makes `f p`
+/-- An operator into trivalent propositions is Strawson upward entailing if `p ≤ q` makes `f p`
 Strawson-entail `f q`. -/
-def IsStrawsonUE (f : α → PartialProp W) : Prop :=
-  ∀ ⦃p q⦄, p ≤ q → (f p).strawsonEntails (f q)
+def IsStrawsonUE (f : α → W → SignType) : Prop :=
+  ∀ ⦃p q⦄, p ≤ q → strawsonEntails (f p) (f q)
 
 /-- Von Fintel's own statement of Strawson downward entailingness asks that `f p` be true wherever
 it is defined and `f q` is true. -/
 theorem isStrawsonDE_iff :
-    IsStrawsonDE f ↔ ∀ ⦃p q⦄, p ≤ q → ∀ w, (f p).presup w → (f q).holds w → (f p).holds w :=
-  ⟨fun h _ _ hpq w hp hq ↦ ⟨hp, h hpq w hq.1 hp hq.2⟩,
-    fun h _ _ hpq w hq hp hq' ↦ (h hpq w hp ⟨hq, hq'⟩).2⟩
+    IsStrawsonDE f ↔ ∀ ⦃p q⦄, p ≤ q → ∀ w, f p w ≠ 0 → f q w = 1 → f p w = 1 :=
+  forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ forall_congr' fun _ ↦
+    ⟨fun h a b ↦ h b a, fun h a b ↦ h b a⟩
 
-/-- An antitone assertion is Strawson downward entailing, whatever the presupposition. -/
-theorem IsStrawsonDE.of_antitone (h : Antitone fun p ↦ (f p).assertion) : IsStrawsonDE f :=
-  fun _ _ hpq ↦ strawsonEntails_of_assertion_le (h hpq)
+/-- An operator whose values, where defined, follow an antitone assertion is Strawson downward
+entailing, whatever the presupposition. -/
+theorem IsStrawsonDE.of_antitone {a : α → W → Prop} (h : Antitone a)
+    (hf : ∀ p w, f p w ≠ 0 → (f p w = 1 ↔ a p w)) : IsStrawsonDE f :=
+  fun _ _ hpq w hq hp ↦ (hf _ w hp).2 (h hpq w ((hf _ w (by simp [hq])).1 hq))
 
-/-- A monotone assertion is Strawson upward entailing, whatever the presupposition. -/
-theorem IsStrawsonUE.of_monotone (h : Monotone fun p ↦ (f p).assertion) : IsStrawsonUE f :=
-  fun _ _ hpq ↦ strawsonEntails_of_assertion_le (h hpq)
+/-- An operator whose values, where defined, follow a monotone assertion is Strawson upward
+entailing, whatever the presupposition. -/
+theorem IsStrawsonUE.of_monotone {a : α → W → Prop} (h : Monotone a)
+    (hf : ∀ p w, f p w ≠ 0 → (f p w = 1 ↔ a p w)) : IsStrawsonUE f :=
+  fun _ _ hpq w hp hq ↦ (hf _ w hq).2 (h hpq w ((hf _ w (by simp [hp])).1 hp))
 
 /-- Classical downward entailingness of the truth set implies the Strawson form. -/
-theorem IsStrawsonDE.of_antitone_truthSet (h : Antitone fun p ↦ (f p).truthSet) :
-    IsStrawsonDE f :=
-  fun _ _ hpq _ hq _ hq' ↦ (h hpq ⟨hq, hq'⟩).2
+theorem IsStrawsonDE.of_antitone_posExt (h : Antitone fun p ↦ posExt (f p)) : IsStrawsonDE f :=
+  fun _ _ hpq _ hq _ ↦ h hpq hq
 
+open Classical in
 /-- Without presuppositions, Strawson downward entailingness is antitonicity. -/
 theorem isStrawsonDE_ofProp_iff {g : α → W → Prop} :
-    IsStrawsonDE (fun p ↦ ofProp (g p)) ↔ Antitone g :=
-  forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ strawsonEntails_ofProp_iff
+    IsStrawsonDE (fun p w ↦ SignType.ofProp (g p w)) ↔ Antitone g :=
+  forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ by simp [strawsonEntails, Pi.le_def]
 
+open Classical in
 /-- Without presuppositions, Strawson upward entailingness is monotonicity. -/
 theorem isStrawsonUE_ofProp_iff {g : α → W → Prop} :
-    IsStrawsonUE (fun p ↦ ofProp (g p)) ↔ Monotone g :=
-  forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ strawsonEntails_ofProp_iff
+    IsStrawsonUE (fun p w ↦ SignType.ofProp (g p w)) ↔ Monotone g :=
+  forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ by simp [strawsonEntails, Pi.le_def]
 
 /-- A presupposition failing at a smaller argument defeats classical downward entailingness. -/
-theorem not_antitone_truthSet {p q : α} {w : W} (hpq : p ≤ q) (hq : (f q).holds w)
-    (hp : ¬ (f p).presup w) : ¬ Antitone fun p ↦ (f p).truthSet :=
-  fun h ↦ hp (h hpq hq).1
+theorem not_antitone_posExt {p q : α} {w : W} (hpq : p ≤ q) (hq : f q w = 1) (hp : f p w = 0) :
+    ¬ Antitone fun p ↦ posExt (f p) :=
+  fun h ↦ by simpa [hp] using h hpq hq
 
-/-- A larger argument defined and false at a world where a smaller one holds defeats Strawson
-upward entailingness. -/
-theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : (f p).holds w)
-    (hq : (f q).presup w) (hq' : ¬ (f q).assertion w) : ¬ IsStrawsonUE f :=
-  fun h ↦ hq' (h hpq w hp.1 hq hp.2)
+/-- A larger argument false at a world where a smaller one is true defeats Strawson upward
+entailingness. -/
+theorem not_isStrawsonUE {p q : α} {w : W} (hpq : p ≤ q) (hp : f p w = 1) (hq : f q w = -1) :
+    ¬ IsStrawsonUE f :=
+  fun h ↦ by simpa [hq] using h hpq w hp (by simp [hq])
 
 end Preorder
 
@@ -175,38 +165,56 @@ end Preorder
 
 section SemilatticeSup
 
-variable [SemilatticeSup α] {f : α → PartialProp W}
+variable [SemilatticeSup α] {f : α → W → SignType}
 
-/-- An operator into partial propositions is Strawson anti-additive if `f (p ⊔ q)` is Strawson
-equivalent to `f p` conjoined with `f q` ([gajewski-2011]'s (36)). -/
-def IsStrawsonAntiAdditive (f : α → PartialProp W) : Prop :=
-  ∀ p q, (f (p ⊔ q)).strawsonEquiv ((f p).and (f q))
+/-- An operator into trivalent propositions is Strawson anti-additive if `f (p ⊔ q)` is Strawson
+equivalent to `f p` conjoined with `f q` ([gajewski-2011]'s (36)), the conjunction being the
+classical one, defined where both conjuncts are. -/
+def IsStrawsonAntiAdditive (f : α → W → SignType) : Prop :=
+  ∀ p q, strawsonEntails (f (p ⊔ q)) (fun w ↦ (f p w).meetWeak (f q w)) ∧
+    strawsonEntails (fun w ↦ (f p w).meetWeak (f q w)) (f (p ⊔ q))
 
-/-- An anti-additive assertion is Strawson anti-additive, whatever the presupposition. -/
-theorem IsStrawsonAntiAdditive.of_isAntiAdditive (h : IsAntiAdditive fun p ↦ (f p).assertion) :
-    IsStrawsonAntiAdditive f :=
-  fun p q ↦ strawsonEquiv_of_assertion_eq (h p q)
+/-- An operator whose values, where defined, follow an anti-additive assertion is Strawson
+anti-additive, whatever the presupposition. -/
+theorem IsStrawsonAntiAdditive.of_isAntiAdditive {a : α → W → Prop} (h : IsAntiAdditive a)
+    (hf : ∀ p w, f p w ≠ 0 → (f p w = 1 ↔ a p w)) : IsStrawsonAntiAdditive f := by
+  refine fun p q ↦ ⟨fun w h₁ h₂ ↦ ?_, fun w h₁ h₂ ↦ ?_⟩
+  · have ha := (hf _ w (by simp [h₁])).1 h₁
+    rw [h p q] at ha
+    simp only [ne_eq, SignType.meetWeak_eq_zero_iff, not_or] at h₂
+    simp [(hf p w h₂.1).2 ha.1, (hf q w h₂.2).2 ha.2]
+  · simp only [SignType.meetWeak_eq_one_iff] at h₁
+    refine (hf _ w h₂).2 ?_
+    rw [h p q]
+    exact ⟨(hf p w (by simp [h₁.1])).1 h₁.1, (hf q w (by simp [h₁.2])).1 h₁.2⟩
 
 theorem IsStrawsonAntiAdditive.isStrawsonDE (h : IsStrawsonAntiAdditive f) : IsStrawsonDE f :=
-  fun p q hpq w hq hp ha ↦ by
-    rw [← sup_eq_right.2 hpq] at hq ha
-    exact ((h p q).1 w hq ⟨hp, sup_eq_right.2 hpq ▸ hq⟩ ha).1
+  fun p q hpq w hq hp ↦ by
+    rw [← sup_eq_right.2 hpq] at hq
+    have := (h p q).1 w hq
+    by_cases hq' : f q w = 0
+    · simp_all
+    · simp_all
 
 /-- Strawson anti-additivity adds to Strawson downward entailingness the Strawson form of
 [atlas-1996]'s pseudo-anti-additivity, that `f p` and `f q` together entail `f (p ⊔ q)`
 ([von-fintel-1999]'s (25); [gajewski-2011], Appendix 1). -/
 theorem isStrawsonAntiAdditive_iff :
     IsStrawsonAntiAdditive f ↔
-      IsStrawsonDE f ∧ ∀ p q, ((f p).and (f q)).strawsonEntails (f (p ⊔ q)) :=
-  ⟨fun h ↦ ⟨h.isStrawsonDE, fun p q ↦ (h p q).2⟩, fun ⟨h, h'⟩ p q ↦
-    ⟨fun w hs hpq ha ↦ ⟨h le_sup_left w hs hpq.1 ha, h le_sup_right w hs hpq.2 ha⟩, h' p q⟩⟩
+      IsStrawsonDE f ∧ ∀ p q, strawsonEntails (fun w ↦ (f p w).meetWeak (f q w)) (f (p ⊔ q)) := by
+  refine ⟨fun h ↦ ⟨h.isStrawsonDE, fun p q ↦ (h p q).2⟩,
+    fun ⟨h, h'⟩ p q ↦ ⟨fun w hs hpq ↦ ?_, h' p q⟩⟩
+  simp only [ne_eq, SignType.meetWeak_eq_zero_iff, not_or] at hpq
+  simp [h le_sup_left w hs hpq.1, h le_sup_right w hs hpq.2]
 
+open Classical in
 /-- Without presuppositions, Strawson anti-additivity is anti-additivity. -/
 theorem isStrawsonAntiAdditive_ofProp_iff {g : α → W → Prop} :
-    IsStrawsonAntiAdditive (fun p ↦ ofProp (g p)) ↔ IsAntiAdditive g := by
+    IsStrawsonAntiAdditive (fun p w ↦ SignType.ofProp (g p w)) ↔ IsAntiAdditive g := by
   refine forall₂_congr fun p q ↦ ?_
-  simp only [strawsonEquiv, AntisymmRel, strawsonEntails, ofProp, PartialProp.and, true_and,
-    forall_const, funext_iff, Pi.inf_apply, inf_Prop_eq]
+  simp only [strawsonEntails, SignType.ofProp_eq_one_iff, ne_eq, SignType.ofProp_ne_zero,
+    not_false_eq_true, forall_const, SignType.meetWeak_eq_one_iff, SignType.meetWeak_eq_zero_iff,
+    or_self, funext_iff, Pi.inf_apply, inf_Prop_eq]
   exact ⟨fun h w ↦ propext ⟨h.1 w, h.2 w⟩, fun h ↦ ⟨fun w ↦ (h w).mp, fun w ↦ (h w).mpr⟩⟩
 
 end SemilatticeSup
@@ -217,47 +225,54 @@ section Only
 
 variable (x : ι) (P : ι → Set W)
 
+open Classical in
 /-- *Only x is P* presupposes that `x` is `P` and asserts that nothing else is
 ([von-fintel-1999]'s (15)). -/
-def only : PartialProp W where
-  presup w := w ∈ P x
-  assertion w := ∀ y, y ≠ x → w ∉ P y
+noncomputable def only : W → SignType :=
+  (P x).indicator fun w ↦ SignType.ofProp (∀ y, y ≠ x → w ∉ P y)
+
+variable {x P} in
+private theorem only_eq_one_iff {w : W} (h : only x P w ≠ 0) :
+    only x P w = 1 ↔ ∀ y, y ≠ x → w ∉ P y := by
+  by_cases hw : w ∈ P x <;> simp_all [only]
 
 theorem isStrawsonAntiAdditive_only : IsStrawsonAntiAdditive (only (W := W) x) :=
-  .of_isAntiAdditive fun _ _ ↦ funext fun _ ↦ propext <| by
-    simp only [only, Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union, Set.mem_union,
-      not_or, imp_and, forall_and]
+  .of_isAntiAdditive (a := fun P w ↦ ∀ y, y ≠ x → w ∉ P y)
+    (fun _ _ ↦ funext fun _ ↦ propext <| by
+      simp only [Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union, Set.mem_union,
+        not_or, imp_and, forall_and])
+    fun _ _ ↦ only_eq_one_iff
 
 theorem isStrawsonDE_only : IsStrawsonDE (only (W := W) x) :=
   (isStrawsonAntiAdditive_only x).isStrawsonDE
 
 /-- *Only John ate vegetables* does not classically entail *only John ate kale*, whose
 presupposition may fail ([von-fintel-1999]'s (11)). -/
-theorem not_antitone_truthSet_only :
-    ¬ Antitone fun P : Bool → Set Unit ↦ (only true P).truthSet :=
-  not_antitone_truthSet (p := ⊥) (q := fun y ↦ {_u | y = true}) (w := ()) bot_le
-    ⟨rfl, fun _ hy h ↦ hy h⟩ id
+theorem not_antitone_posExt_only :
+    ¬ Antitone fun P : Bool → Set Unit ↦ posExt (only true P) :=
+  not_antitone_posExt (p := ⊥) (q := fun y ↦ {_u | y = true}) (w := ()) bot_le
+    (by simp [only]) (by simp [only])
 
 /-- *Only John smokes* does not Strawson-entail *only John smokes or drinks*, which is defined and
 false when someone else drinks, so *only* is not upward entailing. -/
 theorem not_isStrawsonUE_only : ¬ IsStrawsonUE (only (W := Unit) true) :=
   not_isStrawsonUE (p := fun y ↦ {_u | y = true}) (q := ⊤) (w := ()) le_top
-    ⟨rfl, fun _ hy h ↦ hy h⟩ (Set.mem_univ _) fun h ↦ h false Bool.false_ne_true (Set.mem_univ _)
+    (by simp [only]) (by simp [only])
 
 /-- When distinct individuals yield alternatives none of which the prejacent entails, the
 name-based *only* is the propositional exclusive `Focus.Particles.only` applied to the
 predication of `x`, over the alternatives the name generates ([coppock-beaver-2014]'s (93)). -/
 theorem only_eq_only_range (hP : ∀ y, P x ⊆ P y → y = x) :
     only x P = Focus.Particles.only (· ⊆ ·) (Set.range P) (P x) := by
-  refine PartialProp.ext ?_ (funext fun w ↦ propext ?_)
-  · rw [Focus.Particles.only_presup, Focus.Particles.atLeast_subset_eq (Set.mem_range_self x)]
-    rfl
-  · simp only [only, Focus.Particles.only_assertion, Focus.Particles.mem_atMost,
-      Set.forall_mem_range]
-    refine ⟨fun h y hw ↦ ?_, fun h y hyx hw ↦ hyx (hP y (h y hw))⟩
-    by_cases hyx : y = x
-    · exact hyx ▸ subset_rfl
-    · exact absurd hw (h y hyx)
+  funext w
+  have hx := Focus.Particles.atLeast_subset_eq (Set.mem_range_self (f := P) x)
+  refine SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp [only, hx]) ?_
+  simp only [only, Focus.Particles.only_eq_one_iff, hx, indicator_apply_eq_one_iff,
+    SignType.ofProp_eq_one_iff, Focus.Particles.mem_atMost, Set.forall_mem_range]
+  refine and_congr_right fun _ ↦ ⟨fun h y hw ↦ ?_, fun h y hyx hw ↦ hyx (hP y (h y hw))⟩
+  by_cases hyx : y = x
+  · exact hyx ▸ subset_rfl
+  · exact absurd hw (h y hyx)
 
 /-- Without that condition the two come apart, since two individuals with the same predication
 are one alternative, entailed by the prejacent, for the exclusive but two individuals for the
@@ -266,10 +281,12 @@ theorem only_ne_only_range :
     only true (fun _ : Bool ↦ (.univ : Set Unit)) ≠
       Focus.Particles.only (· ⊆ ·) (Set.range fun _ : Bool ↦ (.univ : Set Unit)) .univ := by
   intro h
-  have h0 : (Focus.Particles.only (· ⊆ ·) (Set.range fun _ : Bool ↦ (.univ : Set Unit))
-      .univ).assertion () := fun q ⟨_, hq⟩ _ ↦ hq ▸ subset_rfl
+  have h0 : Focus.Particles.only (· ⊆ ·) (Set.range fun _ : Bool ↦ (.univ : Set Unit)) .univ () =
+      1 :=
+    Focus.Particles.only_eq_one_iff.2 ⟨⟨.univ, ⟨true, rfl⟩, trivial, subset_rfl⟩,
+      fun q ⟨_, hq⟩ _ ↦ hq ▸ subset_rfl⟩
   rw [← h] at h0
-  exact h0 false Bool.false_ne_true (Set.mem_univ ())
+  simp [only] at h0
 
 end Only
 
@@ -279,17 +296,19 @@ section Since
 
 variable {T : Type*} [LinearOrder T] (ago : T → T)
 
+open Classical in
 /-- *It has been five years since p* presupposes that `p` held at the time `ago t` five years
 before the evaluation time `t` and asserts that it has not held since ([von-fintel-1999], after
 Iatridou). -/
-def since (p : Set T) : PartialProp T where
-  presup t := ago t ∈ p
-  assertion t := Disjoint (Set.Ioc (ago t) t) p
+noncomputable def since (p : Set T) : T → SignType :=
+  {t | ago t ∈ p}.indicator fun t ↦ SignType.ofProp (Disjoint (Set.Ioc (ago t) t) p)
 
 /-- *Since* is Strawson anti-additive in its clause, as [gajewski-2011] finds von Fintel's
 Strawson downward entailing operators to be. -/
 theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
-  .of_isAntiAdditive fun _ _ ↦ funext fun _ ↦ propext Set.disjoint_union_right
+  .of_isAntiAdditive (a := fun p t ↦ Disjoint (Set.Ioc (ago t) t) p)
+    (fun _ _ ↦ funext fun _ ↦ propext Set.disjoint_union_right)
+    fun p t h ↦ by by_cases ht : ago t ∈ p <;> simp_all [since]
 
 /-- *Since* is Strawson downward entailing. -/
 theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
@@ -297,19 +316,17 @@ theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
 
 /-- *It's been five years since I saw a bird of prey* does not classically entail *it's been five
 years since I saw an eagle*, whose presupposition may fail. -/
-theorem not_antitone_truthSet_since :
-    ¬ Antitone fun p : Set ℤ ↦ (since (· - 5) p).truthSet :=
-  not_antitone_truthSet (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
-    ⟨show (0 : ℤ) - 5 ∈ ({-5} : Set ℤ) from Set.mem_singleton_iff.2 (by decide),
-      show Disjoint (Set.Ioc ((0 : ℤ) - 5) 0) {-5} by simp⟩ fun h ↦ h
+theorem not_antitone_posExt_since :
+    ¬ Antitone fun p : Set ℤ ↦ posExt (since (· - 5) p) :=
+  not_antitone_posExt (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
+    (by simp [since, Set.disjoint_singleton_right]) (by simp [since])
 
 /-- *It's been five years since I saw an eagle* does not Strawson-entail *it's been five years
 since I saw a bird*, defined and false when a sparrow was seen since. -/
 theorem not_isStrawsonUE_since : ¬ IsStrawsonUE (since (T := ℤ) (· - 5)) :=
   not_isStrawsonUE (p := {-5}) (q := .univ) (w := 0) (Set.subset_univ _)
-    ⟨show (0 : ℤ) - 5 ∈ ({-5} : Set ℤ) from Set.mem_singleton_iff.2 (by decide),
-      show Disjoint (Set.Ioc ((0 : ℤ) - 5) 0) {-5} by simp⟩ (Set.mem_univ _)
-    fun h ↦ Set.disjoint_left.1 h (show (0 : ℤ) ∈ Set.Ioc (0 - 5) 0 by simp) (Set.mem_univ _)
+    (by simp [since, Set.disjoint_singleton_right])
+    (by simpa [since] using Set.nonempty_iff_ne_empty.1 ⟨0, by simp⟩)
 
 end Since
 
@@ -319,22 +336,25 @@ end NaturalLogic
 
 namespace Focus.Particles
 
-open NaturalLogic
+open NaturalLogic Trivalent
 
 variable {W ι : Type*} {S : Set W → Set W → Prop} (C : Set (Set W))
 
 /-- On a scale refining entailment, *only* is Strawson downward entailing in its prejacent with
 the alternatives held fixed ([von-fintel-1999], §3.4; [coppock-beaver-2014], fn. 22). -/
 theorem isStrawsonDE_only (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) : IsStrawsonDE (only S C) :=
-  .of_antitone fun _ _ hpq ↦ antitone_atMost hS hpq
+  .of_antitone (a := fun p w ↦ w ∈ atMost S C p) (fun _ _ hpq ↦ antitone_atMost hS hpq)
+    fun _ _ h ↦ by simp_all
 
 /-- On the entailment scale *only* is Strawson anti-additive in its prejacent. -/
 theorem isStrawsonAntiAdditive_only_subset : IsStrawsonAntiAdditive (only (· ⊆ ·) C) :=
-  .of_isAntiAdditive fun p q ↦ funext fun w ↦ propext <| by
-    show w ∈ Exhaustification.excludes C (p ∪ q) ↔
-      w ∈ Exhaustification.excludes C p ∧ w ∈ Exhaustification.excludes C q
-    rw [Exhaustification.excludes_union]
-    exact Iff.rfl
+  .of_isAntiAdditive (a := fun p w ↦ w ∈ atMost (· ⊆ ·) C p)
+    (fun p q ↦ funext fun w ↦ propext <| by
+      show w ∈ Exhaustification.excludes C (p ∪ q) ↔
+        w ∈ Exhaustification.excludes C p ∧ w ∈ Exhaustification.excludes C q
+      rw [Exhaustification.excludes_union]
+      exact Iff.rfl)
+    fun _ _ h ↦ by simp_all
 
 theorem isStrawsonDE_only_subset : IsStrawsonDE (only (· ⊆ ·) C) :=
   (isStrawsonAntiAdditive_only_subset C).isStrawsonDE
@@ -344,17 +364,18 @@ predicate with the alternatives held fixed, so NP-modifying *only* licenses nega
 items in the verb phrase ([coppock-beaver-2014]'s (93)). -/
 theorem isStrawsonDE_only_apply (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) (x : ι) :
     IsStrawsonDE fun P : ι → Set W ↦ only S C (P x) :=
-  .of_antitone fun _ _ hPQ ↦ antitone_atMost hS (hPQ x)
+  .of_antitone (a := fun P w ↦ w ∈ atMost S C (P x)) (fun _ _ hPQ ↦ antitone_atMost hS (hPQ x))
+    fun _ _ h ↦ by simp_all
 
 /-- *There only was precipitation in Medford* does not classically entail *there only was rain in
 Medford*, whose presupposition, the premise [von-fintel-1999]'s (67) adds, may fail. -/
-theorem not_antitone_truthSet_only_subset :
-    ¬ Antitone fun p : Set Bool ↦ (only (· ⊆ ·) {{true}, .univ} p).truthSet :=
-  not_antitone_truthSet (p := {true}) (q := .univ) (w := false) (Set.subset_univ _)
-    ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
+theorem not_antitone_posExt_only_subset :
+    ¬ Antitone fun p : Set Bool ↦ posExt (only (· ⊆ ·) {{true}, .univ} p) :=
+  not_antitone_posExt (p := {true}) (q := .univ) (w := false) (Set.subset_univ _)
+    (only_eq_one_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
       rcases hq with rfl | rfl
-      exacts [absurd hw (by simp), subset_rfl]⟩
-    fun ⟨_, _, hw, hsub⟩ ↦ by simpa using hsub hw
+      exacts [absurd hw (by simp), subset_rfl]⟩)
+    (only_eq_zero_iff.2 fun ⟨_, _, hw, hsub⟩ ↦ by simpa using hsub hw)
 
 /-- On a scale on which a weaker alternative outranks a stronger one, here reverse entailment,
 *only* is not Strawson downward entailing in its prejacent ([coppock-beaver-2014], fn. 22). The
@@ -362,9 +383,10 @@ two-world model is ours; the footnote states the claim without one. -/
 theorem not_isStrawsonDE_only_superset :
     ¬ IsStrawsonDE (only (· ⊇ ·) ({{true}, .univ} : Set (Set Bool))) := fun h ↦ by
   have := h (p := {true}) (q := .univ) (Set.subset_univ _) true
-    ⟨.univ, by simp, trivial, subset_rfl⟩ ⟨{true}, by simp, rfl, subset_rfl⟩
-    (fun _ _ _ ↦ Set.subset_univ _) .univ (by simp) trivial
-  exact absurd (this (Set.mem_univ false)) (by simp)
+    (only_eq_one_iff.2 ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun _ _ _ ↦ Set.subset_univ _⟩)
+    (by rw [Ne, only_eq_zero_iff, not_not]; exact ⟨{true}, by simp, rfl, subset_rfl⟩)
+  exact absurd ((only_eq_one_iff.1 this).2 .univ (by simp) trivial (Set.mem_univ false))
+    (by simp)
 
 end Focus.Particles
 
@@ -372,16 +394,18 @@ end Focus.Particles
 
 namespace Desire.BestWorlds
 
-open Modality NaturalLogic
+open Modality NaturalLogic Trivalent
 
 variable {W : Type*} (dox base : W → Set W) (g : W → Set (W → Prop))
 
 /-- *Want* is Strawson upward entailing in its complement ([von-fintel-1999], §3.2). -/
 theorem isStrawsonUE_want : IsStrawsonUE (want base g) :=
-  .of_monotone fun _ _ h _ hw ↦ hw.trans h
+  .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
+    fun _ _ h ↦ by simp_all
 
 theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
-  .of_monotone fun _ _ h _ hw ↦ hw.trans h
+  .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
+    fun _ _ h ↦ by simp_all [glad]
 
 /-- *Glad* is not Strawson downward entailing, so it licenses no negative polarity item
 ([von-fintel-1999], §3.3). The subject believes world `0` and prefers world `1`, so is glad that
@@ -393,20 +417,19 @@ theorem not_isStrawsonDE_glad :
     ext
     simp
   intro h
-  have h1 : ({1} : Set (Fin 3)) ⊆ {0} := by
-    have := h (p := {0}) (q := {0, 1}) (by simp) 0
-    simp only [glad, want, Want, hb] at this
-    exact this ⟨by simp, Set.subset_univ _, ⟨0, by simp⟩, ⟨2, by simp⟩⟩
-      ⟨subset_rfl, Set.subset_univ _, ⟨0, by simp⟩, ⟨1, by simp⟩⟩ (by simp)
-  simpa using h1 (Set.mem_singleton 1)
+  have := h (p := {0}) (q := {0, 1}) (by simp) 0
+  simp [glad, Want, IsContingent, hb] at this
+  exact this ⟨2, by simp⟩ ⟨1, by simp⟩
 
 /-- *Sorry* is Strawson anti-additive in its complement, since wanting a disjunction false is
 wanting each disjunct false. -/
 theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base g) :=
-  .of_isAntiAdditive fun p q ↦ funext fun w ↦ propext <| by
-    show Want (g w) (base w) (p ∪ q)ᶜ ↔ Want (g w) (base w) pᶜ ∧ Want (g w) (base w) qᶜ
-    rw [Set.compl_union]
-    exact want_inter_iff
+  .of_isAntiAdditive (a := fun p w ↦ Want (g w) (base w) pᶜ)
+    (fun p q ↦ funext fun w ↦ propext <| by
+      show Want (g w) (base w) (p ∪ q)ᶜ ↔ Want (g w) (base w) pᶜ ∧ Want (g w) (base w) qᶜ
+      rw [Set.compl_union]
+      exact want_inter_iff)
+    fun _ _ h ↦ by simp_all [regret]
 
 theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
   (isStrawsonAntiAdditive_regret dox base g).isStrawsonDE
@@ -414,16 +437,15 @@ theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
 /-- *Sorry that Robin bought a car* does not classically entail *sorry that Robin bought a Honda
 Civic*, whose factive presupposition may fail ([von-fintel-1999]'s (30)). The subject believes
 world `true` and prefers world `false`. -/
-theorem not_antitone_truthSet_regret :
+theorem not_antitone_posExt_regret :
     ¬ Antitone fun p : Set Bool ↦
-      (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ {(· = false)}) p).truthSet := by
-  refine not_antitone_truthSet (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
-    ⟨⟨subset_rfl, Set.subset_univ _, ⟨true, trivial, rfl⟩, ⟨false, trivial, by simp⟩⟩, ?_⟩
-    fun h ↦ h.1 rfl
-  show (premisePreorder {(· = false)}).minimals .univ ⊆ {true}ᶜ
-  rw [Preorder.minimals_ofCriteria_eq ⟨false, Set.mem_univ _, by simp⟩]
-  intro x hx
-  simp_all
+      posExt (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ {(· = false)}) p) := by
+  have hb : (premisePreorder {(· = false)}).minimals ({false, true} : Set Bool) = {false} := by
+    rw [Preorder.minimals_ofCriteria_eq ⟨false, by simp, by simp⟩]
+    ext
+    simp
+  exact not_antitone_posExt (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
+    (by simp [regret, Want, IsContingent, hb]) (by simp [regret])
 
 /-- *Sorry that Robin bought a Civic* does not Strawson-entail *sorry that Robin bought a Civic or
 a Golf*, defined and false when the subject prefers the Golf. The subject believes world `0` and
@@ -434,11 +456,9 @@ theorem not_isStrawsonUE_regret :
     rw [Preorder.minimals_ofCriteria_eq ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp
-  refine not_isStrawsonUE (p := {0}) (q := {0, 1}) (w := 0) (by simp)
-    ⟨⟨subset_rfl, Set.subset_univ _, ⟨0, by simp⟩, ⟨1, by simp⟩⟩, ?_⟩
-    ⟨by simp, Set.subset_univ _, ⟨0, by simp⟩, ⟨2, by simp⟩⟩ ?_
-  · simp [regret, want, Want, hb]
-  · simp [regret, want, Want, hb]
+  exact not_isStrawsonUE (p := {0}) (q := {0, 1}) (w := 0) (by simp)
+    (by simp [regret, Want, IsContingent, hb])
+    (by simp [regret, Want, IsContingent, hb]; exact ⟨2, by simp⟩)
 
 end Desire.BestWorlds
 
@@ -446,14 +466,14 @@ end Desire.BestWorlds
 
 namespace Degree
 
-open NaturalLogic
+open NaturalLogic Trivalent
 
 variable {α D W : Type*} [Preorder D] (μ : α → D) (x : α)
 
 /-- The superlative is Strawson anti-additive in its comparison class. -/
 theorem isStrawsonAntiAdditive_superlative :
     IsStrawsonAntiAdditive (superlative (W := W) μ · x) :=
-  .of_isAntiAdditive (isAntiAdditive_superlative_assertion μ x)
+  .of_isAntiAdditive (isAntiAdditive_superlative_assertion μ x) fun _ _ h ↦ by simp_all
 
 theorem isStrawsonDE_superlative : IsStrawsonDE (superlative (W := W) μ · x) :=
   (isStrawsonAntiAdditive_superlative μ x).isStrawsonDE
@@ -461,18 +481,16 @@ theorem isStrawsonDE_superlative : IsStrawsonDE (superlative (W := W) μ · x) :
 /-- *Emma is the tallest girl in her class* does not classically entail *Emma is the tallest girl
 in her class to have learned the alphabet*, whose presupposition may fail ([von-fintel-1999]'s
 (76)). -/
-theorem not_antitone_truthSet_superlative :
-    ¬ Antitone fun C : Unit → Set Unit ↦ (superlative (fun _ : Unit ↦ (0 : ℕ)) C ()).truthSet :=
-  not_antitone_truthSet (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le
-    ⟨trivial, fun _ _ h ↦ absurd rfl h⟩ id
+theorem not_antitone_posExt_superlative :
+    ¬ Antitone fun C : Unit → Set Unit ↦ posExt (superlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
+  not_antitone_posExt (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
 
 /-- *Emma is the tallest girl to have learned the alphabet* does not Strawson-entail *Emma is the
 tallest girl*, defined and false when a taller girl has not learned it. -/
 theorem not_isStrawsonUE_superlative :
     ¬ IsStrawsonUE (superlative (W := Unit) (fun _ : Bool ↦ (0 : ℕ)) · true) :=
   not_isStrawsonUE (p := fun _ ↦ {true}) (q := fun _ ↦ .univ) (w := ())
-    (fun _ ↦ Set.subset_univ _) ⟨rfl, fun _ hy hne ↦ absurd hy hne⟩ (Set.mem_univ _)
-    fun h ↦ lt_irrefl 0 (h false (Set.mem_univ _) Bool.false_ne_true)
+    (fun _ ↦ Set.subset_univ _) (by simp) (by simp [superlative])
 
 end Degree
 
@@ -480,7 +498,7 @@ end Degree
 
 namespace Conditional
 
-open NaturalLogic
+open NaturalLogic Trivalent
 
 variable {I W : Type*} (horizon : I → Set W) (q : Set W)
 
@@ -489,10 +507,12 @@ conditional with a disjunctive antecedent is the conjunction of the conditionals
 ([gajewski-2011], Appendix 1). -/
 theorem isStrawsonAntiAdditive_horizonCounterfactual :
     IsStrawsonAntiAdditive (horizonCounterfactual horizon · q) :=
-  .of_isAntiAdditive fun p p' ↦ funext fun i ↦ propext <| by
-    show i ∈ strictImp horizon (p ∪ p') q ↔ i ∈ strictImp horizon p q ∧ i ∈ strictImp horizon p' q
-    rw [strictImp_union_left]
-    exact Iff.rfl
+  .of_isAntiAdditive (a := fun p i ↦ i ∈ strictImp horizon p q)
+    (fun p p' ↦ funext fun i ↦ propext <| by
+      show i ∈ strictImp horizon (p ∪ p') q ↔ i ∈ strictImp horizon p q ∧ i ∈ strictImp horizon p' q
+      rw [strictImp_union_left]
+      exact Iff.rfl)
+    fun _ _ h ↦ by simp_all [mem_strictImp]
 
 theorem isStrawsonDE_horizonCounterfactual :
     IsStrawsonDE (horizonCounterfactual horizon · q) :=
@@ -500,19 +520,17 @@ theorem isStrawsonDE_horizonCounterfactual :
 
 /-- Strengthening the antecedent is not classically valid, since a strengthened antecedent can
 fall outside the horizon ([von-fintel-1999], §4.3). -/
-theorem not_antitone_truthSet_horizonCounterfactual :
+theorem not_antitone_posExt_horizonCounterfactual :
     ¬ Antitone fun p : Set Unit ↦
-      (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ).truthSet :=
-  not_antitone_truthSet (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _)
-    ⟨⟨(), trivial, trivial⟩, Set.subset_univ _⟩ fun h ↦ h.ne_empty (Set.inter_empty _)
+      posExt (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ) :=
+  not_antitone_posExt (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _) (by simp) (by simp)
 
 /-- Weakening the antecedent is not Strawson valid either, since the weaker antecedent can admit
 worlds the consequent excludes. -/
 theorem not_isStrawsonUE_horizonCounterfactual :
     ¬ IsStrawsonUE fun p : Set Bool ↦
       horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Bool)) p {true} :=
-  not_isStrawsonUE (p := {true}) (q := .univ) (w := ()) (Set.subset_univ _)
-    ⟨⟨true, trivial, rfl⟩, fun _ h ↦ h.2⟩ ⟨true, trivial, trivial⟩
-    fun h ↦ Bool.false_ne_true (h ⟨trivial, trivial⟩)
+  not_isStrawsonUE (p := {true}) (q := .univ) (w := ()) (Set.subset_univ _) (by simp)
+    (by simp [Set.subset_def])
 
 end Conditional

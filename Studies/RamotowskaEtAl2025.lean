@@ -149,7 +149,7 @@ def selectional (q : Quant) : SignType :=
 /-- On the homogeneity theory (6) each player's counterfactual carries its third status into
 composition, and the quantifier projects it. -/
 noncomputable def homogeneity (q : Quant) : SignType :=
-  q.aggregate D fun d ↦ (homogeneityCounterfactual ord A (B d)).eval w
+  q.aggregate D fun d ↦ homogeneityCounterfactual ord A (B d) w
 
 /-- The implicature theory (§8) pairs the basic existential meaning (23) with its exhaustified
 universal strengthening (24), the latter computed in the upward-entailing scope of *some* and
@@ -170,11 +170,12 @@ indeterminate on the selectional theory, and undefined on the homogeneity theory
 theorem unembedded (h : Mixed ord A w D B) {d : ι} (hd : d ∈ D) :
     w ∉ closestImp ord A (B d) ∧
       selectionalCounterfactual ord A (B d) w = 0 ∧
-      ¬ (homogeneityCounterfactual ord A (B d)).presup w := by
+      homogeneityCounterfactual ord A (B d) w = 0 := by
   obtain ⟨⟨w₁, hw₁, hB₁⟩, ⟨w₂, hw₂, hB₂⟩⟩ := h.players d hd
   have hnot : w ∉ closestImp ord A (B d) := fun hall ↦ hB₂ (hall hw₂)
   have hnot' : w ∉ closestImp ord A (B d)ᶜ := fun hnone ↦ hnone hw₁ hB₁
-  exact ⟨hnot, selectionalCounterfactual_eq_zero_iff.2 ⟨hnot, hnot'⟩, fun h ↦ h.elim hnot hnot'⟩
+  exact ⟨hnot, selectionalCounterfactual_eq_zero_iff.2 ⟨hnot, hnot'⟩,
+    homogeneityCounterfactual_eq_zero_iff.2 ⟨hnot, hnot'⟩⟩
 
 /-- The universal theory turns on polarity, since every player's counterfactual is false, so the
 positive sentences are false and the negative ones true. -/
@@ -222,9 +223,9 @@ either projection algorithm, for every quantifier, and the homogeneity theory le
 sentences to pragmatics. -/
 theorem homogeneity_undefined (h : Mixed ord A w D B) (q : Quant) :
     homogeneity ord A w D B q = 0 := by
-  have hv : ∀ d ∈ D, (homogeneityCounterfactual ord A (B d)).eval w = 0 := fun d hd ↦
-    (Presupposition.PartialProp.eval_eq_indet_iff _ _).2 (unembedded h hd).2.2
-  have hn : ∀ d ∈ D, -(homogeneityCounterfactual ord A (B d)).eval w = 0 :=
+  have hv : ∀ d ∈ D, homogeneityCounterfactual ord A (B d) w = 0 := fun d hd ↦
+    (unembedded h hd).2.2
+  have hn : ∀ d ∈ D, -homogeneityCounterfactual ord A (B d) w = 0 :=
     fun d hd ↦ by rw [hv d hd, SignType.neg_zero]
   cases q
   · exact (Finset.inf_congr rfl hv).trans (Finset.inf_const h.nonempty _)

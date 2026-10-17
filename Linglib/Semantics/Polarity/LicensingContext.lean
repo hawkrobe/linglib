@@ -74,7 +74,7 @@ namespace Quantifier.GQ
 
 variable {α : Type*} {Q Q' : GQ α} {C : Set (GQ α)} {A P : α → Prop}
 
-/-- The determiner `Q` exhaustified against its scale-mates `C`: at each restrictor it holds of the
+/-- The determiner `Q` exhaustified against its scale-mates `C` holds, at each restrictor, of the
 scopes where `Q` holds and every scale-mate holding there is entailed, entailment holding the
 restrictor fixed and quantifying over scopes ([gajewski-2011]'s `O` with `ALT-1`). -/
 def exhaustified (Q : GQ α) (C : Set (GQ α)) : GQ α :=
@@ -109,8 +109,8 @@ namespace PolarityItem
 
 open NaturalLogic Presupposition Quantifier Quantifier.GQ Tense Indefinite
 
-/-- A licensing context is a construction that can host a polarity item: the licenser it places
-over the item, and the function of [haspelmath-1997]'s implicational map it realizes. -/
+/-- A licensing context is a construction that can host a polarity item, given by the licenser it
+places over the item and the function of [haspelmath-1997]'s implicational map it realizes. -/
 structure LicensingContext where
   /-- The operator family over the item's position. -/
   licenser : Licenser
@@ -279,7 +279,7 @@ def universalRestrictor : LicensingContext :=
   ⟨.classical ⟨NonuniversalPredicate, fun p ↦ p.ι → Prop, fun _ ↦ Prop,
     fun p R ↦ GQ.every R p.A⟩, none⟩
 
-/-- A *without*-phrase: the matrix predicate holding without the phrase's. -/
+/-- A *without*-phrase, the matrix predicate holding without the phrase's. -/
 def withoutClause : LicensingContext :=
   ⟨.classical ⟨Predicate, fun p ↦ p.ι → Prop, fun p ↦ p.ι → Prop, fun p V ↦ p.A ⊓ Vᶜ⟩,
     some .indirectNeg⟩
@@ -310,26 +310,26 @@ def denyVerb : LicensingContext :=
     fun p P ↦ p.w ∈ p.R.core Pᶜ⟩, some .indirectNeg⟩
 
 /-- The scope of focus *only*, von Fintel's *only*. -/
-def onlyFocus : LicensingContext :=
+noncomputable def onlyFocus : LicensingContext :=
   ⟨.strawson ⟨Focus, fun p ↦ p.ι → Set p.W, fun p ↦ p.W, fun p ↦ only p.x⟩, none⟩
 
 /-- An adversative predicate, as in *sorry*, *surprised*, *regret*. -/
-def adversative : LicensingContext :=
+noncomputable def adversative : LicensingContext :=
   ⟨.strawson ⟨Attitude, fun p ↦ Set p.W, fun p ↦ p.W,
     fun p ↦ Desire.BestWorlds.regret p.dox p.base p.g⟩, none⟩
 
 /-- A superlative, in its comparison class. -/
-def superlative : LicensingContext :=
+noncomputable def superlative : LicensingContext :=
   ⟨.strawson ⟨Superlative, fun p ↦ p.W → Set p.α, fun p ↦ p.W,
     fun p C ↦ Degree.superlative p.μ C p.x⟩, none⟩
 
 /-- The antecedent of a conditional, the modal-horizon counterfactual. -/
-def conditionalAntecedent : LicensingContext :=
+noncomputable def conditionalAntecedent : LicensingContext :=
   ⟨.strawson ⟨Horizon, fun p ↦ Set p.W, fun p ↦ p.I,
     fun p P ↦ Conditional.horizonCounterfactual p.horizon P p.q⟩, some .conditional⟩
 
 /-- Temporal *since*, as in *it's been five years since*. -/
-def sinceTemporal : LicensingContext :=
+noncomputable def sinceTemporal : LicensingContext :=
   ⟨.strawson ⟨Ago, fun p ↦ Set p.T, fun p ↦ p.T, fun p ↦ since p.ago⟩, none⟩
 
 /-- A question. -/
@@ -570,34 +570,34 @@ theorem not_holds_exhaustified_atMost : ¬ atMost.licenser.exhaustified.Holds .a
 theorem isStrawsonDE_onlyFocus : onlyFocus.licenser.IsStrawsonDE := fun p ↦ isStrawsonDE_only p.x
 
 theorem not_holds_onlyFocus : ¬ onlyFocus.licenser.Holds .anti := fun h ↦
-  not_antitone_truthSet_only (Signature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
+  not_antitone_posExt_only (Signature.holdsFor_anti_iff.mp (h ⟨Bool, Unit, true⟩))
 
 theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p ↦
   Desire.BestWorlds.isStrawsonDE_regret p.dox p.base p.g
 
 theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
-  Desire.BestWorlds.not_antitone_truthSet_regret (Signature.holdsFor_anti_iff.mp
+  Desire.BestWorlds.not_antitone_posExt_regret (Signature.holdsFor_anti_iff.mp
     (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {(· = false)}⟩))
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
   Degree.isStrawsonDE_superlative p.μ p.x
 
 theorem not_holds_superlative : ¬ superlative.licenser.Holds .anti := fun h ↦
-  Degree.not_antitone_truthSet_superlative (Signature.holdsFor_anti_iff.mp
+  Degree.not_antitone_posExt_superlative (Signature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, ℕ, fun _ ↦ 0, ()⟩))
 
 theorem isStrawsonDE_conditionalAntecedent : conditionalAntecedent.licenser.IsStrawsonDE :=
   fun p ↦ Conditional.isStrawsonDE_horizonCounterfactual p.horizon p.q
 
 theorem not_holds_conditionalAntecedent : ¬ conditionalAntecedent.licenser.Holds .anti := fun h ↦
-  Conditional.not_antitone_truthSet_horizonCounterfactual (Signature.holdsFor_anti_iff.mp
+  Conditional.not_antitone_posExt_horizonCounterfactual (Signature.holdsFor_anti_iff.mp
     (h ⟨Unit, Unit, fun _ ↦ .univ, .univ⟩))
 
 theorem isStrawsonDE_sinceTemporal : sinceTemporal.licenser.IsStrawsonDE := fun p ↦
   isStrawsonDE_since p.ago
 
 theorem not_holds_sinceTemporal : ¬ sinceTemporal.licenser.Holds .anti := fun h ↦
-  not_antitone_truthSet_since (Signature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
+  not_antitone_posExt_since (Signature.holdsFor_anti_iff.mp (h ⟨ℤ, (· - 5)⟩))
 
 /-! ### Modal licensers and questions -/
 

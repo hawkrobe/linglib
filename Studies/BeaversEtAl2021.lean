@@ -81,10 +81,10 @@ theorem resultStative_iff (h : M.EntailsChange P) : resultStative M P x s ↔ P 
   and_iff_left_of_imp (h x s)
 
 /-- *Again* attached to `vbecome` presupposes an earlier change with every root. -/
-theorem exists_become_of_againAt_achievement_presup {e : Event}
-    (hp : (againAt M .achievement R P y x).presup e) :
+theorem exists_become_of_againAt_achievement_ne_zero {e : Event}
+    (hp : againAt M .achievement R P y x e ≠ 0) :
     ∃ e', e ~[R] e' ∧ ∃ s, M.become s e' :=
-  let ⟨e', hlt, s, hb, _⟩ := hp; ⟨e', hlt, s, hb⟩
+  let ⟨e', hlt, s, hb, _⟩ := again_eq_zero_iff.not_left.1 hp; ⟨e', hlt, s, hb⟩
 
 end Model
 
@@ -111,9 +111,10 @@ theorem not_entailsChange_sharp : ¬ forged.EntailsChange sharp :=
 /-- The restitutive presupposition holds at the later state of the knife although no change gave
 rise to an earlier one. -/
 theorem forged_restitutive :
-    (BeaversKoontzGarboden2020.againAt forged .state {p | p.2 < p.1} sharp () ()).presup true ∧
+    BeaversKoontzGarboden2020.againAt forged .state {p | p.2 < p.1} sharp () () true ≠ 0 ∧
       ¬ ∃ s', s' < true ∧ ∃ e, forged.become s' e :=
-  ⟨⟨false, Bool.false_lt_true, trivial⟩, fun ⟨_, hlt, _, h⟩ ↦ absurd (h ▸ hlt) (lt_irrefl _)⟩
+  ⟨again_eq_zero_iff.not_left.2 ⟨false, Bool.false_lt_true, trivial⟩,
+    fun ⟨_, hlt, _, h⟩ ↦ absurd (h ▸ hlt) (lt_irrefl _)⟩
 
 /-! ### Default realization -/
 

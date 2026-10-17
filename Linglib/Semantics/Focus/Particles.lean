@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.Monotone.Basic
 public import Linglib.Semantics.Exhaustification.Excluder
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # The focus particles *only* and *even*
@@ -29,7 +29,7 @@ that the prejacent is less likely than every focus alternative.
 
 ## Main results
 
-* `Focus.Particles.only_subset_eq`, `Focus.Particles.truthSet_only_subset`: on the entailment
+* `Focus.Particles.only_subset_eq`, `Focus.Particles.posExt_only_subset`: on the entailment
   scale *only* presupposes its prejacent and asserts the exclusion, and is true exactly where the
   exhaustification `Exhaustification.exh` is.
 * `Focus.Particles.atMost_eq_eq_atMost_subset`: the identity-scale assertion is the
@@ -66,7 +66,7 @@ threshold, in `Studies/Francescotti1995.lean`.
 
 namespace Focus.Particles
 
-open Exhaustification Presupposition
+open Exhaustification
 
 /-! ### *Only* -/
 
@@ -82,9 +82,11 @@ def atLeast : Set W := {w | ∃ q ∈ C, w ∈ q ∧ S q p}
 scale `S` ([coppock-beaver-2014]'s MAX). -/
 def atMost : Set W := {w | ∀ q ∈ C, w ∈ q → S p q}
 
+open Classical in
 /-- *Only p* over the alternatives `C` ranked by `S` presupposes `atLeast S C p` and asserts
 `atMost S C p` ([coppock-beaver-2014]'s (73)). -/
-def only : PartialProp W := ⟨(· ∈ atLeast S C p), (· ∈ atMost S C p)⟩
+noncomputable def only : W → SignType :=
+  (atLeast S C p).indicator fun w ↦ SignType.ofProp (w ∈ atMost S C p)
 
 variable {S C p} {q : Set W} {w : W}
 
@@ -92,9 +94,19 @@ variable {S C p} {q : Set W} {w : W}
 
 @[simp] theorem mem_atMost : w ∈ atMost S C p ↔ ∀ q ∈ C, w ∈ q → S p q := Iff.rfl
 
-theorem only_presup : (only S C p).presup = (· ∈ atLeast S C p) := rfl
+@[simp] theorem only_eq_zero_iff : only S C p w = 0 ↔ w ∉ atLeast S C p := by
+  simp [only]
 
-theorem only_assertion : (only S C p).assertion = (· ∈ atMost S C p) := rfl
+/-- *Only* is defined exactly where its presupposition `atLeast S C p` holds. -/
+theorem support_only : Function.support (only S C p) = atLeast S C p := by
+  ext; simp
+
+@[simp] theorem only_eq_one_iff : only S C p w = 1 ↔ w ∈ atLeast S C p ∧ w ∈ atMost S C p := by
+  simp [only]
+
+@[simp] theorem only_eq_neg_one_iff :
+    only S C p w = -1 ↔ w ∈ atLeast S C p ∧ w ∉ atMost S C p := by
+  simp [only]
 
 /-- A true alternative that `p` does not reach on the scale refutes the assertion. -/
 theorem notMem_atMost (hq : q ∈ C) (hw : w ∈ q) (h : ¬ S p q) : w ∉ atMost S C p :=
@@ -118,16 +130,17 @@ prejacent. -/
 theorem atLeast_subset_eq (hp : p ∈ C) : atLeast (· ⊆ ·) C p = p :=
   atLeast_subset_subset.antisymm fun _ hw ↦ ⟨p, hp, hw, subset_rfl⟩
 
+open Classical in
 /-- On the entailment scale, with the prejacent among the alternatives, *only* presupposes its
 prejacent and asserts the exclusion ([von-fintel-1999]'s (68a)). -/
-theorem only_subset_eq (hp : p ∈ C) : only (· ⊆ ·) C p = ⟨(· ∈ p), (· ∈ excludes C p)⟩ :=
-  PartialProp.ext (by rw [only_presup, atLeast_subset_eq hp]) rfl
+theorem only_subset_eq (hp : p ∈ C) :
+    only (· ⊆ ·) C p = p.indicator fun w ↦ SignType.ofProp (w ∈ excludes C p) := by
+  rw [only, atLeast_subset_eq hp, atMost_subset]
 
-/-- Where it is defined and true, *only* on the entailment scale is the exhaustification
-`Exhaustification.exh`. -/
-theorem truthSet_only_subset (hp : p ∈ C) : (only (· ⊆ ·) C p).truthSet = exh C p := by
-  rw [only_subset_eq hp]
-  rfl
+/-- On the entailment scale *only* is true exactly where the exhaustification
+`Exhaustification.exh` is. -/
+theorem posExt_only_subset (hp : p ∈ C) : Trivalent.posExt (only (· ⊆ ·) C p) = exh C p := by
+  ext w; simp [only_subset_eq hp, exh]
 
 /-! #### The identity scale -/
 

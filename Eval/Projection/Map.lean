@@ -146,7 +146,7 @@ theorem not_supervaluationSymmetric_stronger_kleeneSymmetric :
 /-- The empty interpretation makes every atom false at the one world. -/
 private def interpEmpty : Fin 3 → Set Unit := fun _ ↦ ∅
 
-/-- [chemla-schlenker-2012]'s (13b): `qq' or (not p)` where `p` and `q` fail. -/
+/-- [chemla-schlenker-2012]'s (13b), `qq' or (not p)`, where `p` and `q` fail. -/
 private theorem inverseOr :
     SuperS interpEmpty {()}
         (ChemlaSchlenker2012.target 0 1 2 .orSentence .inverse) ∧ ¬ {()} ⊆ interpEmpty 1 :=
@@ -175,8 +175,7 @@ theorem not_limitedSymmetry_stronger_transparencyIncremental :
   intro h
   have := (Formula.admits_ccp_iff I).1 ((transpI_iff_admits I _ _).1 (h _ _ _ _ _ hls))
     (Set.mem_univ ())
-  simp [I, Formula.filter, Connective.filter, PartialProp.orFilter] at this
-  exact this
+  simp [I, Formula.filter, Connective.filter] at this
 
 /-- By Fact 3.4.1, `(pp' and q)` separates the two where `p` and `q` fail. -/
 theorem not_supervaluationSymmetric_stronger_limitedSymmetry :
@@ -184,7 +183,7 @@ theorem not_supervaluationSymmetric_stronger_limitedSymmetry :
   let I : Fin 3 → Set Unit := fun _ ↦ ∅
   have hs : SuperS I Set.univ (.bin .conj (.trigger 0 1) (.atom 2)) := fun w _ ↦
     (superDefined_iff_of_nodup I (by simp [Formula.occurrences])).2
-      (by simp [I, Formula.strong, Connective.strong, PartialProp.andStrong])
+      (by simp [I, Formula.strong, Connective.strong])
   intro h
   have := (Kalomoiros2023.transpLS_and_left I).1 (h _ _ _ _ _ hs) (Set.mem_univ ())
   simp [I] at this
@@ -229,7 +228,7 @@ theorem edges_sound : ∀ e ∈ edges, e.1.Stronger e.2 := by
     transparencyIncremental_stronger_limitedSymmetry,
     limitedSymmetry_stronger_transparencySymmetric⟩
 
-/-- The non-comparisons the library proves: `(a, b)` when `a` is not stronger than `b`. -/
+/-- The non-comparisons the library proves, `(a, b)` when `a` is not stronger than `b`. -/
 def cuts : List (Account × Account) :=
   [(transparencySymmetric, kleeneSymmetric), (transparencySymmetric, supervaluationSymmetric),
     (supervaluationSymmetric, kleeneSymmetric),

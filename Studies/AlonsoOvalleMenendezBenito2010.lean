@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Exhaustification.DomainAlternatives
 public import Linglib.Data.Examples.AlonsoOvalleMenendezBenito2010
 
@@ -20,7 +20,7 @@ downward entailing operators (43)–(44), and reinforceable (45d).
 
 The paper derives it from an anti-singleton constraint (53)–(54) on the subset selection
 function *algún* takes (`algún`), which excludes the singleton restrictors of (47)/(49)
-(`algún_not_of_singleton`). The competitors (58) are the singleton subdomains; their
+(`algún_ne_one_of_singleton`). The competitors (58) are the singleton subdomains; their
 falsity under a necessity modal (59) gives Modal Variation (`modalVariation_of_box`),
 and under a possibility modal, where some competitor must be true
 (`exists_singleton_of_diamond`), the anti-exhaustivity implicatures (67)–(68) do
@@ -48,7 +48,7 @@ scenario verdicts (24)–(30) are checked in `rows_agree`.
 
 namespace AlonsoOvalleMenendezBenito2010
 
-open Presupposition Exhaustification ModalLogic
+open Exhaustification ModalLogic
 open SetRel
 
 variable {E W : Type*}
@@ -61,30 +61,35 @@ def IsSingleton (f : Finset E → Finset E) : Prop := ∀ P, (f P).card = 1
 /-- An anti-singleton subset selection function (53). -/
 def IsAntiSingleton (f : Finset E → Finset E) : Prop := ∀ P, (f P).card ≠ 1
 
-/-- *un* (50): existential quantification over the subdomain `f` selects from `P`. -/
-def un (f : Finset E → Finset E) (P : Finset E) (Q : W → E → Prop) : PartialProp W :=
-  .ofProp fun w => ∃ x ∈ f P, Q w x
+open Classical in
+/-- *un* (50) quantifies existentially over the subdomain that `f` selects from `P`. -/
+noncomputable def un (f : Finset E → Finset E) (P : Finset E) (Q : W → E → Prop) :
+    W → SignType :=
+  fun w ↦ SignType.ofProp (∃ x ∈ f P, Q w x)
 
-/-- *algún* (54): the assertion of *un*, defined only for anti-singleton `f`. -/
-def algún (f : Finset E → Finset E) (P : Finset E) (Q : W → E → Prop) : PartialProp W where
-  presup _ := IsAntiSingleton f
-  assertion w := ∃ x ∈ f P, Q w x
+open Classical in
+/-- *algún* (54) is *un*, defined only for an anti-singleton `f`. -/
+noncomputable def algún (f : Finset E → Finset E) (P : Finset E) (Q : W → E → Prop) :
+    W → SignType :=
+  {_w | IsAntiSingleton f}.indicator (un f P Q)
 
-/-- (46)–(49): on a singleton restrictor an anti-singleton selection returns no domain, so
+/-- On a singleton restrictor (46)–(49) an anti-singleton selection returns no domain, so
 *algún*'s claim cannot be true where *un*'s can. -/
-theorem algún_not_of_singleton {f : Finset E → Finset E} (hf : ∀ P, f P ⊆ P)
-    {P : Finset E} (hP : P.card = 1) (Q : W → E → Prop) (w : W)
-    (h : (algún f P Q).presup w) : ¬ (algún f P Q).assertion w := by
+theorem algún_ne_one_of_singleton {f : Finset E → Finset E} (hf : ∀ P, f P ⊆ P)
+    {P : Finset E} (hP : P.card = 1) (Q : W → E → Prop) (w : W) : algún f P Q w ≠ 1 := by
+  simp only [algún, un, ne_eq, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
+    SignType.ofProp_eq_one_iff, not_and]
+  intro h
   have : f P = ∅ := Finset.card_eq_zero.1 <|
     Nat.lt_one_iff.1 <| lt_of_le_of_ne (hP ▸ Finset.card_le_card (hf P)) (h P)
-  simp [algún, this]
+  simp [this]
 
 /-! ### Non-uniqueness (§5) -/
 
 variable (R : SetRel W W) (w : W) (D : Finset E) (Q : W → E → Prop) [∀ v, DecidablePred (Q v)]
 
-/-- Ignorance with respect to number: the number of witnesses varies across the accessible
-worlds. -/
+/-- Ignorance with respect to number holds when the number of witnesses varies across the
+accessible worlds. -/
 def NumberIgnorance : Prop :=
   ∃ v, w ~[R] v ∧ ∃ v', w ~[R] v' ∧ (witnesses D Q v).card ≠ (witnesses D Q v').card
 
@@ -93,8 +98,8 @@ theorem modalVariation_of_numberIgnorance (h : NumberIgnorance R w D Q) :
   let ⟨v, hv, v', hv', hne⟩ := h
   ⟨v, hv, v', hv', fun h => hne (h ▸ rfl)⟩
 
-/-- (76)–(78): with the exhaustivity inference of a singleton domain blocked and the plural
-competitor (77) unassertable, a true claim conveys ignorance of number. -/
+/-- With the exhaustivity inference of a singleton domain blocked and the plural competitor (77)
+unassertable, a true claim conveys ignorance of number ((76)–(78)). -/
 theorem numberIgnorance_of_competition (hc : □[R] (claim Q D) w)
     (h₁ : ¬ □[R] (fun v => (witnesses D Q v).card = 1) w)
     (h₂ : ¬ □[R] (fun v => 2 ≤ (witnesses D Q v).card) w) : NumberIgnorance R w D Q := by
@@ -127,17 +132,17 @@ instance (w : Room) : DecidablePred (inRoom w) := fun r => inferInstanceAs (Deci
 
 abbrev house : Finset Room := {.bedroom, .livingRoom, .bathroom, .kitchen}
 
-/-- Pedro's epistemic alternatives: what he takes to be possible, from any world. -/
+/-- Pedro's epistemic alternatives, the rooms he takes to be possible from any world. -/
 def epist (A : Finset Room) : SetRel Room Room := .ofSuccessors fun _ ↦ ↑A
 
 instance (A : Finset Room) (w r : Room) : Decidable (w ~[epist A] r) :=
   inferInstanceAs (Decidable (r ∈ A))
 
-/-- (15): the bathroom and the kitchen are ruled out. -/
+/-- Pedro rules out the bathroom and the kitchen (15). -/
 abbrev pedro15 : Finset Room := {.bedroom, .livingRoom}
-/-- (23): only the bathroom. -/
+/-- Pedro considers only the bathroom (23). -/
 abbrev pedro23 : Finset Room := {.bathroom}
-/-- (27): the other rooms or the barn. -/
+/-- Pedro considers the other rooms or the barn (27). -/
 abbrev pedro27 : Finset Room := {.bedroom, .livingRoom, .barn}
 
 /-- The candidates of (29); worlds are the permitted hires. -/
@@ -168,8 +173,8 @@ theorem hideAndSeek (w : Room) :
 
 /-! ### The paper's verdicts -/
 
-/-- A row's predicted verdict: *algún* needs Modal Variation, *cualquiera* Free Choice, *un*
-nothing. -/
+/-- A row's predicted verdict, where *algún* needs Modal Variation, *cualquiera* Free Choice,
+and *un* nothing. -/
 def predicted (row : Datum) : Option Bool :=
   match row.feature? "scenario", row.feature? "determiner" with
   | some "hideAndSeek15", some d => verdictIn (epist pedro15) house inRoom d
@@ -186,7 +191,7 @@ where
     | "un" => some true
     | _ => none
 
-/-- A row's observed verdict: deviant or judged false, else fine. -/
+/-- A row's observed verdict, which is fine unless the row is deviant or judged false. -/
 def observed (row : Datum) : Bool :=
   row.judgment == .acceptable && row.feature? "verdict" != some "false"
 

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.CoppockWechsler2018
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Reference.Kaplan
 public import Studies.Pearson2015
 
@@ -47,7 +47,7 @@ derives where the egophoric form is excluded, not where it is required.
 
 namespace CoppockWechsler2018
 
-open Presupposition Commitment Question Filter
+open Commitment Question Filter
 open Pearson2015 (Centered sayDeSe)
 
 variable {W E P T : Type*}
@@ -87,44 +87,52 @@ def name (x : E) : Term W E P T := fun _ _ ↦ x
 
 /-- A centered proposition is true, false or undefined at a world together with a center. It is
 undefined where its presupposition fails. -/
-abbrev CenteredProp (W E : Type*) := PartialProp (Centered W E)
+abbrev CenteredProp (W E : Type*) := Centered W E → SignType
 
 variable (V : E → W → Prop) (t : Term W E P T) (c : Context W E P T)
 
+open Classical in
 /-- The meaning of a clause whose verb carries the egophoric suffix. It asserts that the subject
 has the property `V` and presupposes that the subject is the center. -/
-def ego : CenteredProp W E where
-  presup p := t c p.2 = p.2
-  assertion p := V (t c p.2) p.1
+noncomputable def ego : CenteredProp W E :=
+  {p | t c p.2 = p.2}.indicator fun p ↦ SignType.ofProp (V (t c p.2) p.1)
 
+open Classical in
 /-- The meaning of a clause whose verb is in the plain form. It asserts that the subject has the
 property `V` and presupposes nothing. -/
-def plain : CenteredProp W E := .ofProp fun p ↦ V (t c p.2) p.1
+noncomputable def plain : CenteredProp W E := fun p ↦ SignType.ofProp (V (t c p.2) p.1)
 
+open Classical in
 /-- The meaning of an egophoric clause on the authority-indexical account, which presupposes
 that the subject is the authority of the context rather than the center. -/
-def egoAuth : CenteredProp W E where
-  presup p := t c p.2 = c.authority
-  assertion p := V (t c p.2) p.1
+noncomputable def egoAuth : CenteredProp W E :=
+  {p | t c p.2 = c.authority}.indicator fun p ↦ SignType.ofProp (V (t c p.2) p.1)
 
 /-- Filling in `x` as the center of a centered proposition gives an ordinary proposition, the
 set of worlds where it is defined and true of `x`. -/
-def uncenter (φ : CenteredProp W E) (x : E) : Set W := {w | φ.holds (w, x)}
+def uncenter (φ : CenteredProp W E) (x : E) : Set W := {w | φ (w, x) = 1}
 
 variable {V t c} {x : E}
 
+@[simp] theorem ego_eq_one_iff {p : Centered W E} :
+    ego V t c p = 1 ↔ t c p.2 = p.2 ∧ V (t c p.2) p.1 := by
+  simp [ego]
+
+@[simp] theorem plain_eq_one_iff {p : Centered W E} : plain V t c p = 1 ↔ V (t c p.2) p.1 := by
+  simp [plain]
+
 theorem uncenter_ego_of_eq (h : t c x = x) : uncenter (ego V t c) x = {w | V x w} := by
-  ext w; simp [uncenter, ego, PartialProp.holds, h]
+  ext w; simp [uncenter, h]
 
 theorem uncenter_ego_of_ne (h : t c x ≠ x) : uncenter (ego V t c) x = ∅ := by
-  ext w; simp [uncenter, ego, PartialProp.holds, h]
+  ext w; simp [uncenter, h]
 
 theorem uncenter_neg_ego_of_eq (h : t c x = x) :
-    uncenter (ego V t c).neg x = {w | V x w}ᶜ := by
-  ext w; simp [uncenter, ego, PartialProp.neg, PartialProp.holds, h]
+    uncenter (-ego V t c) x = {w | V x w}ᶜ := by
+  ext w; simp [uncenter, ego, h]
 
-theorem uncenter_neg_ego_of_ne (h : t c x ≠ x) : uncenter (ego V t c).neg x = ∅ := by
-  ext w; simp [uncenter, ego, PartialProp.neg, PartialProp.holds, h]
+theorem uncenter_neg_ego_of_ne (h : t c x ≠ x) : uncenter (-ego V t c) x = ∅ := by
+  ext w; simp [uncenter, ego, h]
 
 /-- In a main clause the two accounts propose the same thing for the common ground. -/
 theorem uncenter_egoAuth :
@@ -140,7 +148,7 @@ def assert (K : Table E W) (c : Context W E P T) (φ : CenteredProp W E) : Table
 /-- Asking whether `φ` puts its two answers on the Table, each with the authority as center.
 Both answers keep the presupposition of `φ`. -/
 def ask (K : Table E W) (c : Context W E P T) (φ : CenteredProp W E) : Table E W :=
-  K.push (ofSet (uncenter φ c.authority) ⊔ ofSet (uncenter φ.neg c.authority))
+  K.push (ofSet (uncenter φ c.authority) ⊔ ofSet (uncenter (-φ) c.authority))
 
 variable {K : Table E W}
 
@@ -272,18 +280,22 @@ end Rows
 what `x` says in `w`. -/
 def Says (R : Centered W E → Centered W E → Prop) (x : E) (φ : CenteredProp W E) (w : W) :
     Prop :=
-  ∀ p, R (w, x) p → φ.holds p
+  ∀ p, R (w, x) p → φ p = 1
 
+open Classical in
 /-- The meaning of *`x` says that `φ`*, which is the same at every center. -/
-def report (R : Centered W E → Centered W E → Prop) (x : E) (φ : CenteredProp W E) :
+noncomputable def report (R : Centered W E → Centered W E → Prop) (x : E) (φ : CenteredProp W E) :
     CenteredProp W E :=
-  .ofProp fun p ↦ Says R x φ p.1
+  fun p ↦ SignType.ofProp (Says R x φ p.1)
 
 variable {R : Centered W E → Centered W E → Prop} {φ : CenteredProp W E} {w : W} {y z : E}
 
+@[simp] theorem report_eq_one_iff {p : Centered W E} : report R x φ p = 1 ↔ Says R x φ p.1 := by
+  simp [report]
+
 /-- `Says` agrees with `Pearson2015.sayDeSe` when the say relation is listed as alternatives. -/
 theorem says_iff_sayDeSe {alts : List (Centered W E)} (h : ∀ p, R (w, x) p ↔ p ∈ alts) :
-    Says R x φ w ↔ sayDeSe alts fun a w' ↦ φ.holds (w', a) := by
+    Says R x φ w ↔ sayDeSe alts fun a w' ↦ φ (w', a) = 1 := by
   simp [Says, sayDeSe, h]
 
 /-- An egophoric report is true exactly when the reported speaker takes the subject to be
@@ -291,13 +303,13 @@ herself and ascribes the property to herself. -/
 theorem says_ego_iff :
     Says R x (ego V t c) w ↔
       (∀ p, R (w, x) p → t c p.2 = p.2) ∧ Says R x (ego V self c) w := by
-  simp only [Says, ego, self, PartialProp.holds, true_and]
+  simp only [Says, ego_eq_one_iff, self, true_and]
   exact ⟨fun h ↦ ⟨fun p hp ↦ (h p hp).1, fun p hp ↦ (h p hp).1 ▸ (h p hp).2⟩,
     fun h p hp ↦ ⟨h.1 p hp, (h.1 p hp).symm ▸ h.2 p hp⟩⟩
 
 /-- If an egophoric report is true, so is the corresponding plain report. -/
 theorem says_plain_of_says_ego (h : Says R x (ego V t c) w) : Says R x (plain V t c) w :=
-  fun p hp ↦ ⟨trivial, (h p hp).2⟩
+  fun p hp ↦ plain_eq_one_iff.2 (ego_eq_one_iff.1 (h p hp)).2
 
 /-- A speaker is self-aware when she says something at every world and takes herself to be who
 she is. -/
@@ -311,7 +323,7 @@ theorem eq_of_says_report_ego (hy : ∀ w, ∃ p, R (w, y) p) (hx : SelfAware R 
     (h : Says R y (report R x (ego V (name z) c)) w) : z = x := by
   obtain ⟨p, hp⟩ := hy w
   obtain ⟨q, hq⟩ := hx.serial p.1
-  exact ((h p hp).2 q hq).1.trans (hx.center _ _ hq)
+  exact (ego_eq_one_iff.1 (report_eq_one_iff.1 (h p hp) q hq)).1.trans (hx.center _ _ hq)
 
 /-! ### The authority-indexical account -/
 
@@ -330,8 +342,8 @@ theorem says_egoAuth_name_iff (hR : ∃ p, R (w, x) p) :
     Says R x (egoAuth V (name z) (authorityShift x c)) w ↔
       z = x ∧ Says R x (plain V (name z) c) w := by
   obtain ⟨p₀, hp₀⟩ := hR
-  simp only [Says, egoAuth, plain, name, authorityShift, PartialProp.holds,
-    PartialProp.ofProp, true_and]
+  simp only [Says, egoAuth, plain_eq_one_iff, name, authorityShift,
+    Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq, SignType.ofProp_eq_one_iff]
   exact ⟨fun h ↦ ⟨(h p₀ hp₀).1, fun p hp ↦ (h p hp).2⟩, fun h p hp ↦ ⟨h.1, h.2 p hp⟩⟩
 
 /-! ### The unrecognized photograph
@@ -367,9 +379,9 @@ theorem lampshade :
     ¬ Says sayAlt .syam (ego drank (name .syam) c) .actual ∧
     Says sayAlt .syam (egoAuth drank (name .syam) (authorityShift .syam c)) .actual := by
   refine ⟨?_, fun h ↦ ?_, ?_⟩
-  · rintro p ⟨-, rfl⟩; exact ⟨trivial, rfl, rfl⟩
-  · exact absurd (h (.said, .other) ⟨rfl, rfl⟩).1 (by simp [ego, name])
-  · rintro p ⟨-, rfl⟩; exact ⟨rfl, rfl, rfl⟩
+  · rintro p ⟨-, rfl⟩; simp [name, drank]
+  · simpa [name] using h (.said, .other) ⟨rfl, rfl⟩
+  · rintro p ⟨-, rfl⟩; simp [egoAuth, name, authorityShift, drank]
 
 end Lampshade
 

@@ -20,14 +20,14 @@ signature says.
 ## Main definitions
 
 * `Implicative.Reading`: relations of sufficiency and necessity between facts, sound at worlds
-* `Implicative.sentence`: the presupposition–proposition pair of a verb with a given implication
-  signature
+* `Implicative.sentence`: the trivalent proposition of a verb with a given implication
+  signature, undefined where its presupposition fails
 
 ## Main results
 
 * `Implicative.holds_signed_of_implied_eq`: an affirmed or denied claim implies the polarity of
   the complement that its signature records for that context
-* `Implicative.antitone_presup`: a signature that implies more presupposes more
+* `Implicative.antitone_support`: a signature that implies more presupposes more
 
 ## References
 
@@ -37,15 +37,6 @@ signature says.
 @[expose] public section
 
 open Presupposition NaturalLogic
-
-/-- Polarity acts on partial propositions by negation, the presupposition passing through. -/
-instance {W : Type*} : MulAction Polarity (PartialProp W) where
-  smul
-    | .positive, p => p
-    | .negative, p => p.neg
-  one_smul _ := rfl
-  mul_smul m n p := by
-    cases m <;> cases n <;> first | rfl | exact (PartialProp.neg_neg p).symm
 
 namespace Implicative
 
@@ -98,31 +89,40 @@ end Reading
 
 variable {F W : Type*} (R : Reading F W)
 
-/-- The presupposition–proposition pair of a verb with implication signature `s`, asserted
-proposition `v` and embedded fact `S`. It presupposes that `v` is sufficient for the complement
-`s` implies in a positive context and necessary for the negation of the complement it implies in a
-negative context, and it asserts `v`. -/
-def sentence (s : ImplicationSignature) (v S : F) : PartialProp W where
-  presup w := (∀ q : Polarity, s.positive = q → R.Sufficient v (R.signed q S) w) ∧
-    ∀ q : Polarity, s.negative = q → R.Necessary v (R.signed (.negative * q) S) w
-  assertion := R.Holds v
+open Classical in
+/-- The sentence of a verb with implication signature `s`, asserted proposition `v` and embedded
+fact `S`. It presupposes that `v` is sufficient for the complement `s` implies in a positive
+context and necessary for the negation of the complement it implies in a negative context, and it
+asserts `v`. -/
+noncomputable def sentence (s : ImplicationSignature) (v S : F) : W → SignType :=
+  {w | (∀ q : Polarity, s.positive = q → R.Sufficient v (R.signed q S) w) ∧
+    ∀ q : Polarity, s.negative = q → R.Necessary v (R.signed (.negative * q) S) w}.indicator
+    fun w ↦ SignType.ofProp (R.Holds v w)
 
 variable {R} {s : ImplicationSignature} {v S : F} {w : W}
 
 /-- A claim of matrix polarity `m` implies the polarity of the complement that its signature
 records for a context of that polarity. -/
 theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
-    (hs : (m • sentence R s v S).holds w) : R.Holds (R.signed q S) w := by
+    (hs : (m • sentence R s v S) w = 1) : R.Holds (R.signed q S) w := by
   cases m
-  · exact R.holds_of_sufficient (hs.1.1 q hq) hs.2
-  · by_contra h
+  · simp only [Pi.smul_apply, Polarity.positive_smul, sentence,
+      Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq, SignType.ofProp_eq_one_iff] at hs
+    exact R.holds_of_sufficient (hs.1.1 q hq) hs.2
+  · simp only [Pi.smul_apply, Polarity.negative_smul_signType, SignType.neg_eq_one_iff, sentence,
+      Trivalent.indicator_apply_eq_neg_one_iff, Set.mem_ofPred_eq,
+      SignType.ofProp_eq_neg_one_iff] at hs
+    by_contra h
     exact hs.2 (R.holds_of_necessary (hs.1.2 q hq) (Reading.holds_signed_negative_mul.2 h))
 
 variable (R v S) in
-/-- A signature that implies more presupposes more: the presupposition of a sentence weakens as
-its signature descends. -/
-theorem antitone_presup : Antitone fun s ↦ (sentence R s v S).presup := by
-  intro s t h w ⟨hp, hn⟩
+/-- A signature that implies more presupposes more, the presupposition of a sentence weakening
+as its signature descends. -/
+theorem antitone_support : Antitone fun s ↦ Function.support (sentence R s v S) := by
+  intro s t h w hw
+  simp only [sentence, Function.mem_support, ne_eq, Set.indicator_apply_eq_zero,
+    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq] at hw ⊢
+  obtain ⟨hp, hn⟩ := hw
   have hst := ImplicationSignature.le_iff.1 h
   exact ⟨fun q hq ↦ hp q (Flat.coe_le_iff.1 (hq ▸ hst.1)),
     fun q hq ↦ hn q (Flat.coe_le_iff.1 (hq ▸ hst.2))⟩

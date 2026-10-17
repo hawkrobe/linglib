@@ -30,7 +30,7 @@ namespace Korean.PolarityItems
 open PolarityItem
 
 /-- Bare *nwukwu* 'who', an indefinite in questions and conditionals. -/
-def nwukwu : PolarityItem :=
+noncomputable def nwukwu : PolarityItem :=
   { form := "nwukwu (누구)"
   , licensor := some .weak
   , licensingContexts := [.question, .conditionalAntecedent] }

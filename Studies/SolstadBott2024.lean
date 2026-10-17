@@ -196,7 +196,7 @@ def Account.Accepts {Atom : Type*} (I : Atom → Set W) (C : Set W) (F : Formula
   | incremental => Schlenker2009.SatI I C F
   | limitedSymmetry => Kalomoiros2023.TranspLS I C F
   | symmetric => Schlenker2009.SatS I C F
-  | localAccommodation => (F.filter I).truthOp.Admits C
+  | localAccommodation => C ⊆ Function.support fun w ↦ SignType.ofProp (F.filter I w = 1)
 
 /-- An account filters the implication in an antecedent type when the antecedent is acceptable
 in every context, provided the conjoined clause entails the implication. -/
@@ -228,7 +228,7 @@ theorem Account.filters_iff {a : Account} {x : Antecedent} :
   · exact iff_of_true (fun _ _ I p p' q hq C ↦ (Schlenker2009.satS_and_right_iff I).2
       fun _ _ hw ↦ hq hw) (by simp)
   · exact iff_of_false (hno fun I C h ↦ (Schlenker2009.satS_trigger_iff I).1 h) (by simp)
-  all_goals exact iff_of_true (fun _ _ _ _ _ _ _ _ _ _ ↦ trivial) (by simp)
+  all_goals exact iff_of_true (fun _ _ _ _ _ _ _ _ _ _ ↦ SignType.ofProp_ne_zero) (by simp)
 
 instance (a : Account) (x : Antecedent) : Decidable (a.Filters x) :=
   decidable_of_iff' _ Account.filters_iff

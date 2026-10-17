@@ -23,18 +23,18 @@ their strong reading and a repeated description no sloppy reading.
 ## Main definitions
 
 * `the`, `description`, `sentence`: the article, a description with its situation pronoun, and a
-  sentence as a partial proposition.
+  sentence as a trivalent proposition.
 * `deDicto`, `deRe`, `attributiveDeRe`, `attitude`: descriptions under intensional operators and
   attitude verbs.
 * `Village`: situations as finite sets of atomic facts.
 
 ## Main results
 
-* `sentence_presup`: a sentence presupposes exactly one satisfier at the situation its pronoun
-  denotes.
-* `deDicto_presup`, `deRe_presup`, `attributiveDeRe_assertion`: the three readings under an
-  intensional operator.
-* `attitude_inconsistent_of_agnostic`, `russellian_consistent`: the description, unlike its
+* `sentence_ne_zero_iff`: a sentence presupposes exactly one satisfier at the situation its
+  pronoun denotes.
+* `deDicto_ne_zero_iff`, `deRe_ne_zero_iff`, `attributiveDeRe_eq_one_iff`: the three readings
+  under an intensional operator.
+* `attitude_eq_zero_of_agnostic`, `russellian_consistent`: the description, unlike its
   Russellian paraphrase, makes an agnostic subject's desire infelicitous.
 * `everyOwnerBeatsTheDonkey_iff`, `incomplete_description`,
   `everyOwnerBeatsTheDonkeyAndThePriestToo_iff`: the strong donkey reading, incompleteness, and
@@ -44,14 +44,16 @@ their strong reading and a repeated description no sloppy reading.
 
 * Situations are any partial order; minimality is mathlib's `Minimal`, and the lexical entries of
   §2.3.3 are transcribed with it. The article is `iota` at the situation, so its domain
-  condition is `∃!` (`the_isSome_iff`), and a sentence is `PartialProp.presupOfReferent` of the
-  description. A situation pronoun is its value as a function of the situation the proposition
-  is applied to, constant when free and the identity when bound. A description inside a scope
-  contributes `∃ z ∈ the f s`, the assertion of `presupOfReferent` with `Option` membership.
-* Intensional operators are universal over an accessibility relation and lift partial
-  propositions by requiring presupposition and assertion throughout the accessible situations;
-  attitude verbs check the presupposition in the subject's doxastic alternatives and the
-  assertion in the verb's own, Karttunen's projection.
+  condition is `∃!` (`the_isSome_iff`), and a sentence is `Presupposition.presupOfReferent` of
+  the description. A situation pronoun is its value as a function of the situation the
+  proposition is applied to, constant when free and the identity when bound. A description
+  inside a scope contributes `∃ z ∈ the f s`, the condition under which `presupOfReferent` is
+  true, with `Option` membership.
+* Intensional operators are universal over an accessibility relation and lift trivalent
+  propositions by the Weak Kleene universal over the accessible situations
+  (`Trivalent.forallWeak`); attitude verbs are defined where the complement is defined
+  throughout the subject's doxastic alternatives and true where it is true throughout the
+  verb's own, Karttunen's projection.
 * The village of ch. 6 and ch. 9 is a concrete model: situations are finite sets of atomic
   facts ordered by inclusion, Kratzer's states of affairs, so minimal situations are
   computed and the strong reading of the donkey sentence is a theorem rather than a reading of
@@ -150,106 +152,114 @@ evaluation, the attributive use of (15) of ch. 5. -/
 noncomputable def description (σ : S → S) (f : E → S → Prop) (s : S) : Option E :=
   the f (σ s)
 
-/-- `[[[the NP] sᵢ] VP]` is the sentence as a partial proposition, (3) of ch. 4 for a free
+/-- `[[[the NP] sᵢ] VP]` is the sentence as a trivalent proposition, (3) of ch. 4 for a free
 pronoun and (4) for a bound one. -/
-noncomputable def sentence (σ : S → S) (f vp : E → S → Prop) : PartialProp S :=
-  PartialProp.presupOfReferent (description σ f) vp
+noncomputable def sentence (σ : S → S) (f vp : E → S → Prop) : S → SignType :=
+  presupOfReferent (description σ f) vp
 
 /-- The sentence presupposes exactly one satisfier at the situation its pronoun denotes. A free
 pronoun discharges the domain condition at its referent, whatever situation the proposition is
 applied to; a bound one carries it to the situation where the proposition is applied. -/
-theorem sentence_presup (σ : S → S) (f vp : E → S → Prop) (s : S) :
-    (sentence σ f vp).presup s ↔ ∃! x, f x (σ s) :=
-  the_isSome_iff f (σ s)
+theorem sentence_ne_zero_iff (σ : S → S) (f vp : E → S → Prop) (s : S) :
+    sentence σ f vp s ≠ 0 ↔ ∃! x, f x (σ s) := by
+  rw [sentence, Ne, presupOfReferent_eq_zero_iff, ← Ne, Option.ne_none_iff_isSome]
+  exact the_isSome_iff f (σ s)
 
 /-- Where the description denotes, the sentence says of that individual what the predicate says
 of it; a referential description makes the proposition object-dependent, (12) of ch. 5. -/
-theorem sentence_assertion (σ : S → S) (f vp : E → S → Prop) {s : S} {x : E}
-    (h : description σ f s = some x) : (sentence σ f vp).assertion s ↔ vp x s :=
-  Iff.of_eq (PartialProp.presupOfReferent_assertion_some _ _ _ _ h)
+theorem sentence_eq_one_iff (σ : S → S) (f vp : E → S → Prop) {s : S} {x : E}
+    (h : description σ f s = some x) : sentence σ f vp s = 1 ↔ vp x s := by
+  simp [sentence, presupOfReferent_of_some h]
 
 /-! ### Intensional operators: de re, de dicto, attributive de re (ch. 7) -/
 
-/-- A universal intensional operator over an accessibility relation requires the presupposition
-and the assertion of a partial proposition throughout the accessible situations, as in (12) and
-(14) of ch. 7. -/
-def box (R : S → Set S) (p : PartialProp S) : PartialProp S where
-  presup := fun s ↦ ∀ w ∈ R s, p.presup w
-  assertion := fun s ↦ ∀ w ∈ R s, p.assertion w
+/-- A universal intensional operator over an accessibility relation is the Weak Kleene universal
+over the accessible situations, defined where the proposition is defined throughout them and true
+where it is true throughout them, as in (12) and (14) of ch. 7. -/
+noncomputable def box (R : S → Set S) (p : S → SignType) : S → SignType :=
+  fun s ↦ Trivalent.forallWeak fun w : R s ↦ p w
+
+theorem box_ne_zero_iff (R : S → Set S) (p : S → SignType) (s : S) :
+    box R p s ≠ 0 ↔ ∀ w ∈ R s, p w ≠ 0 := by
+  simp [box]
 
 /-- De dicto, (11) of ch. 7, the situation pronoun is bound by `ς` immediately below the
 operator. -/
-noncomputable def deDicto (R : S → Set S) (f vp : E → S → Prop) : PartialProp S :=
+noncomputable def deDicto (R : S → Set S) (f vp : E → S → Prop) : S → SignType :=
   box R (sentence id f vp)
 
 /-- De re, (13) of ch. 7, the situation pronoun inside the operator refers to the actual world
 `w₀`. -/
-noncomputable def deRe (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) : PartialProp S :=
+noncomputable def deRe (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) : S → SignType :=
   box R (sentence (fun _ ↦ w₀) f vp)
 
 /-- Attributive de re, (17) and (25) of ch. 7, the pronoun is bound above the operator, so the
 description is evaluated at the topic situation and only the predicate is modalized. -/
-noncomputable def attributiveDeRe (R : S → Set S) (f vp : E → S → Prop) : PartialProp S :=
-  PartialProp.presupOfReferent (the f) fun x s ↦ ∀ w ∈ R s, vp x w
+noncomputable def attributiveDeRe (R : S → Set S) (f vp : E → S → Prop) : S → SignType :=
+  presupOfReferent (the f) fun x s ↦ ∀ w ∈ R s, vp x w
 
 /-- De dicto, every accessible situation must contain exactly one satisfier, and the satisfiers
 may differ. -/
-theorem deDicto_presup (R : S → Set S) (f vp : E → S → Prop) (s : S) :
-    (deDicto R f vp).presup s ↔ ∀ w ∈ R s, ∃! x, f x w :=
-  forall₂_congr fun w _ ↦ sentence_presup id f vp w
+theorem deDicto_ne_zero_iff (R : S → Set S) (f vp : E → S → Prop) (s : S) :
+    deDicto R f vp s ≠ 0 ↔ ∀ w ∈ R s, ∃! x, f x w :=
+  (box_ne_zero_iff R _ s).trans <| forall₂_congr fun w _ ↦ sentence_ne_zero_iff id f vp w
 
 /-- De re, the satisfier is fixed in the actual world, and need not satisfy the property in the
 accessible situations. -/
-theorem deRe_presup (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) (s : S) :
-    (deRe R w₀ f vp).presup s ↔ ∀ w ∈ R s, ∃! x, f x w₀ :=
-  forall₂_congr fun w _ ↦ sentence_presup (fun _ ↦ w₀) f vp w
+theorem deRe_ne_zero_iff (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) (s : S) :
+    deRe R w₀ f vp s ≠ 0 ↔ ∀ w ∈ R s, ∃! x, f x w₀ :=
+  (box_ne_zero_iff R _ s).trans <| forall₂_congr fun w _ ↦
+    sentence_ne_zero_iff (fun _ ↦ w₀) f vp w
 
 /-- Attributive de re presupposes exactly one satisfier in the topic situation. -/
-theorem attributiveDeRe_presup (R : S → Set S) (f vp : E → S → Prop) (s : S) :
-    (attributiveDeRe R f vp).presup s ↔ ∃! x, f x s :=
-  the_isSome_iff f s
+theorem attributiveDeRe_ne_zero_iff (R : S → Set S) (f vp : E → S → Prop) (s : S) :
+    attributiveDeRe R f vp s ≠ 0 ↔ ∃! x, f x s :=
+  sentence_ne_zero_iff id f _ s
 
 /-- Kripke's number of the planets, (16) of ch. 7, is attributive, since the speaker need not
 know which number, yet de re, since the number in the topic situation is what is odd in every
 accessible world. -/
-theorem attributiveDeRe_assertion (R : S → Set S) (f vp : E → S → Prop) {s : S} {x : E}
-    (h : the f s = some x) : (attributiveDeRe R f vp).assertion s ↔ ∀ w ∈ R s, vp x w :=
-  Iff.of_eq (PartialProp.presupOfReferent_assertion_some _ _ _ _ h)
+theorem attributiveDeRe_eq_one_iff (R : S → Set S) (f vp : E → S → Prop) {s : S} {x : E}
+    (h : the f s = some x) : attributiveDeRe R f vp s = 1 ↔ ∀ w ∈ R s, vp x w :=
+  sentence_eq_one_iff id f _ h
 
 /-! ### Existence entailments (ch. 8) -/
 
-/-- An attitude verb with [karttunen-1974-presupposition]'s projection (§8.6) presupposes the
-complement's presupposition throughout the subject's doxastic alternatives and asserts its
-assertion throughout the verb's own alternatives, doxastic for *believe* and bouletic for
+open Classical in
+/-- An attitude verb with [karttunen-1974-presupposition]'s projection (§8.6) is defined where the
+complement is defined throughout the subject's doxastic alternatives, and true where the
+complement is true throughout the verb's own alternatives, doxastic for *believe* and bouletic for
 *want*. -/
-def attitude (dox R : S → Set S) (p : PartialProp S) : PartialProp S where
-  presup := fun s ↦ ∀ w ∈ dox s, p.presup w
-  assertion := fun s ↦ ∀ w ∈ R s, p.assertion w
+noncomputable def attitude (dox R : S → Set S) (p : S → SignType) : S → SignType :=
+  {s | ∀ w ∈ dox s, p w ≠ 0}.indicator fun s ↦ SignType.ofProp (∀ w ∈ R s, p w = 1)
 
 /-- *Hans wants the ghost in his attic to be quiet*, (40)–(41) of ch. 8, presupposes that Hans
 believes there is exactly one ghost in his attic. -/
-theorem attitude_presup (dox R : S → Set S) (f vp : E → S → Prop) (s : S) :
-    (attitude dox R (sentence id f vp)).presup s ↔ ∀ w ∈ dox s, ∃! x, f x w :=
-  forall₂_congr fun w _ ↦ sentence_presup id f vp w
+theorem attitude_ne_zero_iff (dox R : S → Set S) (f vp : E → S → Prop) (s : S) :
+    attitude dox R (sentence id f vp) s ≠ 0 ↔ ∀ w ∈ dox s, ∃! x, f x w := by
+  simp only [attitude, ne_eq, Set.indicator_apply_eq_zero, Set.mem_ofPred_eq,
+    SignType.ofProp_ne_zero, imp_false, not_not]
+  exact forall₂_congr fun w _ ↦ sentence_ne_zero_iff id f vp w
 
 /-- A subject unsure whether there is a ghost in his attic cannot felicitously want the ghost in
 his attic to be quiet, (31) with (33b), since the presupposition attributes the belief to him. -/
-theorem attitude_inconsistent_of_agnostic (dox R : S → Set S) (f vp : E → S → Prop) {s : S}
-    (h : ∃ w ∈ dox s, ¬ ∃ x, f x w) : ¬ (attitude dox R (sentence id f vp)).presup s := by
-  rw [attitude_presup]
-  intro hp
+theorem attitude_eq_zero_of_agnostic (dox R : S → Set S) (f vp : E → S → Prop) {s : S}
+    (h : ∃ w ∈ dox s, ¬ ∃ x, f x w) : attitude dox R (sentence id f vp) s = 0 := by
+  refine not_not.1 fun hp ↦ ?_
   obtain ⟨w, hw, hno⟩ := h
-  exact hno (hp w hw).exists
+  exact hno ((attitude_ne_zero_iff dox R f vp s).1 hp w hw).exists
 
 /-- The Russellian paraphrase (33a) asserts existence and uniqueness inside the attitude. -/
 def russellian (R : S → Set S) (f vp : E → S → Prop) (s : S) : Prop :=
   ∀ w ∈ R s, ∃ x, f x w ∧ (∀ y, f y w → y = x) ∧ vp x w
 
 /-- The antecedent of a conditional is a hole, (39) of ch. 8, so the existence presupposition of
-the description projects to the whole conditional. -/
-theorem conditional_presup (f vp : E → S → Prop) (q : PartialProp S) (s : S) :
-    (PartialProp.imp (sentence id f vp) q).presup s ↔ (∃! x, f x s) ∧ q.presup s :=
-  and_congr_left' (sentence_presup id f vp s)
+the description projects to the whole conditional, here the Weak Kleene material conditional. -/
+theorem conditional_ne_zero_iff (f vp : E → S → Prop) (q : S → SignType) (s : S) :
+    (-sentence id f vp s).joinWeak (q s) ≠ 0 ↔ (∃! x, f x s) ∧ q s ≠ 0 := by
+  rw [Ne, SignType.joinWeak_eq_zero_iff, SignType.neg_eq_zero_iff, not_or, ← Ne,
+    sentence_ne_zero_iff]
+  rfl
 
 end Article
 
@@ -265,11 +275,11 @@ theorem russellian_consistent :
 /-- Under an attitude verb the description commits the subject, not the speaker, to a fountain
 of youth, (36) of ch. 8. The presupposition holds although there is none in the topic
 situation. -/
-theorem attitude_presup_not_speaker :
+theorem attitude_ne_zero_not_speaker :
     ∃ (dox R : Bool → Set Bool) (f vp : Unit → Bool → Prop) (s : Bool),
-      (attitude dox R (sentence id f vp)).presup s ∧ ¬ ∃ x, f x s :=
+      attitude dox R (sentence id f vp) s ≠ 0 ∧ ¬ ∃ x, f x s :=
   ⟨fun _ ↦ {true}, fun _ ↦ {true}, fun _ w ↦ w = true, fun _ _ ↦ True, false,
-    (attitude_presup _ _ _ _ _).mpr fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl⟩, by simp⟩
+    (attitude_ne_zero_iff _ _ _ _ _).mpr fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl⟩, by simp⟩
 
 /-! ### The village: situations as sets of facts (ch. 6, ch. 9) -/
 
@@ -445,6 +455,8 @@ theorem everyOwnerBeatsIt_iff (w : Village E) :
       ∀ x y, Fact.farmer x ∈ w → Fact.donkey y ∈ w → Fact.owns x y ∈ w → Fact.beats x y ∈ w :=
   everyOwnerBeatsTheDonkey_iff w
 
+end Village
+
 /-! ### Incompleteness and the argument from sloppy identity (ch. 9) -/
 
 /-- The room of (4) in ch. 9 has one table, covered with books. -/
@@ -459,11 +471,15 @@ theorem room_le_world : room ≤ world := by decide
 with one table. The referential situation pronoun to the room satisfies the domain condition
 although the world contains two tables. -/
 theorem incomplete_description :
-    (sentence (fun _ ↦ room) (fun x (s : Village Bool) ↦ Fact.table x ∈ s)
-        (fun x s ↦ Fact.covered x ∈ s)).presup world ∧
+    sentence (fun _ ↦ room) (fun x (s : Village Bool) ↦ Fact.table x ∈ s)
+        (fun x s ↦ Fact.covered x ∈ s) world ≠ 0 ∧
       ¬ ∃! x, Fact.table x ∈ world :=
-  ⟨(sentence_presup _ _ _ _).mpr ⟨true, by decide, by decide⟩, fun ⟨_, _, h⟩ ↦
+  ⟨(sentence_ne_zero_iff _ _ _ _).mpr ⟨true, by decide, by decide⟩, fun ⟨_, _, h⟩ ↦
     Bool.noConfusion ((h true (by decide)).trans (h false (by decide)).symm)⟩
+
+section SloppyIdentity
+
+variable {E : Type*}
 
 /-- A relation-variable description `the [f v] NP`, §9.2.1, denotes the unique NP-satisfier
 standing in the covert relation to the individual variable `v`, which a higher quantifier may
@@ -472,7 +488,6 @@ noncomputable def relDescription {S : Type*} (rel : E → E → S → Prop) (np 
     (s : S) : Option E :=
   iota fun x ↦ np x s ∧ rel x v s
 
-omit [DecidableEq E] in
 /-- The relation-variable description covaries with its individual variable. Read as *the donkey
 v owns*, *the donkey* denotes each owner's own donkey, which licenses the sloppy reading of (17b)
 in ch. 9 and would wrongly license one for (17a). -/
@@ -482,6 +497,8 @@ theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (n
       (np x s ∧ rel x v s) ∧ ∀ y, np y s → rel y v s → y = x := by
   rw [relDescription, iota_eq_some_iff]
   simp only [and_imp]
+
+variable [DecidableEq E]
 
 /-- In (29) of ch. 9, *every farmer who owns a donkey beats the donkey, and the priest beats the
 donkey too*, with the LF (31), the quantifier scopes over the conjunction, and both occurrences of
@@ -518,6 +535,6 @@ theorem everyOwnerBeatsTheDonkeyAndThePriestToo_iff (w : Village E) {p : E}
     obtain ⟨y, hf, hd, ho, rfl⟩ := (minimal_ownsADonkey_iff w x s').mp hs
     exact (key x y).mpr ⟨hs.prop.1, h x y hf hd ho⟩
 
-end Village
+end SloppyIdentity
 
 end Elbourne2013

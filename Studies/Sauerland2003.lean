@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Semantics.Presupposition.Basic
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Alternatives.Competition
 
 /-!
@@ -27,8 +27,8 @@ coincide and competition cannot separate them (`unblocked_second_of_degenerate`)
 *Every* decomposes into a definite `DER`, taking the maximal element of a cumulative
 restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
 and `JE`, a universal over the atomic parts of a group individual that projects its scope's
-presupposition universally (`JE`), whose assertion is Link's distributivity operator
-(`je_assertion_eq_D`, `je_assertion_eq_forall`). The indefinite projects existentially
+presupposition universally (`JE`), whose truth on a bivalent scope is Link's distributivity
+operator (`je_eq_one_iff_D`, `je_eq_one_iff_forall`). The indefinite projects existentially
 (`aSem`), so *every boy invited his sister* requires every boy to have a sister while *a boy
 invited his sister* requires one (`projection_asymmetry`), and the weak plural makes *Lina
 didn't harvest tomatoes* entail *Lina didn't harvest a tomato*
@@ -49,7 +49,7 @@ namespace Sauerland2003
 
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
 open Mereology (D)
-open Alternatives Presupposition
+open Alternatives Trivalent
 
 variable {E : Type*}
 
@@ -193,10 +193,10 @@ end Person
 
 /-! ### *Every* as `JE ∘ DER`, and the indefinite -/
 
-/-- The indefinite projects its scope's presupposition existentially. -/
-def aSem (R S : E → Prop) (domS : E → Prop := fun _ ↦ True) : PartialProp E where
-  presup _ := ∃ x, R x ∧ domS x
-  assertion _ := ∃ x, R x ∧ S x
+/-- The indefinite projects its scope's presupposition existentially, defined when the scope is
+defined of some individual of the restrictor and true when it is true of one. -/
+noncomputable def aSem (R : E → Prop) (S : E → SignType) : SignType :=
+  existsHaug fun x : {x // R x} ↦ S x
 
 section Every
 
@@ -205,37 +205,41 @@ variable [PartialOrder E]
 /-- `JE`, the quantificational part of *every*, ranges over the atomic parts of a group
 individual `X`, presupposing the scope predicate is defined at each and asserting it holds
 at each. -/
-def JE (X : E) (P : E → Prop) (domP : E → Prop := fun _ ↦ True) : PartialProp E where
-  presup _ := ∀ a, Atom a → a ≤ X → domP a
-  assertion _ := ∀ a, Atom a → a ≤ X → P a
+noncomputable def JE (X : E) (P : E → SignType) : SignType :=
+  forallWeak fun a : {a // Atom a ∧ a ≤ X} ↦ P a
 
-/-- When the atoms below `maxR` are exactly the `R`-elements, `JE` asserts the ordinary
-universal. -/
-theorem je_assertion_eq_forall {R Q : E → Prop} {maxR : E} (hR : ∀ x, R x ↔ Atom x ∧ x ≤ maxR)
-    (w : E) : (JE maxR Q).assertion w ↔ ∀ x, R x → Q x :=
-  ⟨fun h x hx ↦ h x ((hR x).1 hx).1 ((hR x).1 hx).2, fun h a ha hle ↦ h a ((hR a).2 ⟨ha, hle⟩)⟩
+/-- When the atoms below `maxR` are exactly the `R`-elements, `JE` with a bivalent scope asserts
+the ordinary universal. -/
+theorem je_eq_one_iff_forall {R Q : E → Prop} [DecidablePred Q] {maxR : E}
+    (hR : ∀ x, R x ↔ Atom x ∧ x ≤ maxR) :
+    JE maxR (fun x ↦ SignType.ofProp (Q x)) = 1 ↔ ∀ x, R x → Q x := by
+  simp [JE, hR]
 
 /-- `JE` projects its scope's presupposition universally and the indefinite existentially. With
 a restrictor atom `a₂ ≤ boys` outside the scope's domain and some `R`-individual inside it,
 *a boy invited his sister* is defined and *every boy invited his sister* is not. -/
-theorem projection_asymmetry {boys a₁ a₂ : E} {R domP : E → Prop} (ha₂ : Atom a₂)
-    (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : domP a₁) (hdom₂ : ¬ domP a₂) :
-    (aSem R (fun _ ↦ True) domP).presup boys ∧ ¬ (JE boys (fun _ ↦ True) domP).presup boys :=
-  ⟨⟨a₁, hR₁, hdom₁⟩, fun h ↦ hdom₂ (h a₂ ha₂ h₂)⟩
+theorem projection_asymmetry {boys a₁ a₂ : E} {R : E → Prop} {S : E → SignType}
+    (ha₂ : Atom a₂) (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : S a₁ ≠ 0) (hdom₂ : S a₂ = 0) :
+    aSem R S ≠ 0 ∧ JE boys S = 0 :=
+  ⟨fun h ↦ hdom₁ (existsHaug_eq_zero_iff.1 h ⟨a₁, hR₁⟩),
+    forallWeak_eq_zero_iff.2 ⟨⟨a₂, ha₂, h₂⟩, hdom₂⟩⟩
 
-/-- Under the weak plural *Lina didn't harvest tomatoes* entails *Lina didn't harvest a tomato*,
-the singular indefinite restricting the plural's assertion to atoms. -/
-theorem negated_pl_entails_negated_sg {starR harvest : E → Prop} {w : E}
-    (h : ¬ (aSem starR harvest).assertion w) :
-    ¬ (aSem (fun x ↦ Atom x ∧ starR x) harvest).assertion w :=
-  fun ⟨e, ⟨_, hR⟩, hH⟩ ↦ h ⟨e, hR, hH⟩
+/-- Under the weak plural *Lina didn't harvest tomatoes* entails *Lina didn't harvest a tomato*
+wherever the latter is defined, the singular indefinite restricting the plural's assertion to
+atoms. -/
+theorem negated_pl_entails_negated_sg {starR harvest : E → Prop} [DecidablePred harvest]
+    (h : aSem starR (fun x ↦ SignType.ofProp (harvest x)) = -1)
+    (hsg : aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ SignType.ofProp (harvest x)) ≠ 0) :
+    aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ SignType.ofProp (harvest x)) = -1 := by
+  simp_all [aSem]
 
 end Every
 
-/-- The assertion of `JE` is [link-1987]'s distributivity operator. -/
-theorem je_assertion_eq_D [SemilatticeSup E] (X : E) (P : E → Prop) (w : E) :
-    (JE X P).assertion w ↔ D P X :=
-  ⟨fun h y hle hAtom ↦ h y hAtom hle, fun h a hAtom hle ↦ h a hle hAtom⟩
+/-- On a bivalent scope `JE` is [link-1987]'s distributivity operator. -/
+theorem je_eq_one_iff_D [SemilatticeSup E] (X : E) (P : E → Prop) [DecidablePred P] :
+    JE X (fun x ↦ SignType.ofProp (P x)) = 1 ↔ D P X := by
+  simp only [JE, forallWeak_eq_one_iff, SignType.ofProp_eq_one_iff, Subtype.forall, and_imp, D]
+  exact forall_congr' fun _ ↦ imp.swap
 
 /-! ### Gender agreement in Czech coordinations -/
 

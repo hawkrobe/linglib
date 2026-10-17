@@ -1,23 +1,24 @@
 module
 
-public import Linglib.Semantics.Presupposition.Trivalent
 public import Linglib.Semantics.Dynamic.Partial
 
 /-!
 # Formulas of the propositional fragment
 
-This file defines the formulas on which theories of presupposition projection are compared: the
-propositional fragment of the language L of [schlenker-2009]'s Appendix C, which is also the
-language of [kalomoiros-2023]'s System 1 (Definition 3.4.1). A formula is built from atoms and
+This file defines the formulas on which theories of presupposition projection are compared, the
+propositional fragment of the language L of Schlenker's Appendix C, which is also the language of
+Kalomoiros's System 1 (Definition 3.4.1). A formula is built from atoms and
 triggers by negation and the binary connectives of `Connective`; a trigger `trigger p p'`
 presupposes `p` and asserts `p'`, and its classical meaning is the conjunction of the two
 (`Formula.truth`, C.2).
 
-Each binary connective is interpreted classically (`Connective.eval`), by [peters-1979]'s filtering
-connectives (`Connective.filter`), and by the context change potentials of [heim-1983], with
-[beaver-2001]'s disjunction (`Connective.ccp`). The fold `Formula.filter` evaluates a formula into
-`PartialProp`, and `Formula.ccp` into `CCP.Partial`. The context change potential admits a context
-iff the context entails the filtering presupposition, and it updates the context to its worlds at
+Each binary connective is interpreted classically (`Connective.eval`), by Peters' filtering
+connectives (`Connective.filter`), and by Heim's context change potentials, with Beaver's
+disjunction (`Connective.ccp`). The fold `Formula.filter` evaluates a formula into
+a trivalent proposition `W → SignType`, and `Formula.ccp` into `CCP.Partial`, sending an atom or a
+trigger to the update of its trivalent meaning. Where the filtering evaluation is defined it is the
+classical meaning (`Formula.filter_eq_ofProp`). The context change potential admits a context iff
+the filtering evaluation is defined throughout it, and it updates the context to its worlds at
 which the formula is classically true (`Formula.admits_ccp_iff`, `Formula.ccp_get`).
 
 ## Main definitions
@@ -29,7 +30,7 @@ which the formula is classically true (`Formula.admits_ccp_iff`, `Formula.ccp_ge
 
 ## Implementation notes
 
-The interpretation of the atoms is a function to `Set W`. [schlenker-2009]'s Expressivity (C.3),
+The interpretation of the atoms is a function to `Set W`. Schlenker's Expressivity (C.3),
 that every proposition is denoted by an atom, is not built in: the theories that need it quantify
 over propositions where the paper quantifies over expressions. The conditional is material, as in
 the paper, and its Strong Kleene clause is by interdefinability from negation and disjunction.
@@ -62,19 +63,19 @@ def eval : Connective → Prop → Prop → Prop
   | cond, a, b => a → b
   | disj, a, b => a ∨ b
 
-/-- The Strong Kleene connectives; the conditional is `¬p ∨ q`. -/
-def strong : Connective → PartialProp W → PartialProp W → PartialProp W
-  | conj, p, q => p.andStrong q
-  | cond, p, q => p.neg.orStrong q
-  | disj, p, q => p.orStrong q
+/-- The Strong Kleene connectives; the conditional is `¬a ∨ b`. -/
+def strong : Connective → SignType → SignType → SignType
+  | conj, a, b => a ⊓ b
+  | cond, a, b => -a ⊔ b
+  | disj, a, b => a ⊔ b
 
 /-- [peters-1979]'s filtering connectives, the Middle Kleene tables. -/
-def filter : Connective → PartialProp W → PartialProp W → PartialProp W
-  | conj, p, q => p.andFilter q
-  | cond, p, q => p.impFilter q
-  | disj, p, q => p.orFilter q
+def filter : Connective → SignType → SignType → SignType
+  | conj, a, b => a.meetMiddle b
+  | cond, a, b => (-a).joinMiddle b
+  | disj, a, b => a.joinMiddle b
 
-/-- The dynamic connectives: [heim-1983]'s conjunction and conditional, and [beaver-2001]'s
+/-- The dynamic connectives are [heim-1983]'s conjunction and conditional and [beaver-2001]'s
 disjunction. -/
 noncomputable def ccp : Connective → CCP.Partial W → CCP.Partial W → CCP.Partial W
   | .conj => PartialUpdate.seq
@@ -85,8 +86,8 @@ end Connective
 
 /-! ### Formulas -/
 
-/-- The propositional fragment of L (C.1): a trigger `trigger p p'` presupposes `p` and asserts
-`p'`. -/
+/-- The propositional fragment of L (C.1), in which a trigger `trigger p p'` presupposes `p` and
+asserts `p'`. -/
 inductive Formula (Atom : Type*) where
   | atom (p : Atom)
   | trigger (presup assert : Atom)
@@ -96,55 +97,79 @@ inductive Formula (Atom : Type*) where
 
 namespace Formula
 
+open Classical
+
 variable (I : Atom → Set W)
 
-/-- C.2: the classical meaning, with a trigger read as the conjunction of its two parts. -/
+/-- The classical meaning (C.2) reads a trigger as the conjunction of its two parts. -/
 def truth : Formula Atom → Set W
   | atom p => I p
   | trigger p p' => I p ∩ I p'
   | not F => (truth F)ᶜ
   | bin c F G => {w | c.eval (w ∈ truth F) (w ∈ truth G)}
 
-/-- The Strong Kleene evaluation: a trigger is defined where its presupposition holds. -/
-def strong : Formula Atom → PartialProp W
-  | atom p => ⟨fun _ ↦ True, (· ∈ I p)⟩
-  | trigger p p' => ⟨(· ∈ I p), (· ∈ I p')⟩
-  | not F => (strong F).neg
-  | bin c F G => c.strong (strong F) (strong G)
+/-- The Strong Kleene evaluation, in which a trigger is defined where its presupposition holds. -/
+noncomputable def strong : Formula Atom → W → SignType
+  | atom p => fun w ↦ SignType.ofProp (w ∈ I p)
+  | trigger p p' => (I p).indicator fun w ↦ SignType.ofProp (w ∈ I p')
+  | not F => -strong F
+  | bin c F G => fun w ↦ c.strong (strong F w) (strong G w)
 
 /-- The evaluation by the filtering connectives. -/
-def filter : Formula Atom → PartialProp W
-  | atom p => ⟨fun _ ↦ True, (· ∈ I p)⟩
-  | trigger p p' => ⟨(· ∈ I p), (· ∈ I p')⟩
-  | not F => (filter F).neg
-  | bin c F G => c.filter (filter F) (filter G)
+noncomputable def filter : Formula Atom → W → SignType
+  | atom p => fun w ↦ SignType.ofProp (w ∈ I p)
+  | trigger p p' => (I p).indicator fun w ↦ SignType.ofProp (w ∈ I p')
+  | not F => -filter F
+  | bin c F G => fun w ↦ c.filter (filter F w) (filter G w)
 
-/-- The context change potential of a formula: a trigger is defined in a context that entails its
-presupposition. -/
+/-- The context change potential of a formula updates an atom or a trigger by its trivalent
+meaning, so a trigger is defined in a context that entails its presupposition. -/
 noncomputable def ccp : Formula Atom → CCP.Partial W
-  | atom p => CCP.Partial.ofPartialProp ⟨fun _ ↦ True, (· ∈ I p)⟩
-  | trigger p p' => CCP.Partial.ofPartialProp ⟨(· ∈ I p), (· ∈ I p')⟩
+  | atom p => CCP.Partial.ofTrivalent ((atom p).filter I)
+  | trigger p p' => CCP.Partial.ofTrivalent ((trigger p p').filter I)
   | not F => CCP.Partial.neg (ccp F)
   | bin c F G => c.ccp (ccp F) (ccp G)
 
-/-- On its presupposition, the filtering evaluation asserts the classical meaning. -/
-theorem filter_assertion_iff {F : Formula Atom} {w : W} (h : (F.filter I).presup w) :
-    (F.filter I).assertion w ↔ w ∈ F.truth I := by
+variable {w : W}
+
+/-- The filtering evaluation of a binary formula is defined where the first argument's is, and
+the second's wherever the world is in the second argument's local context
+([karttunen-1974-presupposition]). -/
+theorem filter_bin_ne_zero_iff {c : Connective} {F G : Formula Atom}
+    (hF : F.filter I w ≠ 0 → F.filter I w = SignType.ofProp (w ∈ F.truth I)) :
+    (bin c F G).filter I w ≠ 0 ↔
+      F.filter I w ≠ 0 ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.filter I w ≠ 0) := by
+  simp only [filter]
+  refine ⟨fun h ↦ ?_, fun ⟨h, hG⟩ ↦ ?_⟩
+  · have h' : F.filter I w ≠ 0 := by cases c <;> simp_all [Connective.filter]
+    rw [hF h'] at h
+    exact ⟨h', fun hl ↦ by cases c <;> simp_all [Connective.filter, Connective.localContext]⟩
+  · rw [hF h]
+    cases c <;> by_cases ht : w ∈ F.truth I <;>
+      simp_all [Connective.filter, Connective.localContext]
+
+/-- Where the filtering evaluation is defined, it is the classical meaning. -/
+theorem filter_eq_ofProp {F : Formula Atom} (h : F.filter I w ≠ 0) :
+    F.filter I w = SignType.ofProp (w ∈ F.truth I) := by
   induction F with
-  | atom p => exact Iff.rfl
-  | trigger p p' => exact ⟨fun h' ↦ ⟨h, h'⟩, fun h' ↦ h'.2⟩
-  | not F ih => exact not_congr (ih h)
+  | atom p => rfl
+  | trigger p p' =>
+    by_cases hp : w ∈ I p <;> simp_all [filter, truth]
+  | not F ih =>
+    simp only [filter, Pi.neg_apply, ne_eq, SignType.neg_eq_zero_iff] at h ⊢
+    simp [ih h, truth]
   | bin c F G ihF ihG =>
-    cases c <;> have hF := ihF h.1
-    · exact ⟨fun ⟨a, b⟩ ↦ ⟨hF.1 a, (ihG (h.2 a)).1 b⟩,
-        fun ⟨a, b⟩ ↦ ⟨hF.2 a, (ihG (h.2 (hF.2 a))).2 b⟩⟩
-    · exact ⟨fun f t ↦ (ihG (h.2 (hF.2 t))).1 (f (hF.2 t)),
-        fun g a ↦ (ihG (h.2 a)).2 (g (hF.1 a))⟩
-    · by_cases a : (F.filter I).assertion w
-      · exact ⟨fun _ ↦ Or.inl (hF.1 a), fun _ ↦ Or.inl a⟩
-      · have hG := ihG (h.2 a)
-        exact ⟨fun h' ↦ h'.elim (fun a' ↦ absurd a' a) (fun b ↦ Or.inr (hG.1 b)),
-          fun h' ↦ h'.elim (fun t ↦ absurd (hF.2 t) a) (fun t ↦ Or.inr (hG.2 t))⟩
+    obtain ⟨hF, hG⟩ := (filter_bin_ne_zero_iff I ihF).1 h
+    simp only [filter, ihF hF]
+    cases c <;> by_cases ht : w ∈ F.truth I <;>
+      simp_all [Connective.filter, Connective.localContext, truth, Connective.eval]
+
+/-- The filtering evaluation of a binary formula is defined where the first argument's is, and
+the second's wherever the world is in the second argument's local context. -/
+theorem filter_bin_ne_zero {c : Connective} {F G : Formula Atom} :
+    (bin c F G).filter I w ≠ 0 ↔
+      F.filter I w ≠ 0 ∧ (w ∈ c.localContext Set.univ (F.truth I) → G.filter I w ≠ 0) :=
+  filter_bin_ne_zero_iff I (filter_eq_ofProp I)
 
 /-- Every formula contains an atom or a trigger. -/
 theorem nonempty_atom : Formula Atom → Nonempty Atom
@@ -153,74 +178,76 @@ theorem nonempty_atom : Formula Atom → Nonempty Atom
   | not F => nonempty_atom F
   | bin _ F _ => nonempty_atom F
 
-/-- The filtering presupposition of a binary formula: the first argument's presupposition, and the
-second's wherever the world is in the second argument's local context
-([karttunen-1974-presupposition]). -/
-theorem filter_presup_bin {c : Connective} {F G : Formula Atom} {w : W} :
-    ((bin c F G).filter I).presup w ↔
-      (F.filter I).presup w ∧
-        (w ∈ c.localContext Set.univ (F.truth I) → (G.filter I).presup w) := by
-  have assert (hp : (F.filter I).presup w) := filter_assertion_iff I hp
-  cases c
-  · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h ((assert hp).2 hc.2)⟩,
-      fun ⟨hp, h⟩ ↦ ⟨hp, fun ha ↦ h ⟨trivial, (assert hp).1 ha⟩⟩⟩
-  · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h ((assert hp).2 hc.2)⟩,
-      fun ⟨hp, h⟩ ↦ ⟨hp, fun ha ↦ h ⟨trivial, (assert hp).1 ha⟩⟩⟩
-  · exact ⟨fun ⟨hp, h⟩ ↦ ⟨hp, fun hc ↦ h fun ha ↦ hc.2 ((assert hp).1 ha)⟩,
-      fun ⟨hp, h⟩ ↦ ⟨hp, fun hn ↦ h ⟨trivial, fun ht ↦ hn ((assert hp).2 ht)⟩⟩⟩
+/-- A context admits a binary formula when it admits the first argument and the second argument's
+local context admits the second. -/
+theorem subset_support_filter_bin_iff {c : Connective} {F G : Formula Atom} {C : Set W} :
+    C ⊆ Function.support ((bin c F G).filter I) ↔
+      C ⊆ Function.support (F.filter I) ∧
+        c.localContext C (F.truth I) ⊆ Function.support (G.filter I) := by
+  have hl (w) : w ∈ c.localContext C (F.truth I) ↔ w ∈ C ∧
+      w ∈ c.localContext Set.univ (F.truth I) := by
+    cases c <;> simp [Connective.localContext]
+  simp only [Set.subset_def, Function.mem_support, filter_bin_ne_zero I, hl, and_imp]
+  exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw hc ↦ (h w hw).2 hc⟩,
+    fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
+
+private theorem mem_ofTrivalent_filter {F : Formula Atom} {C : Set W}
+    (h : C ⊆ Function.support (F.filter I)) :
+    C ∩ F.truth I ∈ CCP.Partial.ofTrivalent (F.filter I) C :=
+  (CCP.Partial.mem_ofTrivalent _ _ _).2 ⟨h, Set.ext fun w ↦ and_congr_right fun hw ↦ by
+    rw [filter_eq_ofProp I (h hw), SignType.ofProp_eq_one_iff]⟩
 
 private theorem ccp_spec (F : Formula Atom) : ∀ C : Set W,
-    ((F.ccp I).Admits C → (F.filter I).Admits C) ∧
-      ((F.filter I).Admits C → C ∩ F.truth I ∈ F.ccp I C) := by
+    ((F.ccp I).Admits C → C ⊆ Function.support (F.filter I)) ∧
+      (C ⊆ Function.support (F.filter I) → C ∩ F.truth I ∈ F.ccp I C) := by
   induction F with
-  | atom p => exact fun C ↦ ⟨id, fun h ↦ ⟨h, rfl⟩⟩
-  | trigger p p' =>
-    exact fun C ↦ ⟨id, fun h ↦ ⟨h, Set.ext fun w ↦
-      ⟨fun ⟨hc, hp'⟩ ↦ ⟨hc, h hc, hp'⟩, fun ⟨hc, _, hp'⟩ ↦ ⟨hc, hp'⟩⟩⟩⟩
+  | atom p => exact fun C ↦ ⟨id, mem_ofTrivalent_filter I⟩
+  | trigger p p' => exact fun C ↦ ⟨id, mem_ofTrivalent_filter I⟩
   | not F ih =>
-    refine fun C ↦ ⟨(ih C).1, fun h ↦ (Part.mem_map_iff _).2 ⟨_, (ih C).2 h, ?_⟩⟩
-    rw [Set.sdiff_self_inter, Set.sdiff_eq]; rfl
+    refine fun C ↦ ⟨fun h ↦ ?_, fun h ↦ (Part.mem_map_iff _).2 ⟨_, (ih C).2 ?_, ?_⟩⟩
+    · simpa [filter, Set.subset_def] using (ih C).1 h
+    · simpa [filter, Set.subset_def] using h
+    · rw [Set.sdiff_self_inter, Set.sdiff_eq]; rfl
   | bin c F G ihF ihG =>
     intro C
-    have assert {w} (hw : (F.filter I).presup w) := filter_assertion_iff I hw
+    rw [subset_support_filter_bin_iff I]
     cases c
-    · refine ⟨fun ⟨hφ, hψ⟩ ↦ ?_, fun h ↦ ?_⟩
+    · refine ⟨fun ⟨hφ, hψ⟩ ↦ ?_, fun ⟨hF, hG⟩ ↦ ?_⟩
       · have hF := (ihF C).1 hφ
         beta_reduce at hψ
         rw [Part.get_eq_of_mem ((ihF C).2 hF) hφ] at hψ
-        exact fun w hw ↦ ⟨hF hw, fun a ↦ (ihG _).1 hψ ⟨hw, (assert (hF hw)).1 a⟩⟩
-      · have hm := (ihG (C ∩ F.truth I)).2 fun w ⟨hw, t⟩ ↦ (h hw).2 ((assert (h hw).1).2 t)
-        rw [Set.inter_assoc] at hm
-        exact Part.mem_bind_iff.2 ⟨_, (ihF C).2 fun w hw ↦ (h hw).1, hm⟩
-    · refine ⟨fun ⟨hφ, hψ⟩ ↦ ?_, fun h ↦ ?_⟩
+        exact ⟨hF, (ihG _).1 hψ⟩
+      · have hm := (ihG _).2 hG
+        rw [Connective.localContext, Set.inter_assoc] at hm
+        exact Part.mem_bind_iff.2 ⟨_, (ihF C).2 hF, hm⟩
+    · refine ⟨fun ⟨hφ, hψ⟩ ↦ ?_, fun ⟨hF, hG⟩ ↦ ?_⟩
       · have hF := (ihF C).1 hφ
         beta_reduce at hψ
         rw [Part.get_eq_of_mem ((ihF C).2 hF) hφ] at hψ
-        exact fun w hw ↦ ⟨hF hw, fun a ↦ (ihG _).1 hψ ⟨hw, (assert (hF hw)).1 a⟩⟩
-      · refine Part.mem_bind_iff.2 ⟨_, (ihF C).2 fun w hw ↦ (h hw).1,
-          (Part.mem_map_iff _).2 ⟨_, (ihG _).2 fun w ⟨hw, t⟩ ↦ (h hw).2 ((assert (h hw).1).2 t),
-            ?_⟩⟩
+        exact ⟨hF, (ihG _).1 hψ⟩
+      · refine Part.mem_bind_iff.2 ⟨_, (ihF C).2 hF, (Part.mem_map_iff _).2 ⟨_, (ihG _).2 hG, ?_⟩⟩
         ext w
         simp only [Set.mem_sdiff, Set.mem_inter_iff, truth, Connective.eval, Set.mem_ofPred_eq]
         tauto
-    · refine ⟨fun ⟨hφ, hψ⟩ ↦ ?_, fun h ↦ ?_⟩
+    · have e : C \ (C ∩ F.truth I) = Connective.disj.localContext C (F.truth I) := by
+        rw [Set.sdiff_self_inter, Set.sdiff_eq]; rfl
+      refine ⟨fun ⟨hφ, hψ⟩ ↦ ?_, fun ⟨hF, hG⟩ ↦ ?_⟩
       · have hF := (ihF C).1 hφ
         beta_reduce at hψ
-        rw [Part.get_eq_of_mem ((ihF C).2 hF) hφ] at hψ
-        exact fun w hw ↦ ⟨hF hw, fun a ↦ (ihG _).1 hψ
-          ⟨hw, fun ⟨_, t⟩ ↦ a ((assert (hF hw)).2 t)⟩⟩
-      · refine Part.mem_bind_iff.2 ⟨_, (ihF C).2 fun w hw ↦ (h hw).1,
-          (Part.mem_map_iff _).2 ⟨_, (ihG _).2 fun w ⟨hw, ht⟩ ↦
-            (h hw).2 fun a ↦ ht ⟨hw, (assert (h hw).1).1 a⟩, ?_⟩⟩
+        rw [Part.get_eq_of_mem ((ihF C).2 hF) hφ, e] at hψ
+        exact ⟨hF, (ihG _).1 hψ⟩
+      · refine Part.mem_bind_iff.2 ⟨_, (ihF C).2 hF, (Part.mem_map_iff _).2
+          ⟨Connective.disj.localContext C (F.truth I) ∩ G.truth I,
+            by rw [e]; exact (ihG _).2 hG, ?_⟩⟩
         ext w
-        simp only [Set.mem_union, Set.mem_sdiff, Set.mem_inter_iff, truth, Connective.eval,
-          Set.mem_ofPred_eq]
+        simp only [Connective.localContext, Set.mem_union, Set.mem_inter_iff, Set.mem_compl_iff,
+          truth, Connective.eval, Set.mem_ofPred_eq]
         tauto
 
-/-- The context change potential of a formula admits a context iff the context entails the
-presupposition computed by the filtering connectives. -/
+/-- The context change potential of a formula admits a context iff the filtering evaluation is
+defined throughout the context. -/
 theorem admits_ccp_iff {F : Formula Atom} {C : Set W} :
-    (F.ccp I).Admits C ↔ (F.filter I).Admits C :=
+    (F.ccp I).Admits C ↔ C ⊆ Function.support (F.filter I) :=
   ⟨(ccp_spec I F C).1, fun h ↦ Part.dom_iff_mem.2 ⟨_, (ccp_spec I F C).2 h⟩⟩
 
 /-- The context change potential updates a context to its worlds at which the formula is

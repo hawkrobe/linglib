@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Conditionals.Counterfactual
-public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.BarLevFox2020
@@ -30,8 +30,8 @@ excluded into included.
 
 * `freeChoice`, `simpleDisjunction`: the modal and the plain disjunction.
 * `II_fcAlts`, `isInnocentlyExcludable_fcAlts_iff`: what free choice includes and excludes.
-* `only_presup`: free choice under `only` is presupposed.
-* `truthSet_only_eq`: without symmetric alternatives `only` agrees with the exclusive
+* `support_only_fcAlts`: free choice under `only` is presupposed.
+* `posExt_only_eq`: without symmetric alternatives `only` agrees with the exclusive
   `Focus.Particles.only`.
 * `universalFreeChoice`, `negativeUniversalFreeChoice`, `freeChoiceOverUniversal`,
   `simplificationMost`: instances of `Exhaustification.exhIEII_quantified`.
@@ -54,7 +54,7 @@ excluded into included.
 
 namespace BarLevFox2020
 
-open Exhaustification ModalLogic Presupposition SetRel
+open Exhaustification ModalLogic SetRel
 
 variable {W : Type*}
 
@@ -109,7 +109,12 @@ theorem isInnocentlyExcludable_fcAlts_iff {q : Set W} :
     IsInnocentlyExcludable (fcAlts R a b) (R.preimage (a ∪ b)) q ↔ q = R.preimage (a ∩ b) :=
   isInnocentlyExcludable_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
 
-omit hF in
+end FreeChoice
+
+section SimpleDisjunction
+
+variable {a b : Set W}
+
 /-- Without the modal the conjunctive alternative is the conjunction of the disjunct
 alternatives, so exhaustification denies it and includes neither disjunct. -/
 theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
@@ -117,41 +122,46 @@ theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w �
   exhIEII_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
     (h₂.imp fun _ h ↦ ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
-omit hF in
 /-- The cell of simple disjunction is contradictory, so cell identification does not apply. -/
 theorem simpleDisjunction_cell (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
     cell {a ∪ b, a, b, a ∩ b} (a ∪ b) = ∅ :=
   cell_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
     (h₂.imp fun _ h ↦ ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
-end FreeChoice
+end SimpleDisjunction
 
 /-! ### `only` -/
 
+open Classical in
 /-- `only` presupposes the innocently includable alternatives and asserts that the innocently
 excludable ones are false (32). -/
-def only (ALT : Set (Set W)) (φ : Set W) : PartialProp W where
-  presup w := ∀ r ∈ II ALT φ, r w
-  assertion w := ∀ q, IsInnocentlyExcludable ALT φ q → ¬ q w
+noncomputable def only (ALT : Set (Set W)) (φ : Set W) : W → SignType :=
+  {w | ∀ r ∈ II ALT φ, w ∈ r}.indicator
+    fun w ↦ SignType.ofProp (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q)
 
 /-- Free choice under `only` is presupposed, since `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
-theorem only_presup {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitnesses R a b) (w : W) :
-    (only (fcAlts R a b) (R.preimage (a ∪ b))).presup w ↔ w ∈ R.preimage a ∩ R.preimage b := by
-  simp only [only, II_fcAlts hF, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
-    forall_eq]
+theorem support_only_fcAlts {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitnesses R a b) :
+    Function.support (only (fcAlts R a b) (R.preimage (a ∪ b))) =
+      R.preimage a ∩ R.preimage b := by
+  ext w
+  simp only [Function.mem_support, ne_eq, only, Set.indicator_apply_eq_zero,
+    SignType.ofProp_ne_zero, imp_false, not_not, Set.mem_ofPred_eq, II_fcAlts hF,
+    Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
 /-- Where the prejacent is the only includable alternative and the excludable ones are exactly
 those it does not entail, `only` is true at the same worlds as the exclusive
 `Focus.Particles.only` on the entailment scale, the entry (29b) that Innocent Inclusion
 revises. -/
-theorem truthSet_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
+theorem posExt_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
     (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q) (hII : II ALT φ = {φ}) :
-    (only ALT φ).truthSet = (Focus.Particles.only (· ⊆ ·) ALT φ).truthSet := by
-  rw [Focus.Particles.truthSet_only_subset hφ]
+    Trivalent.posExt (only ALT φ) =
+      Trivalent.posExt (Focus.Particles.only (· ⊆ ·) ALT φ) := by
+  rw [Focus.Particles.posExt_only_subset hφ]
   ext w
-  simp only [PartialProp.mem_truthSet, PartialProp.holds, only, hII, Set.mem_singleton_iff,
-    forall_eq, hIE, and_imp, mem_exh]
+  simp only [Trivalent.mem_posExt, only, Trivalent.indicator_apply_eq_one_iff,
+    SignType.ofProp_eq_one_iff, Set.mem_ofPred_eq, hII, Set.mem_singleton_iff, forall_eq, hIE,
+    and_imp, mem_exh]
   exact ⟨fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hwq ↦ by_contra fun hne ↦ h q hq hne hwq⟩,
     fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hne hwq ↦ hne (h q hq hwq)⟩⟩
 

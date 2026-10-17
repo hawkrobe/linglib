@@ -50,7 +50,7 @@ ratings are not formalized; its stimuli are in `Data.Examples.WangDavidson2026`.
 
 namespace WangDavidson2026
 
-open Exhaustification Exhaustification.Trivalent Presupposition DynamicSemantics PartialUpdate
+open Exhaustification Exhaustification.Trivalent DynamicSemantics PartialUpdate
 open CCP.Partial
 
 /-! ### Filtering by a trivalent connective -/
@@ -138,15 +138,15 @@ theorem not_filters_george_xor : ¬ Filters (george (· ^^ ·)) := george_xor �
 
 section Dynamic
 
-variable {W : Type*} (α β : PartialProp W) {s : Set W}
+variable {W : Type*} (α β : W → SignType) {s : Set W}
 
 /-- Update with a proposition or with its negation. -/
-def lit : Bool → PartialProp W → CCP.Partial W
-  | true, p => ofPartialProp p
-  | false, p => CCP.Partial.neg (ofPartialProp p)
+def lit : Bool → (W → SignType) → CCP.Partial W
+  | true, p => ofTrivalent p
+  | false, p => CCP.Partial.neg (ofTrivalent p)
 
 /-- The context `C[p][q]`, for `p` and `q` propositions or their negations. -/
-def chain (b₁ : Bool) (p : PartialProp W) (b₂ : Bool) (q : PartialProp W) : CCP.Partial W :=
+def chain (b₁ : Bool) (p : W → SignType) (b₂ : Bool) (q : W → SignType) : CCP.Partial W :=
   seq (lit b₁ p) (lit b₂ q)
 
 /-- The union of two updates, defined when both are. -/
@@ -169,10 +169,9 @@ def xorCCPs : List (CCP.Partial W) :=
    diff (chain true β true α) (chain false β false α)]
 
 /-- A presupposition satisfied on `C[α]` and on `C[¬α]` is satisfied on `C`. -/
-theorem admits_of_split (h₁ : β.Admits {w ∈ s | α.assertion w})
-    (h₂ : β.Admits (s \ {w ∈ s | α.assertion w})) :
-    β.Admits s := fun w hw ↦ by
-  by_cases ha : α.assertion w
+theorem subset_support_of_split (h₁ : {w ∈ s | α w = 1} ⊆ Function.support β)
+    (h₂ : s \ {w ∈ s | α w = 1} ⊆ Function.support β) : s ⊆ Function.support β := fun w hw ↦ by
+  by_cases ha : α w = 1
   · exact h₁ ⟨hw, ha⟩
   · exact h₂ ⟨hw, fun h ↦ ha h.2⟩
 
@@ -180,29 +179,28 @@ theorem admits_of_split (h₁ : β.Admits {w ∈ s | α.assertion w})
 satisfying both presuppositions, so exclusive disjunction does not filter. -/
 theorem xorCCPs_admits :
     ∀ u ∈ xorCCPs α β, u.Admits s →
-      α.Admits s ∧ β.Admits s := by
+      s ⊆ Function.support α ∧ s ⊆ Function.support β := by
   simp only [xorCCPs, List.mem_cons, List.mem_nil_iff, or_false]
   rintro u (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl) ⟨⟨h₁, h₂⟩, ⟨h₃, h₄⟩⟩
   · exact ⟨h₁, h₃⟩
   · exact ⟨h₁, h₃⟩
-  · exact ⟨h₁, admits_of_split α β h₂ h₄⟩
-  · exact ⟨admits_of_split β α h₂ h₄, h₁⟩
+  · exact ⟨h₁, subset_support_of_split α β h₂ h₄⟩
+  · exact ⟨subset_support_of_split β α h₂ h₄, h₁⟩
   · exact ⟨h₁, h₃⟩
   · exact ⟨h₁, h₃⟩
-  · exact ⟨h₁, admits_of_split α β h₂ h₄⟩
-  · exact ⟨admits_of_split β α h₂ h₄, h₁⟩
+  · exact ⟨h₁, subset_support_of_split α β h₂ h₄⟩
+  · exact ⟨subset_support_of_split β α h₂ h₄, h₁⟩
 
 /-- Inclusive dynamic disjunction, by contrast, filters, since a context can admit `α ∨ β`
 without satisfying `β`'s presupposition. -/
 theorem exists_disj_admits_not_admits :
-    ∃ (α β : PartialProp Bool), (disj (ofPartialProp α) (ofPartialProp β)).Admits Set.univ ∧
-      ¬ β.Admits Set.univ := by
-  refine ⟨{ presup := fun _ ↦ True, assertion := (· = true) },
-    { presup := (· = false), assertion := fun _ ↦ True }, ⟨fun _ _ ↦ trivial, ?_⟩, ?_⟩
-  · rintro (_ | _) hw
-    · rfl
-    · exact absurd ⟨trivial, rfl⟩ hw.2
-  · exact fun h ↦ Bool.noConfusion (h (Set.mem_univ true))
+    ∃ α β : Bool → SignType, (disj (ofTrivalent α) (ofTrivalent β)).Admits Set.univ ∧
+      ¬ Set.univ ⊆ Function.support β := by
+  refine ⟨fun w ↦ SignType.ofProp (w = true), {w | w = false}.indicator 1,
+    ⟨fun _ _ ↦ by simp, ?_⟩, fun h ↦ h (Set.mem_univ true) (by simp)⟩
+  rintro (_ | _) hw
+  · simp
+  · exact absurd ⟨trivial, by simp⟩ hw.2
 
 end Dynamic
 
