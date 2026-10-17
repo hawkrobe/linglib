@@ -54,10 +54,11 @@ positive, is ABA without any homophony.
   every one is contiguous but the Basque doublet (143b), no triple is AAB,
   and the ABC ones are the triples (31) and p. 112 name.
 * `quantifier_isContiguous_iff`, `bulgarian_armenian_eq_abb_comp`,
-  `karelian_sources`: of the quantifier triples of Table 4.2, all but the
-  three of (165) are contiguous; the Bulgarian and Armenian ones are ABB
-  through a superlative embedding the positive, and the Karelian one is
-  contradicted by the triple (170).
+  `karelian_sources`, `exists_ungrammatical_of_not_isContiguous`: of the
+  quantifier triples of Table 4.2, all but the three of (165) are
+  contiguous; the Bulgarian and Armenian ones are ABB through a superlative
+  embedding the positive, and the Karelian one is contradicted by the
+  triple (170), its superlative rejected by the questionnaire.
 * `csg1_of_ne_basque`, `basque_not_realized`: CSG1 holds of every other
   triple, and no antihomophonous vocabulary realizes the Basque one.
 * `bearsOnCSG_names`, `eurasia_of_suppletion`,
@@ -713,7 +714,7 @@ Armenian and Bulgarian (165). Bulgarian *naj* is a freestanding particle (pp. 12
 *amena-* a compound with *amen* 'all' (pp. 128-129), so their superlatives embed the positive, as
 Russian *samyj plox-oj* does. The Karelian ABA comes from Zajkov's dictionary; the online
 dictionary gives the ABB triple (170), which a questionnaire of seven speakers bears out
-(pp. 129-131). -/
+(pp. 129-131), none of whom gave or recognized Zajkov's superlative. -/
 
 /-- Every quantifier triple but the three of (165) is contiguous. -/
 theorem quantifier_isContiguous_iff : ∀ r ∈ Paradigms.rootClasses, Quantifier r →
@@ -735,6 +736,17 @@ theorem karelian_sources :
     Setoid.ker (rootPattern Paradigms.krl_many.roots) = Setoid.ker Paradigm.aba ∧
       Setoid.ker (rootPattern Paradigms.krl_many_onego.roots) = Setoid.ker Paradigm.abb := by
   decide
+
+/-- The one quantifier triple that is not contiguous and that no parse makes ABB, Zajkov's
+Karelian (165a), has a form another source rejects in its cell: no respondent of the
+questionnaire gave or recognized *äij-in* (p. 130). -/
+theorem exists_ungrammatical_of_not_isContiguous : ∀ r ∈ Paradigms.rootClasses, Quantifier r →
+    ¬ IsContiguous (rootPattern r) →
+    r.id ∉ [Paradigms.hye_many.roots.id, Paradigms.bul_many.roots.id] →
+    ∃ f ∈ r.forms, ∃ g ∈ Paradigms.forms, g.judgment = .ungrammatical ∧ g.cell = f.cell ∧
+      g.form = f.form ∧ g.lexeme.id = r.lexeme.id := by
+  simp only [isContiguous_fin_three_iff]
+  decide +kernel
 
 /-! ### The nanosyntax reading
 

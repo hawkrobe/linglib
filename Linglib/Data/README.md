@@ -65,8 +65,14 @@ its gloss.
 Per-paper paradigm data in the shape of the Paralex standard for lexicons of
 inflected forms: a `lexemes` table, a `cells` table whose cells are Universal
 Dependencies feature bundles (`Degree=Cmp`), and a `forms` table giving each
-lexeme's form in a cell with the source's segmentation. A linglib extension
-table `root_classes` records a source's judgment of which cells of a lexeme's
+lexeme's form in a cell with the source's segmentation and, in a linglib
+extension column after CLDF's `grammaticalityJudgement`, the source's
+`judgment` of the form (`ungrammatical` for a form a source rejects, so
+disagreeing sources sit side by side). A linglib extension table
+`paradigms` records the columns a source prints, the forms it gives a lexeme
+in some cells (one grammar's declension, or a colloquial one beside the
+literary), and a linglib extension
+table `root_classes`, a paradigm with a source's classes, records a source's judgment of which cells of a lexeme's
 forms share a root, citing where the source states it, since root identity
 (*better*, *best*) is not identity of strings. Comments and cognate lists are
 validated but not emitted.

@@ -1,0 +1,7804 @@
+{
+  "bibkey": "caha-2009",
+  "description": "The Slavic declensions of chapter 8, each a column of one of Caha's tables along the Slavic sequence nominative, accusative, genitive, prepositional, dative, instrumental, with the segmentation the tables print.",
+  "cells": [
+    {
+      "cell_id": "nom_sg",
+      "label": "nominative singular",
+      "ud": "Case=Nom|Number=Sing"
+    },
+    {
+      "cell_id": "nom_sg_f",
+      "label": "nominative singular fem",
+      "ud": "Case=Nom|Number=Sing|Gender=Fem"
+    },
+    {
+      "cell_id": "nom_sg_m",
+      "label": "nominative singular masc",
+      "ud": "Case=Nom|Number=Sing|Gender=Masc"
+    },
+    {
+      "cell_id": "nom_sg_n",
+      "label": "nominative singular neut",
+      "ud": "Case=Nom|Number=Sing|Gender=Neut"
+    },
+    {
+      "cell_id": "acc_sg",
+      "label": "accusative singular",
+      "ud": "Case=Acc|Number=Sing"
+    },
+    {
+      "cell_id": "acc_sg_f",
+      "label": "accusative singular fem",
+      "ud": "Case=Acc|Number=Sing|Gender=Fem"
+    },
+    {
+      "cell_id": "acc_sg_m",
+      "label": "accusative singular masc",
+      "ud": "Case=Acc|Number=Sing|Gender=Masc"
+    },
+    {
+      "cell_id": "acc_sg_n",
+      "label": "accusative singular neut",
+      "ud": "Case=Acc|Number=Sing|Gender=Neut"
+    },
+    {
+      "cell_id": "gen_sg",
+      "label": "genitive singular",
+      "ud": "Case=Gen|Number=Sing"
+    },
+    {
+      "cell_id": "gen_sg_f",
+      "label": "genitive singular fem",
+      "ud": "Case=Gen|Number=Sing|Gender=Fem"
+    },
+    {
+      "cell_id": "gen_sg_m",
+      "label": "genitive singular masc",
+      "ud": "Case=Gen|Number=Sing|Gender=Masc"
+    },
+    {
+      "cell_id": "gen_sg_n",
+      "label": "genitive singular neut",
+      "ud": "Case=Gen|Number=Sing|Gender=Neut"
+    },
+    {
+      "cell_id": "prep_sg",
+      "label": "prepositional singular",
+      "ud": "Case=Loc|Number=Sing"
+    },
+    {
+      "cell_id": "prep_sg_f",
+      "label": "prepositional singular fem",
+      "ud": "Case=Loc|Number=Sing|Gender=Fem"
+    },
+    {
+      "cell_id": "prep_sg_m",
+      "label": "prepositional singular masc",
+      "ud": "Case=Loc|Number=Sing|Gender=Masc"
+    },
+    {
+      "cell_id": "prep_sg_n",
+      "label": "prepositional singular neut",
+      "ud": "Case=Loc|Number=Sing|Gender=Neut"
+    },
+    {
+      "cell_id": "dat_sg",
+      "label": "dative singular",
+      "ud": "Case=Dat|Number=Sing"
+    },
+    {
+      "cell_id": "dat_sg_f",
+      "label": "dative singular fem",
+      "ud": "Case=Dat|Number=Sing|Gender=Fem"
+    },
+    {
+      "cell_id": "dat_sg_m",
+      "label": "dative singular masc",
+      "ud": "Case=Dat|Number=Sing|Gender=Masc"
+    },
+    {
+      "cell_id": "dat_sg_n",
+      "label": "dative singular neut",
+      "ud": "Case=Dat|Number=Sing|Gender=Neut"
+    },
+    {
+      "cell_id": "ins_sg",
+      "label": "instrumental singular",
+      "ud": "Case=Ins|Number=Sing"
+    },
+    {
+      "cell_id": "ins_sg_f",
+      "label": "instrumental singular fem",
+      "ud": "Case=Ins|Number=Sing|Gender=Fem"
+    },
+    {
+      "cell_id": "ins_sg_m",
+      "label": "instrumental singular masc",
+      "ud": "Case=Ins|Number=Sing|Gender=Masc"
+    },
+    {
+      "cell_id": "ins_sg_n",
+      "label": "instrumental singular neut",
+      "ud": "Case=Ins|Number=Sing|Gender=Neut"
+    },
+    {
+      "cell_id": "nom_du",
+      "label": "nominative dual",
+      "ud": "Case=Nom|Number=Dual"
+    },
+    {
+      "cell_id": "nom_du_m",
+      "label": "nominative dual masc",
+      "ud": "Case=Nom|Number=Dual|Gender=Masc"
+    },
+    {
+      "cell_id": "acc_du",
+      "label": "accusative dual",
+      "ud": "Case=Acc|Number=Dual"
+    },
+    {
+      "cell_id": "acc_du_m",
+      "label": "accusative dual masc",
+      "ud": "Case=Acc|Number=Dual|Gender=Masc"
+    },
+    {
+      "cell_id": "gen_du",
+      "label": "genitive dual",
+      "ud": "Case=Gen|Number=Dual"
+    },
+    {
+      "cell_id": "gen_du_m",
+      "label": "genitive dual masc",
+      "ud": "Case=Gen|Number=Dual|Gender=Masc"
+    },
+    {
+      "cell_id": "prep_du",
+      "label": "prepositional dual",
+      "ud": "Case=Loc|Number=Dual"
+    },
+    {
+      "cell_id": "prep_du_m",
+      "label": "prepositional dual masc",
+      "ud": "Case=Loc|Number=Dual|Gender=Masc"
+    },
+    {
+      "cell_id": "dat_du",
+      "label": "dative dual",
+      "ud": "Case=Dat|Number=Dual"
+    },
+    {
+      "cell_id": "dat_du_m",
+      "label": "dative dual masc",
+      "ud": "Case=Dat|Number=Dual|Gender=Masc"
+    },
+    {
+      "cell_id": "ins_du",
+      "label": "instrumental dual",
+      "ud": "Case=Ins|Number=Dual"
+    },
+    {
+      "cell_id": "ins_du_m",
+      "label": "instrumental dual masc",
+      "ud": "Case=Ins|Number=Dual|Gender=Masc"
+    },
+    {
+      "cell_id": "nom_pl",
+      "label": "nominative plural",
+      "ud": "Case=Nom|Number=Plur"
+    },
+    {
+      "cell_id": "nom_pl_f",
+      "label": "nominative plural fem",
+      "ud": "Case=Nom|Number=Plur|Gender=Fem"
+    },
+    {
+      "cell_id": "nom_pl_m",
+      "label": "nominative plural masc",
+      "ud": "Case=Nom|Number=Plur|Gender=Masc"
+    },
+    {
+      "cell_id": "nom_pl_n",
+      "label": "nominative plural neut",
+      "ud": "Case=Nom|Number=Plur|Gender=Neut"
+    },
+    {
+      "cell_id": "acc_pl",
+      "label": "accusative plural",
+      "ud": "Case=Acc|Number=Plur"
+    },
+    {
+      "cell_id": "acc_pl_f",
+      "label": "accusative plural fem",
+      "ud": "Case=Acc|Number=Plur|Gender=Fem"
+    },
+    {
+      "cell_id": "acc_pl_m",
+      "label": "accusative plural masc",
+      "ud": "Case=Acc|Number=Plur|Gender=Masc"
+    },
+    {
+      "cell_id": "acc_pl_n",
+      "label": "accusative plural neut",
+      "ud": "Case=Acc|Number=Plur|Gender=Neut"
+    },
+    {
+      "cell_id": "gen_pl",
+      "label": "genitive plural",
+      "ud": "Case=Gen|Number=Plur"
+    },
+    {
+      "cell_id": "gen_pl_f",
+      "label": "genitive plural fem",
+      "ud": "Case=Gen|Number=Plur|Gender=Fem"
+    },
+    {
+      "cell_id": "gen_pl_m",
+      "label": "genitive plural masc",
+      "ud": "Case=Gen|Number=Plur|Gender=Masc"
+    },
+    {
+      "cell_id": "gen_pl_n",
+      "label": "genitive plural neut",
+      "ud": "Case=Gen|Number=Plur|Gender=Neut"
+    },
+    {
+      "cell_id": "prep_pl",
+      "label": "prepositional plural",
+      "ud": "Case=Loc|Number=Plur"
+    },
+    {
+      "cell_id": "prep_pl_f",
+      "label": "prepositional plural fem",
+      "ud": "Case=Loc|Number=Plur|Gender=Fem"
+    },
+    {
+      "cell_id": "prep_pl_m",
+      "label": "prepositional plural masc",
+      "ud": "Case=Loc|Number=Plur|Gender=Masc"
+    },
+    {
+      "cell_id": "prep_pl_n",
+      "label": "prepositional plural neut",
+      "ud": "Case=Loc|Number=Plur|Gender=Neut"
+    },
+    {
+      "cell_id": "dat_pl",
+      "label": "dative plural",
+      "ud": "Case=Dat|Number=Plur"
+    },
+    {
+      "cell_id": "dat_pl_f",
+      "label": "dative plural fem",
+      "ud": "Case=Dat|Number=Plur|Gender=Fem"
+    },
+    {
+      "cell_id": "dat_pl_m",
+      "label": "dative plural masc",
+      "ud": "Case=Dat|Number=Plur|Gender=Masc"
+    },
+    {
+      "cell_id": "dat_pl_n",
+      "label": "dative plural neut",
+      "ud": "Case=Dat|Number=Plur|Gender=Neut"
+    },
+    {
+      "cell_id": "ins_pl",
+      "label": "instrumental plural",
+      "ud": "Case=Ins|Number=Plur"
+    },
+    {
+      "cell_id": "ins_pl_f",
+      "label": "instrumental plural fem",
+      "ud": "Case=Ins|Number=Plur|Gender=Fem"
+    },
+    {
+      "cell_id": "ins_pl_m",
+      "label": "instrumental plural masc",
+      "ud": "Case=Ins|Number=Plur|Gender=Masc"
+    },
+    {
+      "cell_id": "ins_pl_n",
+      "label": "instrumental plural neut",
+      "ud": "Case=Ins|Number=Plur|Gender=Neut"
+    }
+  ],
+  "lexemes": [
+    {
+      "lexeme_id": "srp_sin",
+      "language_ID": "sout1528",
+      "label": "sîn",
+      "meaning": "son"
+    },
+    {
+      "lexeme_id": "srp_grad",
+      "language_ID": "sout1528",
+      "label": "grâd",
+      "meaning": "city"
+    },
+    {
+      "lexeme_id": "srp_muz",
+      "language_ID": "sout1528",
+      "label": "muž",
+      "meaning": "man"
+    },
+    {
+      "lexeme_id": "srp_selo",
+      "language_ID": "sout1528",
+      "label": "sèlo",
+      "meaning": "village"
+    },
+    {
+      "lexeme_id": "srp_srce",
+      "language_ID": "sout1528",
+      "label": "srce",
+      "meaning": "heart"
+    },
+    {
+      "lexeme_id": "srp_ovca",
+      "language_ID": "sout1528",
+      "label": "òvca",
+      "meaning": "sheep"
+    },
+    {
+      "lexeme_id": "srp_smrt",
+      "language_ID": "sout1528",
+      "label": "smȑt",
+      "meaning": "death"
+    },
+    {
+      "lexeme_id": "srp_ja",
+      "language_ID": "sout1528",
+      "label": "ja",
+      "meaning": "I"
+    },
+    {
+      "lexeme_id": "srp_ti",
+      "language_ID": "sout1528",
+      "label": "ti",
+      "meaning": "you"
+    },
+    {
+      "lexeme_id": "srp_on",
+      "language_ID": "sout1528",
+      "label": "on/ono",
+      "meaning": "he, it"
+    },
+    {
+      "lexeme_id": "srp_ona",
+      "language_ID": "sout1528",
+      "label": "ona",
+      "meaning": "she"
+    },
+    {
+      "lexeme_id": "srp_mi",
+      "language_ID": "sout1528",
+      "label": "mi",
+      "meaning": "we"
+    },
+    {
+      "lexeme_id": "srp_vi",
+      "language_ID": "sout1528",
+      "label": "vi",
+      "meaning": "you"
+    },
+    {
+      "lexeme_id": "srp_oni",
+      "language_ID": "sout1528",
+      "label": "oni/ona/one",
+      "meaning": "they"
+    },
+    {
+      "lexeme_id": "slv_miza",
+      "language_ID": "slov1268",
+      "label": "mízi",
+      "meaning": "table"
+    },
+    {
+      "lexeme_id": "slv_breskev",
+      "language_ID": "slov1268",
+      "label": "brêskev",
+      "meaning": "peach"
+    },
+    {
+      "lexeme_id": "slv_jabolko",
+      "language_ID": "slov1268",
+      "label": "jábolko",
+      "meaning": "apple"
+    },
+    {
+      "lexeme_id": "slv_kmet",
+      "language_ID": "slov1268",
+      "label": "kmèta",
+      "meaning": "farmer"
+    },
+    {
+      "lexeme_id": "slv_jaz",
+      "language_ID": "slov1268",
+      "label": "jàz",
+      "meaning": "I"
+    },
+    {
+      "lexeme_id": "slv_moj",
+      "language_ID": "slov1268",
+      "label": "mój",
+      "meaning": "my"
+    },
+    {
+      "lexeme_id": "slv_dva",
+      "language_ID": "slov1268",
+      "label": "dvâ",
+      "meaning": "two"
+    },
+    {
+      "lexeme_id": "slv_mi",
+      "language_ID": "slov1268",
+      "label": "mî",
+      "meaning": "we"
+    },
+    {
+      "lexeme_id": "slv_midva",
+      "language_ID": "slov1268",
+      "label": "mîdva",
+      "meaning": "we two"
+    },
+    {
+      "lexeme_id": "slv_nit",
+      "language_ID": "slov1268",
+      "label": "nìt",
+      "meaning": "thread"
+    },
+    {
+      "lexeme_id": "slv_gospa",
+      "language_ID": "slov1268",
+      "label": "gospá",
+      "meaning": "lady"
+    },
+    {
+      "lexeme_id": "slv_dan",
+      "language_ID": "slov1268",
+      "label": "dní",
+      "meaning": "day"
+    },
+    {
+      "lexeme_id": "slv_racunovodja",
+      "language_ID": "slov1268",
+      "label": "računovodja",
+      "meaning": "accountant"
+    },
+    {
+      "lexeme_id": "slv_ta",
+      "language_ID": "slov1268",
+      "label": "ta",
+      "meaning": "this"
+    },
+    {
+      "lexeme_id": "slv_potnik",
+      "language_ID": "slov1268",
+      "label": "pótnik",
+      "meaning": "traveller"
+    },
+    {
+      "lexeme_id": "slv_tisti",
+      "language_ID": "slov1268",
+      "label": "tîsto",
+      "meaning": "that"
+    },
+    {
+      "lexeme_id": "slv_vas",
+      "language_ID": "slov1268",
+      "label": "váše",
+      "meaning": "your"
+    },
+    {
+      "lexeme_id": "ces_okno",
+      "language_ID": "czec1258",
+      "label": "okno",
+      "meaning": "window"
+    },
+    {
+      "lexeme_id": "ces_ulice",
+      "language_ID": "czec1258",
+      "label": "ulice",
+      "meaning": "street"
+    },
+    {
+      "lexeme_id": "ces_muz",
+      "language_ID": "czec1258",
+      "label": "muži",
+      "meaning": "man"
+    },
+    {
+      "lexeme_id": "ces_dobry",
+      "language_ID": "czec1258",
+      "label": "dobrý",
+      "meaning": "good"
+    },
+    {
+      "lexeme_id": "ces_vetsi",
+      "language_ID": "czec1258",
+      "label": "větší",
+      "meaning": "bigger"
+    },
+    {
+      "lexeme_id": "ces_oba",
+      "language_ID": "czec1258",
+      "label": "oba",
+      "meaning": "both"
+    },
+    {
+      "lexeme_id": "ces_stroj",
+      "language_ID": "czec1258",
+      "label": "stroj",
+      "meaning": "machine"
+    },
+    {
+      "lexeme_id": "ces_kost",
+      "language_ID": "czec1258",
+      "label": "kosti",
+      "meaning": "bone"
+    },
+    {
+      "lexeme_id": "ces_ten",
+      "language_ID": "czec1258",
+      "label": "ten",
+      "meaning": "that"
+    },
+    {
+      "lexeme_id": "ces_vila",
+      "language_ID": "czec1258",
+      "label": "vila",
+      "meaning": "villa"
+    },
+    {
+      "lexeme_id": "ces_misa",
+      "language_ID": "czec1258",
+      "label": "Míša",
+      "meaning": "Michelle"
+    },
+    {
+      "lexeme_id": "ces_vul",
+      "language_ID": "czec1258",
+      "label": "vůl",
+      "meaning": "ox"
+    },
+    {
+      "lexeme_id": "ces_hoch",
+      "language_ID": "czec1258",
+      "label": "hoch",
+      "meaning": "boy"
+    },
+    {
+      "lexeme_id": "ces_pan",
+      "language_ID": "czec1258",
+      "label": "pán",
+      "meaning": "sir"
+    },
+    {
+      "lexeme_id": "ces_my",
+      "language_ID": "czec1258",
+      "label": "my",
+      "meaning": "we"
+    },
+    {
+      "lexeme_id": "ces_ona",
+      "language_ID": "czec1258",
+      "label": "ona",
+      "meaning": "she"
+    },
+    {
+      "lexeme_id": "ces_nase",
+      "language_ID": "czec1258",
+      "label": "náš",
+      "meaning": "our"
+    },
+    {
+      "lexeme_id": "ces_zatez",
+      "language_ID": "czec1258",
+      "label": "zátěž",
+      "meaning": "stress"
+    },
+    {
+      "lexeme_id": "ces_zena",
+      "language_ID": "czec1258",
+      "label": "žena",
+      "meaning": "woman"
+    },
+    {
+      "lexeme_id": "ces_kluk",
+      "language_ID": "czec1258",
+      "label": "kluk",
+      "meaning": "boy"
+    },
+    {
+      "lexeme_id": "ces_pisen",
+      "language_ID": "czec1258",
+      "label": "píseň",
+      "meaning": "song"
+    },
+    {
+      "lexeme_id": "ces_hrad",
+      "language_ID": "czec1258",
+      "label": "hrad",
+      "meaning": "castle"
+    },
+    {
+      "lexeme_id": "ces_mesto",
+      "language_ID": "czec1258",
+      "label": "město",
+      "meaning": "city"
+    },
+    {
+      "lexeme_id": "ces_ono",
+      "language_ID": "czec1258",
+      "label": "ono",
+      "meaning": "it"
+    },
+    {
+      "lexeme_id": "ces_oni",
+      "language_ID": "czec1258",
+      "label": "oni",
+      "meaning": "they"
+    },
+    {
+      "lexeme_id": "ces_dva",
+      "language_ID": "czec1258",
+      "label": "dva",
+      "meaning": "two"
+    },
+    {
+      "lexeme_id": "ces_pet",
+      "language_ID": "czec1258",
+      "label": "pět",
+      "meaning": "five"
+    },
+    {
+      "lexeme_id": "slk_ona",
+      "language_ID": "slov1269",
+      "label": "ona",
+      "meaning": "she"
+    },
+    {
+      "lexeme_id": "slk_nase",
+      "language_ID": "slov1269",
+      "label": "náš",
+      "meaning": "our"
+    },
+    {
+      "lexeme_id": "slk_ulica",
+      "language_ID": "slov1269",
+      "label": "ulica",
+      "meaning": "street"
+    },
+    {
+      "lexeme_id": "slk_tlac",
+      "language_ID": "slov1269",
+      "label": "tlač",
+      "meaning": "press"
+    },
+    {
+      "lexeme_id": "ukr_kraj",
+      "language_ID": "ukra1253",
+      "label": "kraj",
+      "meaning": "region"
+    },
+    {
+      "lexeme_id": "ukr_velykyj",
+      "language_ID": "ukra1253",
+      "label": "velíkıj",
+      "meaning": "big"
+    },
+    {
+      "lexeme_id": "ukr_znannja",
+      "language_ID": "ukra1253",
+      "label": "znannjá",
+      "meaning": "knowledge"
+    },
+    {
+      "lexeme_id": "ukr_my",
+      "language_ID": "ukra1253",
+      "label": "mı",
+      "meaning": "we"
+    },
+    {
+      "lexeme_id": "ukr_kasyr",
+      "language_ID": "ukra1253",
+      "label": "kasír",
+      "meaning": "cashier"
+    },
+    {
+      "lexeme_id": "ukr_maty",
+      "language_ID": "ukra1253",
+      "label": "mátı",
+      "meaning": "mother"
+    },
+    {
+      "lexeme_id": "ukr_ruka",
+      "language_ID": "ukra1253",
+      "label": "ruká",
+      "meaning": "hand"
+    },
+    {
+      "lexeme_id": "ukr_ja",
+      "language_ID": "ukra1253",
+      "label": "ja",
+      "meaning": "I"
+    },
+    {
+      "lexeme_id": "ukr_sto",
+      "language_ID": "ukra1253",
+      "label": "sto",
+      "meaning": "hundred"
+    },
+    {
+      "lexeme_id": "ukr_bezkrajij",
+      "language_ID": "ukra1253",
+      "label": "bezkrajij",
+      "meaning": "endless"
+    }
+  ],
+  "forms": [
+    {
+      "form_id": "srp_sin_sg_nom",
+      "lexeme": "srp_sin",
+      "cell": "nom_sg",
+      "analysed_orth_form": "sîn",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_sg_acc",
+      "lexeme": "srp_sin",
+      "cell": "acc_sg",
+      "analysed_orth_form": "sîna",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_sg_gen",
+      "lexeme": "srp_sin",
+      "cell": "gen_sg",
+      "analysed_orth_form": "sîna",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_sg_prep",
+      "lexeme": "srp_sin",
+      "cell": "prep_sg",
+      "analysed_orth_form": "sînu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_sg_dat",
+      "lexeme": "srp_sin",
+      "cell": "dat_sg",
+      "analysed_orth_form": "sînu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_sg_ins",
+      "lexeme": "srp_sin",
+      "cell": "ins_sg",
+      "analysed_orth_form": "sînom",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_sg_nom",
+      "lexeme": "srp_grad",
+      "cell": "nom_sg",
+      "analysed_orth_form": "grâd",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_sg_acc",
+      "lexeme": "srp_grad",
+      "cell": "acc_sg",
+      "analysed_orth_form": "grâd",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_sg_gen",
+      "lexeme": "srp_grad",
+      "cell": "gen_sg",
+      "analysed_orth_form": "grâda",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_sg_prep",
+      "lexeme": "srp_grad",
+      "cell": "prep_sg",
+      "analysed_orth_form": "grádu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_sg_dat",
+      "lexeme": "srp_grad",
+      "cell": "dat_sg",
+      "analysed_orth_form": "grâdu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_sg_ins",
+      "lexeme": "srp_grad",
+      "cell": "ins_sg",
+      "analysed_orth_form": "grâdom",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_sg_nom",
+      "lexeme": "srp_muz",
+      "cell": "nom_sg",
+      "analysed_orth_form": "muž",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_sg_acc",
+      "lexeme": "srp_muz",
+      "cell": "acc_sg",
+      "analysed_orth_form": "muža",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_sg_gen",
+      "lexeme": "srp_muz",
+      "cell": "gen_sg",
+      "analysed_orth_form": "muža",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_sg_prep",
+      "lexeme": "srp_muz",
+      "cell": "prep_sg",
+      "analysed_orth_form": "mužu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_sg_dat",
+      "lexeme": "srp_muz",
+      "cell": "dat_sg",
+      "analysed_orth_form": "mužu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_sg_ins",
+      "lexeme": "srp_muz",
+      "cell": "ins_sg",
+      "analysed_orth_form": "mužem",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_sg_nom",
+      "lexeme": "srp_selo",
+      "cell": "nom_sg",
+      "analysed_orth_form": "sèlo",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_sg_acc",
+      "lexeme": "srp_selo",
+      "cell": "acc_sg",
+      "analysed_orth_form": "sèlo",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_sg_gen",
+      "lexeme": "srp_selo",
+      "cell": "gen_sg",
+      "analysed_orth_form": "sèla",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_sg_prep",
+      "lexeme": "srp_selo",
+      "cell": "prep_sg",
+      "analysed_orth_form": "sèlu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_sg_dat",
+      "lexeme": "srp_selo",
+      "cell": "dat_sg",
+      "analysed_orth_form": "sèlu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_sg_ins",
+      "lexeme": "srp_selo",
+      "cell": "ins_sg",
+      "analysed_orth_form": "sèlom",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_sg_nom",
+      "lexeme": "srp_srce",
+      "cell": "nom_sg",
+      "analysed_orth_form": "srce",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_sg_acc",
+      "lexeme": "srp_srce",
+      "cell": "acc_sg",
+      "analysed_orth_form": "srce",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_sg_gen",
+      "lexeme": "srp_srce",
+      "cell": "gen_sg",
+      "analysed_orth_form": "srca",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_sg_prep",
+      "lexeme": "srp_srce",
+      "cell": "prep_sg",
+      "analysed_orth_form": "srcu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_sg_dat",
+      "lexeme": "srp_srce",
+      "cell": "dat_sg",
+      "analysed_orth_form": "srcu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_sg_ins",
+      "lexeme": "srp_srce",
+      "cell": "ins_sg",
+      "analysed_orth_form": "srcem",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_sg_nom",
+      "lexeme": "srp_ovca",
+      "cell": "nom_sg",
+      "analysed_orth_form": "òvca",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_sg_acc",
+      "lexeme": "srp_ovca",
+      "cell": "acc_sg",
+      "analysed_orth_form": "òvcu",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_sg_gen",
+      "lexeme": "srp_ovca",
+      "cell": "gen_sg",
+      "analysed_orth_form": "òvcē",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_sg_prep",
+      "lexeme": "srp_ovca",
+      "cell": "prep_sg",
+      "analysed_orth_form": "òvci",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_sg_dat",
+      "lexeme": "srp_ovca",
+      "cell": "dat_sg",
+      "analysed_orth_form": "òvci",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_sg_ins",
+      "lexeme": "srp_ovca",
+      "cell": "ins_sg",
+      "analysed_orth_form": "òvcōm",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_sg_nom",
+      "lexeme": "srp_smrt",
+      "cell": "nom_sg",
+      "analysed_orth_form": "smȑt",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_sg_acc",
+      "lexeme": "srp_smrt",
+      "cell": "acc_sg",
+      "analysed_orth_form": "smȑt",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_sg_gen",
+      "lexeme": "srp_smrt",
+      "cell": "gen_sg",
+      "analysed_orth_form": "smȑti",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_sg_prep",
+      "lexeme": "srp_smrt",
+      "cell": "prep_sg",
+      "analysed_orth_form": "smȑti",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_sg_dat",
+      "lexeme": "srp_smrt",
+      "cell": "dat_sg",
+      "analysed_orth_form": "smȑti",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_sg_ins",
+      "lexeme": "srp_smrt",
+      "cell": "ins_sg",
+      "analysed_orth_form": "smr̀ću",
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_pl_nom",
+      "lexeme": "srp_sin",
+      "cell": "nom_pl",
+      "analysed_orth_form": "sȉnovi",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_pl_acc",
+      "lexeme": "srp_sin",
+      "cell": "acc_pl",
+      "analysed_orth_form": "sȉnove",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_pl_gen",
+      "lexeme": "srp_sin",
+      "cell": "gen_pl",
+      "analysed_orth_form": "sinóvā",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_pl_prep",
+      "lexeme": "srp_sin",
+      "cell": "prep_pl",
+      "analysed_orth_form": "sȉnovima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_pl_dat",
+      "lexeme": "srp_sin",
+      "cell": "dat_pl",
+      "analysed_orth_form": "sȉnovima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_sin_pl_ins",
+      "lexeme": "srp_sin",
+      "cell": "ins_pl",
+      "analysed_orth_form": "sȉnovima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_pl_nom",
+      "lexeme": "srp_grad",
+      "cell": "nom_pl",
+      "analysed_orth_form": "grȁdovi",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_pl_acc",
+      "lexeme": "srp_grad",
+      "cell": "acc_pl",
+      "analysed_orth_form": "grȁdove",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_pl_gen",
+      "lexeme": "srp_grad",
+      "cell": "gen_pl",
+      "analysed_orth_form": "gradóvā",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_pl_prep",
+      "lexeme": "srp_grad",
+      "cell": "prep_pl",
+      "analysed_orth_form": "grȁdovima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_pl_dat",
+      "lexeme": "srp_grad",
+      "cell": "dat_pl",
+      "analysed_orth_form": "grȁdovima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_grad_pl_ins",
+      "lexeme": "srp_grad",
+      "cell": "ins_pl",
+      "analysed_orth_form": "grȁdovima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_pl_nom",
+      "lexeme": "srp_muz",
+      "cell": "nom_pl",
+      "analysed_orth_form": "muževi",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_pl_acc",
+      "lexeme": "srp_muz",
+      "cell": "acc_pl",
+      "analysed_orth_form": "muževe",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_pl_gen",
+      "lexeme": "srp_muz",
+      "cell": "gen_pl",
+      "analysed_orth_form": "mȕžēvā",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_pl_prep",
+      "lexeme": "srp_muz",
+      "cell": "prep_pl",
+      "analysed_orth_form": "muževima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_pl_dat",
+      "lexeme": "srp_muz",
+      "cell": "dat_pl",
+      "analysed_orth_form": "muževima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_muz_pl_ins",
+      "lexeme": "srp_muz",
+      "cell": "ins_pl",
+      "analysed_orth_form": "muževima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_pl_nom",
+      "lexeme": "srp_selo",
+      "cell": "nom_pl",
+      "analysed_orth_form": "sȅla",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_pl_acc",
+      "lexeme": "srp_selo",
+      "cell": "acc_pl",
+      "analysed_orth_form": "sȅla",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_pl_gen",
+      "lexeme": "srp_selo",
+      "cell": "gen_pl",
+      "analysed_orth_form": "sêlā",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_pl_prep",
+      "lexeme": "srp_selo",
+      "cell": "prep_pl",
+      "analysed_orth_form": "sȅlima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_pl_dat",
+      "lexeme": "srp_selo",
+      "cell": "dat_pl",
+      "analysed_orth_form": "sȅlima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_selo_pl_ins",
+      "lexeme": "srp_selo",
+      "cell": "ins_pl",
+      "analysed_orth_form": "sȅlima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_pl_nom",
+      "lexeme": "srp_srce",
+      "cell": "nom_pl",
+      "analysed_orth_form": "srca",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_pl_acc",
+      "lexeme": "srp_srce",
+      "cell": "acc_pl",
+      "analysed_orth_form": "srca",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_pl_gen",
+      "lexeme": "srp_srce",
+      "cell": "gen_pl",
+      "analysed_orth_form": "sr̂cā",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_pl_prep",
+      "lexeme": "srp_srce",
+      "cell": "prep_pl",
+      "analysed_orth_form": "srcima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_pl_dat",
+      "lexeme": "srp_srce",
+      "cell": "dat_pl",
+      "analysed_orth_form": "srcima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_srce_pl_ins",
+      "lexeme": "srp_srce",
+      "cell": "ins_pl",
+      "analysed_orth_form": "srcima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_pl_nom",
+      "lexeme": "srp_ovca",
+      "cell": "nom_pl",
+      "analysed_orth_form": "ôvce",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_pl_acc",
+      "lexeme": "srp_ovca",
+      "cell": "acc_pl",
+      "analysed_orth_form": "ôvce",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_pl_gen",
+      "lexeme": "srp_ovca",
+      "cell": "gen_pl",
+      "analysed_orth_form": "ovácā",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_pl_prep",
+      "lexeme": "srp_ovca",
+      "cell": "prep_pl",
+      "analysed_orth_form": "óvcama",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_pl_dat",
+      "lexeme": "srp_ovca",
+      "cell": "dat_pl",
+      "analysed_orth_form": "óvcama",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_ovca_pl_ins",
+      "lexeme": "srp_ovca",
+      "cell": "ins_pl",
+      "analysed_orth_form": "óvcama",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_pl_nom",
+      "lexeme": "srp_smrt",
+      "cell": "nom_pl",
+      "analysed_orth_form": "smȑti",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_pl_acc",
+      "lexeme": "srp_smrt",
+      "cell": "acc_pl",
+      "analysed_orth_form": "smȑti",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_pl_gen",
+      "lexeme": "srp_smrt",
+      "cell": "gen_pl",
+      "analysed_orth_form": "smr̂tī",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_pl_prep",
+      "lexeme": "srp_smrt",
+      "cell": "prep_pl",
+      "analysed_orth_form": "smȑtima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_pl_dat",
+      "lexeme": "srp_smrt",
+      "cell": "dat_pl",
+      "analysed_orth_form": "smȑtima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_smrt_pl_ins",
+      "lexeme": "srp_smrt",
+      "cell": "ins_pl",
+      "analysed_orth_form": "smȑtima",
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "form_id": "srp_ja_nom",
+      "lexeme": "srp_ja",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ja",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ja_acc",
+      "lexeme": "srp_ja",
+      "cell": "acc_sg",
+      "analysed_orth_form": "mene",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ja_gen",
+      "lexeme": "srp_ja",
+      "cell": "gen_sg",
+      "analysed_orth_form": "mene",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ja_prep",
+      "lexeme": "srp_ja",
+      "cell": "prep_sg",
+      "analysed_orth_form": "meni",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ja_dat",
+      "lexeme": "srp_ja",
+      "cell": "dat_sg",
+      "analysed_orth_form": "meni",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ja_ins",
+      "lexeme": "srp_ja",
+      "cell": "ins_sg",
+      "analysed_orth_form": "mnom",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ti_nom",
+      "lexeme": "srp_ti",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ti",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ti_acc",
+      "lexeme": "srp_ti",
+      "cell": "acc_sg",
+      "analysed_orth_form": "tebe",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ti_gen",
+      "lexeme": "srp_ti",
+      "cell": "gen_sg",
+      "analysed_orth_form": "tebe",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ti_prep",
+      "lexeme": "srp_ti",
+      "cell": "prep_sg",
+      "analysed_orth_form": "tebi",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ti_dat",
+      "lexeme": "srp_ti",
+      "cell": "dat_sg",
+      "analysed_orth_form": "tebi",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ti_ins",
+      "lexeme": "srp_ti",
+      "cell": "ins_sg",
+      "analysed_orth_form": "tobom",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_on_nom",
+      "lexeme": "srp_on",
+      "cell": "nom_sg",
+      "analysed_orth_form": "on/ono",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_on_acc",
+      "lexeme": "srp_on",
+      "cell": "acc_sg",
+      "analysed_orth_form": "njega",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_on_gen",
+      "lexeme": "srp_on",
+      "cell": "gen_sg",
+      "analysed_orth_form": "njega",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_on_prep",
+      "lexeme": "srp_on",
+      "cell": "prep_sg",
+      "analysed_orth_form": "njemu",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_on_dat",
+      "lexeme": "srp_on",
+      "cell": "dat_sg",
+      "analysed_orth_form": "njemu",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_on_ins",
+      "lexeme": "srp_on",
+      "cell": "ins_sg",
+      "analysed_orth_form": "njim",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ona_nom",
+      "lexeme": "srp_ona",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ona",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ona_acc",
+      "lexeme": "srp_ona",
+      "cell": "acc_sg",
+      "analysed_orth_form": "nju",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ona_gen",
+      "lexeme": "srp_ona",
+      "cell": "gen_sg",
+      "analysed_orth_form": "nje",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ona_prep",
+      "lexeme": "srp_ona",
+      "cell": "prep_sg",
+      "analysed_orth_form": "njoj",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ona_dat",
+      "lexeme": "srp_ona",
+      "cell": "dat_sg",
+      "analysed_orth_form": "njoj",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_ona_ins",
+      "lexeme": "srp_ona",
+      "cell": "ins_sg",
+      "analysed_orth_form": "njom",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_mi_nom",
+      "lexeme": "srp_mi",
+      "cell": "nom_pl",
+      "analysed_orth_form": "mi",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_mi_acc",
+      "lexeme": "srp_mi",
+      "cell": "acc_pl",
+      "analysed_orth_form": "nas",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_mi_gen",
+      "lexeme": "srp_mi",
+      "cell": "gen_pl",
+      "analysed_orth_form": "nas",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_mi_prep",
+      "lexeme": "srp_mi",
+      "cell": "prep_pl",
+      "analysed_orth_form": "nama",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_mi_dat",
+      "lexeme": "srp_mi",
+      "cell": "dat_pl",
+      "analysed_orth_form": "nama",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_mi_ins",
+      "lexeme": "srp_mi",
+      "cell": "ins_pl",
+      "analysed_orth_form": "nama",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_vi_nom",
+      "lexeme": "srp_vi",
+      "cell": "nom_pl",
+      "analysed_orth_form": "vi",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_vi_acc",
+      "lexeme": "srp_vi",
+      "cell": "acc_pl",
+      "analysed_orth_form": "vas",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_vi_gen",
+      "lexeme": "srp_vi",
+      "cell": "gen_pl",
+      "analysed_orth_form": "vas",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_vi_prep",
+      "lexeme": "srp_vi",
+      "cell": "prep_pl",
+      "analysed_orth_form": "vama",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_vi_dat",
+      "lexeme": "srp_vi",
+      "cell": "dat_pl",
+      "analysed_orth_form": "vama",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_vi_ins",
+      "lexeme": "srp_vi",
+      "cell": "ins_pl",
+      "analysed_orth_form": "vama",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_oni_nom",
+      "lexeme": "srp_oni",
+      "cell": "nom_pl",
+      "analysed_orth_form": "oni/ona/one",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_oni_acc",
+      "lexeme": "srp_oni",
+      "cell": "acc_pl",
+      "analysed_orth_form": "njih",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_oni_gen",
+      "lexeme": "srp_oni",
+      "cell": "gen_pl",
+      "analysed_orth_form": "njih",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_oni_prep",
+      "lexeme": "srp_oni",
+      "cell": "prep_pl",
+      "analysed_orth_form": "njima",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_oni_dat",
+      "lexeme": "srp_oni",
+      "cell": "dat_pl",
+      "analysed_orth_form": "njima",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "srp_oni_ins",
+      "lexeme": "srp_oni",
+      "cell": "ins_pl",
+      "analysed_orth_form": "njima",
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "form_id": "slv_miza_du_nom",
+      "lexeme": "slv_miza",
+      "cell": "nom_du",
+      "analysed_orth_form": "míz-i",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_miza_du_acc",
+      "lexeme": "slv_miza",
+      "cell": "acc_du",
+      "analysed_orth_form": "míz-i",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_miza_du_gen",
+      "lexeme": "slv_miza",
+      "cell": "gen_du",
+      "analysed_orth_form": "mîz",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_miza_du_prep",
+      "lexeme": "slv_miza",
+      "cell": "prep_du",
+      "analysed_orth_form": "míz-ah",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_miza_du_dat",
+      "lexeme": "slv_miza",
+      "cell": "dat_du",
+      "analysed_orth_form": "míz-ama",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_miza_du_ins",
+      "lexeme": "slv_miza",
+      "cell": "ins_du",
+      "analysed_orth_form": "míz-ama",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_sg_nom",
+      "lexeme": "slv_breskev",
+      "cell": "nom_sg",
+      "analysed_orth_form": "brêskev-ø",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_sg_acc",
+      "lexeme": "slv_breskev",
+      "cell": "acc_sg",
+      "analysed_orth_form": "brêskev-ø",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_sg_gen",
+      "lexeme": "slv_breskev",
+      "cell": "gen_sg",
+      "analysed_orth_form": "brêskv-e",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_sg_prep",
+      "lexeme": "slv_breskev",
+      "cell": "prep_sg",
+      "analysed_orth_form": "brêskv-i",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_sg_dat",
+      "lexeme": "slv_breskev",
+      "cell": "dat_sg",
+      "analysed_orth_form": "brêskv-i",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_sg_ins",
+      "lexeme": "slv_breskev",
+      "cell": "ins_sg",
+      "analysed_orth_form": "brêskv-ijo",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_pl_nom",
+      "lexeme": "slv_breskev",
+      "cell": "nom_pl",
+      "analysed_orth_form": "brêskv-e",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_pl_acc",
+      "lexeme": "slv_breskev",
+      "cell": "acc_pl",
+      "analysed_orth_form": "brêskv-e",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_pl_gen",
+      "lexeme": "slv_breskev",
+      "cell": "gen_pl",
+      "analysed_orth_form": "brêskv-ø",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_pl_prep",
+      "lexeme": "slv_breskev",
+      "cell": "prep_pl",
+      "analysed_orth_form": "brêskv-ah",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_pl_dat",
+      "lexeme": "slv_breskev",
+      "cell": "dat_pl",
+      "analysed_orth_form": "brêskv-am",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_breskev_pl_ins",
+      "lexeme": "slv_breskev",
+      "cell": "ins_pl",
+      "analysed_orth_form": "brêskv-ami",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jabolko_sg_nom",
+      "lexeme": "slv_jabolko",
+      "cell": "nom_sg",
+      "analysed_orth_form": "jábolk-o",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jabolko_sg_acc",
+      "lexeme": "slv_jabolko",
+      "cell": "acc_sg",
+      "analysed_orth_form": "jábolk-o",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jabolko_sg_gen",
+      "lexeme": "slv_jabolko",
+      "cell": "gen_sg",
+      "analysed_orth_form": "jábolk-a",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jabolko_sg_prep",
+      "lexeme": "slv_jabolko",
+      "cell": "prep_sg",
+      "analysed_orth_form": "jábolk-u",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jabolko_sg_dat",
+      "lexeme": "slv_jabolko",
+      "cell": "dat_sg",
+      "analysed_orth_form": "jábolk-u",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jabolko_sg_ins",
+      "lexeme": "slv_jabolko",
+      "cell": "ins_sg",
+      "analysed_orth_form": "jábolk-om",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_du_nom",
+      "lexeme": "slv_kmet",
+      "cell": "nom_du",
+      "analysed_orth_form": "kmèt-a",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_du_acc",
+      "lexeme": "slv_kmet",
+      "cell": "acc_du",
+      "analysed_orth_form": "kmèt-a",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_du_gen",
+      "lexeme": "slv_kmet",
+      "cell": "gen_du",
+      "analysed_orth_form": "kmêt-ov",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_du_prep",
+      "lexeme": "slv_kmet",
+      "cell": "prep_du",
+      "analysed_orth_form": "kmēt-ih",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_du_dat",
+      "lexeme": "slv_kmet",
+      "cell": "dat_du",
+      "analysed_orth_form": "kmét-oma",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_du_ins",
+      "lexeme": "slv_kmet",
+      "cell": "ins_du",
+      "analysed_orth_form": "kmét-oma",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_sg_nom",
+      "lexeme": "slv_kmet",
+      "cell": "nom_sg",
+      "analysed_orth_form": "kmèt-ø",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_sg_acc",
+      "lexeme": "slv_kmet",
+      "cell": "acc_sg",
+      "analysed_orth_form": "kmét-a",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_sg_gen",
+      "lexeme": "slv_kmet",
+      "cell": "gen_sg",
+      "analysed_orth_form": "kmét-a",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_sg_prep",
+      "lexeme": "slv_kmet",
+      "cell": "prep_sg",
+      "analysed_orth_form": "kmêt-u",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_sg_dat",
+      "lexeme": "slv_kmet",
+      "cell": "dat_sg",
+      "analysed_orth_form": "kmét-u",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_kmet_sg_ins",
+      "lexeme": "slv_kmet",
+      "cell": "ins_sg",
+      "analysed_orth_form": "kmét-om",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jaz_nom",
+      "lexeme": "slv_jaz",
+      "cell": "nom_sg",
+      "analysed_orth_form": "jàz",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jaz_acc",
+      "lexeme": "slv_jaz",
+      "cell": "acc_sg",
+      "analysed_orth_form": "mȩ́n-e",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jaz_gen",
+      "lexeme": "slv_jaz",
+      "cell": "gen_sg",
+      "analysed_orth_form": "mȩ́n-e",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jaz_prep",
+      "lexeme": "slv_jaz",
+      "cell": "prep_sg",
+      "analysed_orth_form": "mȩ́n-i",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jaz_dat",
+      "lexeme": "slv_jaz",
+      "cell": "dat_sg",
+      "analysed_orth_form": "mȩ́n-i",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_jaz_ins",
+      "lexeme": "slv_jaz",
+      "cell": "ins_sg",
+      "analysed_orth_form": "men-ój",
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "form_id": "slv_moj_mpl_nom",
+      "lexeme": "slv_moj",
+      "cell": "nom_pl_m",
+      "analysed_orth_form": "mo̧j-i",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_moj_mpl_acc",
+      "lexeme": "slv_moj",
+      "cell": "acc_pl_m",
+      "analysed_orth_form": "mo̧j-i",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_moj_mpl_gen",
+      "lexeme": "slv_moj",
+      "cell": "gen_pl_m",
+      "analysed_orth_form": "mo̧j-ih",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_moj_mpl_prep",
+      "lexeme": "slv_moj",
+      "cell": "prep_pl_m",
+      "analysed_orth_form": "mo̧j-ih",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_moj_mpl_dat",
+      "lexeme": "slv_moj",
+      "cell": "dat_pl_m",
+      "analysed_orth_form": "mo̧j-im",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_moj_mpl_ins",
+      "lexeme": "slv_moj",
+      "cell": "ins_pl_m",
+      "analysed_orth_form": "mo̧j-imi",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_dva_nom",
+      "lexeme": "slv_dva",
+      "cell": "nom_du",
+      "analysed_orth_form": "dv-â",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_dva_acc",
+      "lexeme": "slv_dva",
+      "cell": "acc_du",
+      "analysed_orth_form": "dv-â",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_dva_gen",
+      "lexeme": "slv_dva",
+      "cell": "gen_du",
+      "analysed_orth_form": "dv-ēh",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_dva_prep",
+      "lexeme": "slv_dva",
+      "cell": "prep_du",
+      "analysed_orth_form": "dv-ēh",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_dva_dat",
+      "lexeme": "slv_dva",
+      "cell": "dat_du",
+      "analysed_orth_form": "dv-ēma",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_dva_ins",
+      "lexeme": "slv_dva",
+      "cell": "ins_du",
+      "analysed_orth_form": "dv-ēma",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_mi_nom",
+      "lexeme": "slv_mi",
+      "cell": "nom_pl",
+      "analysed_orth_form": "mî",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_mi_acc",
+      "lexeme": "slv_mi",
+      "cell": "acc_pl",
+      "analysed_orth_form": "nà-s",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_mi_gen",
+      "lexeme": "slv_mi",
+      "cell": "gen_pl",
+      "analysed_orth_form": "nà-s",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_mi_prep",
+      "lexeme": "slv_mi",
+      "cell": "prep_pl",
+      "analysed_orth_form": "nà-s",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_mi_dat",
+      "lexeme": "slv_mi",
+      "cell": "dat_pl",
+      "analysed_orth_form": "nàm",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_mi_ins",
+      "lexeme": "slv_mi",
+      "cell": "ins_pl",
+      "analysed_orth_form": "na̧mi",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_midva_nom",
+      "lexeme": "slv_midva",
+      "cell": "nom_du",
+      "analysed_orth_form": "mîdva",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_midva_acc",
+      "lexeme": "slv_midva",
+      "cell": "acc_du",
+      "analysed_orth_form": "ná-ju",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_midva_gen",
+      "lexeme": "slv_midva",
+      "cell": "gen_du",
+      "analysed_orth_form": "ná-ju",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_midva_prep",
+      "lexeme": "slv_midva",
+      "cell": "prep_du",
+      "analysed_orth_form": "ná-ju",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_midva_dat",
+      "lexeme": "slv_midva",
+      "cell": "dat_du",
+      "analysed_orth_form": "ná-ma",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_midva_ins",
+      "lexeme": "slv_midva",
+      "cell": "ins_du",
+      "analysed_orth_form": "ná-ma",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_nit_sg_nom",
+      "lexeme": "slv_nit",
+      "cell": "nom_sg",
+      "analysed_orth_form": "nìt",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_nit_sg_acc",
+      "lexeme": "slv_nit",
+      "cell": "acc_sg",
+      "analysed_orth_form": "nìt",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_nit_sg_gen",
+      "lexeme": "slv_nit",
+      "cell": "gen_sg",
+      "analysed_orth_form": "nít-i",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_nit_sg_prep",
+      "lexeme": "slv_nit",
+      "cell": "prep_sg",
+      "analysed_orth_form": "nít-i",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_nit_sg_dat",
+      "lexeme": "slv_nit",
+      "cell": "dat_sg",
+      "analysed_orth_form": "nít-i",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_nit_sg_ins",
+      "lexeme": "slv_nit",
+      "cell": "ins_sg",
+      "analysed_orth_form": "nít-jo",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_gospa_sg_nom",
+      "lexeme": "slv_gospa",
+      "cell": "nom_sg",
+      "analysed_orth_form": "gosp-á",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_gospa_sg_acc",
+      "lexeme": "slv_gospa",
+      "cell": "acc_sg",
+      "analysed_orth_form": "gosp-ó",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_gospa_sg_gen",
+      "lexeme": "slv_gospa",
+      "cell": "gen_sg",
+      "analysed_orth_form": "gosp-é",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_gospa_sg_prep",
+      "lexeme": "slv_gospa",
+      "cell": "prep_sg",
+      "analysed_orth_form": "gosp-é",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_gospa_sg_dat",
+      "lexeme": "slv_gospa",
+      "cell": "dat_sg",
+      "analysed_orth_form": "gosp-é",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_gospa_sg_ins",
+      "lexeme": "slv_gospa",
+      "cell": "ins_sg",
+      "analysed_orth_form": "gosp-ó",
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "form_id": "slv_dan_du_nom",
+      "lexeme": "slv_dan",
+      "cell": "nom_du",
+      "analysed_orth_form": "dn-í",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_dan_du_acc",
+      "lexeme": "slv_dan",
+      "cell": "acc_du",
+      "analysed_orth_form": "dn-í",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_dan_du_gen",
+      "lexeme": "slv_dan",
+      "cell": "gen_du",
+      "analysed_orth_form": "dn-í",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_dan_du_prep",
+      "lexeme": "slv_dan",
+      "cell": "prep_du",
+      "analysed_orth_form": "dn-éh",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_dan_du_dat",
+      "lexeme": "slv_dan",
+      "cell": "dat_du",
+      "analysed_orth_form": "dn-éma",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_dan_du_ins",
+      "lexeme": "slv_dan",
+      "cell": "ins_du",
+      "analysed_orth_form": "dn-éma",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_racunovodja_sg_nom",
+      "lexeme": "slv_racunovodja",
+      "cell": "nom_sg",
+      "analysed_orth_form": "računovod-ja",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_racunovodja_sg_acc",
+      "lexeme": "slv_racunovodja",
+      "cell": "acc_sg",
+      "analysed_orth_form": "računovod-ja",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_racunovodja_sg_gen",
+      "lexeme": "slv_racunovodja",
+      "cell": "gen_sg",
+      "analysed_orth_form": "računovod-ja",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_racunovodja_sg_prep",
+      "lexeme": "slv_racunovodja",
+      "cell": "prep_sg",
+      "analysed_orth_form": "računovod-ju",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_racunovodja_sg_dat",
+      "lexeme": "slv_racunovodja",
+      "cell": "dat_sg",
+      "analysed_orth_form": "računovod-ju",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_racunovodja_sg_ins",
+      "lexeme": "slv_racunovodja",
+      "cell": "ins_sg",
+      "analysed_orth_form": "računovod-jem",
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_n_nom",
+      "lexeme": "slv_ta",
+      "cell": "nom_sg_n",
+      "analysed_orth_form": "tô",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_n_acc",
+      "lexeme": "slv_ta",
+      "cell": "acc_sg_n",
+      "analysed_orth_form": "tô",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_n_gen",
+      "lexeme": "slv_ta",
+      "cell": "gen_sg_n",
+      "analysed_orth_form": "têga",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_n_prep",
+      "lexeme": "slv_ta",
+      "cell": "prep_sg_n",
+      "analysed_orth_form": "têm",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_n_dat",
+      "lexeme": "slv_ta",
+      "cell": "dat_sg_n",
+      "analysed_orth_form": "têmu",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_n_ins",
+      "lexeme": "slv_ta",
+      "cell": "ins_sg_n",
+      "analysed_orth_form": "têm",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_potnik_pl_nom",
+      "lexeme": "slv_potnik",
+      "cell": "nom_pl",
+      "analysed_orth_form": "pótnik-i",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_potnik_pl_acc",
+      "lexeme": "slv_potnik",
+      "cell": "acc_pl",
+      "analysed_orth_form": "pótnik-e",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_potnik_pl_gen",
+      "lexeme": "slv_potnik",
+      "cell": "gen_pl",
+      "analysed_orth_form": "pótnik-ov",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_potnik_pl_prep",
+      "lexeme": "slv_potnik",
+      "cell": "prep_pl",
+      "analysed_orth_form": "pótnik-ih",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_potnik_pl_dat",
+      "lexeme": "slv_potnik",
+      "cell": "dat_pl",
+      "analysed_orth_form": "pótnik-om",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_potnik_pl_ins",
+      "lexeme": "slv_potnik",
+      "cell": "ins_pl",
+      "analysed_orth_form": "pótnik-i",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_f_nom",
+      "lexeme": "slv_ta",
+      "cell": "nom_sg_f",
+      "analysed_orth_form": "tâ",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_f_acc",
+      "lexeme": "slv_ta",
+      "cell": "acc_sg_f",
+      "analysed_orth_form": "tô",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_f_gen",
+      "lexeme": "slv_ta",
+      "cell": "gen_sg_f",
+      "analysed_orth_form": "tê",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_f_prep",
+      "lexeme": "slv_ta",
+      "cell": "prep_sg_f",
+      "analysed_orth_form": "têj",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_f_dat",
+      "lexeme": "slv_ta",
+      "cell": "dat_sg_f",
+      "analysed_orth_form": "têj",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_ta_f_ins",
+      "lexeme": "slv_ta",
+      "cell": "ins_sg_f",
+      "analysed_orth_form": "tô",
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "form_id": "slv_tisti_n_nom",
+      "lexeme": "slv_tisti",
+      "cell": "nom_sg_n",
+      "analysed_orth_form": "tîs-t-o",
+      "source": [
+        "caha-2009[(19)]"
+      ]
+    },
+    {
+      "form_id": "slv_tisti_n_acc",
+      "lexeme": "slv_tisti",
+      "cell": "acc_sg_n",
+      "analysed_orth_form": "tîs-t-o",
+      "source": [
+        "caha-2009[(19)]"
+      ]
+    },
+    {
+      "form_id": "slv_tisti_n_gen",
+      "lexeme": "slv_tisti",
+      "cell": "gen_sg_n",
+      "analysed_orth_form": "tîs-t-ega",
+      "source": [
+        "caha-2009[(19)]"
+      ]
+    },
+    {
+      "form_id": "slv_tisti_n_prep",
+      "lexeme": "slv_tisti",
+      "cell": "prep_sg_n",
+      "analysed_orth_form": "tîs-t-em",
+      "source": [
+        "caha-2009[(19)]"
+      ]
+    },
+    {
+      "form_id": "slv_tisti_n_dat",
+      "lexeme": "slv_tisti",
+      "cell": "dat_sg_n",
+      "analysed_orth_form": "tîs-t-emu",
+      "source": [
+        "caha-2009[(19)]"
+      ]
+    },
+    {
+      "form_id": "slv_tisti_n_ins",
+      "lexeme": "slv_tisti",
+      "cell": "ins_sg_n",
+      "analysed_orth_form": "tîs-t-im",
+      "source": [
+        "caha-2009[(19)]"
+      ]
+    },
+    {
+      "form_id": "slv_vas_n_nom",
+      "lexeme": "slv_vas",
+      "cell": "nom_sg_n",
+      "analysed_orth_form": "váš-e",
+      "source": [
+        "caha-2009[(20)]"
+      ]
+    },
+    {
+      "form_id": "slv_vas_n_acc",
+      "lexeme": "slv_vas",
+      "cell": "acc_sg_n",
+      "analysed_orth_form": "váš-e",
+      "source": [
+        "caha-2009[(20)]"
+      ]
+    },
+    {
+      "form_id": "slv_vas_n_gen",
+      "lexeme": "slv_vas",
+      "cell": "gen_sg_n",
+      "analysed_orth_form": "váš-ega",
+      "source": [
+        "caha-2009[(20)]"
+      ]
+    },
+    {
+      "form_id": "slv_vas_n_prep",
+      "lexeme": "slv_vas",
+      "cell": "prep_sg_n",
+      "analysed_orth_form": "váš-em",
+      "source": [
+        "caha-2009[(20)]"
+      ]
+    },
+    {
+      "form_id": "slv_vas_n_dat",
+      "lexeme": "slv_vas",
+      "cell": "dat_sg_n",
+      "analysed_orth_form": "váš-emu",
+      "source": [
+        "caha-2009[(20)]"
+      ]
+    },
+    {
+      "form_id": "slv_vas_n_ins",
+      "lexeme": "slv_vas",
+      "cell": "ins_sg_n",
+      "analysed_orth_form": "váš-im",
+      "source": [
+        "caha-2009[(20)]"
+      ]
+    },
+    {
+      "form_id": "ces_okno_sg_nom",
+      "lexeme": "ces_okno",
+      "cell": "nom_sg",
+      "analysed_orth_form": "okn-o",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_okno_sg_acc",
+      "lexeme": "ces_okno",
+      "cell": "acc_sg",
+      "analysed_orth_form": "okn-o",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_okno_sg_gen",
+      "lexeme": "ces_okno",
+      "cell": "gen_sg",
+      "analysed_orth_form": "okn-a",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_okno_sg_prep",
+      "lexeme": "ces_okno",
+      "cell": "prep_sg",
+      "analysed_orth_form": "okn-ě",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_okno_sg_dat",
+      "lexeme": "ces_okno",
+      "cell": "dat_sg",
+      "analysed_orth_form": "okn-u",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_okno_sg_ins",
+      "lexeme": "ces_okno",
+      "cell": "ins_sg",
+      "analysed_orth_form": "okn-em",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_ulice_sg_nom",
+      "lexeme": "ces_ulice",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ulic-e",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_ulice_sg_acc",
+      "lexeme": "ces_ulice",
+      "cell": "acc_sg",
+      "analysed_orth_form": "ulic-i",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_ulice_sg_gen",
+      "lexeme": "ces_ulice",
+      "cell": "gen_sg",
+      "analysed_orth_form": "ulic-e",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_ulice_sg_prep",
+      "lexeme": "ces_ulice",
+      "cell": "prep_sg",
+      "analysed_orth_form": "ulic-i",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_ulice_sg_dat",
+      "lexeme": "ces_ulice",
+      "cell": "dat_sg",
+      "analysed_orth_form": "ulic-i",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_ulice_sg_ins",
+      "lexeme": "ces_ulice",
+      "cell": "ins_sg",
+      "analysed_orth_form": "ulic-í",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_nom",
+      "lexeme": "ces_muz",
+      "cell": "nom_pl",
+      "analysed_orth_form": "muž-i",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_acc",
+      "lexeme": "ces_muz",
+      "cell": "acc_pl",
+      "analysed_orth_form": "muž-e",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_gen",
+      "lexeme": "ces_muz",
+      "cell": "gen_pl",
+      "analysed_orth_form": "muž-ů",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_prep",
+      "lexeme": "ces_muz",
+      "cell": "prep_pl",
+      "analysed_orth_form": "muž-ích",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_dat",
+      "lexeme": "ces_muz",
+      "cell": "dat_pl",
+      "analysed_orth_form": "muž-ům",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_ins",
+      "lexeme": "ces_muz",
+      "cell": "ins_pl",
+      "analysed_orth_form": "muž-i",
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_sg_nom",
+      "lexeme": "ces_muz",
+      "cell": "nom_sg",
+      "analysed_orth_form": "muž",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_sg_acc",
+      "lexeme": "ces_muz",
+      "cell": "acc_sg",
+      "analysed_orth_form": "muž-e",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_sg_gen",
+      "lexeme": "ces_muz",
+      "cell": "gen_sg",
+      "analysed_orth_form": "muž-e",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_sg_prep",
+      "lexeme": "ces_muz",
+      "cell": "prep_sg",
+      "analysed_orth_form": "muž-i",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_sg_dat",
+      "lexeme": "ces_muz",
+      "cell": "dat_sg",
+      "analysed_orth_form": "muž-i",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_sg_ins",
+      "lexeme": "ces_muz",
+      "cell": "ins_sg",
+      "analysed_orth_form": "muž-em",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_fsg_nom",
+      "lexeme": "ces_dobry",
+      "cell": "nom_sg_f",
+      "analysed_orth_form": "dobr-á",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_fsg_acc",
+      "lexeme": "ces_dobry",
+      "cell": "acc_sg_f",
+      "analysed_orth_form": "dobr-ou",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_fsg_gen",
+      "lexeme": "ces_dobry",
+      "cell": "gen_sg_f",
+      "analysed_orth_form": "dobr-é",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_fsg_prep",
+      "lexeme": "ces_dobry",
+      "cell": "prep_sg_f",
+      "analysed_orth_form": "dobr-é",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_fsg_dat",
+      "lexeme": "ces_dobry",
+      "cell": "dat_sg_f",
+      "analysed_orth_form": "dobr-é",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_fsg_ins",
+      "lexeme": "ces_dobry",
+      "cell": "ins_sg_f",
+      "analysed_orth_form": "dobr-ou",
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_2_nom",
+      "lexeme": "ces_dobry",
+      "cell": "nom_pl_m",
+      "analysed_orth_form": "dobrý",
+      "source": [
+        "caha-2009[(24)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_2_acc",
+      "lexeme": "ces_dobry",
+      "cell": "acc_pl_m",
+      "analysed_orth_form": "dobrý",
+      "source": [
+        "caha-2009[(24)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_2_gen",
+      "lexeme": "ces_dobry",
+      "cell": "gen_pl_m",
+      "analysed_orth_form": "dobrý-ch",
+      "source": [
+        "caha-2009[(24)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_2_prep",
+      "lexeme": "ces_dobry",
+      "cell": "prep_pl_m",
+      "analysed_orth_form": "dobrý-ch",
+      "source": [
+        "caha-2009[(24)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_2_dat",
+      "lexeme": "ces_dobry",
+      "cell": "dat_pl_m",
+      "analysed_orth_form": "dobrý-m",
+      "source": [
+        "caha-2009[(24)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_2_ins",
+      "lexeme": "ces_dobry",
+      "cell": "ins_pl_m",
+      "analysed_orth_form": "dobrý-mi",
+      "source": [
+        "caha-2009[(24)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_msg_nom",
+      "lexeme": "ces_vetsi",
+      "cell": "nom_sg_m",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[(25)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_msg_acc",
+      "lexeme": "ces_vetsi",
+      "cell": "acc_sg_m",
+      "analysed_orth_form": "větš-ího",
+      "source": [
+        "caha-2009[(25)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_msg_gen",
+      "lexeme": "ces_vetsi",
+      "cell": "gen_sg_m",
+      "analysed_orth_form": "větš-ího",
+      "source": [
+        "caha-2009[(25)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_msg_prep",
+      "lexeme": "ces_vetsi",
+      "cell": "prep_sg_m",
+      "analysed_orth_form": "větš-ím",
+      "source": [
+        "caha-2009[(25)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_msg_dat",
+      "lexeme": "ces_vetsi",
+      "cell": "dat_sg_m",
+      "analysed_orth_form": "větš-ímu",
+      "source": [
+        "caha-2009[(25)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_msg_ins",
+      "lexeme": "ces_vetsi",
+      "cell": "ins_sg_m",
+      "analysed_orth_form": "větš-ím",
+      "source": [
+        "caha-2009[(25)]"
+      ]
+    },
+    {
+      "form_id": "ces_oba_nom",
+      "lexeme": "ces_oba",
+      "cell": "nom_du",
+      "analysed_orth_form": "ob-a",
+      "source": [
+        "caha-2009[(26)]"
+      ]
+    },
+    {
+      "form_id": "ces_oba_acc",
+      "lexeme": "ces_oba",
+      "cell": "acc_du",
+      "analysed_orth_form": "ob-a",
+      "source": [
+        "caha-2009[(26)]"
+      ]
+    },
+    {
+      "form_id": "ces_oba_gen",
+      "lexeme": "ces_oba",
+      "cell": "gen_du",
+      "analysed_orth_form": "ob-ou",
+      "source": [
+        "caha-2009[(26)]"
+      ]
+    },
+    {
+      "form_id": "ces_oba_prep",
+      "lexeme": "ces_oba",
+      "cell": "prep_du",
+      "analysed_orth_form": "ob-ou",
+      "source": [
+        "caha-2009[(26)]"
+      ]
+    },
+    {
+      "form_id": "ces_oba_dat",
+      "lexeme": "ces_oba",
+      "cell": "dat_du",
+      "analysed_orth_form": "ob-ěma",
+      "source": [
+        "caha-2009[(26)]"
+      ]
+    },
+    {
+      "form_id": "ces_oba_ins",
+      "lexeme": "ces_oba",
+      "cell": "ins_du",
+      "analysed_orth_form": "ob-ěma",
+      "source": [
+        "caha-2009[(26)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_sg_nom",
+      "lexeme": "ces_stroj",
+      "cell": "nom_sg",
+      "analysed_orth_form": "stroj-ø",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_sg_acc",
+      "lexeme": "ces_stroj",
+      "cell": "acc_sg",
+      "analysed_orth_form": "stroj-ø",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_sg_gen",
+      "lexeme": "ces_stroj",
+      "cell": "gen_sg",
+      "analysed_orth_form": "stroj-e",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_sg_prep",
+      "lexeme": "ces_stroj",
+      "cell": "prep_sg",
+      "analysed_orth_form": "stroj-i",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_sg_dat",
+      "lexeme": "ces_stroj",
+      "cell": "dat_sg",
+      "analysed_orth_form": "stroj-i",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_sg_ins",
+      "lexeme": "ces_stroj",
+      "cell": "ins_sg",
+      "analysed_orth_form": "stroj-em",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_pl_nom",
+      "lexeme": "ces_stroj",
+      "cell": "nom_pl",
+      "analysed_orth_form": "stroj-e",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_pl_acc",
+      "lexeme": "ces_stroj",
+      "cell": "acc_pl",
+      "analysed_orth_form": "stroj-e",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_pl_gen",
+      "lexeme": "ces_stroj",
+      "cell": "gen_pl",
+      "analysed_orth_form": "stroj-ů",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_pl_prep",
+      "lexeme": "ces_stroj",
+      "cell": "prep_pl",
+      "analysed_orth_form": "stroj-ích",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_pl_dat",
+      "lexeme": "ces_stroj",
+      "cell": "dat_pl",
+      "analysed_orth_form": "stroj-ům",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_stroj_pl_ins",
+      "lexeme": "ces_stroj",
+      "cell": "ins_pl",
+      "analysed_orth_form": "stroj-i",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_pl_nom",
+      "lexeme": "ces_kost",
+      "cell": "nom_pl",
+      "analysed_orth_form": "kost-i",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_pl_acc",
+      "lexeme": "ces_kost",
+      "cell": "acc_pl",
+      "analysed_orth_form": "kost-i",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_pl_gen",
+      "lexeme": "ces_kost",
+      "cell": "gen_pl",
+      "analysed_orth_form": "kost-í",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_pl_prep",
+      "lexeme": "ces_kost",
+      "cell": "prep_pl",
+      "analysed_orth_form": "kost-ech",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_pl_dat",
+      "lexeme": "ces_kost",
+      "cell": "dat_pl",
+      "analysed_orth_form": "kost-em",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_pl_ins",
+      "lexeme": "ces_kost",
+      "cell": "ins_pl",
+      "analysed_orth_form": "kost-mi",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_ty_nom",
+      "lexeme": "ces_ten",
+      "cell": "nom_pl_f",
+      "analysed_orth_form": "t-y",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_ty_acc",
+      "lexeme": "ces_ten",
+      "cell": "acc_pl_f",
+      "analysed_orth_form": "t-y",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_ty_gen",
+      "lexeme": "ces_ten",
+      "cell": "gen_pl_f",
+      "analysed_orth_form": "t-ěch",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_ty_prep",
+      "lexeme": "ces_ten",
+      "cell": "prep_pl_f",
+      "analysed_orth_form": "t-ěch",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_ty_dat",
+      "lexeme": "ces_ten",
+      "cell": "dat_pl_f",
+      "analysed_orth_form": "t-ěm",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_ty_ins",
+      "lexeme": "ces_ten",
+      "cell": "ins_pl_f",
+      "analysed_orth_form": "t-ěmi",
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "form_id": "ces_vila_sg_nom",
+      "lexeme": "ces_vila",
+      "cell": "nom_sg",
+      "analysed_orth_form": "vil-a",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_vila_sg_acc",
+      "lexeme": "ces_vila",
+      "cell": "acc_sg",
+      "analysed_orth_form": "vil-u",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_vila_sg_gen",
+      "lexeme": "ces_vila",
+      "cell": "gen_sg",
+      "analysed_orth_form": "vil-y",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_vila_sg_prep",
+      "lexeme": "ces_vila",
+      "cell": "prep_sg",
+      "analysed_orth_form": "vil-e",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_vila_sg_dat",
+      "lexeme": "ces_vila",
+      "cell": "dat_sg",
+      "analysed_orth_form": "vil-e",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_vila_sg_ins",
+      "lexeme": "ces_vila",
+      "cell": "ins_sg",
+      "analysed_orth_form": "vil-ou",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_misa_sg_nom",
+      "lexeme": "ces_misa",
+      "cell": "nom_sg",
+      "analysed_orth_form": "Míš-a",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_misa_sg_acc",
+      "lexeme": "ces_misa",
+      "cell": "acc_sg",
+      "analysed_orth_form": "Míš-u",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_misa_sg_gen",
+      "lexeme": "ces_misa",
+      "cell": "gen_sg",
+      "analysed_orth_form": "Míš-i",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_misa_sg_prep",
+      "lexeme": "ces_misa",
+      "cell": "prep_sg",
+      "analysed_orth_form": "Míš-e",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_misa_sg_dat",
+      "lexeme": "ces_misa",
+      "cell": "dat_sg",
+      "analysed_orth_form": "Míš-e",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_misa_sg_ins",
+      "lexeme": "ces_misa",
+      "cell": "ins_sg",
+      "analysed_orth_form": "Míš-ou",
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "form_id": "ces_vul_pl_nom",
+      "lexeme": "ces_vul",
+      "cell": "nom_pl",
+      "analysed_orth_form": "vol-i",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_vul_pl_acc",
+      "lexeme": "ces_vul",
+      "cell": "acc_pl",
+      "analysed_orth_form": "vol-y",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_vul_pl_gen",
+      "lexeme": "ces_vul",
+      "cell": "gen_pl",
+      "analysed_orth_form": "vol-ů",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_vul_pl_prep",
+      "lexeme": "ces_vul",
+      "cell": "prep_pl",
+      "analysed_orth_form": "vol-ech",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_vul_pl_dat",
+      "lexeme": "ces_vul",
+      "cell": "dat_pl",
+      "analysed_orth_form": "vol-ům",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_vul_pl_ins",
+      "lexeme": "ces_vul",
+      "cell": "ins_pl",
+      "analysed_orth_form": "vol-y",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_hoch_pl_nom",
+      "lexeme": "ces_hoch",
+      "cell": "nom_pl",
+      "analysed_orth_form": "hoš-i",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_hoch_pl_acc",
+      "lexeme": "ces_hoch",
+      "cell": "acc_pl",
+      "analysed_orth_form": "hoch-y",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_hoch_pl_gen",
+      "lexeme": "ces_hoch",
+      "cell": "gen_pl",
+      "analysed_orth_form": "hoch-ů",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_hoch_pl_prep",
+      "lexeme": "ces_hoch",
+      "cell": "prep_pl",
+      "analysed_orth_form": "hoš-ích",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_hoch_pl_dat",
+      "lexeme": "ces_hoch",
+      "cell": "dat_pl",
+      "analysed_orth_form": "hoch-ům",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_hoch_pl_ins",
+      "lexeme": "ces_hoch",
+      "cell": "ins_pl",
+      "analysed_orth_form": "hoch-y",
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "form_id": "ces_pan_sg_nom",
+      "lexeme": "ces_pan",
+      "cell": "nom_sg",
+      "analysed_orth_form": "pán",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_pan_sg_acc",
+      "lexeme": "ces_pan",
+      "cell": "acc_sg",
+      "analysed_orth_form": "pán-a",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_pan_sg_gen",
+      "lexeme": "ces_pan",
+      "cell": "gen_sg",
+      "analysed_orth_form": "pán-a",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_pan_sg_prep",
+      "lexeme": "ces_pan",
+      "cell": "prep_sg",
+      "analysed_orth_form": "pán-ovi",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_pan_sg_dat",
+      "lexeme": "ces_pan",
+      "cell": "dat_sg",
+      "analysed_orth_form": "pán-ovi",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_pan_sg_ins",
+      "lexeme": "ces_pan",
+      "cell": "ins_sg",
+      "analysed_orth_form": "pán-em",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_ten_nom",
+      "lexeme": "ces_ten",
+      "cell": "nom_sg_m",
+      "analysed_orth_form": "t-en",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_ten_acc",
+      "lexeme": "ces_ten",
+      "cell": "acc_sg_m",
+      "analysed_orth_form": "t-oho",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_ten_gen",
+      "lexeme": "ces_ten",
+      "cell": "gen_sg_m",
+      "analysed_orth_form": "t-oho",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_ten_prep",
+      "lexeme": "ces_ten",
+      "cell": "prep_sg_m",
+      "analysed_orth_form": "t-om",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_ten_dat",
+      "lexeme": "ces_ten",
+      "cell": "dat_sg_m",
+      "analysed_orth_form": "t-omu",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_ten_ins",
+      "lexeme": "ces_ten",
+      "cell": "ins_sg_m",
+      "analysed_orth_form": "t-ím",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_2_nom",
+      "lexeme": "ces_my",
+      "cell": "nom_pl",
+      "analysed_orth_form": "my",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_2_acc",
+      "lexeme": "ces_my",
+      "cell": "acc_pl",
+      "analysed_orth_form": "ná-s",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_2_gen",
+      "lexeme": "ces_my",
+      "cell": "gen_pl",
+      "analysed_orth_form": "ná-s",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_2_prep",
+      "lexeme": "ces_my",
+      "cell": "prep_pl",
+      "analysed_orth_form": "ná-s",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_2_dat",
+      "lexeme": "ces_my",
+      "cell": "dat_pl",
+      "analysed_orth_form": "ná-m",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_2_ins",
+      "lexeme": "ces_my",
+      "cell": "ins_pl",
+      "analysed_orth_form": "ná-ma",
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_nom",
+      "lexeme": "ces_ona",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ona",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_acc",
+      "lexeme": "ces_ona",
+      "cell": "acc_sg",
+      "analysed_orth_form": "j-i",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_gen",
+      "lexeme": "ces_ona",
+      "cell": "gen_sg",
+      "analysed_orth_form": "j-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_prep",
+      "lexeme": "ces_ona",
+      "cell": "prep_sg",
+      "analysed_orth_form": "j-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_dat",
+      "lexeme": "ces_ona",
+      "cell": "dat_sg",
+      "analysed_orth_form": "j-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_ins",
+      "lexeme": "ces_ona",
+      "cell": "ins_sg",
+      "analysed_orth_form": "j-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_fsg_nom",
+      "lexeme": "ces_nase",
+      "cell": "nom_sg_f",
+      "analysed_orth_form": "naš-e",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_fsg_acc",
+      "lexeme": "ces_nase",
+      "cell": "acc_sg_f",
+      "analysed_orth_form": "naš-i",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_fsg_gen",
+      "lexeme": "ces_nase",
+      "cell": "gen_sg_f",
+      "analysed_orth_form": "naš-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_fsg_prep",
+      "lexeme": "ces_nase",
+      "cell": "prep_sg_f",
+      "analysed_orth_form": "naš-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_fsg_dat",
+      "lexeme": "ces_nase",
+      "cell": "dat_sg_f",
+      "analysed_orth_form": "naš-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_fsg_ins",
+      "lexeme": "ces_nase",
+      "cell": "ins_sg_f",
+      "analysed_orth_form": "naš-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_zatez_sg_nom",
+      "lexeme": "ces_zatez",
+      "cell": "nom_sg",
+      "analysed_orth_form": "zátěž-ø",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_zatez_sg_acc",
+      "lexeme": "ces_zatez",
+      "cell": "acc_sg",
+      "analysed_orth_form": "zátěž-ø",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_zatez_sg_gen",
+      "lexeme": "ces_zatez",
+      "cell": "gen_sg",
+      "analysed_orth_form": "zátěž-e",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_zatez_sg_prep",
+      "lexeme": "ces_zatez",
+      "cell": "prep_sg",
+      "analysed_orth_form": "zátěž-i",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_zatez_sg_dat",
+      "lexeme": "ces_zatez",
+      "cell": "dat_sg",
+      "analysed_orth_form": "zátěž-i",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_zatez_sg_ins",
+      "lexeme": "ces_zatez",
+      "cell": "ins_sg",
+      "analysed_orth_form": "zátěž-í",
+      "source": [
+        "caha-2009[(41)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_sg_nom",
+      "lexeme": "ces_zena",
+      "cell": "nom_sg",
+      "analysed_orth_form": "žen-a",
+      "source": [
+        "caha-2009[(44)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_sg_acc",
+      "lexeme": "ces_zena",
+      "cell": "acc_sg",
+      "analysed_orth_form": "žen-u",
+      "source": [
+        "caha-2009[(44)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_sg_gen",
+      "lexeme": "ces_zena",
+      "cell": "gen_sg",
+      "analysed_orth_form": "žen-y",
+      "source": [
+        "caha-2009[(44)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_sg_prep",
+      "lexeme": "ces_zena",
+      "cell": "prep_sg",
+      "analysed_orth_form": "žen-ě",
+      "source": [
+        "caha-2009[(44)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_sg_dat",
+      "lexeme": "ces_zena",
+      "cell": "dat_sg",
+      "analysed_orth_form": "žen-ě",
+      "source": [
+        "caha-2009[(44)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_sg_ins",
+      "lexeme": "ces_zena",
+      "cell": "ins_sg",
+      "analysed_orth_form": "žen-ou",
+      "source": [
+        "caha-2009[(44)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_nom",
+      "lexeme": "ces_kluk",
+      "cell": "nom_pl",
+      "analysed_orth_form": "kluc-i",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_acc",
+      "lexeme": "ces_kluk",
+      "cell": "acc_pl",
+      "analysed_orth_form": "kluk-y",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_gen",
+      "lexeme": "ces_kluk",
+      "cell": "gen_pl",
+      "analysed_orth_form": "kluk-ů",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_prep",
+      "lexeme": "ces_kluk",
+      "cell": "prep_pl",
+      "analysed_orth_form": "kluc-ích",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_dat",
+      "lexeme": "ces_kluk",
+      "cell": "dat_pl",
+      "analysed_orth_form": "kluk-ům",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_ins",
+      "lexeme": "ces_kluk",
+      "cell": "ins_pl",
+      "analysed_orth_form": "kluk-y",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_colloquial_nom",
+      "lexeme": "ces_kluk",
+      "cell": "nom_pl",
+      "analysed_orth_form": "kluc-i",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_colloquial_acc",
+      "lexeme": "ces_kluk",
+      "cell": "acc_pl",
+      "analysed_orth_form": "kluk-y",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_colloquial_gen",
+      "lexeme": "ces_kluk",
+      "cell": "gen_pl",
+      "analysed_orth_form": "kluk-ů",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_colloquial_prep",
+      "lexeme": "ces_kluk",
+      "cell": "prep_pl",
+      "analysed_orth_form": "kluk-ách",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_colloquial_dat",
+      "lexeme": "ces_kluk",
+      "cell": "dat_pl",
+      "analysed_orth_form": "kluk-ům",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_kluk_pl_colloquial_ins",
+      "lexeme": "ces_kluk",
+      "cell": "ins_pl",
+      "analysed_orth_form": "kluk-ama",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_colloquial_nom",
+      "lexeme": "ces_muz",
+      "cell": "nom_pl",
+      "analysed_orth_form": "muž-i",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_colloquial_acc",
+      "lexeme": "ces_muz",
+      "cell": "acc_pl",
+      "analysed_orth_form": "muž-e",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_colloquial_gen",
+      "lexeme": "ces_muz",
+      "cell": "gen_pl",
+      "analysed_orth_form": "muž-ů",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_colloquial_prep",
+      "lexeme": "ces_muz",
+      "cell": "prep_pl",
+      "analysed_orth_form": "muž-ích",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_colloquial_dat",
+      "lexeme": "ces_muz",
+      "cell": "dat_pl",
+      "analysed_orth_form": "muž-ům",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_muz_pl_colloquial_ins",
+      "lexeme": "ces_muz",
+      "cell": "ins_pl",
+      "analysed_orth_form": "muž-ema",
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_pl_nom",
+      "lexeme": "ces_zena",
+      "cell": "nom_pl",
+      "analysed_orth_form": "žen-y",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_pl_acc",
+      "lexeme": "ces_zena",
+      "cell": "acc_pl",
+      "analysed_orth_form": "žen-y",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_pl_gen",
+      "lexeme": "ces_zena",
+      "cell": "gen_pl",
+      "analysed_orth_form": "žen-ø",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_pl_prep",
+      "lexeme": "ces_zena",
+      "cell": "prep_pl",
+      "analysed_orth_form": "žen-á-ch",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_pl_dat",
+      "lexeme": "ces_zena",
+      "cell": "dat_pl",
+      "analysed_orth_form": "žen-á-m",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_zena_pl_ins",
+      "lexeme": "ces_zena",
+      "cell": "ins_pl",
+      "analysed_orth_form": "žen-a-mi",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_pisen_pl_nom",
+      "lexeme": "ces_pisen",
+      "cell": "nom_pl",
+      "analysed_orth_form": "písn-ě",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_pisen_pl_acc",
+      "lexeme": "ces_pisen",
+      "cell": "acc_pl",
+      "analysed_orth_form": "písn-ě",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_pisen_pl_gen",
+      "lexeme": "ces_pisen",
+      "cell": "gen_pl",
+      "analysed_orth_form": "písn-í",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_pisen_pl_prep",
+      "lexeme": "ces_pisen",
+      "cell": "prep_pl",
+      "analysed_orth_form": "písn-í-ch",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_pisen_pl_dat",
+      "lexeme": "ces_pisen",
+      "cell": "dat_pl",
+      "analysed_orth_form": "písn-í-m",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_pisen_pl_ins",
+      "lexeme": "ces_pisen",
+      "cell": "ins_pl",
+      "analysed_orth_form": "písn-ě-mi",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_nom",
+      "lexeme": "ces_dobry",
+      "cell": "nom_pl_m",
+      "analysed_orth_form": "dobr-é",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_acc",
+      "lexeme": "ces_dobry",
+      "cell": "acc_pl_m",
+      "analysed_orth_form": "dobr-é",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_gen",
+      "lexeme": "ces_dobry",
+      "cell": "gen_pl_m",
+      "analysed_orth_form": "dobr-ý-ch",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_prep",
+      "lexeme": "ces_dobry",
+      "cell": "prep_pl_m",
+      "analysed_orth_form": "dobr-ý-ch",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_dat",
+      "lexeme": "ces_dobry",
+      "cell": "dat_pl_m",
+      "analysed_orth_form": "dobr-ý-m",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_dobry_mpl_ins",
+      "lexeme": "ces_dobry",
+      "cell": "ins_pl_m",
+      "analysed_orth_form": "dobr-ý-mi",
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_sg_nom",
+      "lexeme": "ces_kost",
+      "cell": "nom_sg",
+      "analysed_orth_form": "kost-ø",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_sg_acc",
+      "lexeme": "ces_kost",
+      "cell": "acc_sg",
+      "analysed_orth_form": "kost-ø",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_sg_gen",
+      "lexeme": "ces_kost",
+      "cell": "gen_sg",
+      "analysed_orth_form": "kost-i",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_sg_prep",
+      "lexeme": "ces_kost",
+      "cell": "prep_sg",
+      "analysed_orth_form": "kost-i",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_sg_dat",
+      "lexeme": "ces_kost",
+      "cell": "dat_sg",
+      "analysed_orth_form": "kost-i",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_kost_sg_ins",
+      "lexeme": "ces_kost",
+      "cell": "ins_sg",
+      "analysed_orth_form": "kost-í",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_hrad_sg_nom",
+      "lexeme": "ces_hrad",
+      "cell": "nom_sg",
+      "analysed_orth_form": "hrad-ø",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_hrad_sg_acc",
+      "lexeme": "ces_hrad",
+      "cell": "acc_sg",
+      "analysed_orth_form": "hrad-ø",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_hrad_sg_gen",
+      "lexeme": "ces_hrad",
+      "cell": "gen_sg",
+      "analysed_orth_form": "hrad-u",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_hrad_sg_prep",
+      "lexeme": "ces_hrad",
+      "cell": "prep_sg",
+      "analysed_orth_form": "hrad-u",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_hrad_sg_dat",
+      "lexeme": "ces_hrad",
+      "cell": "dat_sg",
+      "analysed_orth_form": "hrad-u",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_hrad_sg_ins",
+      "lexeme": "ces_hrad",
+      "cell": "ins_sg",
+      "analysed_orth_form": "hrad-em",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_nom",
+      "lexeme": "ces_my",
+      "cell": "nom_pl",
+      "analysed_orth_form": "my",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_acc",
+      "lexeme": "ces_my",
+      "cell": "acc_pl",
+      "analysed_orth_form": "ná-s",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_gen",
+      "lexeme": "ces_my",
+      "cell": "gen_pl",
+      "analysed_orth_form": "ná-s",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_prep",
+      "lexeme": "ces_my",
+      "cell": "prep_pl",
+      "analysed_orth_form": "ná-s",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_dat",
+      "lexeme": "ces_my",
+      "cell": "dat_pl",
+      "analysed_orth_form": "ná-m",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_my_ins",
+      "lexeme": "ces_my",
+      "cell": "ins_pl",
+      "analysed_orth_form": "ná-mi",
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "form_id": "ces_mesto_sg_nom",
+      "lexeme": "ces_mesto",
+      "cell": "nom_sg",
+      "analysed_orth_form": "měst-o",
+      "source": [
+        "caha-2009[(56)]"
+      ]
+    },
+    {
+      "form_id": "ces_mesto_sg_acc",
+      "lexeme": "ces_mesto",
+      "cell": "acc_sg",
+      "analysed_orth_form": "měst-o",
+      "source": [
+        "caha-2009[(56)]"
+      ]
+    },
+    {
+      "form_id": "ces_mesto_sg_gen",
+      "lexeme": "ces_mesto",
+      "cell": "gen_sg",
+      "analysed_orth_form": "měst-a",
+      "source": [
+        "caha-2009[(56)]"
+      ]
+    },
+    {
+      "form_id": "ces_mesto_sg_prep",
+      "lexeme": "ces_mesto",
+      "cell": "prep_sg",
+      "analysed_orth_form": "měst-u",
+      "source": [
+        "caha-2009[(56)]"
+      ]
+    },
+    {
+      "form_id": "ces_mesto_sg_dat",
+      "lexeme": "ces_mesto",
+      "cell": "dat_sg",
+      "analysed_orth_form": "měst-u",
+      "source": [
+        "caha-2009[(56)]"
+      ]
+    },
+    {
+      "form_id": "ces_mesto_sg_ins",
+      "lexeme": "ces_mesto",
+      "cell": "ins_sg",
+      "analysed_orth_form": "měst-em",
+      "source": [
+        "caha-2009[(56)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_nsg_nom",
+      "lexeme": "ces_vetsi",
+      "cell": "nom_sg_n",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[(57)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_nsg_acc",
+      "lexeme": "ces_vetsi",
+      "cell": "acc_sg_n",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[(57)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_nsg_gen",
+      "lexeme": "ces_vetsi",
+      "cell": "gen_sg_n",
+      "analysed_orth_form": "větš-ího",
+      "source": [
+        "caha-2009[(57)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_nsg_prep",
+      "lexeme": "ces_vetsi",
+      "cell": "prep_sg_n",
+      "analysed_orth_form": "větš-ím",
+      "source": [
+        "caha-2009[(57)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_nsg_dat",
+      "lexeme": "ces_vetsi",
+      "cell": "dat_sg_n",
+      "analysed_orth_form": "větš-ímu",
+      "source": [
+        "caha-2009[(57)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_nsg_ins",
+      "lexeme": "ces_vetsi",
+      "cell": "ins_sg_n",
+      "analysed_orth_form": "větš-ím",
+      "source": [
+        "caha-2009[(57)]"
+      ]
+    },
+    {
+      "form_id": "ces_ono_nom",
+      "lexeme": "ces_ono",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ono",
+      "source": [
+        "caha-2009[(58)]"
+      ]
+    },
+    {
+      "form_id": "ces_ono_acc",
+      "lexeme": "ces_ono",
+      "cell": "acc_sg",
+      "analysed_orth_form": "j-e",
+      "source": [
+        "caha-2009[(58)]"
+      ]
+    },
+    {
+      "form_id": "ces_ono_gen",
+      "lexeme": "ces_ono",
+      "cell": "gen_sg",
+      "analysed_orth_form": "j-eho",
+      "source": [
+        "caha-2009[(58)]"
+      ]
+    },
+    {
+      "form_id": "ces_ono_prep",
+      "lexeme": "ces_ono",
+      "cell": "prep_sg",
+      "analysed_orth_form": "j-em",
+      "source": [
+        "caha-2009[(58)]"
+      ]
+    },
+    {
+      "form_id": "ces_ono_dat",
+      "lexeme": "ces_ono",
+      "cell": "dat_sg",
+      "analysed_orth_form": "j-emu",
+      "source": [
+        "caha-2009[(58)]"
+      ]
+    },
+    {
+      "form_id": "ces_ono_ins",
+      "lexeme": "ces_ono",
+      "cell": "ins_sg",
+      "analysed_orth_form": "j-ím",
+      "source": [
+        "caha-2009[(58)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_nsg_nom",
+      "lexeme": "ces_nase",
+      "cell": "nom_sg_n",
+      "analysed_orth_form": "naš-e",
+      "source": [
+        "caha-2009[(62)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_nsg_acc",
+      "lexeme": "ces_nase",
+      "cell": "acc_sg_n",
+      "analysed_orth_form": "naš-e",
+      "source": [
+        "caha-2009[(62)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_nsg_gen",
+      "lexeme": "ces_nase",
+      "cell": "gen_sg_n",
+      "analysed_orth_form": "naš-eho",
+      "source": [
+        "caha-2009[(62)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_nsg_prep",
+      "lexeme": "ces_nase",
+      "cell": "prep_sg_n",
+      "analysed_orth_form": "naš-em",
+      "source": [
+        "caha-2009[(62)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_nsg_dat",
+      "lexeme": "ces_nase",
+      "cell": "dat_sg_n",
+      "analysed_orth_form": "naš-emu",
+      "source": [
+        "caha-2009[(62)]"
+      ]
+    },
+    {
+      "form_id": "ces_nase_nsg_ins",
+      "lexeme": "ces_nase",
+      "cell": "ins_sg_n",
+      "analysed_orth_form": "naš-ím",
+      "source": [
+        "caha-2009[(62)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_fsg_nom",
+      "lexeme": "ces_vetsi",
+      "cell": "nom_sg_f",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[n. 25]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_fsg_acc",
+      "lexeme": "ces_vetsi",
+      "cell": "acc_sg_f",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[n. 25]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_fsg_gen",
+      "lexeme": "ces_vetsi",
+      "cell": "gen_sg_f",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[n. 25]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_fsg_prep",
+      "lexeme": "ces_vetsi",
+      "cell": "prep_sg_f",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[n. 25]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_fsg_dat",
+      "lexeme": "ces_vetsi",
+      "cell": "dat_sg_f",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[n. 25]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_fsg_ins",
+      "lexeme": "ces_vetsi",
+      "cell": "ins_sg_f",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[n. 25]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_npl_nom",
+      "lexeme": "ces_vetsi",
+      "cell": "nom_pl_n",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[(63)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_npl_acc",
+      "lexeme": "ces_vetsi",
+      "cell": "acc_pl_n",
+      "analysed_orth_form": "větš-í",
+      "source": [
+        "caha-2009[(63)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_npl_gen",
+      "lexeme": "ces_vetsi",
+      "cell": "gen_pl_n",
+      "analysed_orth_form": "větš-ích",
+      "source": [
+        "caha-2009[(63)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_npl_prep",
+      "lexeme": "ces_vetsi",
+      "cell": "prep_pl_n",
+      "analysed_orth_form": "větš-ích",
+      "source": [
+        "caha-2009[(63)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_npl_dat",
+      "lexeme": "ces_vetsi",
+      "cell": "dat_pl_n",
+      "analysed_orth_form": "větš-ím",
+      "source": [
+        "caha-2009[(63)]"
+      ]
+    },
+    {
+      "form_id": "ces_vetsi_npl_ins",
+      "lexeme": "ces_vetsi",
+      "cell": "ins_pl_n",
+      "analysed_orth_form": "větš-ími",
+      "source": [
+        "caha-2009[(63)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_npl_nom",
+      "lexeme": "ces_oni",
+      "cell": "nom_pl",
+      "analysed_orth_form": "on-a",
+      "source": [
+        "caha-2009[(64)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_npl_acc",
+      "lexeme": "ces_oni",
+      "cell": "acc_pl",
+      "analysed_orth_form": "j-e",
+      "source": [
+        "caha-2009[(64)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_npl_gen",
+      "lexeme": "ces_oni",
+      "cell": "gen_pl",
+      "analysed_orth_form": "j-ich",
+      "source": [
+        "caha-2009[(64)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_npl_prep",
+      "lexeme": "ces_oni",
+      "cell": "prep_pl",
+      "analysed_orth_form": "j-ich",
+      "source": [
+        "caha-2009[(64)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_npl_dat",
+      "lexeme": "ces_oni",
+      "cell": "dat_pl",
+      "analysed_orth_form": "j-im",
+      "source": [
+        "caha-2009[(64)]"
+      ]
+    },
+    {
+      "form_id": "ces_ona_npl_ins",
+      "lexeme": "ces_oni",
+      "cell": "ins_pl",
+      "analysed_orth_form": "j-imi",
+      "source": [
+        "caha-2009[(64)]"
+      ]
+    },
+    {
+      "form_id": "ces_ta_nom",
+      "lexeme": "ces_ten",
+      "cell": "nom_sg_f",
+      "analysed_orth_form": "t-a",
+      "source": [
+        "caha-2009[n. 26]"
+      ]
+    },
+    {
+      "form_id": "ces_ta_acc",
+      "lexeme": "ces_ten",
+      "cell": "acc_sg_f",
+      "analysed_orth_form": "t-u",
+      "source": [
+        "caha-2009[n. 26]"
+      ]
+    },
+    {
+      "form_id": "ces_ta_gen",
+      "lexeme": "ces_ten",
+      "cell": "gen_sg_f",
+      "analysed_orth_form": "t-é",
+      "source": [
+        "caha-2009[n. 26]"
+      ]
+    },
+    {
+      "form_id": "ces_ta_prep",
+      "lexeme": "ces_ten",
+      "cell": "prep_sg_f",
+      "analysed_orth_form": "t-é",
+      "source": [
+        "caha-2009[n. 26]"
+      ]
+    },
+    {
+      "form_id": "ces_ta_dat",
+      "lexeme": "ces_ten",
+      "cell": "dat_sg_f",
+      "analysed_orth_form": "t-é",
+      "source": [
+        "caha-2009[n. 26]"
+      ]
+    },
+    {
+      "form_id": "ces_ta_ins",
+      "lexeme": "ces_ten",
+      "cell": "ins_sg_f",
+      "analysed_orth_form": "t-ou",
+      "source": [
+        "caha-2009[n. 26]"
+      ]
+    },
+    {
+      "form_id": "ces_dva_nom",
+      "lexeme": "ces_dva",
+      "cell": "nom_du_m",
+      "analysed_orth_form": "dv-a",
+      "source": [
+        "caha-2009[(65)]"
+      ]
+    },
+    {
+      "form_id": "ces_dva_acc",
+      "lexeme": "ces_dva",
+      "cell": "acc_du_m",
+      "analysed_orth_form": "dv-a",
+      "source": [
+        "caha-2009[(65)]"
+      ]
+    },
+    {
+      "form_id": "ces_dva_gen",
+      "lexeme": "ces_dva",
+      "cell": "gen_du_m",
+      "analysed_orth_form": "dv-ou",
+      "source": [
+        "caha-2009[(65)]"
+      ]
+    },
+    {
+      "form_id": "ces_dva_prep",
+      "lexeme": "ces_dva",
+      "cell": "prep_du_m",
+      "analysed_orth_form": "dv-ou",
+      "source": [
+        "caha-2009[(65)]"
+      ]
+    },
+    {
+      "form_id": "ces_dva_dat",
+      "lexeme": "ces_dva",
+      "cell": "dat_du_m",
+      "analysed_orth_form": "dv-ěma",
+      "source": [
+        "caha-2009[(65)]"
+      ]
+    },
+    {
+      "form_id": "ces_dva_ins",
+      "lexeme": "ces_dva",
+      "cell": "ins_du_m",
+      "analysed_orth_form": "dv-ěma",
+      "source": [
+        "caha-2009[(65)]"
+      ]
+    },
+    {
+      "form_id": "ces_pet_nom",
+      "lexeme": "ces_pet",
+      "cell": "nom_pl",
+      "analysed_orth_form": "pět",
+      "source": [
+        "caha-2009[(66)]"
+      ]
+    },
+    {
+      "form_id": "ces_pet_acc",
+      "lexeme": "ces_pet",
+      "cell": "acc_pl",
+      "analysed_orth_form": "pět",
+      "source": [
+        "caha-2009[(66)]"
+      ]
+    },
+    {
+      "form_id": "ces_pet_gen",
+      "lexeme": "ces_pet",
+      "cell": "gen_pl",
+      "analysed_orth_form": "pět-i",
+      "source": [
+        "caha-2009[(66)]"
+      ]
+    },
+    {
+      "form_id": "ces_pet_prep",
+      "lexeme": "ces_pet",
+      "cell": "prep_pl",
+      "analysed_orth_form": "pět-i",
+      "source": [
+        "caha-2009[(66)]"
+      ]
+    },
+    {
+      "form_id": "ces_pet_dat",
+      "lexeme": "ces_pet",
+      "cell": "dat_pl",
+      "analysed_orth_form": "pět-i",
+      "source": [
+        "caha-2009[(66)]"
+      ]
+    },
+    {
+      "form_id": "ces_pet_ins",
+      "lexeme": "ces_pet",
+      "cell": "ins_pl",
+      "analysed_orth_form": "pět-i",
+      "source": [
+        "caha-2009[(66)]"
+      ]
+    },
+    {
+      "form_id": "slk_ona_nom",
+      "lexeme": "slk_ona",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ona",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ona_acc",
+      "lexeme": "slk_ona",
+      "cell": "acc_sg",
+      "analysed_orth_form": "j-u",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ona_gen",
+      "lexeme": "slk_ona",
+      "cell": "gen_sg",
+      "analysed_orth_form": "j-ej",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ona_prep",
+      "lexeme": "slk_ona",
+      "cell": "prep_sg",
+      "analysed_orth_form": "j-ej",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ona_dat",
+      "lexeme": "slk_ona",
+      "cell": "dat_sg",
+      "analysed_orth_form": "nj-ej",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ona_ins",
+      "lexeme": "slk_ona",
+      "cell": "ins_sg",
+      "analysed_orth_form": "nj-ou",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_nase_fsg_nom",
+      "lexeme": "slk_nase",
+      "cell": "nom_sg_f",
+      "analysed_orth_form": "naš-a",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_nase_fsg_acc",
+      "lexeme": "slk_nase",
+      "cell": "acc_sg_f",
+      "analysed_orth_form": "naš-u",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_nase_fsg_gen",
+      "lexeme": "slk_nase",
+      "cell": "gen_sg_f",
+      "analysed_orth_form": "naš-ej",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_nase_fsg_prep",
+      "lexeme": "slk_nase",
+      "cell": "prep_sg_f",
+      "analysed_orth_form": "naš-ej",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_nase_fsg_dat",
+      "lexeme": "slk_nase",
+      "cell": "dat_sg_f",
+      "analysed_orth_form": "naš-ej",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_nase_fsg_ins",
+      "lexeme": "slk_nase",
+      "cell": "ins_sg_f",
+      "analysed_orth_form": "naš-ou",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ulica_sg_nom",
+      "lexeme": "slk_ulica",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ulic-a",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ulica_sg_acc",
+      "lexeme": "slk_ulica",
+      "cell": "acc_sg",
+      "analysed_orth_form": "ulic-u",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ulica_sg_gen",
+      "lexeme": "slk_ulica",
+      "cell": "gen_sg",
+      "analysed_orth_form": "ulic-e",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ulica_sg_prep",
+      "lexeme": "slk_ulica",
+      "cell": "prep_sg",
+      "analysed_orth_form": "ulic-i",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ulica_sg_dat",
+      "lexeme": "slk_ulica",
+      "cell": "dat_sg",
+      "analysed_orth_form": "ulic-i",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_ulica_sg_ins",
+      "lexeme": "slk_ulica",
+      "cell": "ins_sg",
+      "analysed_orth_form": "ulic-ou",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_tlac_sg_nom",
+      "lexeme": "slk_tlac",
+      "cell": "nom_sg",
+      "analysed_orth_form": "tlač-ø",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_tlac_sg_acc",
+      "lexeme": "slk_tlac",
+      "cell": "acc_sg",
+      "analysed_orth_form": "tlač-ø",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_tlac_sg_gen",
+      "lexeme": "slk_tlac",
+      "cell": "gen_sg",
+      "analysed_orth_form": "tlač-e",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_tlac_sg_prep",
+      "lexeme": "slk_tlac",
+      "cell": "prep_sg",
+      "analysed_orth_form": "tlač-i",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_tlac_sg_dat",
+      "lexeme": "slk_tlac",
+      "cell": "dat_sg",
+      "analysed_orth_form": "tlač-i",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "slk_tlac_sg_ins",
+      "lexeme": "slk_tlac",
+      "cell": "ins_sg",
+      "analysed_orth_form": "tlač-ou",
+      "source": [
+        "caha-2009[(42)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_nom",
+      "lexeme": "ukr_kraj",
+      "cell": "nom_sg",
+      "analysed_orth_form": "kraj-ø",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_acc",
+      "lexeme": "ukr_kraj",
+      "cell": "acc_sg",
+      "analysed_orth_form": "kraj-ø",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_gen",
+      "lexeme": "ukr_kraj",
+      "cell": "gen_sg",
+      "analysed_orth_form": "kráj-u",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_prep",
+      "lexeme": "ukr_kraj",
+      "cell": "prep_sg",
+      "analysed_orth_form": "kraj-ú",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_dat",
+      "lexeme": "ukr_kraj",
+      "cell": "dat_sg",
+      "analysed_orth_form": "kráj-evi",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_ins",
+      "lexeme": "ukr_kraj",
+      "cell": "ins_sg",
+      "analysed_orth_form": "kráj-em",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_pl_nom",
+      "lexeme": "ukr_velykyj",
+      "cell": "nom_pl",
+      "analysed_orth_form": "velík-i",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_pl_acc",
+      "lexeme": "ukr_velykyj",
+      "cell": "acc_pl",
+      "analysed_orth_form": "velík-i",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_pl_gen",
+      "lexeme": "ukr_velykyj",
+      "cell": "gen_pl",
+      "analysed_orth_form": "velík-ıch",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_pl_prep",
+      "lexeme": "ukr_velykyj",
+      "cell": "prep_pl",
+      "analysed_orth_form": "velík-ıch",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_pl_dat",
+      "lexeme": "ukr_velykyj",
+      "cell": "dat_pl",
+      "analysed_orth_form": "velík-ım",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_pl_ins",
+      "lexeme": "ukr_velykyj",
+      "cell": "ins_pl",
+      "analysed_orth_form": "velík-ımı",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_znannja_sg_nom",
+      "lexeme": "ukr_znannja",
+      "cell": "nom_sg",
+      "analysed_orth_form": "znann-já",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_znannja_sg_acc",
+      "lexeme": "ukr_znannja",
+      "cell": "acc_sg",
+      "analysed_orth_form": "znann-já",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_znannja_sg_gen",
+      "lexeme": "ukr_znannja",
+      "cell": "gen_sg",
+      "analysed_orth_form": "znann-já",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_znannja_sg_prep",
+      "lexeme": "ukr_znannja",
+      "cell": "prep_sg",
+      "analysed_orth_form": "znann-i̇́",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_znannja_sg_dat",
+      "lexeme": "ukr_znannja",
+      "cell": "dat_sg",
+      "analysed_orth_form": "znann-jú",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_znannja_sg_ins",
+      "lexeme": "ukr_znannja",
+      "cell": "ins_sg",
+      "analysed_orth_form": "znann-jám",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_my_nom",
+      "lexeme": "ukr_my",
+      "cell": "nom_pl",
+      "analysed_orth_form": "mı",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_my_acc",
+      "lexeme": "ukr_my",
+      "cell": "acc_pl",
+      "analysed_orth_form": "nas",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_my_gen",
+      "lexeme": "ukr_my",
+      "cell": "gen_pl",
+      "analysed_orth_form": "nas",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_my_prep",
+      "lexeme": "ukr_my",
+      "cell": "prep_pl",
+      "analysed_orth_form": "nas",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_my_dat",
+      "lexeme": "ukr_my",
+      "cell": "dat_pl",
+      "analysed_orth_form": "nam",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_my_ins",
+      "lexeme": "ukr_my",
+      "cell": "ins_pl",
+      "analysed_orth_form": "námı",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_sg_nom",
+      "lexeme": "ukr_kasyr",
+      "cell": "nom_sg",
+      "analysed_orth_form": "kasír-ø",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_sg_acc",
+      "lexeme": "ukr_kasyr",
+      "cell": "acc_sg",
+      "analysed_orth_form": "kasír-a",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_sg_gen",
+      "lexeme": "ukr_kasyr",
+      "cell": "gen_sg",
+      "analysed_orth_form": "kasír-a",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_sg_prep",
+      "lexeme": "ukr_kasyr",
+      "cell": "prep_sg",
+      "analysed_orth_form": "kasír-ovi",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_sg_dat",
+      "lexeme": "ukr_kasyr",
+      "cell": "dat_sg",
+      "analysed_orth_form": "kasír-ovi",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_sg_ins",
+      "lexeme": "ukr_kasyr",
+      "cell": "ins_sg",
+      "analysed_orth_form": "kasír-om",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_pl_nom",
+      "lexeme": "ukr_kasyr",
+      "cell": "nom_pl",
+      "analysed_orth_form": "kasír-ı",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_pl_acc",
+      "lexeme": "ukr_kasyr",
+      "cell": "acc_pl",
+      "analysed_orth_form": "kasír-iv",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_pl_gen",
+      "lexeme": "ukr_kasyr",
+      "cell": "gen_pl",
+      "analysed_orth_form": "kasír-iv",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_pl_prep",
+      "lexeme": "ukr_kasyr",
+      "cell": "prep_pl",
+      "analysed_orth_form": "kasír-ach",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_pl_dat",
+      "lexeme": "ukr_kasyr",
+      "cell": "dat_pl",
+      "analysed_orth_form": "kasír-am",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kasyr_pl_ins",
+      "lexeme": "ukr_kasyr",
+      "cell": "ins_pl",
+      "analysed_orth_form": "kasír-amı",
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "form_id": "ukr_maty_sg_nom",
+      "lexeme": "ukr_maty",
+      "cell": "nom_sg",
+      "analysed_orth_form": "mát-ı",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_maty_sg_acc",
+      "lexeme": "ukr_maty",
+      "cell": "acc_sg",
+      "analysed_orth_form": "mát-ir",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_maty_sg_gen",
+      "lexeme": "ukr_maty",
+      "cell": "gen_sg",
+      "analysed_orth_form": "mát-er-i",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_maty_sg_prep",
+      "lexeme": "ukr_maty",
+      "cell": "prep_sg",
+      "analysed_orth_form": "mát-er-i",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_maty_sg_dat",
+      "lexeme": "ukr_maty",
+      "cell": "dat_sg",
+      "analysed_orth_form": "mát-er-i",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_maty_sg_ins",
+      "lexeme": "ukr_maty",
+      "cell": "ins_sg",
+      "analysed_orth_form": "mát-ir-ju",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ruka_sg_nom",
+      "lexeme": "ukr_ruka",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ruk-á",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ruka_sg_acc",
+      "lexeme": "ukr_ruka",
+      "cell": "acc_sg",
+      "analysed_orth_form": "rúk-u",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ruka_sg_gen",
+      "lexeme": "ukr_ruka",
+      "cell": "gen_sg",
+      "analysed_orth_form": "ruk-í",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ruka_sg_prep",
+      "lexeme": "ukr_ruka",
+      "cell": "prep_sg",
+      "analysed_orth_form": "ruc-i̇́",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ruka_sg_dat",
+      "lexeme": "ukr_ruka",
+      "cell": "dat_sg",
+      "analysed_orth_form": "ruc-i̇́",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ruka_sg_ins",
+      "lexeme": "ukr_ruka",
+      "cell": "ins_sg",
+      "analysed_orth_form": "ruk-óju",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ja_nom",
+      "lexeme": "ukr_ja",
+      "cell": "nom_sg",
+      "analysed_orth_form": "ja",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ja_acc",
+      "lexeme": "ukr_ja",
+      "cell": "acc_sg",
+      "analysed_orth_form": "mené",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ja_gen",
+      "lexeme": "ukr_ja",
+      "cell": "gen_sg",
+      "analysed_orth_form": "mené",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ja_prep",
+      "lexeme": "ukr_ja",
+      "cell": "prep_sg",
+      "analysed_orth_form": "meni̇́",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ja_dat",
+      "lexeme": "ukr_ja",
+      "cell": "dat_sg",
+      "analysed_orth_form": "meni̇́",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_ja_ins",
+      "lexeme": "ukr_ja",
+      "cell": "ins_sg",
+      "analysed_orth_form": "mnóju",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_nom",
+      "lexeme": "ukr_velykyj",
+      "cell": "nom_sg_m",
+      "analysed_orth_form": "velík-ıj",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_acc",
+      "lexeme": "ukr_velykyj",
+      "cell": "acc_sg_m",
+      "analysed_orth_form": "velík-ıj",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_gen",
+      "lexeme": "ukr_velykyj",
+      "cell": "gen_sg_m",
+      "analysed_orth_form": "velík-ogo",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_prep",
+      "lexeme": "ukr_velykyj",
+      "cell": "prep_sg_m",
+      "analysed_orth_form": "velík-omu",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_dat",
+      "lexeme": "ukr_velykyj",
+      "cell": "dat_sg_m",
+      "analysed_orth_form": "velík-omu",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_ins",
+      "lexeme": "ukr_velykyj",
+      "cell": "ins_sg_m",
+      "analysed_orth_form": "velík-ım",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_sto_nom",
+      "lexeme": "ukr_sto",
+      "cell": "nom_sg",
+      "analysed_orth_form": "st-o",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_sto_acc",
+      "lexeme": "ukr_sto",
+      "cell": "acc_sg",
+      "analysed_orth_form": "st-o",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_sto_gen",
+      "lexeme": "ukr_sto",
+      "cell": "gen_sg",
+      "analysed_orth_form": "st-a",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_sto_prep",
+      "lexeme": "ukr_sto",
+      "cell": "prep_sg",
+      "analysed_orth_form": "st-a",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_sto_dat",
+      "lexeme": "ukr_sto",
+      "cell": "dat_sg",
+      "analysed_orth_form": "st-a",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_sto_ins",
+      "lexeme": "ukr_sto",
+      "cell": "ins_sg",
+      "analysed_orth_form": "st-a",
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_2_nom",
+      "lexeme": "ukr_kraj",
+      "cell": "nom_sg",
+      "analysed_orth_form": "kraj-ø",
+      "source": [
+        "caha-2009[(70)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_2_acc",
+      "lexeme": "ukr_kraj",
+      "cell": "acc_sg",
+      "analysed_orth_form": "kraj-ø",
+      "source": [
+        "caha-2009[(70)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_2_gen",
+      "lexeme": "ukr_kraj",
+      "cell": "gen_sg",
+      "analysed_orth_form": "kráj-u",
+      "source": [
+        "caha-2009[(70)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_2_prep",
+      "lexeme": "ukr_kraj",
+      "cell": "prep_sg",
+      "analysed_orth_form": "kráj-i",
+      "source": [
+        "caha-2009[(70)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_2_dat",
+      "lexeme": "ukr_kraj",
+      "cell": "dat_sg",
+      "analysed_orth_form": "kráj-u",
+      "source": [
+        "caha-2009[(70)]"
+      ]
+    },
+    {
+      "form_id": "ukr_kraj_sg_2_ins",
+      "lexeme": "ukr_kraj",
+      "cell": "ins_sg",
+      "analysed_orth_form": "kráj-em",
+      "source": [
+        "caha-2009[(70)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_nom",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "nom_sg_m",
+      "analysed_orth_form": "bezkraj-ij",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_acc",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "acc_sg_m",
+      "analysed_orth_form": "bezkraj-ij",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_gen",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "gen_sg_m",
+      "analysed_orth_form": "bezkraj-ogo",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_prep",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "prep_sg_m",
+      "analysed_orth_form": "bezkraj-omu",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_dat",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "dat_sg_m",
+      "analysed_orth_form": "bezkraj-omu",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_ins",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "ins_sg_m",
+      "analysed_orth_form": "bezkraj-im",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_2_nom",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "nom_sg_m",
+      "analysed_orth_form": "bezkraj-ij",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_2_acc",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "acc_sg_m",
+      "analysed_orth_form": "bezkraj-ij",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_2_gen",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "gen_sg_m",
+      "analysed_orth_form": "bezkraj-ogo",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_2_prep",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "prep_sg_m",
+      "analysed_orth_form": "bezkraj-im",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_2_dat",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "dat_sg_m",
+      "analysed_orth_form": "bezkraj-omu",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_bezkrajij_msg_2_ins",
+      "lexeme": "ukr_bezkrajij",
+      "cell": "ins_sg_m",
+      "analysed_orth_form": "bezkraj-im",
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_2_nom",
+      "lexeme": "ukr_velykyj",
+      "cell": "nom_sg_m",
+      "analysed_orth_form": "velík-ıj",
+      "source": [
+        "caha-2009[(72)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_2_acc",
+      "lexeme": "ukr_velykyj",
+      "cell": "acc_sg_m",
+      "analysed_orth_form": "velík-ıj",
+      "source": [
+        "caha-2009[(72)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_2_gen",
+      "lexeme": "ukr_velykyj",
+      "cell": "gen_sg_m",
+      "analysed_orth_form": "velík-ogo",
+      "source": [
+        "caha-2009[(72)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_2_prep",
+      "lexeme": "ukr_velykyj",
+      "cell": "prep_sg_m",
+      "analysed_orth_form": "velík-im",
+      "source": [
+        "caha-2009[(72)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_2_dat",
+      "lexeme": "ukr_velykyj",
+      "cell": "dat_sg_m",
+      "analysed_orth_form": "velík-omu",
+      "source": [
+        "caha-2009[(72)]"
+      ]
+    },
+    {
+      "form_id": "ukr_velykyj_msg_2_ins",
+      "lexeme": "ukr_velykyj",
+      "cell": "ins_sg_m",
+      "analysed_orth_form": "velík-ım",
+      "source": [
+        "caha-2009[(72)]"
+      ]
+    }
+  ],
+  "paradigms": [
+    {
+      "paradigm_id": "srp_sin_sg",
+      "lexeme": "srp_sin",
+      "forms": [
+        "srp_sin_sg_nom",
+        "srp_sin_sg_acc",
+        "srp_sin_sg_gen",
+        "srp_sin_sg_prep",
+        "srp_sin_sg_dat",
+        "srp_sin_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_grad_sg",
+      "lexeme": "srp_grad",
+      "forms": [
+        "srp_grad_sg_nom",
+        "srp_grad_sg_acc",
+        "srp_grad_sg_gen",
+        "srp_grad_sg_prep",
+        "srp_grad_sg_dat",
+        "srp_grad_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_muz_sg",
+      "lexeme": "srp_muz",
+      "forms": [
+        "srp_muz_sg_nom",
+        "srp_muz_sg_acc",
+        "srp_muz_sg_gen",
+        "srp_muz_sg_prep",
+        "srp_muz_sg_dat",
+        "srp_muz_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_selo_sg",
+      "lexeme": "srp_selo",
+      "forms": [
+        "srp_selo_sg_nom",
+        "srp_selo_sg_acc",
+        "srp_selo_sg_gen",
+        "srp_selo_sg_prep",
+        "srp_selo_sg_dat",
+        "srp_selo_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_srce_sg",
+      "lexeme": "srp_srce",
+      "forms": [
+        "srp_srce_sg_nom",
+        "srp_srce_sg_acc",
+        "srp_srce_sg_gen",
+        "srp_srce_sg_prep",
+        "srp_srce_sg_dat",
+        "srp_srce_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_ovca_sg",
+      "lexeme": "srp_ovca",
+      "forms": [
+        "srp_ovca_sg_nom",
+        "srp_ovca_sg_acc",
+        "srp_ovca_sg_gen",
+        "srp_ovca_sg_prep",
+        "srp_ovca_sg_dat",
+        "srp_ovca_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_smrt_sg",
+      "lexeme": "srp_smrt",
+      "forms": [
+        "srp_smrt_sg_nom",
+        "srp_smrt_sg_acc",
+        "srp_smrt_sg_gen",
+        "srp_smrt_sg_prep",
+        "srp_smrt_sg_dat",
+        "srp_smrt_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(9)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_sin_pl",
+      "lexeme": "srp_sin",
+      "forms": [
+        "srp_sin_pl_nom",
+        "srp_sin_pl_acc",
+        "srp_sin_pl_gen",
+        "srp_sin_pl_prep",
+        "srp_sin_pl_dat",
+        "srp_sin_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_grad_pl",
+      "lexeme": "srp_grad",
+      "forms": [
+        "srp_grad_pl_nom",
+        "srp_grad_pl_acc",
+        "srp_grad_pl_gen",
+        "srp_grad_pl_prep",
+        "srp_grad_pl_dat",
+        "srp_grad_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_muz_pl",
+      "lexeme": "srp_muz",
+      "forms": [
+        "srp_muz_pl_nom",
+        "srp_muz_pl_acc",
+        "srp_muz_pl_gen",
+        "srp_muz_pl_prep",
+        "srp_muz_pl_dat",
+        "srp_muz_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_selo_pl",
+      "lexeme": "srp_selo",
+      "forms": [
+        "srp_selo_pl_nom",
+        "srp_selo_pl_acc",
+        "srp_selo_pl_gen",
+        "srp_selo_pl_prep",
+        "srp_selo_pl_dat",
+        "srp_selo_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_srce_pl",
+      "lexeme": "srp_srce",
+      "forms": [
+        "srp_srce_pl_nom",
+        "srp_srce_pl_acc",
+        "srp_srce_pl_gen",
+        "srp_srce_pl_prep",
+        "srp_srce_pl_dat",
+        "srp_srce_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_ovca_pl",
+      "lexeme": "srp_ovca",
+      "forms": [
+        "srp_ovca_pl_nom",
+        "srp_ovca_pl_acc",
+        "srp_ovca_pl_gen",
+        "srp_ovca_pl_prep",
+        "srp_ovca_pl_dat",
+        "srp_ovca_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_smrt_pl",
+      "lexeme": "srp_smrt",
+      "forms": [
+        "srp_smrt_pl_nom",
+        "srp_smrt_pl_acc",
+        "srp_smrt_pl_gen",
+        "srp_smrt_pl_prep",
+        "srp_smrt_pl_dat",
+        "srp_smrt_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(10)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_ja",
+      "lexeme": "srp_ja",
+      "forms": [
+        "srp_ja_nom",
+        "srp_ja_acc",
+        "srp_ja_gen",
+        "srp_ja_prep",
+        "srp_ja_dat",
+        "srp_ja_ins"
+      ],
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_ti",
+      "lexeme": "srp_ti",
+      "forms": [
+        "srp_ti_nom",
+        "srp_ti_acc",
+        "srp_ti_gen",
+        "srp_ti_prep",
+        "srp_ti_dat",
+        "srp_ti_ins"
+      ],
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_on",
+      "lexeme": "srp_on",
+      "forms": [
+        "srp_on_nom",
+        "srp_on_acc",
+        "srp_on_gen",
+        "srp_on_prep",
+        "srp_on_dat",
+        "srp_on_ins"
+      ],
+      "source": [
+        "caha-2009[(12)]"
+      ],
+      "comment": "the table prints on ono in the nominative, one column for 3m/n.sg"
+    },
+    {
+      "paradigm_id": "srp_ona",
+      "lexeme": "srp_ona",
+      "forms": [
+        "srp_ona_nom",
+        "srp_ona_acc",
+        "srp_ona_gen",
+        "srp_ona_prep",
+        "srp_ona_dat",
+        "srp_ona_ins"
+      ],
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_mi",
+      "lexeme": "srp_mi",
+      "forms": [
+        "srp_mi_nom",
+        "srp_mi_acc",
+        "srp_mi_gen",
+        "srp_mi_prep",
+        "srp_mi_dat",
+        "srp_mi_ins"
+      ],
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_vi",
+      "lexeme": "srp_vi",
+      "forms": [
+        "srp_vi_nom",
+        "srp_vi_acc",
+        "srp_vi_gen",
+        "srp_vi_prep",
+        "srp_vi_dat",
+        "srp_vi_ins"
+      ],
+      "source": [
+        "caha-2009[(12)]"
+      ]
+    },
+    {
+      "paradigm_id": "srp_oni",
+      "lexeme": "srp_oni",
+      "forms": [
+        "srp_oni_nom",
+        "srp_oni_acc",
+        "srp_oni_gen",
+        "srp_oni_prep",
+        "srp_oni_dat",
+        "srp_oni_ins"
+      ],
+      "source": [
+        "caha-2009[(12)]"
+      ],
+      "comment": "the table prints on-i / -a / -e in the nominative"
+    },
+    {
+      "paradigm_id": "slv_miza_du",
+      "lexeme": "slv_miza",
+      "forms": [
+        "slv_miza_du_nom",
+        "slv_miza_du_acc",
+        "slv_miza_du_gen",
+        "slv_miza_du_prep",
+        "slv_miza_du_dat",
+        "slv_miza_du_ins"
+      ],
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_breskev_sg",
+      "lexeme": "slv_breskev",
+      "forms": [
+        "slv_breskev_sg_nom",
+        "slv_breskev_sg_acc",
+        "slv_breskev_sg_gen",
+        "slv_breskev_sg_prep",
+        "slv_breskev_sg_dat",
+        "slv_breskev_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_breskev_pl",
+      "lexeme": "slv_breskev",
+      "forms": [
+        "slv_breskev_pl_nom",
+        "slv_breskev_pl_acc",
+        "slv_breskev_pl_gen",
+        "slv_breskev_pl_prep",
+        "slv_breskev_pl_dat",
+        "slv_breskev_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_jabolko_sg",
+      "lexeme": "slv_jabolko",
+      "forms": [
+        "slv_jabolko_sg_nom",
+        "slv_jabolko_sg_acc",
+        "slv_jabolko_sg_gen",
+        "slv_jabolko_sg_prep",
+        "slv_jabolko_sg_dat",
+        "slv_jabolko_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_kmet_du",
+      "lexeme": "slv_kmet",
+      "forms": [
+        "slv_kmet_du_nom",
+        "slv_kmet_du_acc",
+        "slv_kmet_du_gen",
+        "slv_kmet_du_prep",
+        "slv_kmet_du_dat",
+        "slv_kmet_du_ins"
+      ],
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_kmet_sg",
+      "lexeme": "slv_kmet",
+      "forms": [
+        "slv_kmet_sg_nom",
+        "slv_kmet_sg_acc",
+        "slv_kmet_sg_gen",
+        "slv_kmet_sg_prep",
+        "slv_kmet_sg_dat",
+        "slv_kmet_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_jaz",
+      "lexeme": "slv_jaz",
+      "forms": [
+        "slv_jaz_nom",
+        "slv_jaz_acc",
+        "slv_jaz_gen",
+        "slv_jaz_prep",
+        "slv_jaz_dat",
+        "slv_jaz_ins"
+      ],
+      "source": [
+        "caha-2009[(14)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_moj_mpl",
+      "lexeme": "slv_moj",
+      "forms": [
+        "slv_moj_mpl_nom",
+        "slv_moj_mpl_acc",
+        "slv_moj_mpl_gen",
+        "slv_moj_mpl_prep",
+        "slv_moj_mpl_dat",
+        "slv_moj_mpl_ins"
+      ],
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_dva",
+      "lexeme": "slv_dva",
+      "forms": [
+        "slv_dva_nom",
+        "slv_dva_acc",
+        "slv_dva_gen",
+        "slv_dva_prep",
+        "slv_dva_dat",
+        "slv_dva_ins"
+      ],
+      "source": [
+        "caha-2009[(16)]"
+      ],
+      "comment": "the column heading is 'both'"
+    },
+    {
+      "paradigm_id": "slv_mi",
+      "lexeme": "slv_mi",
+      "forms": [
+        "slv_mi_nom",
+        "slv_mi_acc",
+        "slv_mi_gen",
+        "slv_mi_prep",
+        "slv_mi_dat",
+        "slv_mi_ins"
+      ],
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_midva",
+      "lexeme": "slv_midva",
+      "forms": [
+        "slv_midva_nom",
+        "slv_midva_acc",
+        "slv_midva_gen",
+        "slv_midva_prep",
+        "slv_midva_dat",
+        "slv_midva_ins"
+      ],
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_nit_sg",
+      "lexeme": "slv_nit",
+      "forms": [
+        "slv_nit_sg_nom",
+        "slv_nit_sg_acc",
+        "slv_nit_sg_gen",
+        "slv_nit_sg_prep",
+        "slv_nit_sg_dat",
+        "slv_nit_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_gospa_sg",
+      "lexeme": "slv_gospa",
+      "forms": [
+        "slv_gospa_sg_nom",
+        "slv_gospa_sg_acc",
+        "slv_gospa_sg_gen",
+        "slv_gospa_sg_prep",
+        "slv_gospa_sg_dat",
+        "slv_gospa_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(16)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_dan_du",
+      "lexeme": "slv_dan",
+      "forms": [
+        "slv_dan_du_nom",
+        "slv_dan_du_acc",
+        "slv_dan_du_gen",
+        "slv_dan_du_prep",
+        "slv_dan_du_dat",
+        "slv_dan_du_ins"
+      ],
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_racunovodja_sg",
+      "lexeme": "slv_racunovodja",
+      "forms": [
+        "slv_racunovodja_sg_nom",
+        "slv_racunovodja_sg_acc",
+        "slv_racunovodja_sg_gen",
+        "slv_racunovodja_sg_prep",
+        "slv_racunovodja_sg_dat",
+        "slv_racunovodja_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(17)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_ta_n",
+      "lexeme": "slv_ta",
+      "forms": [
+        "slv_ta_n_nom",
+        "slv_ta_n_acc",
+        "slv_ta_n_gen",
+        "slv_ta_n_prep",
+        "slv_ta_n_dat",
+        "slv_ta_n_ins"
+      ],
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_potnik_pl",
+      "lexeme": "slv_potnik",
+      "forms": [
+        "slv_potnik_pl_nom",
+        "slv_potnik_pl_acc",
+        "slv_potnik_pl_gen",
+        "slv_potnik_pl_prep",
+        "slv_potnik_pl_dat",
+        "slv_potnik_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_ta_f",
+      "lexeme": "slv_ta",
+      "forms": [
+        "slv_ta_f_nom",
+        "slv_ta_f_acc",
+        "slv_ta_f_gen",
+        "slv_ta_f_prep",
+        "slv_ta_f_dat",
+        "slv_ta_f_ins"
+      ],
+      "source": [
+        "caha-2009[(18)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_tisti_n",
+      "lexeme": "slv_tisti",
+      "forms": [
+        "slv_tisti_n_nom",
+        "slv_tisti_n_acc",
+        "slv_tisti_n_gen",
+        "slv_tisti_n_prep",
+        "slv_tisti_n_dat",
+        "slv_tisti_n_ins"
+      ],
+      "source": [
+        "caha-2009[(19)]"
+      ]
+    },
+    {
+      "paradigm_id": "slv_vas_n",
+      "lexeme": "slv_vas",
+      "forms": [
+        "slv_vas_n_nom",
+        "slv_vas_n_acc",
+        "slv_vas_n_gen",
+        "slv_vas_n_prep",
+        "slv_vas_n_dat",
+        "slv_vas_n_ins"
+      ],
+      "source": [
+        "caha-2009[(20)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_okno_sg",
+      "lexeme": "ces_okno",
+      "forms": [
+        "ces_okno_sg_nom",
+        "ces_okno_sg_acc",
+        "ces_okno_sg_gen",
+        "ces_okno_sg_prep",
+        "ces_okno_sg_dat",
+        "ces_okno_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_ulice_sg",
+      "lexeme": "ces_ulice",
+      "forms": [
+        "ces_ulice_sg_nom",
+        "ces_ulice_sg_acc",
+        "ces_ulice_sg_gen",
+        "ces_ulice_sg_prep",
+        "ces_ulice_sg_dat",
+        "ces_ulice_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_muz_pl",
+      "lexeme": "ces_muz",
+      "forms": [
+        "ces_muz_pl_nom",
+        "ces_muz_pl_acc",
+        "ces_muz_pl_gen",
+        "ces_muz_pl_prep",
+        "ces_muz_pl_dat",
+        "ces_muz_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(22)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_muz_sg",
+      "lexeme": "ces_muz",
+      "forms": [
+        "ces_muz_sg_nom",
+        "ces_muz_sg_acc",
+        "ces_muz_sg_gen",
+        "ces_muz_sg_prep",
+        "ces_muz_sg_dat",
+        "ces_muz_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_dobry_fsg",
+      "lexeme": "ces_dobry",
+      "forms": [
+        "ces_dobry_fsg_nom",
+        "ces_dobry_fsg_acc",
+        "ces_dobry_fsg_gen",
+        "ces_dobry_fsg_prep",
+        "ces_dobry_fsg_dat",
+        "ces_dobry_fsg_ins"
+      ],
+      "source": [
+        "caha-2009[(23)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_dobry_mpl_2",
+      "lexeme": "ces_dobry",
+      "forms": [
+        "ces_dobry_mpl_2_nom",
+        "ces_dobry_mpl_2_acc",
+        "ces_dobry_mpl_2_gen",
+        "ces_dobry_mpl_2_prep",
+        "ces_dobry_mpl_2_dat",
+        "ces_dobry_mpl_2_ins"
+      ],
+      "source": [
+        "caha-2009[(24)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_vetsi_msg",
+      "lexeme": "ces_vetsi",
+      "forms": [
+        "ces_vetsi_msg_nom",
+        "ces_vetsi_msg_acc",
+        "ces_vetsi_msg_gen",
+        "ces_vetsi_msg_prep",
+        "ces_vetsi_msg_dat",
+        "ces_vetsi_msg_ins"
+      ],
+      "source": [
+        "caha-2009[(25)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_oba",
+      "lexeme": "ces_oba",
+      "forms": [
+        "ces_oba_nom",
+        "ces_oba_acc",
+        "ces_oba_gen",
+        "ces_oba_prep",
+        "ces_oba_dat",
+        "ces_oba_ins"
+      ],
+      "source": [
+        "caha-2009[(26)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_stroj_sg",
+      "lexeme": "ces_stroj",
+      "forms": [
+        "ces_stroj_sg_nom",
+        "ces_stroj_sg_acc",
+        "ces_stroj_sg_gen",
+        "ces_stroj_sg_prep",
+        "ces_stroj_sg_dat",
+        "ces_stroj_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_stroj_pl",
+      "lexeme": "ces_stroj",
+      "forms": [
+        "ces_stroj_pl_nom",
+        "ces_stroj_pl_acc",
+        "ces_stroj_pl_gen",
+        "ces_stroj_pl_prep",
+        "ces_stroj_pl_dat",
+        "ces_stroj_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_kost_pl",
+      "lexeme": "ces_kost",
+      "forms": [
+        "ces_kost_pl_nom",
+        "ces_kost_pl_acc",
+        "ces_kost_pl_gen",
+        "ces_kost_pl_prep",
+        "ces_kost_pl_dat",
+        "ces_kost_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(30)]"
+      ],
+      "comment": "the column heading is 'castle, pl.'"
+    },
+    {
+      "paradigm_id": "ces_ty",
+      "lexeme": "ces_ten",
+      "forms": [
+        "ces_ty_nom",
+        "ces_ty_acc",
+        "ces_ty_gen",
+        "ces_ty_prep",
+        "ces_ty_dat",
+        "ces_ty_ins"
+      ],
+      "source": [
+        "caha-2009[(30)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_vila_sg",
+      "lexeme": "ces_vila",
+      "forms": [
+        "ces_vila_sg_nom",
+        "ces_vila_sg_acc",
+        "ces_vila_sg_gen",
+        "ces_vila_sg_prep",
+        "ces_vila_sg_dat",
+        "ces_vila_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_misa_sg",
+      "lexeme": "ces_misa",
+      "forms": [
+        "ces_misa_sg_nom",
+        "ces_misa_sg_acc",
+        "ces_misa_sg_gen",
+        "ces_misa_sg_prep",
+        "ces_misa_sg_dat",
+        "ces_misa_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(31)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_vul_pl",
+      "lexeme": "ces_vul",
+      "forms": [
+        "ces_vul_pl_nom",
+        "ces_vul_pl_acc",
+        "ces_vul_pl_gen",
+        "ces_vul_pl_prep",
+        "ces_vul_pl_dat",
+        "ces_vul_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_hoch_pl",
+      "lexeme": "ces_hoch",
+      "forms": [
+        "ces_hoch_pl_nom",
+        "ces_hoch_pl_acc",
+        "ces_hoch_pl_gen",
+        "ces_hoch_pl_prep",
+        "ces_hoch_pl_dat",
+        "ces_hoch_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(35)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_pan_sg",
+      "lexeme": "ces_pan",
+      "forms": [
+        "ces_pan_sg_nom",
+        "ces_pan_sg_acc",
+        "ces_pan_sg_gen",
+        "ces_pan_sg_prep",
+        "ces_pan_sg_dat",
+        "ces_pan_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_ten",
+      "lexeme": "ces_ten",
+      "forms": [
+        "ces_ten_nom",
+        "ces_ten_acc",
+        "ces_ten_gen",
+        "ces_ten_prep",
+        "ces_ten_dat",
+        "ces_ten_ins"
+      ],
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_my_2",
+      "lexeme": "ces_my",
+      "forms": [
+        "ces_my_2_nom",
+        "ces_my_2_acc",
+        "ces_my_2_gen",
+        "ces_my_2_prep",
+        "ces_my_2_dat",
+        "ces_my_2_ins"
+      ],
+      "source": [
+        "caha-2009[(39)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_ona",
+      "lexeme": "ces_ona",
+      "forms": [
+        "ces_ona_nom",
+        "ces_ona_acc",
+        "ces_ona_gen",
+        "ces_ona_prep",
+        "ces_ona_dat",
+        "ces_ona_ins"
+      ],
+      "source": [
+        "caha-2009[(41)]"
+      ],
+      "comment": "the table prints the nominative (ona)/Ø: the strong pronoun ona, the weak one null (note 15)"
+    },
+    {
+      "paradigm_id": "ces_nase_fsg",
+      "lexeme": "ces_nase",
+      "forms": [
+        "ces_nase_fsg_nom",
+        "ces_nase_fsg_acc",
+        "ces_nase_fsg_gen",
+        "ces_nase_fsg_prep",
+        "ces_nase_fsg_dat",
+        "ces_nase_fsg_ins"
+      ],
+      "source": [
+        "caha-2009[(41)]"
+      ],
+      "comment": "the table indexes the endings as pronominal (1)"
+    },
+    {
+      "paradigm_id": "ces_zatez_sg",
+      "lexeme": "ces_zatez",
+      "forms": [
+        "ces_zatez_sg_nom",
+        "ces_zatez_sg_acc",
+        "ces_zatez_sg_gen",
+        "ces_zatez_sg_prep",
+        "ces_zatez_sg_dat",
+        "ces_zatez_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(41)]"
+      ],
+      "comment": "the table indexes the endings as nominal (2)"
+    },
+    {
+      "paradigm_id": "ces_zena_sg",
+      "lexeme": "ces_zena",
+      "forms": [
+        "ces_zena_sg_nom",
+        "ces_zena_sg_acc",
+        "ces_zena_sg_gen",
+        "ces_zena_sg_prep",
+        "ces_zena_sg_dat",
+        "ces_zena_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(44)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_kluk_pl",
+      "lexeme": "ces_kluk",
+      "forms": [
+        "ces_kluk_pl_nom",
+        "ces_kluk_pl_acc",
+        "ces_kluk_pl_gen",
+        "ces_kluk_pl_prep",
+        "ces_kluk_pl_dat",
+        "ces_kluk_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(49)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_kluk_pl_colloquial",
+      "lexeme": "ces_kluk",
+      "forms": [
+        "ces_kluk_pl_colloquial_nom",
+        "ces_kluk_pl_colloquial_acc",
+        "ces_kluk_pl_colloquial_gen",
+        "ces_kluk_pl_colloquial_prep",
+        "ces_kluk_pl_colloquial_dat",
+        "ces_kluk_pl_colloquial_ins"
+      ],
+      "source": [
+        "caha-2009[(49)]"
+      ],
+      "comment": "colloquial, beside the literary paradigm"
+    },
+    {
+      "paradigm_id": "ces_muz_pl_colloquial",
+      "lexeme": "ces_muz",
+      "forms": [
+        "ces_muz_pl_colloquial_nom",
+        "ces_muz_pl_colloquial_acc",
+        "ces_muz_pl_colloquial_gen",
+        "ces_muz_pl_colloquial_prep",
+        "ces_muz_pl_colloquial_dat",
+        "ces_muz_pl_colloquial_ins"
+      ],
+      "source": [
+        "caha-2009[(49)]"
+      ],
+      "comment": "colloquial, beside the literary paradigm"
+    },
+    {
+      "paradigm_id": "ces_zena_pl",
+      "lexeme": "ces_zena",
+      "forms": [
+        "ces_zena_pl_nom",
+        "ces_zena_pl_acc",
+        "ces_zena_pl_gen",
+        "ces_zena_pl_prep",
+        "ces_zena_pl_dat",
+        "ces_zena_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_pisen_pl",
+      "lexeme": "ces_pisen",
+      "forms": [
+        "ces_pisen_pl_nom",
+        "ces_pisen_pl_acc",
+        "ces_pisen_pl_gen",
+        "ces_pisen_pl_prep",
+        "ces_pisen_pl_dat",
+        "ces_pisen_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_dobry_mpl",
+      "lexeme": "ces_dobry",
+      "forms": [
+        "ces_dobry_mpl_nom",
+        "ces_dobry_mpl_acc",
+        "ces_dobry_mpl_gen",
+        "ces_dobry_mpl_prep",
+        "ces_dobry_mpl_dat",
+        "ces_dobry_mpl_ins"
+      ],
+      "source": [
+        "caha-2009[(51)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_kost_sg",
+      "lexeme": "ces_kost",
+      "forms": [
+        "ces_kost_sg_nom",
+        "ces_kost_sg_acc",
+        "ces_kost_sg_gen",
+        "ces_kost_sg_prep",
+        "ces_kost_sg_dat",
+        "ces_kost_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_hrad_sg",
+      "lexeme": "ces_hrad",
+      "forms": [
+        "ces_hrad_sg_nom",
+        "ces_hrad_sg_acc",
+        "ces_hrad_sg_gen",
+        "ces_hrad_sg_prep",
+        "ces_hrad_sg_dat",
+        "ces_hrad_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_my",
+      "lexeme": "ces_my",
+      "forms": [
+        "ces_my_nom",
+        "ces_my_acc",
+        "ces_my_gen",
+        "ces_my_prep",
+        "ces_my_dat",
+        "ces_my_ins"
+      ],
+      "source": [
+        "caha-2009[(55)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_mesto_sg",
+      "lexeme": "ces_mesto",
+      "forms": [
+        "ces_mesto_sg_nom",
+        "ces_mesto_sg_acc",
+        "ces_mesto_sg_gen",
+        "ces_mesto_sg_prep",
+        "ces_mesto_sg_dat",
+        "ces_mesto_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(56)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_vetsi_nsg",
+      "lexeme": "ces_vetsi",
+      "forms": [
+        "ces_vetsi_nsg_nom",
+        "ces_vetsi_nsg_acc",
+        "ces_vetsi_nsg_gen",
+        "ces_vetsi_nsg_prep",
+        "ces_vetsi_nsg_dat",
+        "ces_vetsi_nsg_ins"
+      ],
+      "source": [
+        "caha-2009[(57)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_ono",
+      "lexeme": "ces_ono",
+      "forms": [
+        "ces_ono_nom",
+        "ces_ono_acc",
+        "ces_ono_gen",
+        "ces_ono_prep",
+        "ces_ono_dat",
+        "ces_ono_ins"
+      ],
+      "source": [
+        "caha-2009[(58)]"
+      ],
+      "comment": "the table prints (j-e) ono in the nominative"
+    },
+    {
+      "paradigm_id": "ces_nase_nsg",
+      "lexeme": "ces_nase",
+      "forms": [
+        "ces_nase_nsg_nom",
+        "ces_nase_nsg_acc",
+        "ces_nase_nsg_gen",
+        "ces_nase_nsg_prep",
+        "ces_nase_nsg_dat",
+        "ces_nase_nsg_ins"
+      ],
+      "source": [
+        "caha-2009[(62)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_vetsi_fsg",
+      "lexeme": "ces_vetsi",
+      "forms": [
+        "ces_vetsi_fsg_nom",
+        "ces_vetsi_fsg_acc",
+        "ces_vetsi_fsg_gen",
+        "ces_vetsi_fsg_prep",
+        "ces_vetsi_fsg_dat",
+        "ces_vetsi_fsg_ins"
+      ],
+      "source": [
+        "caha-2009[n. 25]"
+      ],
+      "comment": "note 25 (i)"
+    },
+    {
+      "paradigm_id": "ces_vetsi_npl",
+      "lexeme": "ces_vetsi",
+      "forms": [
+        "ces_vetsi_npl_nom",
+        "ces_vetsi_npl_acc",
+        "ces_vetsi_npl_gen",
+        "ces_vetsi_npl_prep",
+        "ces_vetsi_npl_dat",
+        "ces_vetsi_npl_ins"
+      ],
+      "source": [
+        "caha-2009[(63)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_ona_npl",
+      "lexeme": "ces_oni",
+      "forms": [
+        "ces_ona_npl_nom",
+        "ces_ona_npl_acc",
+        "ces_ona_npl_gen",
+        "ces_ona_npl_prep",
+        "ces_ona_npl_dat",
+        "ces_ona_npl_ins"
+      ],
+      "source": [
+        "caha-2009[(64)]"
+      ],
+      "comment": "the table prints (j-e) on-a in the nominative"
+    },
+    {
+      "paradigm_id": "ces_ta",
+      "lexeme": "ces_ten",
+      "forms": [
+        "ces_ta_nom",
+        "ces_ta_acc",
+        "ces_ta_gen",
+        "ces_ta_prep",
+        "ces_ta_dat",
+        "ces_ta_ins"
+      ],
+      "source": [
+        "caha-2009[n. 26]"
+      ],
+      "comment": "note 26 (ii); the column heading is 'that, pl. m.', but the forms are feminine singular"
+    },
+    {
+      "paradigm_id": "ces_dva",
+      "lexeme": "ces_dva",
+      "forms": [
+        "ces_dva_nom",
+        "ces_dva_acc",
+        "ces_dva_gen",
+        "ces_dva_prep",
+        "ces_dva_dat",
+        "ces_dva_ins"
+      ],
+      "source": [
+        "caha-2009[(65)]"
+      ]
+    },
+    {
+      "paradigm_id": "ces_pet",
+      "lexeme": "ces_pet",
+      "forms": [
+        "ces_pet_nom",
+        "ces_pet_acc",
+        "ces_pet_gen",
+        "ces_pet_prep",
+        "ces_pet_dat",
+        "ces_pet_ins"
+      ],
+      "source": [
+        "caha-2009[(66)]"
+      ],
+      "comment": "the column heading gives no number"
+    },
+    {
+      "paradigm_id": "slk_ona",
+      "lexeme": "slk_ona",
+      "forms": [
+        "slk_ona_nom",
+        "slk_ona_acc",
+        "slk_ona_gen",
+        "slk_ona_prep",
+        "slk_ona_dat",
+        "slk_ona_ins"
+      ],
+      "source": [
+        "caha-2009[(42)]"
+      ],
+      "comment": "the table prints the nominative (ona)/Ø"
+    },
+    {
+      "paradigm_id": "slk_nase_fsg",
+      "lexeme": "slk_nase",
+      "forms": [
+        "slk_nase_fsg_nom",
+        "slk_nase_fsg_acc",
+        "slk_nase_fsg_gen",
+        "slk_nase_fsg_prep",
+        "slk_nase_fsg_dat",
+        "slk_nase_fsg_ins"
+      ],
+      "source": [
+        "caha-2009[(42)]"
+      ],
+      "comment": "the table indexes the endings as pronominal (1)"
+    },
+    {
+      "paradigm_id": "slk_ulica_sg",
+      "lexeme": "slk_ulica",
+      "forms": [
+        "slk_ulica_sg_nom",
+        "slk_ulica_sg_acc",
+        "slk_ulica_sg_gen",
+        "slk_ulica_sg_prep",
+        "slk_ulica_sg_dat",
+        "slk_ulica_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(42)]"
+      ],
+      "comment": "the table indexes the nominative and accusative endings as pronominal (1), the others as nominal (2)"
+    },
+    {
+      "paradigm_id": "slk_tlac_sg",
+      "lexeme": "slk_tlac",
+      "forms": [
+        "slk_tlac_sg_nom",
+        "slk_tlac_sg_acc",
+        "slk_tlac_sg_gen",
+        "slk_tlac_sg_prep",
+        "slk_tlac_sg_dat",
+        "slk_tlac_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(42)]"
+      ],
+      "comment": "the table indexes the endings as nominal (2)"
+    },
+    {
+      "paradigm_id": "ukr_kraj_sg",
+      "lexeme": "ukr_kraj",
+      "forms": [
+        "ukr_kraj_sg_nom",
+        "ukr_kraj_sg_acc",
+        "ukr_kraj_sg_gen",
+        "ukr_kraj_sg_prep",
+        "ukr_kraj_sg_dat",
+        "ukr_kraj_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(68)]"
+      ],
+      "comment": "the first of two declensions of 'region' (70)"
+    },
+    {
+      "paradigm_id": "ukr_velykyj_pl",
+      "lexeme": "ukr_velykyj",
+      "forms": [
+        "ukr_velykyj_pl_nom",
+        "ukr_velykyj_pl_acc",
+        "ukr_velykyj_pl_gen",
+        "ukr_velykyj_pl_prep",
+        "ukr_velykyj_pl_dat",
+        "ukr_velykyj_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_znannja_sg",
+      "lexeme": "ukr_znannja",
+      "forms": [
+        "ukr_znannja_sg_nom",
+        "ukr_znannja_sg_acc",
+        "ukr_znannja_sg_gen",
+        "ukr_znannja_sg_prep",
+        "ukr_znannja_sg_dat",
+        "ukr_znannja_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_my",
+      "lexeme": "ukr_my",
+      "forms": [
+        "ukr_my_nom",
+        "ukr_my_acc",
+        "ukr_my_gen",
+        "ukr_my_prep",
+        "ukr_my_dat",
+        "ukr_my_ins"
+      ],
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_kasyr_sg",
+      "lexeme": "ukr_kasyr",
+      "forms": [
+        "ukr_kasyr_sg_nom",
+        "ukr_kasyr_sg_acc",
+        "ukr_kasyr_sg_gen",
+        "ukr_kasyr_sg_prep",
+        "ukr_kasyr_sg_dat",
+        "ukr_kasyr_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_kasyr_pl",
+      "lexeme": "ukr_kasyr",
+      "forms": [
+        "ukr_kasyr_pl_nom",
+        "ukr_kasyr_pl_acc",
+        "ukr_kasyr_pl_gen",
+        "ukr_kasyr_pl_prep",
+        "ukr_kasyr_pl_dat",
+        "ukr_kasyr_pl_ins"
+      ],
+      "source": [
+        "caha-2009[(68)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_maty_sg",
+      "lexeme": "ukr_maty",
+      "forms": [
+        "ukr_maty_sg_nom",
+        "ukr_maty_sg_acc",
+        "ukr_maty_sg_gen",
+        "ukr_maty_sg_prep",
+        "ukr_maty_sg_dat",
+        "ukr_maty_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_ruka_sg",
+      "lexeme": "ukr_ruka",
+      "forms": [
+        "ukr_ruka_sg_nom",
+        "ukr_ruka_sg_acc",
+        "ukr_ruka_sg_gen",
+        "ukr_ruka_sg_prep",
+        "ukr_ruka_sg_dat",
+        "ukr_ruka_sg_ins"
+      ],
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_ja",
+      "lexeme": "ukr_ja",
+      "forms": [
+        "ukr_ja_nom",
+        "ukr_ja_acc",
+        "ukr_ja_gen",
+        "ukr_ja_prep",
+        "ukr_ja_dat",
+        "ukr_ja_ins"
+      ],
+      "source": [
+        "caha-2009[(69)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_velykyj_msg",
+      "lexeme": "ukr_velykyj",
+      "forms": [
+        "ukr_velykyj_msg_nom",
+        "ukr_velykyj_msg_acc",
+        "ukr_velykyj_msg_gen",
+        "ukr_velykyj_msg_prep",
+        "ukr_velykyj_msg_dat",
+        "ukr_velykyj_msg_ins"
+      ],
+      "source": [
+        "caha-2009[(69)]"
+      ],
+      "comment": "the text prints velík-ij in (69)"
+    },
+    {
+      "paradigm_id": "ukr_sto",
+      "lexeme": "ukr_sto",
+      "forms": [
+        "ukr_sto_nom",
+        "ukr_sto_acc",
+        "ukr_sto_gen",
+        "ukr_sto_prep",
+        "ukr_sto_dat",
+        "ukr_sto_ins"
+      ],
+      "source": [
+        "caha-2009[(69)]"
+      ],
+      "comment": "the column heading is '100, m.in./f./n.'"
+    },
+    {
+      "paradigm_id": "ukr_kraj_sg_2",
+      "lexeme": "ukr_kraj",
+      "forms": [
+        "ukr_kraj_sg_2_nom",
+        "ukr_kraj_sg_2_acc",
+        "ukr_kraj_sg_2_gen",
+        "ukr_kraj_sg_2_prep",
+        "ukr_kraj_sg_2_dat",
+        "ukr_kraj_sg_2_ins"
+      ],
+      "source": [
+        "caha-2009[(70)]"
+      ],
+      "comment": "the second column of (70), the variant Caha leaves open"
+    },
+    {
+      "paradigm_id": "ukr_bezkrajij_msg",
+      "lexeme": "ukr_bezkrajij",
+      "forms": [
+        "ukr_bezkrajij_msg_nom",
+        "ukr_bezkrajij_msg_acc",
+        "ukr_bezkrajij_msg_gen",
+        "ukr_bezkrajij_msg_prep",
+        "ukr_bezkrajij_msg_dat",
+        "ukr_bezkrajij_msg_ins"
+      ],
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_bezkrajij_msg_2",
+      "lexeme": "ukr_bezkrajij",
+      "forms": [
+        "ukr_bezkrajij_msg_2_nom",
+        "ukr_bezkrajij_msg_2_acc",
+        "ukr_bezkrajij_msg_2_gen",
+        "ukr_bezkrajij_msg_2_prep",
+        "ukr_bezkrajij_msg_2_dat",
+        "ukr_bezkrajij_msg_2_ins"
+      ],
+      "source": [
+        "caha-2009[(71)]"
+      ]
+    },
+    {
+      "paradigm_id": "ukr_velykyj_msg_2",
+      "lexeme": "ukr_velykyj",
+      "forms": [
+        "ukr_velykyj_msg_2_nom",
+        "ukr_velykyj_msg_2_acc",
+        "ukr_velykyj_msg_2_gen",
+        "ukr_velykyj_msg_2_prep",
+        "ukr_velykyj_msg_2_dat",
+        "ukr_velykyj_msg_2_ins"
+      ],
+      "source": [
+        "caha-2009[(72)]"
+      ]
+    }
+  ]
+}
