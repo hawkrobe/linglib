@@ -69,8 +69,6 @@ positive, is ABA without any homophony.
 * `exists_records_iff`, `ssg_exceptions`: a row records synthetic extents
   exactly when it satisfies the SSG, and of the rows of Tables A.1 and B.1
   only the four counterexamples §3.4.2 and §3.4.3 discuss fail it.
-* `english_patterns`, `latin_patterns`, `latin_all_three`: the Fragments
-  show the attested patterns of (191) and no others.
 * `english_ssg`, `english_rsg`: (3) and (4) on the English Fragment.
 * `czech_bad_abb`, `latin_realize_abc`, `welsh_good_abc`: the engine derives
   the book's paradigms.
@@ -82,10 +80,10 @@ positive, is ABA without any homophony.
 * `csg1_iff_one_le`: with a suppletive comparative, CSG1 holds of the
   superlative exactly when its adjective word contains CMPR (§3.3.3).
 * `greek_superlative`, `russian_bad_eq_ploxoj`: the Greek superlative inherits
-  the suppletive root ((106a)) and the Russian one does not ((106d)), whose
-  pattern the Fragment records.
-* `periphrastic_of_aba`: on the Fragments every ABA has a periphrastic
-  superlative that embeds the positive.
+  the suppletive root ((106a)) and the Russian one does not ((106d)), as the
+  Fragment's *samyj plox-oj* shows.
+* `periphrastic_of_aba`: on the Fragments a superlative on the positive's root
+  after a comparative on another is periphrastic.
 * `latin_ns_eq_dm`: nanosyntax and DM realize Latin alike.
 
 ## Implementation notes
@@ -299,32 +297,7 @@ theorem rsg {s : Synthesis 3} {v : RuleSet (SpanRule 3 F)} {g g' : Fin 3}
 
 end Merger
 
-/-! ### The patterns on the Fragments (ch. 4) -/
-
-/-- The English Fragment shows only AAA and ABB. -/
-theorem english_patterns :
-    ∀ e ∈ allEntries,
-      Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.aaa ∨
-        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abb := by
-  decide
-
-/-- The Latin Fragment shows only the attested patterns of (191). -/
-theorem latin_patterns :
-    ∀ e ∈ Latin.Adjectives.allEntries,
-      Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.aaa ∨
-        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abb ∨
-        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abc := by
-  decide
-
-/-- Latin shows all three patterns, in *longus*, *parvus* and *bonus*. -/
-theorem latin_all_three :
-    (∃ e ∈ Latin.Adjectives.allEntries,
-        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.aaa) ∧
-      (∃ e ∈ Latin.Adjectives.allEntries,
-        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abb) ∧
-      ∃ e ∈ Latin.Adjectives.allEntries,
-        Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.abc := by
-  decide
+/-! ### CSG1 -/
 
 /-- In a contiguous pattern a suppletive comparative, whose root differs from the positive's,
 forces a suppletive superlative. This is CSG1 (1). -/
@@ -429,10 +402,6 @@ theorem exists_rootClasses_of_bearsOnCSG : ∀ r ∈ Structures.broadSample, Bea
 
 /-! ### The English Fragment -/
 
-/-- *Best* does not return to the root of *good*, as CSG1 requires. -/
-theorem good_csg1 : good.comparison.suppletion 2 ≠ good.comparison.suppletion 0 :=
-  csg1 (by decide) (by decide)
-
 /-- A grade form of one word is synthetic, as *taller* is. -/
 def Synthetic (f : List Morph) : Prop := (Morph.wordsAt .clitic f).length = 1
 
@@ -449,10 +418,10 @@ theorem english_ssg :
     ∀ e ∈ allEntries, Synthetic e.comparison.superlative → Synthetic e.comparison.comparative := by
   decide
 
-/-- On the English Fragment a suppletive comparative is synthetic (*better*, *worse*, never
-*more bett*). This is the RSG (4). -/
+/-- On the English Fragment a comparative not on the positive's root is synthetic (*better*,
+*worse*, never *more bett*). This is the RSG (4). -/
 theorem english_rsg :
-    ∀ e ∈ allEntries, e.comparison.suppletion 1 ≠ e.comparison.suppletion 0 →
+    ∀ e ∈ allEntries, e.comparison.comparative ≠ [] → .root e.form ∉ e.comparison.comparative →
       Synthetic e.comparison.comparative := by
   decide
 
@@ -680,11 +649,13 @@ theorem russianBad_antihomophonous : russianBad.Antihomophonous := by decide
 def positiveEmbedding : Fin 3 → Fin 3 := ![0, 1, 0]
 
 /-- *Plox-oj, xuž-e, samyj plox-oj* (106d) is ABA although the vocabulary is antihomophonous,
-since the superlative's adjective word lacks CMPR. The derived pattern is the one the Russian
-Fragment records. -/
+since the superlative's adjective word lacks CMPR. The Russian Fragment's superlative is that one:
+periphrastic and on the positive's root, after a comparative on another. -/
 theorem russian_bad_eq_ploxoj :
-    Setoid.ker (realize russianBad ∘ positiveEmbedding) =
-      Setoid.ker Russian.Adjectives.ploxoj.comparison.suppletion := by
+    Setoid.ker (realize russianBad ∘ positiveEmbedding) = Setoid.ker Paradigm.aba ∧
+      Periphrastic Russian.Adjectives.ploxoj.comparison.superlative ∧
+      .root Russian.Adjectives.ploxoj.form ∈ Russian.Adjectives.ploxoj.comparison.superlative ∧
+      .root Russian.Adjectives.ploxoj.form ∉ Russian.Adjectives.ploxoj.comparison.comparative := by
   decide
 
 /-- With a superlative embedding the comparative, as in Greek, the same vocabulary is ABB. -/
@@ -697,13 +668,14 @@ fully synthetic paradigm is ABB, as the locality condition predicts. -/
 theorem russian_bad_synthetic_abb : Setoid.ker (realize russianBad) = Setoid.ker Paradigm.abb := by
   decide
 
-/-- In the English, Latin and Russian Fragments every ABA root pattern has a periphrastic
-superlative that embeds the positive, so every morphological superlative satisfies CSG1. -/
+/-- In the English, Latin and Russian Fragments a superlative on the positive's root after a
+comparative on another is periphrastic, embedding the positive, so every morphological superlative
+satisfies CSG1. -/
 theorem periphrastic_of_aba :
     ∀ e ∈ allEntries.map (·.toAdjective) ++ Latin.Adjectives.allEntries ++
         Russian.Adjectives.allEntries,
-      Setoid.ker e.comparison.suppletion = Setoid.ker Paradigm.aba →
-        Periphrastic e.comparison.superlative ∧ .root e.form ∈ e.comparison.superlative := by
+      e.comparison.comparative ≠ [] → .root e.form ∉ e.comparison.comparative →
+        .root e.form ∈ e.comparison.superlative → Periphrastic e.comparison.superlative := by
   simp only [List.mem_append, or_imp, forall_and, List.forall_mem_map]
   exact ⟨⟨by decide, by decide⟩, by decide⟩
 

@@ -56,16 +56,14 @@ def fortis : Adjective := { form := "fortis", comparison := regular "fort" }
 def bonus : Adjective :=
   { form := "bonus"
     comparison :=
-      { comparative := [.root "melior"], superlative := [.root "optimus"]
-        suppletion := Paradigm.abc } }
+      { comparative := [.root "melior"], superlative := [.root "optimus"] } }
 
 /-- *malus*, *peior*, *pessimus* 'bad' has one suppletive root, *pēj-* or *pe-*, in both grades
 ([bobaljik-2012] Table 4.1), the pattern ABB. -/
 def malus : Adjective :=
   { form := "malus"
     comparison :=
-      { comparative := [.root "peior"], superlative := [.root "pessimus"]
-        suppletion := Paradigm.abb } }
+      { comparative := [.root "peior"], superlative := [.root "pessimus"] } }
 
 /-- *magnus*, *maior*, *maximus* 'great' is irregular and not suppletive, *mag-*, *mai-* and
 *max-* being one root; the triple is absent from [bobaljik-2012]'s Table 4.1. -/
@@ -78,8 +76,7 @@ pattern ABB. -/
 def parvus : Adjective :=
   { form := "parvus"
     comparison :=
-      { comparative := [.root "minor"], superlative := [.root "minimus"]
-        suppletion := Paradigm.abb } }
+      { comparative := [.root "minor"], superlative := [.root "minimus"] } }
 
 /-! ### Inventory -/
 

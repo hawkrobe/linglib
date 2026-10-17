@@ -54,8 +54,7 @@ def analytic (form : String) : Adjective.Comparison :=
 
 /-- The comparison of an adjective whose comparative and superlative are on another root. -/
 def suppletive (comparative superlative : String) : Adjective.Comparison :=
-  { comparative := [.root comparative], superlative := [.root superlative]
-    suppletion := Paradigm.abb }
+  { comparative := [.root comparative], superlative := [.root superlative] }
 
 /-! ### The lexemes -/
 
@@ -589,15 +588,6 @@ def lookup (form : String) : Option GradableAdjective :=
 /-- The antonym pair with a given surface form as one of its poles. -/
 def pairOf (form : String) : Option AntonymPair :=
   pairs.find? fun p ↦ p.posForm == form || p.negForm == form
-
-/-- A recorded comparative or superlative is built on the adjective's own form exactly where the
-root pattern keeps the root of the positive. -/
-theorem root_mem_iff_suppletion_eq : ∀ e ∈ allEntries,
-    (e.comparison.comparative ≠ [] → (.root e.form ∈ e.comparison.comparative ↔
-      e.comparison.suppletion 1 = e.comparison.suppletion 0)) ∧
-    (e.comparison.superlative ≠ [] → (.root e.form ∈ e.comparison.superlative ↔
-      e.comparison.suppletion 2 = e.comparison.suppletion 0)) := by
-  decide
 
 /-- The grades are spelled by the rules of `English.Inflection`, with the consonant doubled in
 *sadder*, the *y* replaced in *happiest* and *drier* and the *e* dropped in *surer*. -/
