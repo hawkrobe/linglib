@@ -19,6 +19,7 @@ comparative one needs a portmanteau.
 ## Main definitions
 
 * `ElsewhereGenerable`, `SupersetSpellable`: the patterns each engine realizes in full.
+* `GroundedGenerable`: the patterns a grounded antihomophonous rule set realizes in full.
 
 ## Main results
 
@@ -27,6 +28,7 @@ comparative one needs a portmanteau.
   `spelloutGenerable_iff_generable`: both engines generate exactly the contiguous patterns.
 * `realize_const_of_terminal_adjacent`, `realize_const_of_grounded`, `exists_portmanteau_of_ne`:
   the AAA/ABB plateau, *AAB, and the portmanteau prediction.
+* `groundedGenerable_iff`: grounded rule sets generate exactly AAA, ABB and ABC.
 
 ## References
 
@@ -201,6 +203,42 @@ theorem exists_portmanteau_of_ne {v : RuleSet (SpanRule 3 F)} (hA : Adjacent v)
   · refine ⟨w, RuleSet.selectBy_mem hw, rfl, Nat.pos_of_ne_zero fun h0 ↦ h12 ?_⟩
     exact realize_eq_of_threshold_le hw
       (threshold_le_one h0 (hA w (RuleSet.selectBy_mem hw))) (by decide)
+
+/-- A pattern is **groundedly generable** when some antihomophonous rule set satisfying
+[bobaljik-2012]'s markedness condition realizes it in full. -/
+def GroundedGenerable (p : Paradigm n F) : Prop :=
+  ∃ v : RuleSet (SpanRule n F), v.Antihomophonous ∧ Grounded v ∧ ∀ g, realize v g = some (p g)
+
+/-- Over the three-grade hierarchy the groundedly generable patterns are the contiguous ones but
+AAB, that is AAA, ABB and ABC: the canonical rule set of such a pattern is grounded. -/
+theorem groundedGenerable_iff [DecidableEq F] (p : Paradigm 3 F) :
+    GroundedGenerable p ↔ IsContiguous p ∧ ¬ (p 0 = p 1 ∧ p 1 ≠ p 2) := by
+  constructor
+  · rintro ⟨v, hv, hG, hreal⟩
+    refine ⟨?_, fun ⟨h01, h12⟩ ↦ h12 ?_⟩
+    · have h : realize v = some ∘ p := funext hreal
+      rw [← isContiguous_comp_iff (Option.some_injective F), ← h]
+      exact isContiguous_realize hv
+    · simpa [hreal] using
+        realize_const_of_grounded hv hG (by rw [hreal, hreal, h01]) (by simp [hreal])
+  · rintro ⟨hc, hab⟩
+    refine ⟨ofPattern p, antihomophonous_ofPattern p, fun it hit k hk ↦ ?_, realize_ofPattern hc⟩
+    obtain ⟨s, hs, rfl⟩ := mem_ofPattern.mp hit
+    rw [threshold_ofPattern] at hk
+    refine ⟨_, mem_ofPattern.mpr ⟨k, ?_, rfl⟩, threshold_ofPattern⟩
+    have h0 : firstOcc p 0 = 0 := le_antisymm (firstOcc_le p 0) (Fin.zero_le _)
+    fin_cases s <;> fin_cases k <;> simp at hk
+    · exact h0
+    · exact h0
+    · dsimp only at hs
+      have h2 : ∀ j : Fin 3, j < 2 → p j ≠ p 2 := fun j hj hpj ↦ by
+        have h' := firstOcc_le p j
+        rw [(firstOcc_congr hpj).trans hs] at h'
+        exact not_le.mpr hj h'
+      have h01 : p 0 ≠ p 1 := fun h ↦ hab ⟨h, h2 1 (by decide)⟩
+      have hle := firstOcc_le p 1
+      have hne : firstOcc p 1 ≠ 0 := fun h ↦ h01 (h ▸ apply_firstOcc p 1)
+      exact le_antisymm hle (Fin.one_le_of_ne_zero hne)
 
 /-! ### Completeness: Superset-spellable = contiguous -/
 
