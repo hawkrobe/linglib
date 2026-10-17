@@ -2,34 +2,40 @@
 Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
+
+[UPSTREAM] candidate: `Mathlib.Algebra.Group.Aperiodic`; mathlib has `Monoid.IsTorsion` but no
+aperiodicity notion.
 -/
 module
 
 public import Mathlib.Algebra.Group.Prod
+public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Data.Nat.Init
 public import Mathlib.Order.MinMax
 
 /-!
 # Aperiodic monoids
 
-A monoid is **aperiodic** (group-free) when some power stabilises every element:
-`∃ n, ∀ x, x ^ (n + 1) = x ^ n`. [schutzenberger-1965] introduced these as the monoids
-with only trivial subgroups (his condition `γ fⁿ = γ fⁿ⁺¹`); they are the algebraic side
-of the star-free / counter-free / `FO[<]`-definable languages ([pin-mfa],
-[mcnaughton-papert-1971]).
+A monoid is *aperiodic* when a single power stabilizes every element, `x ^ (n + 1) = x ^ n`.
+Schützenberger introduced these monoids as the ones with only trivial subgroups, and they are the
+algebraic counterpart of the star-free languages.
 
-`[UPSTREAM]`: mathlib has `Monoid.IsTorsion` but no aperiodicity notion; this is a
-candidate for `Mathlib/Algebra/Group/`.
+## Main definitions
+
+* `Monoid.IsAperiodic`: some power stabilizes every element.
 
 ## Main results
 
-* `Monoid.IsAperiodic.of_subsingleton` — subsingleton monoids are aperiodic.
-* `Monoid.pow_succ_stabilizes` — once a stabilising power is reached, all higher
-  powers stabilise too.
-* `Monoid.IsAperiodic.of_surjective` — aperiodicity passes along surjective homs.
-* `Monoid.IsAperiodic.of_injective` — aperiodicity is inherited by submonoids.
-* `Monoid.IsAperiodic.prod` — a product of aperiodic monoids is aperiodic.
-* `Monoid.IsAperiodic.of_mulEquiv` — aperiodicity transports across isomorphisms.
+* `Monoid.isAperiodic_iff_forall_exists`: a finite monoid is aperiodic when the powers of each
+  element stabilize.
+* `Monoid.IsAperiodic.of_injective`, `Monoid.IsAperiodic.of_surjective`, `Monoid.IsAperiodic.prod`:
+  closure under submonoids, quotients and products.
+
+## References
+
+* [schutzenberger-1965]
+* [mcnaughton-papert-1971]
+* [pin-mfa]
 -/
 
 @[expose] public section
@@ -38,9 +44,7 @@ namespace Monoid
 
 variable (M : Type*) [Monoid M]
 
-/-- A monoid is **aperiodic** when some uniform power stabilises every element:
-`∃ n, ∀ x, x ^ (n + 1) = x ^ n`. Introduced by [schutzenberger-1965] as the monoids with
-only trivial subgroups. -/
+/-- A monoid is *aperiodic* when some power stabilizes every element. -/
 @[to_additive]
 def IsAperiodic : Prop := ∃ n : ℕ, ∀ x : M, x ^ (n + 1) = x ^ n
 
@@ -49,31 +53,39 @@ variable {M}
 /-- A subsingleton monoid is aperiodic (take `n = 0`). -/
 @[to_additive]
 theorem IsAperiodic.of_subsingleton [Subsingleton M] : IsAperiodic M :=
-  ⟨0, fun _ => Subsingleton.elim _ _⟩
+  ⟨0, fun _ ↦ Subsingleton.elim _ _⟩
 
-/-- If `x ^ (n + 1) = x ^ n` then the power stabilises at every `m ≥ n`. -/
+/-- If `x ^ (n + 1) = x ^ n` then the power stabilizes at every `m ≥ n`. -/
 @[to_additive]
 theorem pow_succ_stabilizes {x : M} {n : ℕ} (h : x ^ (n + 1) = x ^ n) :
     ∀ m, n ≤ m → x ^ (m + 1) = x ^ m := by
-  refine fun m hm => Nat.le_induction h (fun k _ hk => ?_) m hm
+  refine fun m hm ↦ Nat.le_induction h (fun k _ hk ↦ ?_) m hm
   rw [pow_succ x (k + 1), hk, ← pow_succ, hk]
 
-/-- Aperiodicity passes along a surjective monoid hom: the same exponent works for the image. -/
+/-- A finite monoid is aperiodic exactly when the powers of each element stabilize. -/
+@[to_additive]
+theorem isAperiodic_iff_forall_exists [Finite M] :
+    IsAperiodic M ↔ ∀ x : M, ∃ n : ℕ, x ^ (n + 1) = x ^ n := by
+  refine ⟨fun ⟨n, hn⟩ x ↦ ⟨n, hn x⟩, fun h ↦ ?_⟩
+  choose n hn using h
+  obtain ⟨x₀, hx₀⟩ := Finite.exists_max n
+  exact ⟨n x₀, fun x ↦ pow_succ_stabilizes (hn x) _ (hx₀ x)⟩
+
+/-- Aperiodicity passes along a surjective monoid hom, with the same exponent. -/
 @[to_additive]
 theorem IsAperiodic.of_surjective {N : Type*} [Monoid N] {f : M →* N}
     (hf : Function.Surjective f) (hM : IsAperiodic M) : IsAperiodic N := by
   obtain ⟨n, hn⟩ := hM
-  refine ⟨n, fun y => ?_⟩
+  refine ⟨n, fun y ↦ ?_⟩
   obtain ⟨x, rfl⟩ := hf y
   rw [← map_pow, ← map_pow, hn]
 
-/-- Aperiodicity is inherited by submonoids: if `f : M →* N` is injective and `N` is aperiodic
-then so is `M` (the same exponent works, pulled back through `f`). -/
+/-- Aperiodicity pulls back along an injective monoid hom, with the same exponent. -/
 @[to_additive]
 theorem IsAperiodic.of_injective {N : Type*} [Monoid N] {f : M →* N}
     (hf : Function.Injective f) (hN : IsAperiodic N) : IsAperiodic M := by
   obtain ⟨n, hn⟩ := hN
-  exact ⟨n, fun x => hf (by rw [map_pow, map_pow, hn])⟩
+  exact ⟨n, fun x ↦ hf (by rw [map_pow, map_pow, hn])⟩
 
 /-- A binary product of aperiodic monoids is aperiodic (take the larger exponent). -/
 @[to_additive]
@@ -81,7 +93,7 @@ theorem IsAperiodic.prod {N : Type*} [Monoid N] (hM : IsAperiodic M) (hN : IsApe
     IsAperiodic (M × N) := by
   obtain ⟨nM, hnM⟩ := hM
   obtain ⟨nN, hnN⟩ := hN
-  refine ⟨max nM nN, fun x => Prod.ext ?_ ?_⟩
+  refine ⟨max nM nN, fun x ↦ Prod.ext ?_ ?_⟩
   · exact pow_succ_stabilizes (hnM x.1) _ (le_max_left _ _)
   · exact pow_succ_stabilizes (hnN x.2) _ (le_max_right _ _)
 

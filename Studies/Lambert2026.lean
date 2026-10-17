@@ -733,13 +733,11 @@ theorem stressPenultCulminative_not_isGeneralizedDefinite (k : ℕ) :
 
 /-- Culminative stress-penult is not multitier reverse definite (§6.3), since in its syntactic
 monoid `[σσ]` is idempotent but `[σσ] [σ́] [σσ] ≠ [σσ] [σ́]` in the context `__ σ`, against the
-equation `x^ω y x = x^ω y` of (62). -/
+equation of (62). -/
 theorem stressPenultCulminative_not_isBTK (k : ℕ) : ¬ IsBTK k stressPenultCulminative := fun h ↦ by
-  have := h.mem_multitierReverseDefiniteVariety.2
-    (stressPenultCulminative.syntacticClass [.unstressed, .unstressed])
-    (stressPenultCulminative.syntacticClass [.stressed]) 1 one_ne_zero
-    (by rw [pow_one]; exact stressPenultCulminative_isIdempotentElem)
-  rw [pow_one, ← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff] at this
+  have := h.mem_multitierReverseDefiniteVariety.2.2 _ stressPenultCulminative_isIdempotentElem
+    (stressPenultCulminative.syntacticClass [.stressed])
+  rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff] at this
   simpa [stressPenultCulminative, Edge.takeAt_right, rtake, Syl.isStressed] using
     this [] [.unstressed]
 
