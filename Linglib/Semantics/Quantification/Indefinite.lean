@@ -13,10 +13,7 @@ which Haspelmath arranges on an implicational map: a graph on the functions whos
 requirement says that the functions a series covers form a connected region. The map is
 `implicationalMap`, and a region `s` meets the requirement when
 `(implicationalMap.induce ↑s).Connected`, so the book's requirement is a statement of graph
-theory. A series is further described by the ontological category it belongs to (person, thing,
-place, …) and the morphological basis it is built from (an interrogative, a generic noun, a
-dedicated marker or an existential construction); the carrier bundling these with a form is
-`IndefinitePronoun` in `Syntax/Category/Pronoun/Indefinite.lean`.
+theory. The series themselves are `IndefinitePronoun.Series`.
 
 ## Main declarations
 
@@ -27,8 +24,6 @@ dedicated marker or an existential construction); the carrier bundling these wit
   functions in the order the map chains them, with their embedding `toFunction` in the map and
   the ones a region covers, `specificityFunctions`. A set of them is an interval unless it has
   the two ends without the middle (`SpecificityFunction.ordConnected_iff`).
-* `Indefinite.OntologicalCategory`, `Indefinite.MorphologicalBasis`: the two further dimensions
-  of a series.
 
 ## Implementation notes
 
@@ -39,7 +34,6 @@ graph encoded here; see the TODO of `Studies/Haspelmath1997.lean`.
 ## References
 
 * [haspelmath-1997]
-* [wals-2013]
 -/
 
 @[expose] public section
@@ -179,49 +173,5 @@ def specificityFunctions (s : Finset HaspelmathFunction) : Finset SpecificityFun
 theorem mem_specificityFunctions {s : Finset HaspelmathFunction} {u : SpecificityFunction} :
     u ∈ specificityFunctions s ↔ u.toFunction ∈ s := by
   simp [specificityFunctions]
-
-/-! ### Ontological category and morphological basis -/
-
-/-- The ontological categories of a series. Person, thing, property, place, time, manner and
-amount are the seven the book finds expressed by simple means in most languages, the cut
-between person and thing (*somebody* against *something*) being made nearly everywhere; the
-category fixes the word class of the member, a pronoun for person and thing and a pro-adverb
-for place, time and manner. Determiners (*some* N) and reasons (*for some reason*) are common but
-not universal, English and German having no *somewhy*. -/
-inductive OntologicalCategory where
-  /-- Person is the category of *somebody*, *someone* and interrogative *who*. -/
-  | person
-  /-- Thing is the category of *something* and interrogative *what*. -/
-  | thing
-  /-- Property or kind is the category of *some kind of* and interrogative *what kind*. -/
-  | property
-  /-- Place is the category of *somewhere* and interrogative *where*. -/
-  | place
-  /-- Time is the category of *sometime* and interrogative *when*. -/
-  | time
-  /-- Manner is the category of *somehow* and interrogative *how*. -/
-  | manner
-  /-- Amount is the category of *some amount* and interrogative *how much*. -/
-  | amount
-  /-- Determiner is the category of *some* N and interrogative *which*. -/
-  | determiner
-  /-- Reason is the category of *for some reason* and interrogative *why*. -/
-  | reason
-  deriving DecidableEq, Repr
-
-/-- A series is built in one of four ways, from an interrogative pronoun (Russian *kto-nibud'*),
-from a generic noun (English *somebody*), with a dedicated indefinite marker (German *irgend-*),
-or by an existential construction. These are the four single-basis cells of chapter 46 of
-[wals-2013]; its fifth cell, mixed, describes a paradigm using several bases. -/
-inductive MorphologicalBasis where
-  /-- The series is built from an interrogative pronoun. -/
-  | interrogative
-  /-- The series is built from a generic noun for person, thing or place. -/
-  | genericNoun
-  /-- The series is built with a dedicated indefinite marker. -/
-  | special
-  /-- The series is an existential construction. -/
-  | existentialConstruction
-  deriving DecidableEq, Repr
 
 end Indefinite

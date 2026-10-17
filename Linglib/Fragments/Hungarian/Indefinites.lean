@@ -16,8 +16,10 @@ beszél magyarul* 'No one speaks Hungarian here'.
 ## Main definitions
 
 * `Hungarian.Indefinites.vala`, `Hungarian.Indefinites.akár`, `Hungarian.Indefinites.bár`,
-  `Hungarian.Indefinites.né`: the series marked by a single prefix.
-* `Hungarian.Indefinites.sem`: the negative series, given the form of its prefix.
+  `Hungarian.Indefinites.né`: the markers that attach a single prefix.
+* `Hungarian.Indefinites.sem`: the negative marker, given the form of its prefix.
+* `Hungarian.Indefinites.valaSeries`, `semSeries`, `akárSeries`, `bárSeries`, `néSeries`: the
+  series.
 
 ## Implementation notes
 
@@ -42,7 +44,7 @@ namespace Hungarian.Indefinites
 
 open Pronouns
 
-/-! ### The series -/
+/-! ### The markers -/
 
 /-- The *vala*-series attaches the prefix *vala-* to the interrogative. -/
 def vala : InterrogativePronoun → IndefinitePronoun :=
@@ -79,32 +81,33 @@ def akárki : IndefinitePronoun := akár ki
 /-- *bárki* 'anyone' is the *bár*-member of *ki* 'who'. -/
 def bárki : IndefinitePronoun := bár ki
 
-/-! ### The paradigm -/
+/-! ### The series -/
 
 /-- The *vala*-series has a member for each interrogative, listed from person to determiner. -/
-def valaSeries : List IndefinitePronoun :=
-  [valaki, vala mi, vala milyen, vala hol, vala hova, vala honnan, vala mikor, vala hogy,
-    vala hány, vala mennyi, vala melyik]
+def valaSeries : IndefinitePronoun.Series :=
+  ⟨"vala-", [valaki, vala mi, vala milyen, vala hol, vala hova, vala honnan, vala mikor, vala hogy,
+    vala hány, vala mennyi, vala melyik]⟩
 
 /-- The negative series has a member for each interrogative, listed from person to
 determiner. -/
-def semSeries : List IndefinitePronoun :=
-  [senki, sem "sem" mi, sem "sem" milyen, sem "se" hol, sem "se" hova, sem "se" honnan,
-    sem "sem" mikor, sem "se" hogy, sem "se" hány, sem "se" mennyi, sem "se" melyik]
+def semSeries : IndefinitePronoun.Series :=
+  ⟨"sem-", [senki, sem "sem" mi, sem "sem" milyen, sem "se" hol, sem "se" hova, sem "se" honnan,
+    sem "sem" mikor, sem "se" hogy, sem "se" hány, sem "se" mennyi, sem "se" melyik]⟩
 
 /-- The *akár*-series has a member for each interrogative, listed from person to determiner. -/
-def akárSeries : List IndefinitePronoun :=
-  [akárki, akár mi, akár milyen, akár hol, akár hova, akár honnan, akár mikor, akár hogy,
-    akár hány, akár mennyi, akár melyik]
+def akárSeries : IndefinitePronoun.Series :=
+  ⟨"akár-", [akárki, akár mi, akár milyen, akár hol, akár hova, akár honnan, akár mikor, akár hogy,
+    akár hány, akár mennyi, akár melyik]⟩
 
 /-- The *bár*-series has a member for each interrogative but *hány*, listed from person to
 determiner. -/
-def bárSeries : List IndefinitePronoun :=
-  [bárki, bár mi, bár milyen, bár hol, bár hova, bár honnan, bár mikor, bár hogy, bár mennyi,
-    bár melyik]
+def bárSeries : IndefinitePronoun.Series :=
+  ⟨"bár-", [bárki, bár mi, bár milyen, bár hol, bár hova, bár honnan, bár mikor, bár hogy,
+    bár mennyi, bár melyik]⟩
 
 /-- The *né*-series has the members *némi* 'something, a little', *néhol* 'in some places',
 *néhány* 'some, a few' and *némelyik* 'some'. -/
-def néSeries : List IndefinitePronoun := [né mi, né hol, né hány, né melyik]
+def néSeries : IndefinitePronoun.Series :=
+  ⟨"né-", [né mi, né hol, né hány, né melyik]⟩
 
 end Hungarian.Indefinites

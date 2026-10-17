@@ -238,14 +238,16 @@ constancy within one (ABB), Latin *ali-* requires variation across the alternati
 constancy across them (AAB), and Russian *-nibud'*, *-to* and *koe-* require variation within an
 alternative, variation across them and constancy across them, the entries (6) and (7). -/
 theorem coexpression_is_underspecification :
-    (∃ s ∈ english, s.pronoun = English.Indefinites.someEntry ∧ Instantiates s .unmarked) ∧
-      (∃ s ∈ yakut, s.pronoun = Yakut.Indefinites.emeEntry ∧ Instantiates s .nonSpecific) ∧
-      (∃ s ∈ yakut, s.pronoun = Yakut.Indefinites.ereEntry ∧ Instantiates s .specific) ∧
-      (∃ s ∈ latin, s.pronoun = Latin.Indefinites.aliEntry ∧ Instantiates s .epistemic) ∧
-      (∃ s ∈ latin, s.pronoun = Latin.Indefinites.damEntry ∧ Instantiates s .specificKnown) ∧
-      (∃ s ∈ russian, s.pronoun = Russian.Indefinites.ktoNibud ∧ Instantiates s .nonSpecific) ∧
-      (∃ s ∈ russian, s.pronoun = Russian.Indefinites.ktoTo ∧ Instantiates s .epistemic) ∧
-      ∃ s ∈ russian, s.pronoun = Russian.Indefinites.koeKto ∧ Instantiates s .specificKnown := by
+    (∃ s ∈ english, s.toSeries = English.Indefinites.someSeries ∧ Instantiates s .unmarked) ∧
+      (∃ s ∈ yakut, s.toSeries = Yakut.Indefinites.emeSeries ∧ Instantiates s .nonSpecific) ∧
+      (∃ s ∈ yakut, s.toSeries = Yakut.Indefinites.ereSeries ∧ Instantiates s .specific) ∧
+      (∃ s ∈ latin, s.toSeries = Latin.Indefinites.aliSeries ∧ Instantiates s .epistemic) ∧
+      (∃ s ∈ latin, s.toSeries = Latin.Indefinites.damSeries ∧ Instantiates s .specificKnown) ∧
+      (∃ s ∈ russian,
+        s.toSeries = Russian.Indefinites.nibudSeries ∧ Instantiates s .nonSpecific) ∧
+      (∃ s ∈ russian, s.toSeries = Russian.Indefinites.toSeries ∧ Instantiates s .epistemic) ∧
+      ∃ s ∈ russian,
+        s.toSeries = Russian.Indefinites.koeSeries ∧ Instantiates s .specificKnown := by
   decide
 
 /-- The nanosyntactic lexicon gives Russian *-to* the profile of the specific unknown type,
@@ -253,7 +255,7 @@ where the map makes it epistemic. The form shares the non-specific function with
 spellout, which gives a layer one form, hands that layer to *-nibud'* by the Elsewhere
 Principle. -/
 theorem to_is_specificUnknown_under_spellout :
-    coverage layer (lexicon russian) Russian.Indefinites.ktoTo.form =
+    coverage layer (lexicon russian) Russian.Indefinites.toSeries.name =
       IndefiniteType.specificUnknown.profile := by
   decide
 

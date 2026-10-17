@@ -367,7 +367,7 @@ theorem negation_licenses_irgendein :
 of the *irgend-* series, and inflectional negation realizes direct negation, which the series
 lacks. -/
 theorem irgendein_haspelmath :
-    ∀ s ∈ Haspelmath1997.german, s.pronoun = German.Indefinites.irgendEntry →
+    ∀ s ∈ Haspelmath1997.german, s.toSeries = German.Indefinites.irgendSeries →
       (∀ c ∈ German.PolarityItems.irgendein.licensingContexts, ∀ f ∈ c.haspelmath,
         f ∈ s.functions) ∧
         ∀ f ∈ LicensingContext.negation.haspelmath, f ∉ s.functions := by

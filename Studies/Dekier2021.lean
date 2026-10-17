@@ -27,10 +27,11 @@ spellout-driven movement where prefixes arise by subderivation, (57).
 Layers are the grades `Fin 3` of the containment substrate and entries its context-free span
 rules, with `spellout` the exponent of the Superset-and-Elsewhere winner. The paradigms are
 those of `Studies/Haspelmath1997.lean`, a series covering a layer when the layer's function lies
-in the region the book draws for it. Their forms are whole pronouns where the paper lists
-markers, so the theorems over them compare coverage patterns and the paper's marker tables are
-rows; a layer's form is the one series covering its function, `none` at a gap or where series
-overlap. The paper's Russian row has the three series that divide the hierarchy and not
+in the region the book draws for it. A layer's form is the marker of the one series covering its
+function, `none` at a gap or where series overlap. The markers are named as the book names them,
+which departs from the paper's notation in places (*-nibud'* against *-nibud*, *kaut* against
+*kaut-*), so the theorems over them compare coverage patterns and the paper's marker tables are
+rows. The paper's Russian row has the three series that divide the hierarchy and not
 *-libo*, which the book draws over the non-specific function beside *-nibud'*; the book draws
 *-to* over that function too, so Russian's coverage has no single non-specific form and its
 ABC pattern is the work of the Elsewhere Principle (`russian_elsewhere`). The derivations of
@@ -71,7 +72,7 @@ def function (g : Fin 3) : HaspelmathFunction := (layer.symm g).toFunction
 at a gap or where series overlap. -/
 def formAt (p : List Series) (f : HaspelmathFunction) : Option String :=
   match p.filter (f ∈ ·.functions) with
-  | [e] => some e.pronoun.form
+  | [e] => some e.name
   | _ => none
 
 /-- A paradigm's forms over the three layers, the triple the syncretism patterns classify. -/
@@ -85,13 +86,13 @@ def layers (e : Series) : Finset (Fin 3) :=
 /-- In the nanosyntactic lexicon of a paradigm each form stores the largest layer it covers, the
 Superset and Elsewhere Principles deriving the rest of its coverage. -/
 def lexicon (p : List Series) : RuleSet (SupersetRule 3 String) :=
-  p.filterMap fun e ↦ (layers e).max.map (⟨e.pronoun.form, ·⟩)
+  p.filterMap fun e ↦ (layers e).max.map (⟨e.name, ·⟩)
 
 /-- The Russian series of the paper's row are *koe-*, *-to* and *-nibud'*. -/
 def russian : List Series :=
   Haspelmath1997.russian.filter fun e ↦
-    e.pronoun ∈ [Russian.Indefinites.koeKto, Russian.Indefinites.ktoTo,
-      Russian.Indefinites.ktoNibud]
+    e.toSeries ∈ [Russian.Indefinites.koeSeries, Russian.Indefinites.toSeries,
+      Russian.Indefinites.nibudSeries]
 
 /-! ### Syncretism and its absence -/
 
@@ -108,7 +109,7 @@ function beside *-nibud'*, so coverage gives that layer no single form, and the 
 *-to* at the specific unknown layer, gives it to the smaller match *-nibud'*. -/
 theorem russian_elsewhere :
     pattern russian 0 = none ∧
-      spellout (lexicon russian) = ![some "kto-nibud'", some "kto-to", some "koe-kto"] ∧
+      spellout (lexicon russian) = ![some "-nibud'", some "-to", some "koe-"] ∧
       Setoid.ker (spellout (lexicon russian)) = Setoid.ker Paradigm.abc := by
   decide
 

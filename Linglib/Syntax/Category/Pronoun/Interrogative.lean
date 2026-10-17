@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Quantification.Indefinite
 public import Linglib.Syntax.Category.Pronoun.Basic
+public import Linglib.Syntax.Category.Pronoun.OntologicalCategory
 
 /-!
 # Interrogative pronouns
@@ -26,22 +26,17 @@ place, time and manner, which surface as adverbs.
 /-- An interrogative pronoun is a `Pronoun` with the ontological category it asks about. -/
 structure InterrogativePronoun extends Pronoun where
   /-- The ontological category the form asks about. -/
-  ontology : Indefinite.OntologicalCategory
+  ontology : Pronoun.OntologicalCategory
   deriving DecidableEq, Repr
 
 namespace InterrogativePronoun
 
 variable (p : InterrogativePronoun)
 
-/-- The form is a pro-adverb, asking about a place, a time or a manner. -/
-def IsAdverbial : Prop := p.ontology = .place ∨ p.ontology = .time ∨ p.ontology = .manner
-
-instance : Decidable p.IsAdverbial := inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-
-/-- An interrogative's word is of UD pronoun type `Int`, an adverb when the form is a
-pro-adverb and a pronoun otherwise. -/
+/-- An interrogative's word is of UD pronoun type `Int`, with the word class its category
+fixes. -/
 def toWord : Morphology.Word :=
-  { p.toPronoun.toWord (some .Int) with cat := if p.IsAdverbial then .ADV else .PRON }
+  { p.toPronoun.toWord (some .Int) with cat := p.ontology.upos }
 
 /-- An interrogative projects a wh-marked word. -/
 theorem isWh_toWord : p.toWord.features.IsWh :=

@@ -55,15 +55,15 @@ that are not pronouns in the book's sense (Georgian free-choice *nebismieri*, Tu
 the Italian determiner *qualsiasi*) are omitted, so a paradigm need not cover all nine
 functions.
 
-A `Series` pairs a pronoun with the region its Appendix A figure encloses. The region is the
-book's analysis of the series and not a lexical property of the pronoun: a figure records
-where a series is possible and not where it is preferred (Russian *-to* is drawn over the
-functions of *-nibud'*, which is preferred there), and it fills cells the book has no data for
-on the strength of the map (Yakut *da* and Mandarin
-bare interrogatives under indirect negation, the Swahili comparative). For those cells
-`sample_connected` restates the map; it tests the adjacency requirement on the others. The
-pronouns of English, Georgian, German, Hungarian, Kannada, Latin, Latvian, Russian and Yakut
-are their Fragments' entries.
+A `Series` is an indefinite series with the region its Appendix A figure encloses, named as the book
+names it. The region is the book's analysis of the series and not a lexical property of its members:
+a figure records where a series is possible and not where it is preferred (Russian *-to* is drawn
+over the functions of *-nibud'*, which is preferred there), and it fills cells the book has no data
+for on the strength of the map (Yakut *da* and Mandarin bare interrogatives under indirect negation,
+the Swahili comparative). For those cells `sample_connected` restates the map; it tests the
+adjacency requirement on the others. The series of English, Georgian, German, Hungarian, Japanese,
+Kannada, Latin, Latvian, Russian, Turkish and Yakut are their Fragments' series; the other seven
+languages are entered here with one member a series.
 
 ## TODO
 
@@ -208,90 +208,86 @@ theorem excluded_violate :
 
 /-! ### Eighteen languages of the 40-language sample -/
 
-/-- A `Series` pairs a pronoun of an indefinite series with the region of the map that the
-series' figure in Appendix A encloses. -/
-structure Series where
-  /-- The book's name for the series, by which its examples are tagged. -/
-  label : String
-  /-- A member of the series, of the person category where the series has one. -/
-  pronoun : IndefinitePronoun
+/-- A `Series` is an indefinite series with the region of the map that its figure in Appendix A
+encloses. Its name is the book's, by which the examples are tagged. -/
+structure Series extends IndefinitePronoun.Series where
   /-- The functions the series covers. -/
   functions : Finset HaspelmathFunction
   deriving DecidableEq
 
-/-- A series of the person category, the ontological category Appendix A tabulates first, with
-its functions in the book's digit notation. -/
-def series (label form : String) (basis : MorphologicalBasis) (ns : List ℕ)
-    (ontology : OntologicalCategory := .person) : Series :=
-  ⟨label, { form, ontology, basis }, region ns⟩
+/-- A series of a language without a Fragment, entered with one member, of the person category
+where the series has one, and with its functions in the book's digit notation. -/
+def series (name form : String) (basis : IndefinitePronoun.Basis) (ns : List ℕ)
+    (ontology : Pronoun.OntologicalCategory := .person) : Series :=
+  { name, members := [{ form, ontology, basis }], functions := region ns }
 
 /-- The English series (A.3, §4.3.1) are *some-* 12345, *any-* 456789 and *no-* 7. -/
 def english : List Series :=
-  [ ⟨"some-", English.Indefinites.someEntry, region [1, 2, 3, 4, 5]⟩,
-    ⟨"any-", English.Indefinites.anyEntry, region [4, 5, 6, 7, 8, 9]⟩,
-    ⟨"no-", English.Indefinites.noEntry, region [7]⟩ ]
+  [ { English.Indefinites.someSeries with functions := region [1, 2, 3, 4, 5] },
+    { English.Indefinites.anySeries with functions := region [4, 5, 6, 7, 8, 9] },
+    { English.Indefinites.noSeries with functions := region [7] } ]
 
 /-- The Russian series (A.16) are *koe-* 1, *-to* 2345, *-nibud'* 345, *-libo* 34568, *by to ni
 bylo* 568, *ni-* 7, and *ugodno* and the determiner *ljuboj* 9. The *-to*-series is mainly used
 specifically but is not excluded from the functions of *-nibud'*, where *-nibud'* is preferred;
 *-libo* replaces *-nibud'* under indirect negation and in comparatives. -/
 def russian : List Series :=
-  [ ⟨"koe-", Russian.Indefinites.koeKto, region [1]⟩,
-    ⟨"-to", Russian.Indefinites.ktoTo, region [2, 3, 4, 5]⟩,
-    ⟨"-nibud'", Russian.Indefinites.ktoNibud, region [3, 4, 5]⟩,
-    ⟨"-libo", Russian.Indefinites.ktoLibo, region [3, 4, 5, 6, 8]⟩,
-    ⟨"by to ni bylo", Russian.Indefinites.ktoByToNiBylo, region [5, 6, 8]⟩,
-    ⟨"ni-", Russian.Indefinites.nikto, region [7]⟩,
-    ⟨"ugodno", Russian.Indefinites.ktoUgodno, region [9]⟩,
-    series "ljuboj" "ljuboj" .special [9] .determiner ]
+  [ { Russian.Indefinites.koeSeries with functions := region [1] },
+    { Russian.Indefinites.toSeries with functions := region [2, 3, 4, 5] },
+    { Russian.Indefinites.nibudSeries with functions := region [3, 4, 5] },
+    { Russian.Indefinites.liboSeries with functions := region [3, 4, 5, 6, 8] },
+    { Russian.Indefinites.byToNiByloSeries with functions := region [5, 6, 8] },
+    { Russian.Indefinites.niSeries with functions := region [7] },
+    { Russian.Indefinites.ugodnoSeries with functions := region [9] },
+    { Russian.Indefinites.ljubojSeries with functions := region [9] } ]
 
 /-- The German series (A.1) are *etwas* 123456, *irgend-* 2345689, temporal *je* 4568, *jeder*
 689 and *n-* 7. -/
 def german : List Series :=
-  [ ⟨"etwas-", German.Indefinites.jemandEntry, region [1, 2, 3, 4, 5, 6]⟩,
-    ⟨"irgend-", German.Indefinites.irgendEntry, region [2, 3, 4, 5, 6, 8, 9]⟩,
-    ⟨"je", German.Indefinites.jeEntry, region [4, 5, 6, 8]⟩,
-    ⟨"jeder", German.Indefinites.jederEntry, region [6, 8, 9]⟩,
-    ⟨"n-", German.Indefinites.niemandEntry, region [7]⟩ ]
+  [ { German.Indefinites.etwasSeries with functions := region [1, 2, 3, 4, 5, 6] },
+    { German.Indefinites.irgendSeries with functions := region [2, 3, 4, 5, 6, 8, 9] },
+    { German.Indefinites.jeSeries with functions := region [4, 5, 6, 8] },
+    { German.Indefinites.jederSeries with functions := region [6, 8, 9] },
+    { German.Indefinites.nSeries with functions := region [7] } ]
 
 /-- The Latin series (A.6) are *-dam* 1, *ali-* 2345, *-quam* 4568, the negative series 7, and
 *-vis* and *-libet* 9. -/
 def latin : List Series :=
-  [ ⟨"-dam", Latin.Indefinites.damEntry, region [1]⟩,
-    ⟨"ali-", Latin.Indefinites.aliEntry, region [2, 3, 4, 5]⟩,
-    ⟨"-quam", Latin.Indefinites.quamEntry, region [4, 5, 6, 8]⟩,
-    ⟨"n-", Latin.Indefinites.nemoEntry, region [7]⟩,
-    ⟨"-vis", Latin.Indefinites.visEntry, region [9]⟩ ]
+  [ { Latin.Indefinites.damSeries with functions := region [1] },
+    { Latin.Indefinites.aliSeries with functions := region [2, 3, 4, 5] },
+    { Latin.Indefinites.quamSeries with functions := region [4, 5, 6, 8] },
+    { Latin.Indefinites.nSeries with functions := region [7] },
+    { Latin.Indefinites.visSeries with functions := region [9] } ]
 
 /-- The Yakut series (A.25) are *ere* 12, *eme* 345, *da* 6789 with indirect negation
 predicted, and *bayarar* 9. -/
 def yakut : List Series :=
-  [ ⟨"ere", Yakut.Indefinites.ereEntry, region [1, 2]⟩,
-    ⟨"eme", Yakut.Indefinites.emeEntry, region [3, 4, 5]⟩,
-    ⟨"da", Yakut.Indefinites.daEntry, region [6, 7, 8, 9]⟩,
-    ⟨"bayarar", Yakut.Indefinites.bayararEntry, region [9]⟩ ]
+  [ { Yakut.Indefinites.ereSeries with functions := region [1, 2] },
+    { Yakut.Indefinites.emeSeries with functions := region [3, 4, 5] },
+    { Yakut.Indefinites.daSeries with functions := region [6, 7, 8, 9] },
+    { Yakut.Indefinites.bayararSeries with functions := region [9] } ]
 
 /-- The Kannada series (A.35) are *-oo* 2, *-aadaruu* 345 and *-uu* 6789; no series expresses a
 referent the speaker has in mind. -/
 def kannada : List Series :=
-  [ ⟨"-oo", Kannada.Indefinites.ooEntry, region [2]⟩,
-    ⟨"-aadaruu", Kannada.Indefinites.aadaruuEntry, region [3, 4, 5]⟩,
-    ⟨"-uu", Kannada.Indefinites.uuEntry, region [6, 7, 8, 9]⟩ ]
+  [ { Kannada.Indefinites.ooSeries with functions := region [2] },
+    { Kannada.Indefinites.aadaruuSeries with functions := region [3, 4, 5] },
+    { Kannada.Indefinites.uuSeries with functions := region [6, 7, 8, 9] } ]
 
 /-- The Latvian series (A.18) are *kaut* 12345, the figure not separating the specific
 functions, *ne-* 7 and *jeb-* 689. The bare interrogatives are also used as indefinites, *kāds*
 'somebody' in conditionals and under indirect negation, and the figure draws no region for
 them. -/
 def latvian : List Series :=
-  [ ⟨"kaut", Latvian.Indefinites.kautKas, region [1, 2, 3, 4, 5]⟩,
-    ⟨"ne-", Latvian.Indefinites.neviens, region [7]⟩,
-    ⟨"jeb-", Latvian.Indefinites.jebkāds, region [6, 8, 9]⟩ ]
+  [ { Latvian.Indefinites.kautSeries with functions := region [1, 2, 3, 4, 5] },
+    { Latvian.Indefinites.neSeries with functions := region [7] },
+    { Latvian.Indefinites.jebSeries with functions := region [6, 8, 9] } ]
 
 /-- The Japanese series (A.38) are *-ka* 12345, *-mo* 678 and *-demo* 9. -/
 def japanese : List Series :=
-  [ ⟨"-ka", Japanese.Indefinites.dareKa, region [1, 2, 3, 4, 5]⟩,
-    ⟨"-mo", Japanese.Indefinites.dareMo, region [6, 7, 8]⟩,
-    ⟨"-demo", Japanese.Indefinites.dareDemo, region [9]⟩ ]
+  [ { Japanese.Indefinites.kaSeries with functions := region [1, 2, 3, 4, 5] },
+    { Japanese.Indefinites.moSeries with functions := region [6, 7, 8] },
+    { Japanese.Indefinites.demoSeries with functions := region [9] } ]
 
 /-- The Mandarin Chinese series (A.36) are generic nouns 12, the bare interrogatives in all
 non-specific non-emphatic functions 34567 (with no data for indirect negation), *dōu*/*yě* 7,
@@ -308,9 +304,9 @@ starts the *herhangi* outline at irrealis non-specific; the text admits either s
 function from specific unknown to direct negation and gives *herhangi biri* as a
 specific-unknown example, and the region follows the text. -/
 def turkish : List Series :=
-  [ ⟨"bir-", Turkish.Indefinites.biri, region [1, 2, 3, 4, 5, 6, 7]⟩,
-    ⟨"hiç", Turkish.Indefinites.hiçKimse, region [4, 6, 7]⟩,
-    ⟨"herhangi", Turkish.Indefinites.herhangiBiri, region [2, 3, 4, 5, 6, 7, 8, 9]⟩ ]
+  [ { Turkish.Indefinites.birSeries with functions := region [1, 2, 3, 4, 5, 6, 7] },
+    { Turkish.Indefinites.hiçSeries with functions := region [4, 6, 7] },
+    { Turkish.Indefinites.herhangiSeries with functions := region [2, 3, 4, 5, 6, 7, 8, 9] } ]
 
 /-- The Hindi/Urdu series (A.22) are *koii* 1234567 and *koii bhii* 3456789. -/
 def hindi : List Series :=
@@ -344,18 +340,18 @@ def korean : List Series :=
 /-- The Hungarian series (A.26) are *vala-* 123456, *sem-* 7, and *akár-* and *bár-* 5689,
 excluded from questions. The figure does not draw the marginal *né*-series. -/
 def hungarian : List Series :=
-  [ ⟨"vala-", Hungarian.Indefinites.valaki, region [1, 2, 3, 4, 5, 6]⟩,
-    ⟨"sem-", Hungarian.Indefinites.senki, region [7]⟩,
-    ⟨"akár-", Hungarian.Indefinites.akárki, region [5, 6, 8, 9]⟩,
-    ⟨"bár-", Hungarian.Indefinites.bárki, region [5, 6, 8, 9]⟩ ]
+  [ { Hungarian.Indefinites.valaSeries with functions := region [1, 2, 3, 4, 5, 6] },
+    { Hungarian.Indefinites.semSeries with functions := region [7] },
+    { Hungarian.Indefinites.akárSeries with functions := region [5, 6, 8, 9] },
+    { Hungarian.Indefinites.bárSeries with functions := region [5, 6, 8, 9] } ]
 
 /-- The Georgian series (A.34) are *-γac* 12, *-me* 34568 and *ara-* 7. The text also puts the
 potential *vera-* and prohibitive *nura-* series in direct negation, where the figure does not
 draw them, and free choice is expressed by the adjective *nebismieri*, not by a series. -/
 def georgian : List Series :=
-  [ ⟨"-γac", Georgian.Indefinites.viγac, region [1, 2]⟩,
-    ⟨"-me", Georgian.Indefinites.vinMe, region [3, 4, 5, 6, 8]⟩,
-    ⟨"ara-", Georgian.Indefinites.araVin, region [7]⟩ ]
+  [ { Georgian.Indefinites.γacSeries with functions := region [1, 2] },
+    { Georgian.Indefinites.meSeries with functions := region [3, 4, 5, 6, 8] },
+    { Georgian.Indefinites.araSeries with functions := region [7] } ]
 
 /-- The Ancash Quechua series (A.37) are the bare interrogatives for the specific functions,
 which the map of the language does not distinguish, and *-pis* 3456789. -/
@@ -431,7 +427,7 @@ def functionTable : List (String × HaspelmathFunction) :=
 
 /-- The region the figure of an example's language draws for a series. -/
 def region? (e : Datum) (label : String) : Option (Finset HaspelmathFunction) :=
-  (paradigm? e.language).bind fun p ↦ (p.find? (·.label = label)).map (·.functions)
+  (paradigm? e.language).bind fun p ↦ (p.find? (·.name = label)).map (·.functions)
 
 /-- The figure draws the series over the function the example illustrates. -/
 def Covers (e : Datum) (label : String) : Prop :=
