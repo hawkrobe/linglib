@@ -34,6 +34,9 @@ model.
 * The third chapter's ratio scales are local to a set of gambles, since the chapter mixes imperfect
   discrimination among gambles with perfect discrimination among pure alternatives.
 * The beta model of §4.G is a Markov kernel on the logarithm of the ratio of the response strengths.
+* Thurstone's discriminal processes are random variables `U ω a` on a probability space, and choice
+  from `T` is the random utility model on the processes of `T` (`ChoiceFn.ofRandomUtility`). Luce's
+  independence and densities enter Theorem 7 only through the null ties they imply.
 
 ## TODO
 
@@ -142,7 +145,18 @@ conditional probability relative to `P_T`" (p. 24), and for the ratio rule this 
 
 section RatioRule
 
-variable {A : Type*} [DecidableEq A]
+variable {A : Type*}
+
+open MeasureTheory in
+theorem withDensity_ofReal_finset [MeasurableSpace A] [MeasurableSingletonClass A] {v : A → ℝ}
+    (hv : ∀ a, 0 ≤ v a) (E : Finset A) :
+    (Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b)) ↑E =
+      ENNReal.ofReal (∑ b ∈ E, v b) := by
+  rw [withDensity_apply _ E.measurableSet, lintegral_finset,
+    ENNReal.ofReal_sum_of_nonneg fun b _ ↦ hv b]
+  simp
+
+variable [DecidableEq A]
 
 /-- The ratio rule gives `a` the probability `v a / ∑ b ∈ T, v b` of being chosen from `T`, and `0`
 if `a ∉ T`. -/
@@ -194,16 +208,6 @@ theorem ratioProb_eq_one_div_sum {v : A → ℝ} {T : Finset A} {x : A} (hv : �
     field_simp
   rw [sum_congr rfl hodds, ← sum_div, ratioProb_eq_div v T x hx, one_div_div]
 
-omit [DecidableEq A] in
-open MeasureTheory in
-theorem withDensity_ofReal_finset [MeasurableSpace A] [MeasurableSingletonClass A] {v : A → ℝ}
-    (hv : ∀ a, 0 ≤ v a) (E : Finset A) :
-    (Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b)) ↑E =
-      ENNReal.ofReal (∑ b ∈ E, v b) := by
-  rw [withDensity_apply _ E.measurableSet, lintegral_finset,
-    ENNReal.ofReal_sum_of_nonneg fun b _ ↦ hv b]
-  simp
-
 open MeasureTheory ProbabilityTheory in
 /-- For a nonnegative scale `v`, choosing `a` from `T` by the ratio rule is conditioning on `T` the
 measure with point masses `v` (p. 24). -/
@@ -233,6 +237,15 @@ section ChoiceAxiomForms
 
 open MeasureTheory ProbabilityTheory Finset
 open scoped ENNReal
+
+/-- Two measures that give the same choice from `T` by conditioning agree on `T` up to a constant
+multiple (Theorem 3, p. 23). -/
+theorem restrict_eq_smul_of_cond_eq {A : Type*} [MeasurableSpace A] {μ ν : Measure A} {T : Set A}
+    (hμ₀ : μ T ≠ 0) (hμ : μ T ≠ ∞) (h : μ[|T] = ν[|T]) :
+    μ.restrict T = (μ T / ν T) • ν.restrict T := by
+  have hrestrict (ρ : Measure A) (h₀ : ρ T ≠ 0) (h₁ : ρ T ≠ ∞) : ρ.restrict T = ρ T • ρ[|T] := by
+    rw [ProbabilityTheory.cond, smul_smul, ENNReal.mul_inv_cancel h₀ h₁, one_smul]
+  rw [hrestrict μ hμ₀ hμ, h, ProbabilityTheory.cond, smul_smul, div_eq_mul_inv]
 
 /-- A system of choice probabilities assigns to every finite set `T` a measure `P_T` concentrated on
 `T`, the distribution of the alternative chosen from `T`, which is a probability measure when `T` is
@@ -280,6 +293,33 @@ private theorem measureReal_cond_singleton {μ : Measure A} {S : Finset A} {a : 
   rw [measureReal_def, cond_apply S.measurableSet, Set.inter_singleton_of_mem (mem_coe.2 ha),
     ENNReal.toReal_mul, ENNReal.toReal_inv, measureReal_def, measureReal_def, inv_mul_eq_div]
 
+/-- A system has a ratio scale if a measure `μ` with positive finite point masses gives every `P_T`
+by conditioning on `T` (Theorem 3, p. 23). -/
+def HasRatioScale : Prop :=
+  ∃ μ : Measure A, (∀ a, μ {a} ≠ 0) ∧ (∀ a, μ {a} ≠ ∞) ∧
+    ∀ T : Finset A, T.Nonempty → cf.prob T = μ[|↑T]
+
+/-- A system satisfies the product rule if `P_T(R) = P_S(R) P_T(S)` whenever `R ⊆ S ⊆ T`, which is
+part i of Axiom 1 without its hypothesis of imperfect discrimination (p. 6). -/
+def HasProductRule : Prop :=
+  ∀ R S T : Finset A, R ⊆ S → S ⊆ T → cf.prob T R = cf.prob S R * cf.prob T S
+
+variable {cf} in
+/-- A ratio scale satisfies the product rule, since conditioning on `T` and then on `S ⊆ T` is
+conditioning on `S`. -/
+theorem HasRatioScale.hasProductRule (h : cf.HasRatioScale) : cf.HasProductRule := by
+  obtain ⟨μ, -, hfin, hμ⟩ := h
+  intro R S T hRS hST
+  rcases S.eq_empty_or_nonempty with rfl | hS
+  · simp [subset_empty.1 hRS]
+  have hT : μ ↑T ≠ ∞ := by
+    rw [← sum_measure_singleton]
+    exact ENNReal.sum_ne_top.2 fun a _ ↦ hfin a
+  have hS' : μ[|↑S] = (cf.prob T)[|↑S] := by
+    rw [hμ T (hS.mono hST), cond_cond_eq_cond_inter' T.measurableSet S.measurableSet hT,
+      Set.inter_eq_right.2 (coe_subset.2 hST)]
+  rw [hμ S hS, hS', cond_mul_eq_inter S.measurableSet, Set.inter_eq_right.2 (coe_subset.2 hRS)]
+
 variable [DecidableEq A]
 
 private theorem measure_pair {μ : Measure A} {x y : A} (hxy : x ≠ y) :
@@ -304,17 +344,6 @@ convention (p. 5). -/
 theorem binary_self (x : A) : cf.binary x x = 1 := by
   rw [binary, insert_eq_of_mem (mem_singleton_self x), measureReal_def, ← coe_singleton,
     cf.prob_coe (singleton_nonempty x), ENNReal.toReal_one]
-
-/-- A system has a ratio scale if a measure `μ` with positive finite point masses gives every `P_T`
-by conditioning on `T` (Theorem 3, p. 23). -/
-def HasRatioScale : Prop :=
-  ∃ μ : Measure A, (∀ a, μ {a} ≠ 0) ∧ (∀ a, μ {a} ≠ ∞) ∧
-    ∀ T : Finset A, T.Nonempty → cf.prob T = μ[|↑T]
-
-/-- A system satisfies the product rule if `P_T(R) = P_S(R) P_T(S)` whenever `R ⊆ S ⊆ T`, which is
-part i of Axiom 1 without its hypothesis of imperfect discrimination (p. 6). -/
-def HasProductRule : Prop :=
-  ∀ R S T : Finset A, R ⊆ S → S ⊆ T → cf.prob T R = cf.prob S R * cf.prob T S
 
 /-- A system satisfies the constant-ratio rule if every set containing `a` and `b` gives them the
 odds of the pair, `P_T(a) P(b, a) = P_T(b) P(a, b)` (Lemma 3, p. 9). -/
@@ -342,22 +371,6 @@ structure HasChoiceAxiom : Prop where
     ∀ S ⊆ T, cf.prob T S = cf.prob (T.erase x) (S.erase x)
 
 variable {cf}
-
-omit [DecidableEq A] in
-/-- A ratio scale satisfies the product rule, since conditioning on `T` and then on `S ⊆ T` is
-conditioning on `S`. -/
-theorem HasRatioScale.hasProductRule (h : cf.HasRatioScale) : cf.HasProductRule := by
-  obtain ⟨μ, -, hfin, hμ⟩ := h
-  intro R S T hRS hST
-  rcases S.eq_empty_or_nonempty with rfl | hS
-  · simp [subset_empty.1 hRS]
-  have hT : μ ↑T ≠ ∞ := by
-    rw [← sum_measure_singleton]
-    exact ENNReal.sum_ne_top.2 fun a _ ↦ hfin a
-  have hS' : μ[|↑S] = (cf.prob T)[|↑S] := by
-    rw [hμ T (hS.mono hST), cond_cond_eq_cond_inter' T.measurableSet S.measurableSet hT,
-      Set.inter_eq_right.2 (coe_subset.2 hST)]
-  rw [hμ S hS, hS', cond_mul_eq_inter S.measurableSet, Set.inter_eq_right.2 (coe_subset.2 hRS)]
 
 /-- A ratio scale satisfies the constant-ratio rule. -/
 theorem HasRatioScale.hasPairwiseIIA (h : cf.HasRatioScale) : cf.HasPairwiseIIA := by
@@ -508,27 +521,21 @@ theorem HasChoiceAxiom.ratioScaleOn (h : cf.HasChoiceAxiom) {T : Finset A}
     (∀ x ∈ T, cf.prob T {x} ≠ 0) ∧ ∀ S ⊆ T, S.Nonempty → cf.prob S = (cf.prob T)[|↑S] :=
   ⟨fun _ hx ↦ h.prob_singleton_ne_zero himp hx, fun _ hST hS ↦ h.prob_eq_cond himp hST hS⟩
 
-omit [MeasurableSingletonClass A] [DecidableEq A] in
-/-- Two measures that give the same choice from `T` by conditioning agree on `T` up to a constant
-multiple (Theorem 3, p. 23). -/
-theorem restrict_eq_smul_of_cond_eq {μ ν : Measure A} {T : Set A} (hμ₀ : μ T ≠ 0)
-    (hμ : μ T ≠ ∞) (h : μ[|T] = ν[|T]) : μ.restrict T = (μ T / ν T) • ν.restrict T := by
-  have hrestrict (ρ : Measure A) (h₀ : ρ T ≠ 0) (h₁ : ρ T ≠ ∞) : ρ.restrict T = ρ T • ρ[|T] := by
-    rw [ProbabilityTheory.cond, smul_smul, ENNReal.mul_inv_cancel h₀ h₁, one_smul]
-  rw [hrestrict μ hμ₀ hμ, h, ProbabilityTheory.cond, smul_smul, div_eq_mul_inv]
-
 /-- Under Axiom 1 and imperfect discrimination throughout `T`, `v a = P_T(a)` is a binary ratio
 scale on `T` (Theorem 3, p. 23). -/
-theorem HasChoiceAxiom.binaryRatioScaleOn (h : cf.HasChoiceAxiom) {T : Finset A}
-    (himp : cf.ImperfectOn T) : ∃ v : A → ℝ, cf.BinaryRatioScaleOn ↑T v := by
-  refine ⟨fun a ↦ (cf.prob T).real {a}, fun x hx ↦
-    ENNReal.toReal_pos (h.prob_singleton_ne_zero himp hx) (measure_ne_top _ _),
+theorem HasChoiceAxiom.binaryRatioScaleOn_prob (h : cf.HasChoiceAxiom) {T : Finset A}
+    (himp : cf.ImperfectOn T) : cf.BinaryRatioScaleOn ↑T fun a ↦ (cf.prob T).real {a} := by
+  refine ⟨fun x hx ↦ ENNReal.toReal_pos (h.prob_singleton_ne_zero himp hx) (measure_ne_top _ _),
     fun x hx y hy hxy ↦ ?_⟩
   rw [binary, h.prob_eq_cond himp (insert_subset hx (singleton_subset_iff.2 hy))
       (insert_nonempty _ _), measureReal_cond_singleton (by simp), pairwiseProb,
     measureReal_def (cf.prob T) ↑({x, y} : Finset A), measure_pair hxy,
     ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _)]
   rfl
+
+theorem HasChoiceAxiom.binaryRatioScaleOn (h : cf.HasChoiceAxiom) {T : Finset A}
+    (himp : cf.ImperfectOn T) : ∃ v : A → ℝ, cf.BinaryRatioScaleOn ↑T v :=
+  ⟨_, h.binaryRatioScaleOn_prob himp⟩
 
 /-- Under Axiom 1 and imperfect discrimination on `{x, y, z}`, a stochastic intransitivity is
 exactly as probable as its reverse, `P(x, y) P(y, z) P(z, x) = P(x, z) P(z, y) P(y, x)` (Theorem 2,
@@ -592,17 +599,13 @@ theorem jndI_iff (hx : 0 < v x) (hy : 0 < v y) :
   simp only [jndI, jndL, not_lt]
   constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith
 
-variable (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1)
-include hv hthr₀ hthr₁
-
-omit hv in
-private theorem one_lt_odds : 1 < thr / (1 - thr) := by
+private theorem one_lt_odds (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1) : 1 < thr / (1 - thr) := by
   rw [one_lt_div (by linarith)]
   linarith
 
 /-- Exactly one of `x L y`, `y L x` and `x I y` holds, which is the first semiorder axiom (Theorem
 5, p. 35). -/
-theorem jnd_trichotomy :
+theorem jnd_trichotomy (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1) :
     (jndL v thr x y ∧ ¬ jndL v thr y x ∧ ¬ jndI v thr x y) ∨
       (jndL v thr y x ∧ ¬ jndL v thr x y ∧ ¬ jndI v thr x y) ∨
       (jndI v thr x y ∧ ¬ jndL v thr x y ∧ ¬ jndL v thr y x) := by
@@ -616,15 +619,15 @@ theorem jnd_trichotomy :
 
 /-- Every alternative bears `I` to itself, which is the second semiorder axiom (Theorem 5, p. 35).
 -/
-theorem jndI_refl : jndI v thr x x := by
+theorem jndI_refl (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1) :
+    jndI v thr x x := by
   rw [jndI_iff (hv x) (hv x), and_self, jndL_iff (hv x) (hv x) hthr₁, not_lt]
   nlinarith [one_lt_odds hthr₀ hthr₁, hv x]
 
-omit hthr₀ in
 /-- `x L y`, `y I z` and `z L w` imply `x L w`, which is the third semiorder axiom (Theorem 5, p.
 35). -/
-theorem jndL_interval (hxy : jndL v thr x y) (hyz : jndI v thr y z) (hzw : jndL v thr z w) :
-    jndL v thr x w := by
+theorem jndL_interval (hv : ∀ a, 0 < v a) (hthr₁ : thr < 1) (hxy : jndL v thr x y)
+    (hyz : jndI v thr y z) (hzw : jndL v thr z w) : jndL v thr x w := by
   rw [jndL_iff (hv _) (hv _) hthr₁] at hxy hzw ⊢
   rw [jndI_iff (hv _) (hv _), jndL_iff (hv _) (hv _) hthr₁, jndL_iff (hv _) (hv _) hthr₁] at hyz
   simp only [not_lt] at hyz
@@ -632,8 +635,8 @@ theorem jndL_interval (hxy : jndL v thr x y) (hyz : jndI v thr y z) (hzw : jndL 
 
 /-- `x L y` and `y L z` exclude `x I w` together with `w I z`, which is the fourth semiorder axiom
 (Theorem 5, p. 35). -/
-theorem jndL_no_sandwich (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
-    ¬ (jndI v thr x w ∧ jndI v thr w z) := by
+theorem jndL_no_sandwich (hv : ∀ a, 0 < v a) (hthr₀ : 1 / 2 < thr) (hthr₁ : thr < 1)
+    (hxy : jndL v thr x y) (hyz : jndL v thr y z) : ¬ (jndI v thr x w ∧ jndI v thr w z) := by
   have hk := one_lt_odds hthr₀ hthr₁
   rintro ⟨hxw, hwz⟩
   rw [jndL_iff (hv _) (hv _) hthr₁] at hxy hyz
@@ -642,27 +645,24 @@ theorem jndL_no_sandwich (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
   simp only [not_lt] at hxw hwz
   nlinarith [hv w, hv z]
 
-omit hthr₀ hthr₁ in
 /-- In the trace `x ≥ y` holds when `P(x, z) ≥ P(y, z)` for every `z` (Definition 4, p. 37). -/
 def traceGe (v : A → ℝ) (x y : A) : Prop :=
   ∀ z : A, pairwiseProb v y z ≤ pairwiseProb v x z
 
-omit hthr₀ hthr₁ in
 /-- Under a positive ratio scale the trace is the order of the scale (proof of Theorem 6, p. 37). -/
-theorem traceGe_iff : traceGe v x y ↔ v y ≤ v x :=
+theorem traceGe_iff (hv : ∀ a, 0 < v a) : traceGe v x y ↔ v y ≤ v x :=
   ⟨fun h ↦ (pairwiseProb_mono_iff (hv x) (hv y) (hv y)).1 (h y),
     fun h z ↦ (pairwiseProb_mono_iff (hv x) (hv y) (hv z)).2 h⟩
 
-omit hthr₀ hthr₁ in
 /-- Under a positive ratio scale the trace is a weak order (Theorem 6, p. 37). -/
-theorem theorem6 : Std.Total (traceGe v) ∧ IsTrans A (traceGe v) :=
+theorem theorem6 (hv : ∀ a, 0 < v a) : Std.Total (traceGe v) ∧ IsTrans A (traceGe v) :=
   ⟨⟨fun _ _ ↦ (le_total _ _).imp (traceGe_iff hv).2 (traceGe_iff hv).2⟩,
     ⟨fun _ _ _ h₁ h₂ ↦ (traceGe_iff hv).2 (((traceGe_iff hv).1 h₂).trans ((traceGe_iff hv).1 h₁))⟩⟩
 
-omit hthr₀ hthr₁ in
 /-- Under a positive ratio scale `x ≥ y` in the trace exactly when `P(x, y) ≥ 1/2` (corollary to
 Theorem 6, p. 37). -/
-theorem traceGe_iff_pairwiseProb : traceGe v x y ↔ 1 / 2 ≤ pairwiseProb v x y := by
+theorem traceGe_iff_pairwiseProb (hv : ∀ a, 0 < v a) :
+    traceGe v x y ↔ 1 / 2 ≤ pairwiseProb v x y := by
   rw [traceGe_iff hv, pairwiseProb_ge_half_iff (hv x) (hv y)]
 
 end JustNoticeableDifferences
@@ -873,16 +873,70 @@ section Thurstone
 
 /-! ### §2.D: Discriminal processes (pp. 54–58)
 
-In Thurstone's model each stimulus produces an independent observation and the larger observation is
-judged the larger stimulus, so its choice probabilities are those of a random utility model
-(`ProbabilityTheory.choiceProb`). With three stimuli the probabilities that `x` is judged the
-largest and the smallest differ by `P(x, y) + P(x, z) - 1`, and Theorem 7 (p. 57) shows that the
-choice axiom cannot reproduce this difference, taking the integral identity from the text. -/
+In Thurstone's model each stimulus `a` produces a discriminal process `U ω a`, and the stimulus
+whose process is the largest is judged the largest. Choice from `T` is then the random utility model
+on the processes of `T` (`ProbabilityTheory.choiceProb`), Luce's integral (9) when the processes are
+independent. Judging the smallest is judging the largest of the processes `-U ω a`, his (10). With
+three stimuli the probabilities that `x` is judged the largest and the smallest differ by
+`P(x, y) + P(x, z) - 1`, and Theorem 7 (p. 57) shows that the two judgments cannot both satisfy
+Axiom 1. -/
+
+open MeasureTheory ProbabilityTheory Finset
+
+namespace ChoiceFn
+
+variable {A Ω : Type*} [MeasurableSpace A] [MeasurableSingletonClass A] [MeasurableSpace Ω]
+  {U : Ω → A → ℝ}
+
+/-- The system of choice probabilities of discriminal processes `U ω a` whose ties have probability
+zero. Choice from `T` is the random utility model on the processes of `T`, so `P_T(a)` is the
+probability that the process of `a` is the largest of them, equation (9) for independent processes
+(p. 56). -/
+noncomputable def ofRandomUtility (P : Measure Ω) [IsProbabilityMeasure P] (hU : Measurable U)
+    (hties : ∀ j k, j ≠ k → P {ω | U ω j = U ω k} = 0) : ChoiceFn A where
+  prob T := ∑ a : T, choiceProb (P.map fun ω (j : T) ↦ U ω j) a • Measure.dirac (a : A)
+  isProbabilityMeasure_prob T hT := by
+    have : Nonempty T := hT.to_subtype
+    have hV : Measurable fun ω (j : T) ↦ U ω j := by fun_prop
+    refine ⟨?_⟩
+    simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, measure_univ,
+      smul_eq_mul, mul_one]
+    refine sum_choiceProb _ fun j k hjk ↦ ?_
+    rw [Measure.map_apply hV (measurableSet_eq_fun (measurable_pi_apply j) (measurable_pi_apply k))]
+    exact hties j k (Subtype.coe_ne_coe.2 hjk)
+  prob_compl T := by
+    simp [Measure.dirac_apply' _ T.measurableSet.compl]
+
+variable {P : Measure Ω} [IsProbabilityMeasure P] (hU : Measurable U)
+  (hties : ∀ j k, j ≠ k → P {ω | U ω j = U ω k} = 0)
+
+/-- The probability that `a` is judged the largest from `T` is the probability that its process
+exceeds the others of `T`. -/
+theorem ofRandomUtility_prob_singleton {T : Finset A} {a : A} (ha : a ∈ T) :
+    (ofRandomUtility P hU hties).prob T {a} = P {ω | ∀ j ∈ T, j ≠ a → U ω j < U ω a} := by
+  have hV : Measurable fun ω (j : T) ↦ U ω j := by fun_prop
+  simp only [ofRandomUtility, Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
+    smul_eq_mul]
+  rw [Finset.sum_eq_single ⟨a, ha⟩ (fun b _ hb ↦ by simp [Subtype.coe_ne_coe.2 hb]) (by simp),
+    Measure.dirac_apply_of_mem (Set.mem_singleton a), mul_one, choiceProb_map P hV]
+  congr 1
+  ext ω
+  simp [Subtype.forall]
+
+variable [DecidableEq A]
+
+theorem binary_ofRandomUtility {x y : A} (hxy : x ≠ y) :
+    (ofRandomUtility P hU hties).binary x y = P.real {ω | U ω y < U ω x} := by
+  rw [binary, measureReal_def, ofRandomUtility_prob_singleton hU hties (mem_insert_self x {y}),
+    measureReal_def]
+  congr 2
+  ext ω
+  simp [hxy.symm]
 
 /-- For positive `x`, `y` and `z` with `P(x, y) + P(x, z) ≠ 1`, the difference between the
 probabilities that the choice axiom gives to `x` being judged the largest and the smallest is not
-the `P(x, y) + P(x, z) - 1` of independent discriminal processes (Theorem 7, p. 57). -/
-theorem theorem7 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
+`P(x, y) + P(x, z) - 1`. -/
+private theorem ratio_largest_sub_smallest_ne {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
     (hne : x / (x + y) + x / (x + z) ≠ 1) :
     x / (x + y + z) - y * z / (x * y + x * z + y * z) ≠ x / (x + y) + x / (x + z) - 1 := by
   intro h
@@ -899,6 +953,92 @@ theorem theorem7 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
   have h5 : (y + z) * ((x + y) * (x + z)) = (x + y + z) * (x * y + x * z + y * z) :=
     mul_left_cancel₀ hsq (by linarith)
   nlinarith [mul_pos (mul_pos hx hy) hz]
+
+/-- Positive ratio scales `p` and `q` of unit sum, with `q` giving each pair containing `x` the
+reversed odds of `p`, cannot make `p x - q x` equal to `P(x, y) + P(x, z) - 1` unless that sum is
+`1`, which is the arithmetic of Luce's proof. -/
+private theorem theorem7_arith {px py pz qx qy qz : ℝ} (hpx : 0 < px) (hpy : 0 < py)
+    (hpz : 0 < pz) (hqx : 0 < qx) (hqy : 0 < qy) (hqz : 0 < qz) (hp : px + py + pz = 1)
+    (hq : qx + qy + qz = 1) (hxy : qx / (qx + qy) = py / (py + px))
+    (hxz : qx / (qx + qz) = pz / (pz + px)) (hne : px / (px + py) + px / (px + pz) ≠ 1) :
+    px - qx ≠ px / (px + py) + px / (px + pz) - 1 := by
+  rw [div_eq_div_iff (by positivity) (by positivity)] at hxy hxz
+  have hqx' : qx = py * pz / (px * py + px * pz + py * pz) := by
+    rw [eq_div_iff (by positivity)]
+    linear_combination pz * hxy + py * hxz + py * pz * hq
+  have := ratio_largest_sub_smallest_ne hpx hpy hpz hne
+  rwa [hp, div_one, ← hqx'] at this
+
+/-- **Theorem 7** (p. 57). Let discriminal processes `U` with null ties make `P_T(a)` the
+probability that `a` is judged the largest and `P*_T(a)` the probability that it is judged the
+smallest, the largest of the processes `-U`. If discrimination is imperfect on `{x, y, z}` (i) and
+`P(x, y) + P(x, z) ≠ 1` (ii), then `P` and `P*` do not both satisfy Axiom 1 (iii). Luce's
+hypothesis (iv), `P*(x, y) = P(y, x)`, holds in every such model. He takes the processes independent
+with densities, which makes ties null (`Measure.pi_setOf_apply_eq_apply`), and the stimuli to be
+`x`, `y` and `z` alone, so that Axiom 1 concerns only `{x, y, z}` and its subsets. -/
+theorem theorem7 {x y z : A} (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z)
+    (himp : (ofRandomUtility P hU hties).ImperfectOn {x, y, z})
+    (hne : (ofRandomUtility P hU hties).binary x y + (ofRandomUtility P hU hties).binary x z ≠ 1) :
+    ¬ ((ofRandomUtility P hU hties).HasChoiceAxiom ∧
+      (ofRandomUtility P hU.neg fun j k hjk ↦ by simpa using hties j k hjk).HasChoiceAxiom) := by
+  rintro ⟨hL, hS⟩
+  set L := ofRandomUtility P hU hties
+  set S := ofRandomUtility P hU.neg fun j k hjk ↦ by simpa using hties j k hjk
+  have hSL (r s : A) (hrs : r ≠ s) : S.binary r s = L.binary s r := by
+    rw [binary_ofRandomUtility _ _ hrs, binary_ofRandomUtility _ _ hrs.symm]
+    simp
+  have himpS : S.ImperfectOn {x, y, z} := fun r hr s hs hrs ↦ by
+    rw [hSL r s hrs]
+    exact himp s hs r hr hrs.symm
+  obtain ⟨hp, hpL⟩ := hL.binaryRatioScaleOn_prob himp
+  obtain ⟨hq, hqS⟩ := hS.binaryRatioScaleOn_prob himpS
+  have hsum (cf : ChoiceFn A) : (cf.prob {x, y, z}).real {x} + (cf.prob {x, y, z}).real {y} +
+      (cf.prob {x, y, z}).real {z} = 1 := by
+    rw [← cf.sum_prob_real (insert_nonempty x {y, z}), sum_insert (by simp [hxy, hxz]),
+      sum_pair hyz, add_assoc]
+  -- the probabilities that `x` is judged the largest and the smallest differ by
+  -- `P(x, y) + P(x, z) - 1`, by inclusion-exclusion with null ties
+  have hid : (L.prob {x, y, z}).real {x} - (S.prob {x, y, z}).real {x} =
+      L.binary x y + L.binary x z - 1 := by
+    have hA : MeasurableSet {ω | U ω y < U ω x} := measurableSet_lt (by fun_prop) (by fun_prop)
+    have hB : MeasurableSet {ω | U ω z < U ω x} := measurableSet_lt (by fun_prop) (by fun_prop)
+    have hae : {ω | U ω x < U ω y ∧ U ω x < U ω z} =ᵐ[P]
+        ({ω | U ω y < U ω x} ∪ {ω | U ω z < U ω x})ᶜ := by
+      refine Filter.eventuallyEqSet_iff.2 ?_
+      filter_upwards [measure_eq_zero_iff_ae_notMem.1 (hties x y hxy),
+        measure_eq_zero_iff_ae_notMem.1 (hties x z hxz)] with ω h1 h2
+      simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_union, not_or, not_lt] at h1 h2 ⊢
+      rw [lt_iff_le_and_ne, lt_iff_le_and_ne]
+      tauto
+    have hL' : {ω | ∀ j ∈ ({x, y, z} : Finset A), j ≠ x → U ω j < U ω x} =
+        {ω | U ω y < U ω x} ∩ {ω | U ω z < U ω x} := by
+      ext ω
+      simp [hxy.symm, hxz.symm]
+    have hS' : {ω | ∀ j ∈ ({x, y, z} : Finset A), j ≠ x → (-U) ω j < (-U) ω x} =
+        {ω | U ω x < U ω y ∧ U ω x < U ω z} := by
+      ext ω
+      simp [hxy.symm, hxz.symm]
+    rw [measureReal_def, measureReal_def, ofRandomUtility_prob_singleton _ _ (by simp),
+      ofRandomUtility_prob_singleton _ _ (by simp), hL', hS', ← measureReal_def,
+      ← measureReal_def, measureReal_congr hae, probReal_compl_eq_one_sub (hA.union hB),
+      binary_ofRandomUtility _ _ hxy, binary_ofRandomUtility _ _ hxz]
+    linarith [measureReal_union_add_inter (μ := P) (s := {ω | U ω y < U ω x}) hB]
+  have mem (a : A) (ha : a = x ∨ a = y ∨ a = z) : a ∈ (↑({x, y, z} : Finset A) : Set A) := by
+    simpa using ha
+  have hxy' := hSL x y hxy
+  have hxz' := hSL x z hxz
+  rw [hqS x (mem x (by simp)) y (mem y (by simp)) hxy, hpL y (mem y (by simp)) x (mem x (by simp))
+    hxy.symm] at hxy'
+  rw [hqS x (mem x (by simp)) z (mem z (by simp)) hxz, hpL z (mem z (by simp)) x (mem x (by simp))
+    hxz.symm] at hxz'
+  rw [hpL x (mem x (by simp)) y (mem y (by simp)) hxy, hpL x (mem x (by simp)) z (mem z (by simp))
+    hxz] at hid hne
+  simp only [pairwiseProb] at hid hne hxy' hxz'
+  exact theorem7_arith (hp x (mem x (by simp))) (hp y (mem y (by simp))) (hp z (mem z (by simp)))
+    (hq x (mem x (by simp))) (hq y (mem y (by simp))) (hq z (mem z (by simp))) (hsum L) (hsum S)
+    hxy' hxz' hne hid
+
+end ChoiceFn
 
 end Thurstone
 
@@ -990,7 +1130,14 @@ section Ranking
 
 open Finset
 
-variable {A : Type*} [DecidableEq A]
+variable {A : Type*}
+
+private theorem sublist_cons_of_ne {a b : A} {l r : List A} (h : b ≠ a) :
+    (b :: l).Sublist (a :: r) ↔ (b :: l).Sublist r := by
+  rw [List.sublist_cons_iff]
+  simp [h]
+
+variable [DecidableEq A]
 
 /-! ### §2.F: Rank orderings (pp. 68–74)
 
@@ -1067,12 +1214,6 @@ private theorem sum_rankProb {v : A → ℝ} (T : Finset A) (hv : ∀ a ∈ T, 0
     refine sum_congr rfl fun a ha ↦ ?_
     rw [sum_congr rfl fun r hr ↦ rankProb_cons_of_mem (cons_mem_allRankings_iff.2 ⟨ha, hr⟩),
       ← mul_sum, ih _ (erase_ssubset ha) fun b hb ↦ hv b (mem_of_mem_erase hb), mul_one]
-
-omit [DecidableEq A] in
-private theorem sublist_cons_of_ne {a b : A} {l r : List A} (h : b ≠ a) :
-    (b :: l).Sublist (a :: r) ↔ (b :: l).Sublist r := by
-  rw [List.sublist_cons_iff]
-  simp [h]
 
 private theorem sum_rankProb_sublist {v : A → ℝ} {x y : A} (hxy : x ≠ y) (T : Finset A)
     (hx : x ∈ T) (hy : y ∈ T)
@@ -2165,7 +2306,7 @@ matrix, the form Luce derives from the unboundedness, superposition and independ
 conditions, the beta model multiplies each strength by a constant, and the gamma model adds a
 constant as well. -/
 
-variable {A : Type*} [Fintype A] [DecidableEq A]
+variable {A : Type*} [Fintype A]
 
 /-! #### §4.C: The alpha model -/
 
@@ -2174,11 +2315,12 @@ multiplies the total strength of every positive vector by `a`. -/
 def ProportionalChange (M : Matrix A A ℝ) (a : ℝ) : Prop :=
   ∀ v : A → ℝ, (∀ i, 0 < v i) → ∑ i, (M *ᵥ v) i = a * ∑ i, v i
 
-omit [DecidableEq A] in
 private theorem sum_mulVec_eq_sum_mul (M : Matrix A A ℝ) (v : A → ℝ) :
     ∑ i, (M *ᵥ v) i = ∑ j, (∑ i, M i j) * v j := by
   simp only [mulVec, dotProduct, sum_mul]
   exact sum_comm
+
+variable [DecidableEq A]
 
 /-- The proportional change assumption holds exactly when every column of `M` sums to `a`
 (equation (1), p. 98). -/
