@@ -66,7 +66,7 @@ equation is proved here. The converse and the equations for the other classes ar
 
 * [lambert-2026]
 * [heinz-rawal-tanner-2011]
-* [almeida-1995]
+* [almeida-1994]
 -/
 
 @[expose] public section
