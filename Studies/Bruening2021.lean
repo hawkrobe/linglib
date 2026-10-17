@@ -1,244 +1,219 @@
 module
 
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Studies.Larson1988
-public import Studies.Pylkkanen2008
+public import Linglib.Data.Examples.Bruening2021
+public import Linglib.Semantics.Composition.Tree
+public import Linglib.Syntax.Minimalist.Category.Basic
 
 /-!
-# Bruening 2021: implicit arguments in English double object constructions
+# Bruening (2021): implicit arguments in English double object constructions
 
-This file formalizes the second of the four asymmetries [bruening-2021] draws between the arguments
-of an English ditransitive. Table (56) classifies the verbs on three coordinates: how an implicit
-second object is interpreted, whether the goal argument is a first object or a PP, and how that
-goal is interpreted when implicit. Two of the three are read off the Fragment's frames, whose
-implicit positions record the interpretation of an unexpressed argument, so what this file
-supplies is the goal's position, and the grid's shape is then read off the Fragment: one
-combination — an indefinite implicit first object — is systematically missing, and every other is
-attested.
+An implicit second object of an English double object construction, like an implicit direct
+object or PP of the prepositional frame, is definite or indefinite as the verb dictates and
+licenses sluicing; an implicit first object is always definite and never does. Bruening
+concludes that the verb selects the second object and Appl the first. An argument of the verb is
+left implicit by a head ∃ or ι adjoined to it, an argument of Appl only by a passive head
+ApplPass, which binds it as a definite.
 
-That gap is the argument against treating both objects as selected arguments of V, since on
-[pesetsky-1995]'s and [larson-1988]'s accounts the two objects should be interpreted alike. In
-Bruening's analysis the second object is selected by V while the first is projected by Appl above
-VP ([marantz-1993], [bruening-2010a]); an implicit argument of V is licensed by an ∃ or ι head
-adjoined to V, while an implicit argument of a functional head needs a higher Pass or ApplPass, and
-only the ι route is available to the first object. He rejects the small-clause analyses, among them
-[pylkkanen-2008]'s low applicative, and Landau's null-NP view of implicit arguments.
-
-The sluicing asymmetry (G1) is formalized in `Studies/Bruening2021Sluicing.lean`. Frame-conditioned
-licensing (G4), the contrast between *show*, licensed only in the double object frame, and *pass*,
-licensed only in the PP frame, is expressible over the frames but not yet formalized.
-
-Of the roughly 43 verbs of (56), the 32 whose Fragment encoding is unambiguous are classified here;
-*ask*, *promise*, *wish*, *leave*, *afford*, *lose*, *guarantee*, *rent*, *save*, *email/text* and
-*bill* are absent or carry attitude senses in the Fragment.
+An implicit argument here is a diathesis of an English verb leaving a complement of its double
+object or prepositional frame unexpressed, so the four patterns of the paper's §2.4 are theorems
+over the whole lexicon.
 
 ## Main definitions
 
-* `GoalPosition`, `classification` — where each verb's goal argument sits in (56)
-* `implicitSecondObject`, `implicitGoal`, `cell` — a verb's grid coordinates, the
-  interpretations read off the Fragment's frames
+* `Argument.leaveImplicit`: the voice leaving an internal argument of a ditransitive implicit.
+* `observed`: the interpretations the lexicon gives an implicit argument.
+* `Binder`, `interps`, `Sluices`: the heads that leave an argument implicit, the
+  interpretations they give an argument of each head, and whether it licenses sluicing.
 
 ## Main results
 
-* `no_indefinite_implicit_first_object` — the empty cell of the grid
-* `other_combinations_attested` — every other cell is populated, so the gap is not a sampling gap
-* `g2_asymmetry` — the two halves together, over the Fragment's fields
-* `g3_base_transitive_constraint` — a base transitive with an implicit object has no double object
-  frame to license it in
-* `bruening_vs_larson_implicit_first_obj`, `bruening_vs_pylkkanen_low_recipient` — the disagreements
-  with the accounts formalized alongside
+* `observed_firstObject`, `observed_of_ne_firstObject`: an implicit first object is definite,
+  any other implicit argument definite or indefinite.
+* `interps_eq_observed_iff`: these interpretations single out Appl as the head of the first
+  object and the verb as that of the others.
+* `sluiced_rows`: the sluicing judgments of (10) and (11) follow.
+* `objectDrop_secondObject`, `dropsInBothFrames`: a verb with an implicit transitive object has
+  no implicit second object, and no verb drops its direct object in both frames, except *write*.
+
+## Implementation notes
+
+The fragment places an implicit argument where the construction it is understood in would
+express it, so an alternating verb's implicit goal is a first object or a PP as its entry says.
+Semantic types are those of `Montague.Ty`, in which events share the type `e` with individuals.
+
+## TODO
+
+Appendix A's varieties of definite first objects and Appendix B's verbs with two implicit
+arguments are not formalized.
 
 ## References
 
 * [bruening-2021]
-* [marantz-1993]
 * [larson-1988]
-* [pylkkanen-2008]
+* [marantz-1993]
 * [pesetsky-1995]
+* [pylkkanen-2008]
 -/
 
 @[expose] public section
 
 namespace Bruening2021
 
-open English
-open English.Verbs hiding Verb
-open ArgumentStructure
+open English.Verbs Minimalist Montague HeimKratzer.Tree
 
-/-! ### Table (56) as a grid
+/-! ### Implicit arguments -/
 
-Bruening's table is a grid: a verb's cell is fixed by how its implicit second object is
-interpreted, whether its goal argument is a first object or a PP, and how that goal is interpreted
-when implicit. Two of those three coordinates are read off the Fragment's frames, so all this file
-adds is the goal's position — the classification below is the table's content that the Fragment
-does not carry, and every claim about interpretation is read off the Fragment itself. -/
-
-/-- Where a verb's goal argument sits. Bruening files alternating verbs whose arguments cannot be
-implicit under "PP" as well, so this classifies the goal, not the verb's frame inventory. -/
-inductive GoalPosition where
+/-- The internal arguments of a ditransitive, the first and second objects of the double object
+construction and the direct object and PP of the prepositional frame. -/
+inductive Argument where
   | firstObject
+  | secondObject
+  | directObject
   | pp
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Fintype, Repr
 
-/-- The position of each verb's goal in (56), for the verbs whose Fragment encoding is
-unambiguous. -/
-def classification : List (English.Verbs.Verb × GoalPosition) := [
-  (forgive, .firstObject), (spare, .firstObject), (show_, .firstObject),
-  (tell, .pp), (pass, .pp), (throw, .pp), (sell, .pp),
-  (charge, .firstObject), (cost, .firstObject), (envy, .firstObject), (fine, .firstObject),
-  (pay, .firstObject), (strike_, .firstObject), (tip, .firstObject),
-  (feed, .firstObject), (write, .firstObject),
-  (give, .pp), (serve, .pp), (teach, .pp),
-  (assign, .firstObject), (deny, .firstObject), (permit, .firstObject),
-  (begrudge, .firstObject), (bet, .firstObject),
-  (award, .pp), (forward_, .pp), (grant, .pp), (offer, .pp), (reserve, .pp), (send, .pp),
-  (hand, .pp), (lend, .pp)
-]
+namespace Argument
 
-/-- The interpretation of the verb's implicit second object: for a first-object goal, the
-implicit position after the first object; for a PP goal, the implicit theme before the PP. -/
-def implicitSecondObject (vp : English.Verbs.Verb × GoalPosition) : Option ImplicitInterp :=
-  vp.1.valency.frames.findSome? fun fr ↦
-    match vp.2, fr.complements with
-    | .firstObject, [.nominal, .implicit i] => i
-    | .pp, [.implicit i, .adpositional _ _] => i
-    | _, _ => none
+/-- The voice leaving the argument unexpressed in its construction, interpreted as `a`. -/
+def leaveImplicit : Argument → ImplicitInterp → Voice
+  | firstObject, a => .leaveImplicit .np_np 0 (some a)
+  | secondObject, a => .leaveImplicit .np_np 1 (some a)
+  | directObject, a => .leaveImplicit .np_pp 0 (some a)
+  | pp, a => .leaveImplicit .np_pp 1 (some a)
 
-/-- The interpretation of the verb's implicit goal: the implicit first object, or the implicit
-PP after the theme. -/
-def implicitGoal (vp : English.Verbs.Verb × GoalPosition) : Option ImplicitInterp :=
-  vp.1.valency.frames.findSome? fun fr ↦
-    match vp.2, fr.complements with
-    | .firstObject, [.implicit i, .nominal] => i
-    | .pp, [.nominal, .implicit i] => i
-    | _, _ => none
+/-- The argument a feature of the examples names. -/
+def ofString? : String → Option Argument
+  | "firstObject" => some firstObject
+  | "secondObject" => some secondObject
+  | "directObject" => some directObject
+  | "pp" => some pp
+  | _ => none
 
-/-- The cell a verb occupies: its second object's interpretation, its goal's position, and the
-goal's interpretation. -/
-def cell (vp : English.Verbs.Verb × GoalPosition) :
-    Option ImplicitInterp × GoalPosition × Option ImplicitInterp :=
-  (implicitSecondObject vp, vp.2, implicitGoal vp)
+/-- In Bruening's analysis the first object is the argument of Appl, merged in its specifier
+above the verb phrase, and every other argument is the verb's. -/
+def host : Argument → Cat
+  | firstObject => .Appl
+  | _ => .V
 
-/-! ### Derived verb subsets -/
+end Argument
 
-/-- The verbs of (56) whose goal argument is a first object. -/
-def docOnlyVerbs : List (English.Verbs.Verb × GoalPosition) :=
-  classification.filter fun vp ↦ vp.2 == .firstObject
+/-- The interpretations an implicit argument receives across the English verb lexicon. -/
+def observed (x : Argument) : Finset ImplicitInterp :=
+  Finset.univ.filter fun a ↦ ∃ v ∈ verbs, v.Alternates (x.leaveImplicit a)
 
-/-! ### G2: the empty cell
+theorem observed_firstObject : observed .firstObject = {.def} := by decide +kernel
 
-Bruening's second asymmetry (§2.2.4) is a gap in the grid: an implicit first object is always
-definite, while implicit second objects and implicit PPs are either. So the claim has two halves —
-one combination is systematically unattested, an indefinite implicit first object, and the rest of
-the grid is populated, which is what makes the gap a fact about the paradigm rather than an
-artefact of the sample. Bruening draws exactly that conclusion below the table: "all possible
-combinations are attested, other than the missing indefinite implicit first object interpretation".
+theorem observed_of_ne_firstObject {x : Argument} (hx : x ≠ .firstObject) :
+    observed x = {.indef, .def} := by
+  cases x <;> first | exact absurd rfl hx | decide +kernel
 
-His ι-head, the licensor of a definite implicit argument, and the ApplPass head that licenses an
-implicit first object have no substrate counterpart; `Voice.Voice.ExternalArgSemantics` carries
-`thematicExistential`, the analogue of his ∃-head, so a `thematicIota` and a Pass-of-Appl head are
-the gaps on that side. -/
+/-! ### ∃, ι, Pass and ApplPass -/
 
-/-- The empty cell: no verb leaves a first object implicit and indefinite. -/
-theorem no_indefinite_implicit_first_object :
-    classification.all (fun vp =>
-      vp.2 != .firstObject || implicitGoal vp != some .indef) = true := by decide
+/-- The heads that leave an argument implicit, ∃ and ι adjoined to the verb and the passive
+heads Pass and ApplPass projecting over Voice and Appl. -/
+inductive Binder where
+  | existential
+  | iota
+  | pass
+  | applPass
+  deriving DecidableEq, Fintype, Repr
 
-/-- Every other combination is attested, so the gap is not a sampling accident. -/
-theorem other_combinations_attested :
-    ([(some .def, .firstObject, some .def), (some .def, .firstObject, none),
-      (some .def, .pp, some .indef), (some .indef, .firstObject, some .def),
-      (some .indef, .firstObject, none), (some .indef, .pp, some .def),
-      (some .indef, .pp, some .indef), (none, .firstObject, some .def),
-      (none, .firstObject, none), (none, .pp, some .def), (none, .pp, none)] :
-        List (Option ImplicitInterp × GoalPosition × Option ImplicitInterp)).all
-      (fun c => classification.any (fun vp => cell vp == c)) = true := by decide
+namespace Binder
 
-/-- The asymmetry stated over the two positions: a first-object goal is never implicit and
-indefinite, while both interpretations occur for second objects and for PP goals. -/
-theorem g2_asymmetry :
-    docOnlyVerbs.all (fun vp => implicitGoal vp != some .indef) = true ∧
-      classification.any (fun vp => implicitSecondObject vp == some .def) = true ∧
-      classification.any (fun vp => implicitSecondObject vp == some .indef) = true ∧
-      classification.any (fun vp => implicitGoal vp == some .indef) = true := by
-  refine ⟨by decide, by decide, by decide, by decide⟩
+/-- The head whose argument the binder closes off. -/
+def head : Binder → Cat
+  | existential | iota => .V
+  | pass => .Voice
+  | applPass => .Appl
 
-/-! ### G3: base-transitivity constraint
+/-- ∃ and Pass bind their argument as an indefinite, ι and ApplPass as a definite. -/
+def interp : Binder → ImplicitInterp
+  | existential | pass => .indef
+  | iota | applPass => .def
 
-Bruening's G3 (§2.3.1, summary point 3): a simple transitive that allows
-an implicit object does NOT allow it when used in the DOC.
+/-- Pass and ApplPass head phrases of their own; ∃ and ι form a complex head with the verb. -/
+def Projects : Binder → Prop
+  | pass | applPass => True
+  | existential | iota => False
 
-The encoded consequent: *melt* and *build* (Bruening p. 1025 ex. (7)–(8))
-have the basic frame `np` (transitive) with an object-drop frame, AND
-no double object or PP frame with an implicit second object — so the
-Fragment itself blocks the spurious "implicit-second-obj-in-DOC" reading for
-these verbs, *build* having the benefactive double object frame but not that
-one.
+instance : DecidablePred Projects := fun b ↦ by cases b <;> unfold Projects <;> infer_instance
 
-(Bruening's prototypical example *bake* is not in the English fragment.) -/
+end Binder
 
-def baseTransitivesWithImplicit : List English.Verbs.Verb := [melt, build]
+/-- The interpretations available to an implicit argument of the head `h`. -/
+def interps (h : Cat) : Finset ImplicitInterp :=
+  (Finset.univ.filter (·.head = h)).image Binder.interp
 
-theorem g3_base_transitive_constraint :
-    baseTransitivesWithImplicit.all (fun v =>
-      decide (v.valency.frames.head? = some ArgumentFrame.np)
-      && v.valency.frames.any (fun fr => decide fr.HasImplicit)
-      && decide (implicitSecondObject (v, .firstObject) = none)
-      && decide (implicitSecondObject (v, .pp) = none)) = true := by decide
+/-- An implicit argument of `h` licenses sluicing when a binder that does not project can close
+it off. Ellipsis needs a correlate in the elided clause for every maximal projection of the
+antecedent, which a sluice has for a head adjoined to the verb but not for PassP or ApplPassP. -/
+def Sluices (h : Cat) : Prop := ∃ b : Binder, b.head = h ∧ ¬ b.Projects
 
-/-! ### G1 and G4
+instance (h : Cat) : Decidable (Sluices h) := inferInstanceAs (Decidable (∃ _, _))
 
-G1, the sluicing asymmetry of §2.1, is formalized in `Studies/Bruening2021Sluicing.lean` over the
-maximal-projection identity condition of `Syntax/Minimalist/Ellipsis/FormalMatching.lean`.
+/-- The interpretations an implicit argument shows are those available to an argument of its
+head, and of no other head. The verb chooses ∃ or ι for its own arguments, so their
+interpretations vary from verb to verb, while ApplPass alone closes off the first object. An
+analysis on which the verb selects the first object, as Pesetsky's and Larson's do, predicts
+indefinite implicit first objects; a small-clause analysis, on which the verb selects neither,
+predicts no lexical variation in the second. -/
+theorem interps_eq_observed_iff (x : Argument) (h : Cat) :
+    interps h = observed x ↔ h = x.host := by
+  rcases eq_or_ne x .firstObject with rfl | hx
+  · rw [observed_firstObject]
+    cases h <;> decide
+  · rw [observed_of_ne_firstObject hx]
+    cases x <;> cases h <;> first | exact absurd rfl hx | decide
 
-G4, frame-conditioned licensing (§2.3.2), is not formalized: the Fragment carries `implicitObj`
-globally rather than per frame, so the contrast between *show*, licensed only in the double object
-frame, and *pass*, licensed only in the PP frame, cannot be stated without a schema field indexed
-by complement type. -/
+/-- In (10) and (11) every verb leaves the sluiced argument implicit, and the sluice is
+acceptable exactly when that argument's head licenses sluicing. -/
+theorem sluiced_rows : ∀ v ∈ verbs, .np_np ∈ v.valency.frames → ∀ row ∈ Examples.all,
+    row.feature? "verb" = some v.form → ∀ x,
+      (row.feature? "sluiced").bind Argument.ofString? = some x →
+        (∃ a, v.Alternates (x.leaveImplicit a)) ∧
+          (row.judgment = .acceptable ↔ Sluices x.host) := by
+  decide +kernel
 
-/-! ### Cross-framework contrasts
+/-! ### Implicit direct objects -/
 
-Bruening positions his analysis explicitly against several rivals
-(§3.1 + fn. 10 p. 1042 + §4.1). Two of those rivals — Pylkkänen 2008 and
-Larson 1988 — are formalized in this directory. Below we make Bruening's
-disagreements with them Lean-checkable. -/
+/-- A verb that leaves the object of its transitive frame implicit does not leave the second
+object of its double object construction implicit, except *write*, whose *She wrote me* the
+paper's fn. 7 suggests is a prepositional frame with a silent preposition. -/
+theorem objectDrop_secondObject :
+    (verbs.filter fun v ↦ (∃ a, v.Alternates (Argument.secondObject.leaveImplicit a)) ∧
+      ∃ a, v.Alternates (.leaveImplicit .np 0 (some a))).map (·.form) = ["write"] := by
+  decide +kernel
 
-/-- Bruening vs Pylkkänen 2008.
+/-- *melt* and *build*, the base transitives of (7) and (8), leave their object implicit and
+have a double object construction. -/
+theorem melt_build : ∀ v ∈ [melt, build],
+    (∃ a, v.Alternates (.leaveImplicit .np 0 (some a))) ∧ .np_np ∈ v.valency.frames := by
+  decide +kernel
 
-Both analyses agree that the first object of English DOC is in an
-Appl-projection above V (not selected by V). Pylkkänen's `english_appl`
-commits English DOC to `.low .recipient` (`Pylkkanen2008.Construction.head`); this
-classification correctly predicts the structural facts about c-command,
-binding, and quantifier scope.
-
-They diverge on what licenses *implicit* first objects. Bruening's
-ApplPass derivation predicts implicit first objects are *uniformly
-definite* (G2 above). Pylkkänen's `.low .recipient` classification alone
-does not entail this — it requires Bruening's additional Pass/ApplPass
-machinery, which has no substrate analogue (see G2 ANALOGUE note).
-
-Bruening explicitly *rejects* Pylkkänen 2008's analysis as a "variety of
-small clause analysis" (fn. 10 p. 1042). -/
-theorem bruening_vs_pylkkanen_low_recipient :
-    Pylkkanen2008.Construction.englishDOC.head = .low .recipient
-    ∧ docOnlyVerbs.all (fun vp => implicitGoal vp != some .indef) = true := by
-  refine ⟨rfl, ?_⟩; decide
-
-/-- Bruening vs Larson 1988.
-
-Larson's VP-shell analysis (`Larson1988.docDativeShift`) treats both
-objects of DOC as selected arguments of V (lower V'-shell + Dative Shift
-movement). This predicts implicit first objects should pattern with
-implicit second objects — both arguments-of-V should behave alike.
-
-Bruening's data refute the prediction: *pay* has indef-implicit second
-object (`some .indef`) but def-implicit first object (`some .def`). The
-asymmetry is the load-bearing argument against Larson (§3.1 p. 1041),
-and against [pesetsky-1995]'s "both selected by V" view. -/
-theorem bruening_vs_larson_implicit_first_obj :
-    implicitSecondObject (pay, .firstObject) = some .indef
-    ∧ implicitGoal (pay, .firstObject) = some .def
-    ∧ implicitSecondObject (pay, .firstObject) ≠ implicitGoal (pay, .firstObject) := by
+/-- Appl takes a verb with an open individual argument, of type ⟨e,⟨s,t⟩⟩, then the theme, the
+recipient and the event, so a verb whose object ∃ has closed off, of type ⟨s,t⟩, cannot combine
+with it: a simple transitive's implicit object is not available in the double object
+construction. -/
+theorem tyBinary_appl :
+    tyBinary (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.eet = some (.e ⇒ .e ⇒ Ty.et) ∧
+      tyBinary (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.et = none := by
   decide
+
+/-- No verb but *write* leaves its direct object implicit both in the double object and in the
+prepositional frame. -/
+theorem dropsInBothFrames :
+    (verbs.filter fun v ↦ (∃ a, v.Alternates (Argument.secondObject.leaveImplicit a)) ∧
+      ∃ a, v.Alternates (Argument.directObject.leaveImplicit a)).map (·.form) = ["write"] := by
+  decide +kernel
+
+/-- In (63)–(65) a double object verb leaves its direct object implicit beside a first object or
+beside a PP exactly as the example is acceptable. The fragment has no double object frame for
+*ask*, *email*, *text* or *telegraph*. -/
+theorem implicit_rows : ∀ v ∈ verbs, .np_np ∈ v.valency.frames → ∀ row ∈ Examples.all,
+    row.feature? "verb" = some v.form → ∀ x,
+      (row.feature? "implicit").bind Argument.ofString? = some x →
+        (row.judgment = .acceptable ↔ ∃ a, v.Alternates (x.leaveImplicit a)) := by
+  decide +kernel
 
 end Bruening2021

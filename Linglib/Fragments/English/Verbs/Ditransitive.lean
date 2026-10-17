@@ -5,10 +5,10 @@ public import Linglib.Fragments.English.Verbs.Basic
 /-!
 # English ditransitive verbs
 
-This file defines the English ditransitive verbs of Bruening's study of implicit arguments,
-*charge*, *cost*, *fine*, *tip*, *pay*, *forgive*, *deny*, *permit*, *teach*, *feed*, *show*,
-*award*, *grant*, *offer*, *lend* and the rest, with the frames in which each argument may be
-implicit.
+These are the ditransitive verbs of Bruening's study of implicit arguments, from *charge* and
+*pay* to *hand* and *lend*. Their participants are the agent, the recipient and the theme,
+numbered 0, 1 and 2, and a diathesis with an implicit argument is one of the verb's frames with
+that argument left unexpressed (`ArgumentFrame.leaveImplicit`).
 
 ## References
 
@@ -21,141 +21,111 @@ namespace English.Verbs
 
 open ArgumentStructure Aspect Degree
 
-/-! ### Ditransitive verbs and implicit arguments ([bruening-2021]) -/
+/-! ### Verbs without the prepositional frame -/
 
-/-! Ditransitive verbs classified by their implicit argument behavior,
-    following [bruening-2021] Table (56). The classification is
-    theory-neutral: it records surface optionality and interpretation
-    without committing to a specific structural analysis. -/
-
--- DOC-only verbs (no PP frame alternant)
-
-/-- "charge" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
+/-- "charge" — either object may be implicit, the second as an indefinite and the first as a
+definite. -/
 def charge : Verb where
   morphs := [.root "charge"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .equip, .run}
 
-/-- "cost" — DOC-only. Implicit second obj indef, implicit goal def. -/
+/-- "cost" — either object may be implicit, the second as an indefinite and the first as a
+definite. -/
 def cost : Verb where
   morphs := [.root "cost"]
   past := "cost"
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
   vendlerClass := some .state
   levinClasses := {LevinClass.cost}
 
-/-- "fine" — DOC-only. Implicit second obj indef, implicit goal def. -/
+/-- "fine" — the second object may be implicit, an indefinite; the first may not
+(*They fined an astronomical amount*). -/
 def fine : Verb where
   morphs := [.root "fine"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .judgment}
 
-/-- "tip" — DOC-only. Implicit second obj indef, implicit goal def (unique). -/
+/-- "tip" — either object may be implicit, the second as an indefinite and the first as a
+definite. -/
 def tip : Verb where
   morphs := [.root "tip"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .throw}
 
-/-- "pay" — DOC-only. Implicit second obj indef, implicit goal def. -/
-def pay : Verb where
-  morphs := [.root "pay"]
-  past := "paid"
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
-  vendlerClass := some .accomplishment
-  levinClasses := {LevinClass.give}
-
-/-- "strike" — DOC-only. Implicit second obj indef, implicit goal def (familiar). -/
+/-- "strike" — either object may be implicit, the second as an indefinite and the first as a
+definite. -/
 def strike_ : Verb where
   morphs := [.root "strike"]
   past := "struck"
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
   vendlerClass := some .achievement
   senseTag := .default
   levinClasses := {LevinClass.amuse, .hit, .soundEmission}
 
-/-- "forgive" — DOC-only. Implicit second obj def, implicit goal def (addressee). -/
+/-- "forgive" — either object may be implicit, each a definite. -/
 def forgive : Verb where
   morphs := [.root "forgive"]
   past := "forgave"
   pastPart := "forgiven"
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.judgment}
 
-/-- "spare" — DOC-only. Implicit second obj def, no implicit goal. -/
+/-- "spare" — the second object may be implicit, a definite; the first may not. -/
 def spare : Verb where
   morphs := [.root "spare"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill}
 
-/-- "deny" — DOC-only. Implicit goal def; second object obligatory
-    ([bruening-2021] Table 56 row 3 col 1, ex. (32d) p. 1032). -/
+/-- "deny" — the first object may be implicit, a definite; the second may not. -/
 def deny : Verb where
   morphs := [.root "deny"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.conjecture}
 
-/-- "permit" — DOC-only. Implicit goal def (addressee); second object
-    obligatory ([bruening-2021] Table 56 row 3 col 1, ex. (32e) p. 1032). -/
+/-- "permit" — the first object may be implicit, a definite; the second may not. -/
 def permit : Verb where
   morphs := [.root "permit"]
   doubling := true
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
   vendlerClass := some .accomplishment
 
-/-- "assign" — alternating (DOC + PP). Implicit goal definite; the second
-    object is obligatory, Pesetsky's observation as [bruening-2021] report it. -/
-def assign : Verb where
-  morphs := [.root "assign"]
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
-     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
-  vendlerClass := some .accomplishment
-  levinClasses := {LevinClass.futureHaving}
-
--- DOC-only verbs with no implicit arguments
-
-/-- "begrudge" — DOC-only. Neither object implicit. -/
+/-- "begrudge" — neither object may be implicit. -/
 def begrudge : Verb where
   morphs := [.root "begrudge"]
   valency := .ofFrame ArgumentFrame.np_np
   vendlerClass := some .state
 
-/-- "bet" — DOC-only. Neither object implicit. -/
+/-- "bet" — neither object may be implicit. -/
 def bet : Verb where
   morphs := [.root "bet"]
   past := "bet"
@@ -163,126 +133,152 @@ def bet : Verb where
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill}
 
--- Alternating verbs (both DOC and PP frame)
+/-! ### Alternating verbs -/
 
-/-- "serve" — alternates DOC/PP. Implicit second obj indef (DOC).
-    Implicit goal def (PP). -/
+/-- "pay" — the direct object may be implicit in the double object frame only, an indefinite;
+the first object may be implicit, a definite. -/
+def pay : Verb where
+  morphs := [.root "pay"]
+  past := "paid"
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
+  vendlerClass := some .accomplishment
+  levinClasses := {LevinClass.give}
+
+/-- "assign" — the goal may be implicit, a definite, as a first object or as a PP; the theme may
+not. -/
+def assign : Verb where
+  morphs := [.root "assign"]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
+     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+  vendlerClass := some .accomplishment
+  levinClasses := {LevinClass.futureHaving}
+
+/-- "serve" — the direct object may be implicit in the double object frame only, an indefinite;
+the PP may be implicit, a definite. -/
 def serve : Verb where
   morphs := [.root "serve"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (⟨some .nominal, [.implicit (some .indef), .adpositional]⟩, [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.fit, .fulfilling, .give, .masquerade}
 
-/-- "teach" — alternates DOC/PP. Implicit goal indef (PP).
-    When both implicit, both are indefinite. -/
+/-- "teach" — the direct object may be implicit in the double object frame only, and the PP may
+be implicit, each an indefinite. -/
 def teach : Verb where
   morphs := [.root "teach"]
   past := "taught"
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (⟨some .nominal, [.implicit (some .indef), .adpositional]⟩, [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 2, 1])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .indef), [0, 2, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.transferOfMessage}
 
-/-- "feed" — alternates DOC/PP. Implicit second obj indef (DOC).
-    No implicit goal. -/
+/-- "feed" — the direct object may be implicit in the double object frame only, an
+indefinite; the goal may not. -/
 def feed : Verb where
   morphs := [.root "feed"]
   past := "fed"
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.feed, .fit, .give, .gorge}
 
-/-- "show" — alternates DOC/PP. Implicit second obj def. No implicit goal. -/
+/-- "show" — the direct object may be implicit in the double object frame only, a definite
+(*Show me*); the goal may not. -/
 def show_ : Verb where
   morphs := [.root "show"]
   pastPart := "shown"
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.conjecture, .crane, .reflexiveAppearance, .transferOfMessage}
 
-/-- "award" — alternates DOC/PP. Implicit goal def (PP). -/
+/-- "award" — the PP may be implicit, a definite; the theme may not. -/
 def award : Verb where
   morphs := [.root "award"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.futureHaving}
 
-/-- "forward" — alternates DOC/PP. Implicit goal def (PP). -/
+/-- "forward" — the PP may be implicit, a definite; the theme may not. -/
 def forward_ : Verb where
   morphs := [.root "forward"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.send}
 
-/-- "grant" — alternates DOC/PP. Implicit goal def (PP). -/
+/-- "grant" — the PP may be implicit, a definite; the theme may not. -/
 def grant : Verb where
   morphs := [.root "grant"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.conjecture, .futureHaving}
 
-/-- "offer" — alternates DOC/PP. Implicit goal def (PP). -/
+/-- "offer" — the PP may be implicit, a definite; the theme may not. -/
 def offer : Verb where
   morphs := [.root "offer"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.characterize, .futureHaving, .reflexiveAppearance}
 
-/-- "reserve" — alternates DOC/PP. Implicit goal def (PP). -/
+/-- "reserve" — the PP may be implicit, a definite; the theme may not. -/
 def reserve : Verb where
   morphs := [.root "reserve"]
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_), [0, 2, 1]),
-     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.get}
 
-/-- "pass" — alternates DOC/PP. Implicit DO def in PP frame only. -/
+/-- "pass" — the direct object may be implicit in the prepositional frame only, a definite
+(*She wouldn't pass to me*); the PP may be implicit, an indefinite. Its theme is participant 1
+and its goal participant 2. -/
 def pass : Verb where
   morphs := [.root "pass"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
-     (⟨some .nominal, [.implicit (some .def), .adpositional]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
      (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 0 (some .def), [0, 1, 2]),
+     (ArgumentFrame.np_pp.leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give, .marry, .send, .throw}
 
--- Alternating verbs with no implicit arguments
-
-/-- "hand" — Levin 11.1 Send verbs; alternates DOC/PP, neither argument
-    implicit. -/
+/-- "hand" — Levin 11.1 Send verbs; neither argument may be implicit. -/
 def hand : Verb where
   morphs := [.root "hand"]
   valency := .of
@@ -301,7 +297,7 @@ def mail : Verb where
      (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
   levinClasses := {LevinClass.send}
 
-/-- "lend" — alternates DOC/PP. Neither argument implicit. -/
+/-- "lend" — neither argument may be implicit. -/
 def lend : Verb where
   morphs := [.root "lend"]
   past := "lent"

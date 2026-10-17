@@ -27,6 +27,7 @@ voice with its marker, `Voice.passive.marked [.suff "x"]`, and the bare constant
   with two such diatheses.
 * `Voice.passive`, `antipassive`, `anticausative`, `causative`, `reflexive`, `applicative`,
   `patientVoice`, `obliqueVoice`: the voices.
+* `Voice.leaveImplicit`: the voice leaving one complement of a frame unexpressed.
 
 ## Main statements
 
@@ -56,6 +57,8 @@ voice with its marker, `Voice.passive.marked [.suff "x"]`, and the bare constant
 * [creissels-2024]
 * [dixon-1994]
 * [dixon-aikhenvald-2000]
+* [fillmore-1986]
+* [levin-1993]
 * [song-1996]
 -/
 
@@ -238,9 +241,9 @@ end Fintype
 
 end Construction
 
-/-- The status a frame gives the participant of a slot: the transitivity-related role of a core
-slot, X for an expressed oblique, implicit for an implicit position, and absent for an expletive
-or an unfilled slot. -/
+/-- The status a frame gives the participant of a slot is the transitivity-related role of a
+core slot, X for an expressed oblique, implicit for an implicit position, and absent for an
+expletive or an unfilled slot. -/
 def _root_.ArgumentFrame.status (fr : ArgumentFrame) (s : ArgumentFrame.Slot) : Status :=
   match fr.argumentRole s, fr.get? s with
   | some r, _ => .term (.ofArgumentRole r)
@@ -459,6 +462,12 @@ def impersonalPassive (fr : ArgumentFrame := .np) : Voice :=
 intransitive construction ([creissels-2024] §8.3.2.3). -/
 def antipassive : Voice := of .np .pp [some external, some (complement 0)]
 
+/-- The voice leaving the `i`-th complement of `fr` unexpressed, interpreted as `a`, every
+participant keeping its slot and the one of that complement implied there, as in Fillmore's null
+complements and Levin's unexpressed object alternations. -/
+def leaveImplicit (fr : ArgumentFrame) (i : ℕ) (a : Option ImplicitInterp := none) : Voice :=
+  of fr (fr.leaveImplicit i a) (fr.slots.map some)
+
 /-- The anticausative suppresses the initial A from participant structure and makes the
 initial P the S of an intransitive construction, [creissels-2024]'s decausativization
 (§8.3.1.2). -/
@@ -549,8 +558,12 @@ end Relates
 def _root_.Verb.Alternates (w : Verb) (v : Voice) : Prop :=
   ∃ c ∈ w.valency.diatheses, ∃ d ∈ w.valency.diatheses, v.Relates c d
 
+/-- Deciding the alternation skips a diathesis whose frame does not refine the initial one before
+looking for a derived one. -/
 instance (w : Verb) (v : Voice) : Decidable (w.Alternates v) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _))
+  decidable_of_iff (∃ c ∈ w.valency.diatheses, v.initial.toArgumentFrame ≤ c.toArgumentFrame ∧
+      ∃ d ∈ w.valency.diatheses, v.Relates c d)
+    ⟨fun ⟨c, hc, _, d, hd, h⟩ ↦ ⟨c, hc, d, hd, h⟩, fun ⟨c, hc, d, hd, h⟩ ↦ ⟨c, hc, h.1, d, hd, h⟩⟩
 
 /-! ### Alignment -/
 

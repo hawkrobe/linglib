@@ -12,6 +12,7 @@ with the entailment each carries from its complement.
 
 ## References
 
+* [bruening-2021]
 * [karttunen-1971]
 * [landau-2015]
 * [solstad-bott-2024]
@@ -67,13 +68,15 @@ def persuade : Verb where
 
 /-- "promise" — subject control across an object, "promise X to VP". A desiderative attitude
     verb whose subject commits to a future action; [landau-2015] (5c) classifies it as
-    desiderative, hence logophoric control. -/
+    desiderative, hence logophoric control. Its direct object may be implicit in the double
+    object frame only, a definite (*Promise me!*; [bruening-2021]). -/
 def promise : Verb where
   morphs := [.root "promise"]
   valency := .of
     [(ArgumentFrame.infinitival, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 2, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   opaqueContext := true
